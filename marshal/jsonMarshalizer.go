@@ -32,7 +32,3 @@ func (j *JsonMarshalizer) Unmarshal(obj interface{}, buff []byte) error {
 
 	return json.Unmarshal(buff, obj)
 }
-
-func (j *JsonMarshalizer) Version() string {
-	return "JSON/v.0.0.0.1"
-}
