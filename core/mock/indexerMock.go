@@ -11,11 +11,19 @@ type IndexerMock struct {
 	SaveBlockCalled func(body block.Body, header *block.Header)
 }
 
-func (im *IndexerMock) SaveBlock(body data.BodyHandler, header data.HeaderHandler, txPool map[string]data.TransactionHandler) {
+func (im *IndexerMock) SaveBlock(body data.BodyHandler, header data.HeaderHandler, txPool map[string]data.TransactionHandler, signersIndexes []uint64) {
 	panic("implement me")
 }
 
 func (im *IndexerMock) UpdateTPS(tpsBenchmark statistics.TPSBenchmark) {
+	panic("implement me")
+}
+
+func (im *IndexerMock) SaveRoundInfo(round int64, shardId uint32, signersIndexes []uint64, blockWasProposed bool) {
+	panic("implement me")
+}
+
+func (im *IndexerMock) SaveValidatorsPubKeys(validatorsPubKeys map[uint32][][]byte) {
 	panic("implement me")
 }
 
@@ -24,5 +32,9 @@ func (im *IndexerMock) IsInterfaceNil() bool {
 	if im == nil {
 		return true
 	}
+	return false
+}
+
+func (im *IndexerMock) IsNilIndexer() bool {
 	return false
 }
