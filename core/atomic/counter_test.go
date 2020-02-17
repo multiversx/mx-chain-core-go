@@ -1,15 +1,14 @@
-package core_test
+package atomic
 
 import (
 	"sync"
 	"testing"
 
-	"github.com/ElrondNetwork/elrond-go/core"
 	"github.com/stretchr/testify/assert"
 )
 
-func TestIncrementAndDecrement(t *testing.T) {
-	var counter core.AtomicCounter
+func TestCounter_IncrementAndDecrement(t *testing.T) {
+	var counter Counter
 	var wg sync.WaitGroup
 
 	// Increment 100 * 100 times
@@ -37,4 +36,15 @@ func TestIncrementAndDecrement(t *testing.T) {
 	wg.Wait()
 
 	assert.Equal(t, int64(5000), counter.Get())
+}
+
+func TestCounter_SetAndGet(t *testing.T) {
+	t.Parallel()
+
+	var counter Counter
+
+	value := int64(10)
+	counter.Set(value)
+
+	assert.Equal(t, value, counter.Get())
 }
