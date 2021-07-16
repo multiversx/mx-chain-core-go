@@ -17,5 +17,5 @@ func TestDumpGoRoutinesToLogShouldNotPanic(t *testing.T) {
 		}
 	}()
 
-	DumpGoRoutinesToLog(0)
+	DumpGoRoutinesToLog(0, nil)
 }

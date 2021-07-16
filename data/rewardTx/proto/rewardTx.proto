@@ -27,7 +27,7 @@ enum Type {
 // RewardTx holds the data for a reward transaction
 message RewardTx {
 	uint64   Round     = 1 [(gogoproto.jsontag) = "round"];
-	bytes    Value     = 3 [(gogoproto.jsontag) = "value", (gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go/data.BigIntCaster"]; 
+	bytes    Value     = 3 [(gogoproto.jsontag) = "value", (gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
 	bytes    RcvAddr   = 4 [(gogoproto.jsontag) = "receiver"];
 	uint32   Epoch     = 2 [(gogoproto.jsontag) = "epoch"];
 }

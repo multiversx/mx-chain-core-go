@@ -1,8 +1,6 @@
 package transaction
 
-import (
-	"github.com/ElrondNetwork/elrond-go/data/block"
-)
+import "github.com/ElrondNetwork/elrond-go-core/data/block"
 
 // Encoder represents a byte slice to string encoder
 type Encoder interface {
@@ -25,5 +23,5 @@ type StatusComputerHandler interface {
 		miniblockType block.Type,
 		headerNonce uint64,
 		headerHash []byte,
-) (bool, error)
+	) (bool, error)
 }

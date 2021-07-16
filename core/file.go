@@ -24,7 +24,6 @@ type ArgCreateFileArgument struct {
 func OpenFile(relativePath string) (*os.File, error) {
 	path, err := filepath.Abs(relativePath)
 	if err != nil {
-		log.Warn("cannot create absolute path for the provided file", "error", err.Error())
 		return nil, err
 	}
 	f, err := os.Open(filepath.Clean(path))
@@ -43,10 +42,7 @@ func LoadTomlFile(dest interface{}, relativePath string) error {
 	}
 
 	defer func() {
-		err = f.Close()
-		if err != nil {
-			log.Warn("cannot close file", "error", err.Error())
-		}
+		_ = f.Close()
 	}()
 
 	return toml.NewDecoder(f).Decode(dest)
@@ -61,7 +57,6 @@ func LoadTomlFileToMap(relativePath string) (map[string]interface{}, error) {
 
 	fileinfo, err := f.Stat()
 	if err != nil {
-		log.Error("cannot stat file", "error", err.Error())
 		return nil, err
 	}
 
@@ -70,20 +65,15 @@ func LoadTomlFileToMap(relativePath string) (map[string]interface{}, error) {
 
 	_, err = f.Read(buffer)
 	if err != nil {
-		log.Error("cannot read from file", "error", err.Error())
 		return nil, err
 	}
 
 	defer func() {
-		err = f.Close()
-		if err != nil {
-			log.Error("cannot close file", "error", err.Error())
-		}
+		_ = f.Close()
 	}()
 
 	loadedTree, err := toml.Load(string(buffer))
 	if err != nil {
-		log.Error("cannot interpret file contents as toml", "error", err.Error())
 		return nil, err
 	}
 
@@ -100,10 +90,7 @@ func LoadJsonFile(dest interface{}, relativePath string) error {
 	}
 
 	defer func() {
-		err = f.Close()
-		if err != nil {
-			log.Warn("cannot close file", "error", err.Error())
-		}
+		_ = f.Close()
 	}()
 
 	return json.NewDecoder(f).Decode(dest)
@@ -145,8 +132,7 @@ func LoadSkPkFromPemFile(relativePath string, skIndex int) ([]byte, string, erro
 	}
 
 	defer func() {
-		cerr := file.Close()
-		log.LogIfError(cerr)
+		_ = file.Close()
 	}()
 
 	buff, err := ioutil.ReadAll(file)

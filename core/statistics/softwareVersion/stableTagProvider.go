@@ -23,10 +23,7 @@ func (stp *stableTagProvider) FetchTagVersion() (string, error) {
 	}
 
 	defer func() {
-		err = resp.Body.Close()
-		if err != nil {
-			log.Debug(err.Error())
-		}
+		_ = resp.Body.Close()
 
 		http.DefaultClient.CloseIdleConnections()
 	}()

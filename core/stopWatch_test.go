@@ -9,6 +9,8 @@ import (
 
 const identifier = "identifier"
 
+var log = NewConsoleLogger()
+
 func TestStopWatch_Start(t *testing.T) {
 	t.Parallel()
 

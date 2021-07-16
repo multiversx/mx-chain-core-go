@@ -8,14 +8,10 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ElrondNetwork/elrond-go/core"
-	"github.com/ElrondNetwork/elrond-go/core/mock"
-	"github.com/ElrondNetwork/elrond-go/crypto/signing"
-	"github.com/ElrondNetwork/elrond-go/crypto/signing/mcl"
-	"github.com/ElrondNetwork/elrond-go/data/batch"
-	"github.com/ElrondNetwork/elrond-go/testscommon"
+	"github.com/ElrondNetwork/elrond-go-core/core"
+	"github.com/ElrondNetwork/elrond-go-core/core/mock"
+	"github.com/ElrondNetwork/elrond-go-core/data/batch"
 	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestCalculateHash_NilMarshalizer(t *testing.T) {
@@ -120,7 +116,7 @@ func TestCalculateHash_Good(t *testing.T) {
 	marshaledData := "marshalized random string"
 	hashedData := "hashed marshalized random string"
 	hash, err := core.CalculateHash(
-		&testscommon.MarshalizerStub{
+		&mock.MarshalizerStub{
 			MarshalCalled: func(obj interface{}) ([]byte, error) {
 				marshalCalled = true
 				assert.Equal(t, initialObject, obj)
@@ -128,7 +124,7 @@ func TestCalculateHash_Good(t *testing.T) {
 				return []byte(marshaledData), nil
 			},
 		},
-		&testscommon.HasherStub{
+		&mock.HasherStub{
 			ComputeCalled: func(s string) []byte {
 				hashCalled = true
 				assert.Equal(t, marshaledData, s)
@@ -258,72 +254,4 @@ func TestConvertShardIDToUint32(t *testing.T) {
 	shardID, err = core.ConvertShardIDToUint32("wrongID")
 	assert.Error(t, err)
 	assert.Equal(t, uint32(0), shardID)
-}
-
-func TestAssignShardForPubKeyWhenNotSpecified(t *testing.T) {
-	t.Parallel()
-
-	numShards := uint32(3)
-
-	key := []byte{5, 7, 4} // 4 % 4 = 0
-	require.Equal(t, uint32(0), core.AssignShardForPubKeyWhenNotSpecified(key, numShards))
-
-	key = []byte{5, 7, 5} // 5 % 4 = 1
-	require.Equal(t, uint32(1), core.AssignShardForPubKeyWhenNotSpecified(key, numShards))
-
-	key = []byte{5, 7, 6} // 6 % 4 = 2
-	require.Equal(t, uint32(2), core.AssignShardForPubKeyWhenNotSpecified(key, numShards))
-
-	key = []byte{5, 7, 7} // 7 % 4 = 3 => metachain
-	require.Equal(t, core.MetachainShardId, core.AssignShardForPubKeyWhenNotSpecified(key, numShards))
-
-	key = []byte{5, 7, 8} // 8 % 4 = 0
-	require.Equal(t, uint32(0), core.AssignShardForPubKeyWhenNotSpecified(key, numShards))
-
-	key = []byte{} // empty
-	require.Equal(t, uint32(0), core.AssignShardForPubKeyWhenNotSpecified(key, numShards))
-}
-
-func TestAssignShardForPubKeyWhenNotSpecifiedShouldReturnSameShardForSameKey(t *testing.T) {
-	t.Parallel()
-
-	key := []byte("test pub key number 0")
-	numShards := uint32(3)
-
-	result0 := core.AssignShardForPubKeyWhenNotSpecified(key, numShards)
-	result1 := core.AssignShardForPubKeyWhenNotSpecified(key, numShards)
-
-	require.Equal(t, result0, result1)
-}
-
-func TestShardAssignment(t *testing.T) {
-	t.Skip()
-
-	keyGen := signing.NewKeyGenerator(mcl.NewSuiteBLS12())
-	generatePubKey := func() []byte {
-		_, pk := keyGen.GeneratePair()
-		pkB, _ := pk.ToByteArray()
-
-		return pkB
-	}
-
-	numShards := uint32(3)
-	counts := map[uint32]uint64{
-		0:                     0,
-		1:                     0,
-		2:                     0,
-		core.MetachainShardId: 0,
-	}
-
-	numAccounts := 1000
-
-	for i := 0; i < numAccounts; i++ {
-		pubKey := generatePubKey()
-		shId := core.AssignShardForPubKeyWhenNotSpecified(pubKey, numShards)
-		counts[shId]++
-	}
-
-	for sh, cnt := range counts {
-		fmt.Printf("Shard %d:\n\t\t%d accounts\n", sh, cnt)
-	}
 }

@@ -5,45 +5,52 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ElrondNetwork/elrond-go/core"
-	"github.com/ElrondNetwork/elrond-go/core/appStatusPolling"
-	"github.com/ElrondNetwork/elrond-go/core/mock"
-	"github.com/ElrondNetwork/elrond-go/statusHandler"
+	"github.com/ElrondNetwork/elrond-go-core/core"
+	core2 "github.com/ElrondNetwork/elrond-go-core/core"
+	"github.com/ElrondNetwork/elrond-go-core/core/appStatusPolling"
+	"github.com/ElrondNetwork/elrond-go-core/core/mock"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewAppStatusPooling_NilAppStatusHandlerShouldErr(t *testing.T) {
 	t.Parallel()
 
-	_, err := appStatusPolling.NewAppStatusPolling(nil, time.Second)
+	_, err := appStatusPolling.NewAppStatusPolling(nil, time.Second, core2.NewConsoleLogger())
 	assert.Equal(t, err, appStatusPolling.ErrNilAppStatusHandler)
+}
+
+func TestNewAppStatusPooling_NilLoggerShouldErr(t *testing.T) {
+	t.Parallel()
+
+	_, err := appStatusPolling.NewAppStatusPolling(&mock.StatusHandlerFake{}, time.Second, nil)
+	assert.Equal(t, err, core2.ErrNilLogger)
 }
 
 func TestNewAppStatusPooling_NegativePollingDurationShouldErr(t *testing.T) {
 	t.Parallel()
 
-	_, err := appStatusPolling.NewAppStatusPolling(&statusHandler.NilStatusHandler{}, time.Duration(-1))
+	_, err := appStatusPolling.NewAppStatusPolling(&mock.StatusHandlerFake{}, time.Duration(-1), core2.NewConsoleLogger())
 	assert.Equal(t, err, appStatusPolling.ErrPollingDurationToSmall)
 }
 
 func TestNewAppStatusPooling_ZeroPollingDurationShouldErr(t *testing.T) {
 	t.Parallel()
 
-	_, err := appStatusPolling.NewAppStatusPolling(&statusHandler.NilStatusHandler{}, 0)
+	_, err := appStatusPolling.NewAppStatusPolling(&mock.StatusHandlerFake{}, 0, core2.NewConsoleLogger())
 	assert.Equal(t, err, appStatusPolling.ErrPollingDurationToSmall)
 }
 
 func TestNewAppStatusPooling_OkValsShouldPass(t *testing.T) {
 	t.Parallel()
 
-	_, err := appStatusPolling.NewAppStatusPolling(&statusHandler.NilStatusHandler{}, time.Second)
+	_, err := appStatusPolling.NewAppStatusPolling(&mock.StatusHandlerFake{}, time.Second, core2.NewConsoleLogger())
 	assert.Nil(t, err)
 }
 
 func TestNewAppStatusPolling_RegisterHandlerFuncShouldErr(t *testing.T) {
 	t.Parallel()
 
-	asp, err := appStatusPolling.NewAppStatusPolling(&statusHandler.NilStatusHandler{}, time.Second)
+	asp, err := appStatusPolling.NewAppStatusPolling(&mock.StatusHandlerFake{}, time.Second, core2.NewConsoleLogger())
 	assert.Nil(t, err)
 
 	err = asp.RegisterPollingFunc(nil)
@@ -60,7 +67,7 @@ func TestAppStatusPolling_Poll_TestNumOfConnectedAddressesCalled(t *testing.T) {
 			chDone <- struct{}{}
 		},
 	}
-	asp, err := appStatusPolling.NewAppStatusPolling(&ash, pollingDuration)
+	asp, err := appStatusPolling.NewAppStatusPolling(&ash, pollingDuration, core2.NewConsoleLogger())
 	assert.Nil(t, err)
 
 	err = asp.RegisterPollingFunc(func(appStatusHandler core.AppStatusHandler) {

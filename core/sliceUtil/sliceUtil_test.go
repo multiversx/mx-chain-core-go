@@ -3,7 +3,7 @@ package sliceUtil_test
 import (
 	"testing"
 
-	"github.com/ElrondNetwork/elrond-go/core/sliceUtil"
+	"github.com/ElrondNetwork/elrond-go-core/core/sliceUtil"
 	"github.com/stretchr/testify/assert"
 )
 

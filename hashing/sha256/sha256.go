@@ -3,7 +3,7 @@ package sha256
 import (
 	sha256Lib "crypto/sha256"
 
-	"github.com/ElrondNetwork/elrond-go/hashing"
+	"github.com/ElrondNetwork/elrond-go-core/hashing"
 )
 
 var _ hashing.Hasher = (*sha256)(nil)

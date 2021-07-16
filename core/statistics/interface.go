@@ -3,7 +3,7 @@ package statistics
 import (
 	"math/big"
 
-	"github.com/ElrondNetwork/elrond-go/data"
+	"github.com/ElrondNetwork/elrond-go-core/data"
 )
 
 // TPSBenchmark is an interface used to calculate statistics for the network activity

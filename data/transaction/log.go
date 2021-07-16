@@ -2,7 +2,7 @@
 package transaction
 
 import (
-	"github.com/ElrondNetwork/elrond-go/data"
+	"github.com/ElrondNetwork/elrond-go-core/data"
 )
 
 // GetLogEvents returns the interface for the underlying events of the log structure

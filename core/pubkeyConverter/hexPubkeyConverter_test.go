@@ -4,9 +4,8 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/ElrondNetwork/elrond-go/core/check"
-	"github.com/ElrondNetwork/elrond-go/core/pubkeyConverter"
-	"github.com/ElrondNetwork/elrond-go/data/state"
+	"github.com/ElrondNetwork/elrond-go-core/core/check"
+	"github.com/ElrondNetwork/elrond-go-core/core/pubkeyConverter"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -14,15 +13,15 @@ func TestNewHexPubkeyConverter_InvalidSizeShouldErr(t *testing.T) {
 	t.Parallel()
 
 	hpc, err := pubkeyConverter.NewHexPubkeyConverter(-1)
-	assert.True(t, errors.Is(err, state.ErrInvalidAddressLength))
+	assert.True(t, errors.Is(err, pubkeyConverter.ErrInvalidAddressLength))
 	assert.True(t, check.IfNil(hpc))
 
 	hpc, err = pubkeyConverter.NewHexPubkeyConverter(0)
-	assert.True(t, errors.Is(err, state.ErrInvalidAddressLength))
+	assert.True(t, errors.Is(err, pubkeyConverter.ErrInvalidAddressLength))
 	assert.True(t, check.IfNil(hpc))
 
 	hpc, err = pubkeyConverter.NewHexPubkeyConverter(3)
-	assert.True(t, errors.Is(err, state.ErrInvalidAddressLength))
+	assert.True(t, errors.Is(err, pubkeyConverter.ErrInvalidAddressLength))
 	assert.True(t, check.IfNil(hpc))
 }
 
@@ -44,7 +43,7 @@ func TestHexPubkeyConverter_DecodeShouldErr(t *testing.T) {
 	hpc, _ := pubkeyConverter.NewHexPubkeyConverter(addressLen)
 
 	buff, err := hpc.Decode("aaff")
-	assert.True(t, errors.Is(err, state.ErrWrongSize))
+	assert.True(t, errors.Is(err, pubkeyConverter.ErrWrongSize))
 	assert.Equal(t, 0, len(buff))
 
 	buff, err = hpc.Decode("not a hex")

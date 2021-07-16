@@ -6,7 +6,7 @@ package block
 import (
 	bytes "bytes"
 	fmt "fmt"
-	github_com_ElrondNetwork_elrond_go_data "github.com/ElrondNetwork/elrond-go/data"
+	github_com_ElrondNetwork_elrond_go_data "github.com/ElrondNetwork/elrond-go-core/data"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
@@ -288,8 +288,8 @@ type Header struct {
 	ReceiptsHash       []byte            `protobuf:"bytes,19,opt,name=ReceiptsHash,proto3" json:"ReceiptsHash,omitempty"`
 	ChainID            []byte            `protobuf:"bytes,20,opt,name=ChainID,proto3" json:"ChainID,omitempty"`
 	SoftwareVersion    []byte            `protobuf:"bytes,21,opt,name=SoftwareVersion,proto3" json:"SoftwareVersion,omitempty"`
-	AccumulatedFees    *math_big.Int     `protobuf:"bytes,22,opt,name=AccumulatedFees,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go/data.BigIntCaster" json:"AccumulatedFees,omitempty"`
-	DeveloperFees      *math_big.Int     `protobuf:"bytes,23,opt,name=DeveloperFees,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go/data.BigIntCaster" json:"DeveloperFees,omitempty"`
+	AccumulatedFees    *math_big.Int     `protobuf:"bytes,22,opt,name=AccumulatedFees,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"AccumulatedFees,omitempty"`
+	DeveloperFees      *math_big.Int     `protobuf:"bytes,23,opt,name=DeveloperFees,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"DeveloperFees,omitempty"`
 	Reserved           []byte            `protobuf:"bytes,24,opt,name=Reserved,proto3" json:"Reserved,omitempty"`
 }
 

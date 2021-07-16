@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"runtime"
 
-	"github.com/ElrondNetwork/elrond-go/core"
+	"github.com/ElrondNetwork/elrond-go-core/core"
 	"github.com/shirou/gopsutil/mem"
 )
 
@@ -63,6 +63,5 @@ func AcquireMemStatistics() MemStatistics {
 		StackInUse:   runtimeMemStats.StackInuse,
 	}
 
-	log.Trace("AcquireMemStatistics", "stats", result.String())
 	return result
 }

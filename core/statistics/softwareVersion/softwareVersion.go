@@ -4,9 +4,8 @@ import (
 	"context"
 	"time"
 
-	logger "github.com/ElrondNetwork/elrond-go-logger"
-	"github.com/ElrondNetwork/elrond-go/core"
-	"github.com/ElrondNetwork/elrond-go/core/check"
+	"github.com/ElrondNetwork/elrond-go-core/core"
+	"github.com/ElrondNetwork/elrond-go-core/core/check"
 )
 
 type tagVersion struct {
@@ -18,17 +17,17 @@ type SoftwareVersionChecker struct {
 	statusHandler             core.AppStatusHandler
 	stableTagProvider         StableTagProviderHandler
 	mostRecentSoftwareVersion string
+	log                       core.Logger
 	checkInterval             time.Duration
 	closeFunc                 func()
 }
-
-var log = logger.GetOrCreate("core/statistics")
 
 // NewSoftwareVersionChecker will create an object for software  version checker
 func NewSoftwareVersionChecker(
 	appStatusHandler core.AppStatusHandler,
 	stableTagProvider StableTagProviderHandler,
 	pollingIntervalInMinutes int,
+	log core.Logger,
 ) (*SoftwareVersionChecker, error) {
 	if check.IfNil(appStatusHandler) {
 		return nil, core.ErrNilAppStatusHandler
@@ -39,6 +38,9 @@ func NewSoftwareVersionChecker(
 	if pollingIntervalInMinutes <= 0 {
 		return nil, core.ErrInvalidPollingInterval
 	}
+	if check.IfNil(log) {
+		return nil, core.ErrNilLogger
+	}
 
 	checkInterval := time.Duration(pollingIntervalInMinutes) * time.Minute
 
@@ -47,6 +49,7 @@ func NewSoftwareVersionChecker(
 		stableTagProvider:         stableTagProvider,
 		mostRecentSoftwareVersion: "",
 		checkInterval:             checkInterval,
+		log:                       log,
 		closeFunc:                 nil,
 	}, nil
 }
@@ -64,7 +67,7 @@ func (svc *SoftwareVersionChecker) checkSoftwareVersion(ctx context.Context) {
 
 		select {
 		case <-ctx.Done():
-			log.Debug("softwareVersionChecker's go routine is stopping...")
+			svc.log.Debug("softwareVersionChecker's go routine is stopping...")
 			return
 		case <-time.After(svc.checkInterval):
 		}
@@ -74,7 +77,7 @@ func (svc *SoftwareVersionChecker) checkSoftwareVersion(ctx context.Context) {
 func (svc *SoftwareVersionChecker) readLatestStableVersion() {
 	tagVersionFromURL, err := svc.stableTagProvider.FetchTagVersion()
 	if err != nil {
-		log.Debug("cannot read json with latest stable tag", "error", err)
+		svc.log.Debug("cannot read json with latest stable tag", "error", err)
 		return
 	}
 	if tagVersionFromURL != "" {

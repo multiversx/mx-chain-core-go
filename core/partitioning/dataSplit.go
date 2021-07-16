@@ -1,7 +1,7 @@
 package partitioning
 
 import (
-	"github.com/ElrondNetwork/elrond-go/core"
+	"github.com/ElrondNetwork/elrond-go-core/core"
 )
 
 const minimumMaxPacketNum = 1

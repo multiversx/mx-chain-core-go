@@ -5,15 +5,15 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ElrondNetwork/elrond-go/core"
-	"github.com/ElrondNetwork/elrond-go/core/mock"
+	"github.com/ElrondNetwork/elrond-go-core/core"
+	"github.com/ElrondNetwork/elrond-go-core/core/mock"
 	"github.com/stretchr/testify/assert"
 )
 
 func TestNewSoftwareVersionChecker_NilStatusHandlerShouldErr(t *testing.T) {
 	t.Parallel()
 
-	softwareChecker, err := NewSoftwareVersionChecker(nil, &mock.StableTagProviderStub{}, 1)
+	softwareChecker, err := NewSoftwareVersionChecker(nil, &mock.StableTagProviderStub{}, 1, &mock.LoggerFake{})
 
 	assert.Nil(t, softwareChecker)
 	assert.Equal(t, core.ErrNilAppStatusHandler, err)
@@ -22,10 +22,19 @@ func TestNewSoftwareVersionChecker_NilStatusHandlerShouldErr(t *testing.T) {
 func TestNewSoftwareVersionChecker_NilStableTagProviderShouldErr(t *testing.T) {
 	t.Parallel()
 
-	softwareChecker, err := NewSoftwareVersionChecker(&mock.AppStatusHandlerStub{}, nil, 1)
+	softwareChecker, err := NewSoftwareVersionChecker(&mock.AppStatusHandlerStub{}, nil, 1, &mock.LoggerFake{})
 
 	assert.Nil(t, softwareChecker)
 	assert.Equal(t, core.ErrNilStatusTagProvider, err)
+}
+
+func TestNewSoftwareVersionChecker_NilLoggerShouldErr(t *testing.T) {
+	t.Parallel()
+
+	softwareChecker, err := NewSoftwareVersionChecker(&mock.AppStatusHandlerStub{}, &mock.StableTagProviderStub{}, 1, nil)
+
+	assert.Nil(t, softwareChecker)
+	assert.Equal(t, core.ErrNilLogger, err)
 }
 
 func TestNewSoftwareVersionChecker_InvalidPollingIntervalShouldErr(t *testing.T) {
@@ -33,7 +42,7 @@ func TestNewSoftwareVersionChecker_InvalidPollingIntervalShouldErr(t *testing.T)
 
 	statusHandler := &mock.AppStatusHandlerStub{}
 	tagProvider := &mock.StableTagProviderStub{}
-	softwareChecker, err := NewSoftwareVersionChecker(statusHandler, tagProvider, 0)
+	softwareChecker, err := NewSoftwareVersionChecker(statusHandler, tagProvider, 0, &mock.LoggerFake{})
 
 	assert.Nil(t, softwareChecker)
 	assert.Equal(t, core.ErrInvalidPollingInterval, err)
@@ -44,7 +53,7 @@ func TestNewSoftwareVersionChecker(t *testing.T) {
 
 	statusHandler := &mock.AppStatusHandlerStub{}
 	tagProvider := &mock.StableTagProviderStub{}
-	softwareChecker, err := NewSoftwareVersionChecker(statusHandler, tagProvider, 1)
+	softwareChecker, err := NewSoftwareVersionChecker(statusHandler, tagProvider, 1, &mock.LoggerFake{})
 
 	assert.Nil(t, err)
 	assert.NotNil(t, softwareChecker)
@@ -67,7 +76,7 @@ func TestSoftwareVersionChecker_StartCheckSoftwareVersionShouldWork(t *testing.T
 		},
 	}
 
-	softwareChecker, _ := NewSoftwareVersionChecker(statusHandler, tagProvider, 1)
+	softwareChecker, _ := NewSoftwareVersionChecker(statusHandler, tagProvider, 1, &mock.LoggerFake{})
 	softwareChecker.StartCheckSoftwareVersion()
 
 	select {
@@ -101,7 +110,7 @@ func TestSoftwareVersionChecker_StartCheckSoftwareVersionShouldErrWhenFetchFails
 		},
 	}
 
-	softwareChecker, _ := NewSoftwareVersionChecker(statusHandler, tagProvider, 1)
+	softwareChecker, _ := NewSoftwareVersionChecker(statusHandler, tagProvider, 1, &mock.LoggerFake{})
 	softwareChecker.StartCheckSoftwareVersion()
 
 	select {

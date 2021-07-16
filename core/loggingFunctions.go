@@ -7,9 +7,12 @@ import (
 )
 
 // DumpGoRoutinesToLog will print the currently running go routines in the log
-func DumpGoRoutinesToLog(goRoutinesNumberStart int) {
-	buffer := new(bytes.Buffer)
-	err := pprof.Lookup("goroutine").WriteTo(buffer, 2)
+func DumpGoRoutinesToLog(goRoutinesNumberStart int, log Logger) {
+	if log == nil {
+		return
+	}
+	buf := new(bytes.Buffer)
+	err := pprof.Lookup("goroutine").WriteTo(buf, 2)
 	if err != nil {
 		log.Error("could not dump goroutines", "error", err)
 	}
@@ -17,5 +20,5 @@ func DumpGoRoutinesToLog(goRoutinesNumberStart int) {
 		"start", goRoutinesNumberStart,
 		"end", runtime.NumGoroutine())
 
-	log.Debug(buffer.String())
+	log.Debug(buf.String())
 }
