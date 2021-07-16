@@ -1,6 +1,9 @@
+github.com/ElrondNetwork/elrond-go-core v0.0.1/go.mod h1:cNsmRhhHPyT55lH4T/3vzDCxTbTx8BMrBhc/pvnKiec=
 github.com/ElrondNetwork/elrond-go-logger v1.0.4/go.mod h1:e5D+c97lKUfFdAzFX7rrI2Igl/z4Y0RkKYKWyzprTGk=
 github.com/ElrondNetwork/elrond-vm-common v1.1.0 h1:zSIXrNbIb/SyKB2+JIOWenUSky5+NgEr0iQtFiWp17o=
 github.com/ElrondNetwork/elrond-vm-common v1.1.0/go.mod h1:w3i6f8uiuRkE68Ie/gebRcLgTuHqvruJSYrFyZWuLrE=
+github.com/ElrondNetwork/elrond-vm-common v1.1.1-0.20210716144048-c244e20af46d h1:ZS2dqMr5AQuRngWAUdfdTdjjSpgOFFZqYVHF2URzpnI=
+github.com/ElrondNetwork/elrond-vm-common v1.1.1-0.20210716144048-c244e20af46d/go.mod h1:XGym7GiE2Qb2HwLPvHa5LrJg+VPigoFwTqrLDe6HAQ4=
 github.com/ElrondNetwork/protobuf v1.3.2 h1:qoCSYiO+8GtXBEZWEjw0WPcZfM3g7QuuJrwpN+y6Mvg=
 github.com/ElrondNetwork/protobuf v1.3.2/go.mod h1:SlYgWuQ5SjCEi6WLHjHCa1yvBfUnHcTbrrZtXPKa29o=
 github.com/StackExchange/wmi v0.0.0-20180116203802-5d049714c4a6 h1:fLjPD/aNc3UIOA6tDi6QXUemppXK3P9BI7mr2hd6gx8=
