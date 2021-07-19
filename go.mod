@@ -3,7 +3,7 @@ module github.com/ElrondNetwork/elrond-go-core
 go 1.16
 
 require (
-	github.com/ElrondNetwork/elrond-vm-common v1.1.1-0.20210716144048-c244e20af46d
+	github.com/ElrondNetwork/elrond-vm-common v1.1.0
 	github.com/btcsuite/btcutil v1.0.2
 	github.com/denisbrodbeck/machineid v1.0.1
 	github.com/gogo/protobuf v1.3.2
