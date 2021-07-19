@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/ElrondNetwork/elrond-go-core/core"
-	core2 "github.com/ElrondNetwork/elrond-go-core/core"
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
 )
 
@@ -18,11 +17,11 @@ type AppStatusPolling struct {
 	mutRegisteredFunc   sync.RWMutex
 	registeredFunctions []func(appStatusHandler core.AppStatusHandler)
 	appStatusHandler    core.AppStatusHandler
-	log                 core2.Logger
+	log                 core.Logger
 }
 
 // NewAppStatusPolling will return an instance of AppStatusPolling
-func NewAppStatusPolling(appStatusHandler core.AppStatusHandler, pollingDuration time.Duration, logger core2.Logger) (*AppStatusPolling, error) {
+func NewAppStatusPolling(appStatusHandler core.AppStatusHandler, pollingDuration time.Duration, logger core.Logger) (*AppStatusPolling, error) {
 	if check.IfNil(appStatusHandler) {
 		return nil, ErrNilAppStatusHandler
 	}
@@ -30,7 +29,7 @@ func NewAppStatusPolling(appStatusHandler core.AppStatusHandler, pollingDuration
 		return nil, ErrPollingDurationToSmall
 	}
 	if check.IfNil(logger) {
-		return nil, core2.ErrNilLogger
+		return nil, core.ErrNilLogger
 	}
 	return &AppStatusPolling{
 		pollingDuration:  pollingDuration,

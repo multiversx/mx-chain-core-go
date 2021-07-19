@@ -17,7 +17,7 @@ type TestStruct struct {
 }
 
 func TestOpenFile_NoExistingFileShouldErr(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	file, err := core.OpenFile("testFile1")
 
@@ -26,7 +26,7 @@ func TestOpenFile_NoExistingFileShouldErr(t *testing.T) {
 }
 
 func TestOpenFile_NoErrShouldPass(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	fileName := "testFile2"
 	_, err := os.Create(fileName)
@@ -42,7 +42,7 @@ func TestOpenFile_NoErrShouldPass(t *testing.T) {
 }
 
 func TestLoadTomlFile_NoExistingFileShouldErr(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	cfg := &TestStruct{}
 
@@ -52,7 +52,7 @@ func TestLoadTomlFile_NoExistingFileShouldErr(t *testing.T) {
 }
 
 func TestLoadTomlFile_FileExitsShouldPass(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	cfg := &TestStruct{}
 
@@ -69,7 +69,7 @@ func TestLoadTomlFile_FileExitsShouldPass(t *testing.T) {
 }
 
 func TestLoadJSonFile_NoExistingFileShouldErr(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	cfg := &TestStruct{}
 
@@ -80,7 +80,7 @@ func TestLoadJSonFile_NoExistingFileShouldErr(t *testing.T) {
 }
 
 func TestLoadJSonFile_FileExitsShouldPass(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	cfg := &TestStruct{}
 
@@ -104,7 +104,7 @@ func TestLoadJSonFile_FileExitsShouldPass(t *testing.T) {
 }
 
 func TestLoadSkPkFromPemFile_InvalidSkIndexShouldErr(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	dataSk, dataPk, err := core.LoadSkPkFromPemFile("testFile5", -1)
 
@@ -114,7 +114,7 @@ func TestLoadSkPkFromPemFile_InvalidSkIndexShouldErr(t *testing.T) {
 }
 
 func TestLoadSkPkFromPemFile_NoExistingFileShouldErr(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	dataSk, dataPk, err := core.LoadSkPkFromPemFile("testFile6", 0)
 
@@ -124,7 +124,7 @@ func TestLoadSkPkFromPemFile_NoExistingFileShouldErr(t *testing.T) {
 }
 
 func TestLoadSkPkFromPemFile_EmptyFileShouldErr(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	fileName := "testFile7"
 	_, _ = os.Create(fileName)
@@ -140,7 +140,7 @@ func TestLoadSkPkFromPemFile_EmptyFileShouldErr(t *testing.T) {
 }
 
 func TestLoadSkPkFromPemFile_ShouldPass(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	fileName := "testFile8"
 	file, err := os.Create(fileName)
@@ -164,7 +164,7 @@ func TestLoadSkPkFromPemFile_ShouldPass(t *testing.T) {
 }
 
 func TestLoadSkPkFromPemFile_IncorrectHeaderShouldErr(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	fileName := "testFile9"
 	file, err := os.Create(fileName)
@@ -185,7 +185,7 @@ func TestLoadSkPkFromPemFile_IncorrectHeaderShouldErr(t *testing.T) {
 }
 
 func TestLoadSkPkFromPemFile_InvalidPemFileShouldErr(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	fileName := "testFile10"
 	file, err := os.Create(fileName)
@@ -204,7 +204,7 @@ func TestLoadSkPkFromPemFile_InvalidPemFileShouldErr(t *testing.T) {
 }
 
 func TestLoadSkPkFromPemFile_InvalidIndexShouldErr(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	fileName := "testFile11"
 	file, err := os.Create(fileName)
@@ -225,7 +225,7 @@ func TestLoadSkPkFromPemFile_InvalidIndexShouldErr(t *testing.T) {
 }
 
 func TestSaveSkToPemFile_NilFileShouldErr(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	skBytes := make([]byte, 0)
 	skBytes = append(skBytes, 10, 20, 30)
@@ -236,7 +236,7 @@ func TestSaveSkToPemFile_NilFileShouldErr(t *testing.T) {
 }
 
 func TestSaveSkToPemFile_ShouldPass(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	fileName := "testFile12"
 	file, err := os.Create(fileName)
@@ -254,7 +254,7 @@ func TestSaveSkToPemFile_ShouldPass(t *testing.T) {
 }
 
 func TestCreateFile(t *testing.T) {
-	// t.Parallel()
+	t.Parallel()
 
 	arg := core.ArgCreateFileArgument{
 		Directory:     "subdir",

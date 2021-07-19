@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/ElrondNetwork/elrond-go-core/core"
-	core2 "github.com/ElrondNetwork/elrond-go-core/core"
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
 	"github.com/ElrondNetwork/elrond-go-core/data/endProcess"
 )
@@ -14,14 +13,14 @@ import (
 type watchdog struct {
 	alarmScheduler      core.TimersScheduler
 	chanStopNodeProcess chan endProcess.ArgEndProcess
-	log                 core2.Logger
+	log                 core.Logger
 }
 
 // NewWatchdog creates a new instance of WatchdogTimer
 func NewWatchdog(
 	alarmScheduler core.TimersScheduler,
 	chanStopNodeProcess chan endProcess.ArgEndProcess,
-	log core2.Logger,
+	log core.Logger,
 ) (core.WatchdogTimer, error) {
 	if check.IfNil(alarmScheduler) {
 		return nil, ErrNilAlarmScheduler
@@ -30,7 +29,7 @@ func NewWatchdog(
 		return nil, ErrNilEndProcessChan
 	}
 	if check.IfNil(log) {
-		return nil, core2.ErrNilLogger
+		return nil, core.ErrNilLogger
 	}
 
 	return &watchdog{

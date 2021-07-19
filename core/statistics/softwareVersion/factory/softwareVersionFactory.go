@@ -35,7 +35,7 @@ func NewSoftwareVersionFactory(
 // Create returns an software version checker object
 func (svf *softwareVersionFactory) Create() (*softwareVersion.SoftwareVersionChecker, error) {
 	stableTagProvider := softwareVersion.NewStableTagProvider(svf.stableTagLocation)
-	softwareVersionChecker, err := softwareVersion.NewSoftwareVersionChecker(svf.statusHandler, stableTagProvider, svf.pollingIntervalInMinutes, &mock.LoggerFake{})
+	softwareVersionChecker, err := softwareVersion.NewSoftwareVersionChecker(svf.statusHandler, stableTagProvider, svf.pollingIntervalInMinutes, &mock.LoggerMock{})
 
 	return softwareVersionChecker, err
 }

@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/ElrondNetwork/elrond-go-core/core"
-	core2 "github.com/ElrondNetwork/elrond-go-core/core"
 	"github.com/ElrondNetwork/elrond-go-core/core/accumulator"
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
 	"github.com/ElrondNetwork/elrond-go-core/core/mock"
@@ -19,7 +18,7 @@ var timeout = time.Second * 2
 func TestNewTimeAccumulator_InvalidMaxWaitTimeShouldErr(t *testing.T) {
 	t.Parallel()
 
-	ta, err := accumulator.NewTimeAccumulator(accumulator.MinimumAllowedTime-1, 0, &mock.LoggerFake{})
+	ta, err := accumulator.NewTimeAccumulator(accumulator.MinimumAllowedTime-1, 0, &mock.LoggerMock{})
 
 	assert.True(t, check.IfNil(ta))
 	assert.True(t, errors.Is(err, core.ErrInvalidValue))
@@ -28,7 +27,7 @@ func TestNewTimeAccumulator_InvalidMaxWaitTimeShouldErr(t *testing.T) {
 func TestNewTimeAccumulator_InvalidMaxOffsetShouldErr(t *testing.T) {
 	t.Parallel()
 
-	ta, err := accumulator.NewTimeAccumulator(accumulator.MinimumAllowedTime, -1, &mock.LoggerFake{})
+	ta, err := accumulator.NewTimeAccumulator(accumulator.MinimumAllowedTime, -1, &mock.LoggerMock{})
 
 	assert.True(t, check.IfNil(ta))
 	assert.True(t, errors.Is(err, core.ErrInvalidValue))
@@ -40,13 +39,13 @@ func TestNewTimeAccumulator_NilLoggerShouldErr(t *testing.T) {
 	ta, err := accumulator.NewTimeAccumulator(accumulator.MinimumAllowedTime, 0, nil)
 
 	assert.True(t, check.IfNil(ta))
-	assert.True(t, errors.Is(err, core2.ErrNilLogger))
+	assert.True(t, errors.Is(err, core.ErrNilLogger))
 }
 
 func TestNewTimeAccumulator_ShouldWork(t *testing.T) {
 	t.Parallel()
 
-	ta, err := accumulator.NewTimeAccumulator(accumulator.MinimumAllowedTime, 0, &mock.LoggerFake{})
+	ta, err := accumulator.NewTimeAccumulator(accumulator.MinimumAllowedTime, 0, &mock.LoggerMock{})
 
 	assert.False(t, check.IfNil(ta))
 	assert.Nil(t, err)
@@ -59,7 +58,7 @@ func TestTimeAccumulator_AddDataShouldWorkEvenIfTheChanIsBlocked(t *testing.T) {
 
 	chDone := make(chan struct{})
 	allowedTime := time.Millisecond * 100
-	ta, _ := accumulator.NewTimeAccumulator(allowedTime, 0, &mock.LoggerFake{})
+	ta, _ := accumulator.NewTimeAccumulator(allowedTime, 0, &mock.LoggerMock{})
 	go func() {
 		ta.AddData(struct{}{})
 		time.Sleep(allowedTime * 3)
@@ -86,7 +85,7 @@ func TestTimeAccumulator_EvictionShouldStopWhenCloseIsCalled(t *testing.T) {
 	t.Parallel()
 
 	allowedTime := time.Millisecond * 100
-	ta, _ := accumulator.NewTimeAccumulator(allowedTime, 0, &mock.LoggerFake{})
+	ta, _ := accumulator.NewTimeAccumulator(allowedTime, 0, &mock.LoggerMock{})
 
 	ta.AddData(struct{}{})
 	time.Sleep(allowedTime * 3)
@@ -105,7 +104,7 @@ func TestTimeAccumulator_EvictionDuringWaitShouldStopWhenCloseIsCalled(t *testin
 	t.Parallel()
 
 	allowedTime := time.Millisecond * 100
-	ta, _ := accumulator.NewTimeAccumulator(allowedTime, 0, &mock.LoggerFake{})
+	ta, _ := accumulator.NewTimeAccumulator(allowedTime, 0, &mock.LoggerMock{})
 	ta.AddData(struct{}{})
 
 	_ = ta.Close()
@@ -122,7 +121,7 @@ func TestTimeAccumulator_EvictionShouldPreserveTheOrder(t *testing.T) {
 	t.Parallel()
 
 	allowedTime := time.Millisecond * 100
-	ta, _ := accumulator.NewTimeAccumulator(allowedTime, 0, &mock.LoggerFake{})
+	ta, _ := accumulator.NewTimeAccumulator(allowedTime, 0, &mock.LoggerMock{})
 
 	data := []interface{}{"data1", "data2", "data3"}
 	for _, d := range data {
@@ -141,7 +140,7 @@ func TestTimeAccumulator_EvictionWithOffsetShouldPreserveTheOrder(t *testing.T) 
 	t.Parallel()
 
 	allowedTime := time.Millisecond * 100
-	ta, _ := accumulator.NewTimeAccumulator(allowedTime, time.Millisecond, &mock.LoggerFake{})
+	ta, _ := accumulator.NewTimeAccumulator(allowedTime, time.Millisecond, &mock.LoggerMock{})
 
 	data := []interface{}{"data1", "data2", "data3"}
 	for _, d := range data {
@@ -162,7 +161,7 @@ func TestTimeAccumulator_ComputeWaitTimeWithMaxOffsetZeroShouldRetMaxWaitTime(t 
 	t.Parallel()
 
 	allowedTime := time.Millisecond * 56
-	ta, _ := accumulator.NewTimeAccumulator(allowedTime, 0, &mock.LoggerFake{})
+	ta, _ := accumulator.NewTimeAccumulator(allowedTime, 0, &mock.LoggerMock{})
 
 	assert.Equal(t, allowedTime, ta.ComputeWaitTime())
 }
@@ -172,7 +171,7 @@ func TestTimeAccumulator_ComputeWaitTimeShouldWork(t *testing.T) {
 
 	allowedTime := time.Millisecond * 56
 	maxOffset := time.Millisecond * 12
-	ta, _ := accumulator.NewTimeAccumulator(allowedTime, maxOffset, &mock.LoggerFake{})
+	ta, _ := accumulator.NewTimeAccumulator(allowedTime, maxOffset, &mock.LoggerMock{})
 
 	numComputations := 10000
 	for i := 0; i < numComputations; i++ {
