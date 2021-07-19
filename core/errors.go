@@ -103,3 +103,6 @@ var ErrNilTransactionFeeCalculator = errors.New("nil transaction fee calculator"
 
 // ErrNilLogger signals that a nil logger instance has been provided
 var ErrNilLogger = errors.New("nil logger")
+
+// ErrNilGoRoutineProcessor signals that a nil go routine processor has been provided
+var ErrNilGoRoutineProcessor = errors.New("nil go routine processor")
