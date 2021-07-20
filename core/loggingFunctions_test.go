@@ -5,7 +5,6 @@ import (
 	"testing"
 
 	"github.com/ElrondNetwork/elrond-go-core/core/mock"
-	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -15,7 +14,7 @@ func TestDumpGoRoutinesToLogShouldNotPanic(t *testing.T) {
 	defer func() {
 		r := recover()
 		if r != nil {
-			assert.Fail(t, fmt.Sprintf("should have not paniced %v", r))
+			require.Fail(t, fmt.Sprintf("should have not paniced %v", r))
 		}
 	}()
 

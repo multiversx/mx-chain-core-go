@@ -54,7 +54,7 @@ func (w *watchdog) defaultWatchdogExpiry(watchdogID string) {
 	buffer := new(bytes.Buffer)
 	err := pprof.Lookup("goroutine").WriteTo(buffer, 1)
 	if err != nil {
-		w.log.Error("could not dump goroutines", "err", err)
+		w.log.Error("could not dump goroutines", "error", err)
 	}
 
 	w.log.Error("watchdog alarm has expired", "alarm", watchdogID)

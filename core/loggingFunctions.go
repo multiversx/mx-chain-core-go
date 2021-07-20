@@ -11,6 +11,7 @@ func DumpGoRoutinesToLog(goRoutinesNumberStart int, log Logger) {
 	if log == nil {
 		return
 	}
+
 	buf := new(bytes.Buffer)
 	err := pprof.Lookup("goroutine").WriteTo(buf, 2)
 	if err != nil {
