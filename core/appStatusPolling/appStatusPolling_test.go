@@ -70,7 +70,7 @@ func TestAppStatusPolling_Poll_TestNumOfConnectedAddressesCalled(t *testing.T) {
 	assert.Nil(t, err)
 
 	err = asp.RegisterPollingFunc(func(appStatusHandler core.AppStatusHandler) {
-		appStatusHandler.SetInt64Value(core.MetricNumConnectedPeers, int64(10))
+		appStatusHandler.SetInt64Value("metric", int64(10))
 	})
 	assert.Nil(t, err)
 
