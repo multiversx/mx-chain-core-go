@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/ElrondNetwork/elrond-go-core/core/mock"
+	"github.com/stretchr/testify/require"
 )
 
 func TestDumpGoRoutinesToLogShouldNotPanic(t *testing.T) {
@@ -13,9 +14,16 @@ func TestDumpGoRoutinesToLogShouldNotPanic(t *testing.T) {
 	defer func() {
 		r := recover()
 		if r != nil {
-			assert.Fail(t, fmt.Sprintf("should have not paniced %v", r))
+			require.Fail(t, fmt.Sprintf("should have not paniced %v", r))
 		}
 	}()
 
-	DumpGoRoutinesToLog(0)
+	DumpGoRoutinesToLog(0, &mock.LoggerMock{})
+}
+
+func TestGetRunningGoRoutines(t *testing.T) {
+	t.Parallel()
+
+	res := GetRunningGoRoutines(&mock.LoggerMock{})
+	require.NotNil(t, res)
 }

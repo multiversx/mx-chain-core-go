@@ -5,14 +5,11 @@ import (
 	"sync"
 	"time"
 
-	logger "github.com/ElrondNetwork/elrond-go-logger"
-	"github.com/ElrondNetwork/elrond-go/core"
-	"github.com/ElrondNetwork/elrond-go/core/check"
+	"github.com/ElrondNetwork/elrond-go-core/core"
+	"github.com/ElrondNetwork/elrond-go-core/core/check"
 )
 
 const minPollingDuration = time.Second
-
-var log = logger.GetOrCreate("core/appStatusPolling")
 
 // AppStatusPolling will update an AppStatusHandler by polling components at a predefined interval
 type AppStatusPolling struct {
@@ -20,19 +17,24 @@ type AppStatusPolling struct {
 	mutRegisteredFunc   sync.RWMutex
 	registeredFunctions []func(appStatusHandler core.AppStatusHandler)
 	appStatusHandler    core.AppStatusHandler
+	log                 core.Logger
 }
 
 // NewAppStatusPolling will return an instance of AppStatusPolling
-func NewAppStatusPolling(appStatusHandler core.AppStatusHandler, pollingDuration time.Duration) (*AppStatusPolling, error) {
+func NewAppStatusPolling(appStatusHandler core.AppStatusHandler, pollingDuration time.Duration, logger core.Logger) (*AppStatusPolling, error) {
 	if check.IfNil(appStatusHandler) {
 		return nil, ErrNilAppStatusHandler
 	}
 	if pollingDuration < minPollingDuration {
 		return nil, ErrPollingDurationToSmall
 	}
+	if check.IfNil(logger) {
+		return nil, core.ErrNilLogger
+	}
 	return &AppStatusPolling{
 		pollingDuration:  pollingDuration,
 		appStatusHandler: appStatusHandler,
+		log:              logger,
 	}, nil
 }
 
@@ -53,7 +55,7 @@ func (asp *AppStatusPolling) Poll(ctx context.Context) {
 		for {
 			select {
 			case <-ctx.Done():
-				log.Debug("closing AppStatusPolling.Poll go routine")
+				asp.log.Debug("closing AppStatusPolling.Poll go routine")
 				return
 			case <-time.After(asp.pollingDuration):
 			}

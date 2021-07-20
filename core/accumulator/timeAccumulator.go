@@ -8,12 +8,11 @@ import (
 	"sync"
 	"time"
 
-	logger "github.com/ElrondNetwork/elrond-go-logger"
-	"github.com/ElrondNetwork/elrond-go/core"
+	"github.com/ElrondNetwork/elrond-go-core/core"
+	"github.com/ElrondNetwork/elrond-go-core/core/check"
 )
 
 var _ core.Accumulator = (*timeAccumulator)(nil)
-var log = logger.GetOrCreate("core/accumulator")
 
 const minimumAllowedTime = time.Millisecond * 10
 
@@ -26,10 +25,11 @@ type timeAccumulator struct {
 	mut            sync.Mutex
 	data           []interface{}
 	output         chan []interface{}
+	log            core.Logger
 }
 
 // NewTimeAccumulator returns a new accumulator instance
-func NewTimeAccumulator(maxAllowedTime time.Duration, maxOffset time.Duration) (*timeAccumulator, error) {
+func NewTimeAccumulator(maxAllowedTime time.Duration, maxOffset time.Duration, logger core.Logger) (*timeAccumulator, error) {
 	if maxAllowedTime < minimumAllowedTime {
 		return nil, fmt.Errorf("%w for maxAllowedTime as minimum allowed time is %v",
 			core.ErrInvalidValue,
@@ -39,6 +39,9 @@ func NewTimeAccumulator(maxAllowedTime time.Duration, maxOffset time.Duration) (
 	if maxOffset < 0 {
 		return nil, fmt.Errorf("%w for maxOffset: should not be negative", core.ErrInvalidValue)
 	}
+	if check.IfNil(logger) {
+		return nil, core.ErrNilLogger
+	}
 
 	ctx, cancel := context.WithCancel(context.Background())
 
@@ -47,6 +50,7 @@ func NewTimeAccumulator(maxAllowedTime time.Duration, maxOffset time.Duration) (
 		maxAllowedTime: maxAllowedTime,
 		output:         make(chan []interface{}),
 		maxOffset:      maxOffset,
+		log:            logger,
 	}
 
 	go ta.continuousEviction(ctx)
@@ -80,7 +84,7 @@ func (ta *timeAccumulator) continuousEviction(ctx context.Context) {
 				return
 			}
 		case <-ctx.Done():
-			log.Debug("closing timeAccumulator.continuousEviction go routine")
+			ta.log.Debug("closing timeAccumulator.continuousEviction go routine")
 			return
 		}
 	}
@@ -112,7 +116,7 @@ func (ta *timeAccumulator) doEviction(ctx context.Context) bool {
 	case ta.output <- tempData:
 		return false
 	case <-ctx.Done():
-		log.Debug("closing timeAccumulator.doEviction go routine")
+		ta.log.Debug("closing timeAccumulator.doEviction go routine")
 		return true
 	}
 }

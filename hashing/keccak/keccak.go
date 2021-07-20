@@ -1,7 +1,7 @@
 package keccak
 
 import (
-	"github.com/ElrondNetwork/elrond-go/hashing"
+	"github.com/ElrondNetwork/elrond-go-core/hashing"
 	"golang.org/x/crypto/sha3"
 )
 

@@ -4,7 +4,7 @@ package block
 import (
 	"math/big"
 
-	"github.com/ElrondNetwork/elrond-go/data"
+	"github.com/ElrondNetwork/elrond-go-core/data"
 )
 
 // MiniBlockSlice should be used when referring to subset of mini blocks that is not

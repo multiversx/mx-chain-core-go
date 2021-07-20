@@ -8,8 +8,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ElrondNetwork/elrond-go/config"
-	"github.com/ElrondNetwork/elrond-go/core"
+	"github.com/ElrondNetwork/elrond-go-core/core"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -45,7 +44,7 @@ func TestOpenFile_NoErrShouldPass(t *testing.T) {
 func TestLoadTomlFile_NoExistingFileShouldErr(t *testing.T) {
 	t.Parallel()
 
-	cfg := &config.Config{}
+	cfg := &TestStruct{}
 
 	err := core.LoadTomlFile(cfg, "file")
 
@@ -55,7 +54,7 @@ func TestLoadTomlFile_NoExistingFileShouldErr(t *testing.T) {
 func TestLoadTomlFile_FileExitsShouldPass(t *testing.T) {
 	t.Parallel()
 
-	cfg := &config.Config{}
+	cfg := &TestStruct{}
 
 	fileName := "testFile3"
 	_, err := os.Create(fileName)
@@ -72,7 +71,7 @@ func TestLoadTomlFile_FileExitsShouldPass(t *testing.T) {
 func TestLoadJSonFile_NoExistingFileShouldErr(t *testing.T) {
 	t.Parallel()
 
-	cfg := &config.Config{}
+	cfg := &TestStruct{}
 
 	err := core.LoadJsonFile(cfg, "file")
 
@@ -83,7 +82,7 @@ func TestLoadJSonFile_NoExistingFileShouldErr(t *testing.T) {
 func TestLoadJSonFile_FileExitsShouldPass(t *testing.T) {
 	t.Parallel()
 
-	cfg := &config.Config{}
+	cfg := &TestStruct{}
 
 	fileName := "testFile4"
 	file, err := os.Create(fileName)
@@ -164,7 +163,7 @@ func TestLoadSkPkFromPemFile_ShouldPass(t *testing.T) {
 	assert.Nil(t, err)
 }
 
-func TestLoadSkPkFromPemFile_IncorrectHeaderShoukldErr(t *testing.T) {
+func TestLoadSkPkFromPemFile_IncorrectHeaderShouldErr(t *testing.T) {
 	t.Parallel()
 
 	fileName := "testFile9"

@@ -3,7 +3,7 @@ package keyValStorage
 import (
 	"bytes"
 
-	"github.com/ElrondNetwork/elrond-go/core"
+	"github.com/ElrondNetwork/elrond-go-core/core"
 )
 
 // KeyValStorage holds a key and an associated value

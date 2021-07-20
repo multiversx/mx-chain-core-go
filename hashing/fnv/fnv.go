@@ -3,7 +3,7 @@ package fnv
 import (
 	fnvLib "hash/fnv"
 
-	"github.com/ElrondNetwork/elrond-go/hashing"
+	"github.com/ElrondNetwork/elrond-go-core/hashing"
 )
 
 var _ hashing.Hasher = (*fnv)(nil)

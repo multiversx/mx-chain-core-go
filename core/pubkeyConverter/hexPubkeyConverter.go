@@ -3,8 +3,6 @@ package pubkeyConverter
 import (
 	"encoding/hex"
 	"fmt"
-
-	"github.com/ElrondNetwork/elrond-go/data/state"
 )
 
 // hexPubkeyConverter encodes or decodes provided public key as/from hex
@@ -16,11 +14,11 @@ type hexPubkeyConverter struct {
 func NewHexPubkeyConverter(addressLen int) (*hexPubkeyConverter, error) {
 	if addressLen < 1 {
 		return nil, fmt.Errorf("%w when creating hex address converter, addressLen should have been greater than 0",
-			state.ErrInvalidAddressLength)
+			ErrInvalidAddressLength)
 	}
 	if addressLen%2 == 1 {
 		return nil, fmt.Errorf("%w when creating hex address converter, addressLen should have been an even number",
-			state.ErrInvalidAddressLength)
+			ErrInvalidAddressLength)
 	}
 
 	return &hexPubkeyConverter{
@@ -37,7 +35,7 @@ func (ppc *hexPubkeyConverter) Decode(humanReadable string) ([]byte, error) {
 
 	if len(buff) != ppc.len {
 		return nil, fmt.Errorf("%w when converting to address, expected length %d, received %d",
-			state.ErrWrongSize, ppc.len, len(buff))
+			ErrWrongSize, ppc.len, len(buff))
 	}
 
 	return buff, nil

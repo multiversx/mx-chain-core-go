@@ -5,9 +5,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ElrondNetwork/elrond-go/core"
-	"github.com/ElrondNetwork/elrond-go/core/check"
-	"github.com/ElrondNetwork/elrond-go/data/endProcess"
+	"github.com/ElrondNetwork/elrond-go-core/core"
+	"github.com/ElrondNetwork/elrond-go-core/core/check"
+	"github.com/ElrondNetwork/elrond-go-core/core/mock"
+	"github.com/ElrondNetwork/elrond-go-core/data/endProcess"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -18,6 +19,7 @@ func TestNewShuffleOutCloser_InvalidMinWaitShouldErr(t *testing.T) {
 		minDuration-1,
 		minDuration,
 		make(chan endProcess.ArgEndProcess),
+		&mock.LoggerMock{},
 	)
 
 	assert.True(t, check.IfNil(soc))
@@ -31,6 +33,7 @@ func TestNewShuffleOutCloser_InvalidMaxWaitShouldErr(t *testing.T) {
 		minDuration,
 		minDuration-1,
 		make(chan endProcess.ArgEndProcess),
+		&mock.LoggerMock{},
 	)
 
 	assert.True(t, check.IfNil(soc))
@@ -44,10 +47,25 @@ func TestNewShuffleOutCloser_NilChannelShouldErr(t *testing.T) {
 		minDuration,
 		minDuration,
 		nil,
+		&mock.LoggerMock{},
 	)
 
 	assert.True(t, check.IfNil(soc))
 	assert.True(t, errors.Is(err, core.ErrNilSignalChan))
+}
+
+func TestNewShuffleOutCloser_NilLoggerShouldErr(t *testing.T) {
+	t.Parallel()
+
+	soc, err := NewShuffleOutCloser(
+		minDuration,
+		minDuration,
+		make(chan endProcess.ArgEndProcess),
+		nil,
+	)
+
+	assert.True(t, check.IfNil(soc))
+	assert.True(t, errors.Is(err, core.ErrNilLogger))
 }
 
 func TestNewShuffleOutCloser_MinWaitDurationLargerThanMaxShouldErr(t *testing.T) {
@@ -57,6 +75,7 @@ func TestNewShuffleOutCloser_MinWaitDurationLargerThanMaxShouldErr(t *testing.T)
 		minDuration+1,
 		minDuration,
 		make(chan endProcess.ArgEndProcess),
+		&mock.LoggerMock{},
 	)
 
 	assert.True(t, check.IfNil(soc))
@@ -70,6 +89,7 @@ func TestNewShuffleOutCloser_ShouldWork(t *testing.T) {
 		minDuration,
 		minDuration,
 		make(chan endProcess.ArgEndProcess),
+		&mock.LoggerMock{},
 	)
 
 	assert.False(t, check.IfNil(soc))
@@ -84,6 +104,7 @@ func TestShuffleOutCloser_EndOfProcessingHandlerShouldWork(t *testing.T) {
 		minDuration,
 		minDuration,
 		ch,
+		&mock.LoggerMock{},
 	)
 
 	event := endProcess.ArgEndProcess{
@@ -112,6 +133,7 @@ func TestShuffleOutCloser_CloseAfterStartShouldWork(t *testing.T) {
 		minDuration,
 		minDuration,
 		ch,
+		&mock.LoggerMock{},
 	)
 
 	event := endProcess.ArgEndProcess{
@@ -142,6 +164,7 @@ func TestShuffleOutCloser_CloseBeforeStartShouldWork(t *testing.T) {
 		minDuration,
 		minDuration,
 		ch,
+		&mock.LoggerMock{},
 	)
 
 	err := soc.Close()

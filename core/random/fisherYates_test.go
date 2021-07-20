@@ -3,7 +3,7 @@ package random
 import (
 	"testing"
 
-	"github.com/ElrondNetwork/elrond-go/core/mock"
+	"github.com/ElrondNetwork/elrond-go-core/core/mock"
 	"github.com/stretchr/testify/assert"
 )
 

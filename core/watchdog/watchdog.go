@@ -5,23 +5,22 @@ import (
 	"runtime/pprof"
 	"time"
 
-	logger "github.com/ElrondNetwork/elrond-go-logger"
-	"github.com/ElrondNetwork/elrond-go/core"
-	"github.com/ElrondNetwork/elrond-go/core/check"
-	"github.com/ElrondNetwork/elrond-go/data/endProcess"
+	"github.com/ElrondNetwork/elrond-go-core/core"
+	"github.com/ElrondNetwork/elrond-go-core/core/check"
+	"github.com/ElrondNetwork/elrond-go-core/data/endProcess"
 )
-
-var log = logger.GetOrCreate("watchdog")
 
 type watchdog struct {
 	alarmScheduler      core.TimersScheduler
 	chanStopNodeProcess chan endProcess.ArgEndProcess
+	log                 core.Logger
 }
 
 // NewWatchdog creates a new instance of WatchdogTimer
 func NewWatchdog(
 	alarmScheduler core.TimersScheduler,
 	chanStopNodeProcess chan endProcess.ArgEndProcess,
+	log core.Logger,
 ) (core.WatchdogTimer, error) {
 	if check.IfNil(alarmScheduler) {
 		return nil, ErrNilAlarmScheduler
@@ -29,10 +28,14 @@ func NewWatchdog(
 	if chanStopNodeProcess == nil {
 		return nil, ErrNilEndProcessChan
 	}
+	if check.IfNil(log) {
+		return nil, core.ErrNilLogger
+	}
 
 	return &watchdog{
 		alarmScheduler:      alarmScheduler,
 		chanStopNodeProcess: chanStopNodeProcess,
+		log:                 log,
 	}, nil
 }
 
@@ -51,11 +54,11 @@ func (w *watchdog) defaultWatchdogExpiry(watchdogID string) {
 	buffer := new(bytes.Buffer)
 	err := pprof.Lookup("goroutine").WriteTo(buffer, 1)
 	if err != nil {
-		log.Error("could not dump goroutines")
+		w.log.Error("could not dump goroutines", "error", err)
 	}
 
-	log.Error("watchdog alarm has expired", "alarm", watchdogID)
-	log.Warn(buffer.String())
+	w.log.Error("watchdog alarm has expired", "alarm", watchdogID)
+	w.log.Warn(buffer.String())
 
 	arg := endProcess.ArgEndProcess{
 		Reason:      "alarm " + watchdogID + " has expired",

@@ -100,3 +100,9 @@ var ErrSubtractionOverflow = errors.New("uint64 subtraction overflowed")
 
 // ErrNilTransactionFeeCalculator signals that a nil transaction fee calculator has been provided
 var ErrNilTransactionFeeCalculator = errors.New("nil transaction fee calculator")
+
+// ErrNilLogger signals that a nil logger instance has been provided
+var ErrNilLogger = errors.New("nil logger")
+
+// ErrNilGoRoutineProcessor signals that a nil go routine processor has been provided
+var ErrNilGoRoutineProcessor = errors.New("nil go routine processor")

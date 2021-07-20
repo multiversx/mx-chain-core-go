@@ -1,13 +1,10 @@
 package partitioning
 
 import (
-	"github.com/ElrondNetwork/elrond-go/core"
-	"github.com/ElrondNetwork/elrond-go/data/batch"
-	"github.com/ElrondNetwork/elrond-go/dataRetriever"
-	"github.com/ElrondNetwork/elrond-go/marshal"
+	"github.com/ElrondNetwork/elrond-go-core/core"
+	"github.com/ElrondNetwork/elrond-go-core/data/batch"
+	"github.com/ElrondNetwork/elrond-go-core/marshal"
 )
-
-var _ dataRetriever.DataPacker = (*SimpleDataPacker)(nil)
 
 // SimpleDataPacker can split a large slice of byte slices in chunks <= maxPacketSize
 // If one element still exceeds maxPacketSize, it will be returned alone

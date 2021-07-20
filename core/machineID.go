@@ -8,7 +8,6 @@ const maxMachineIDLen = 10
 func GetAnonymizedMachineID(appID string) string {
 	machineID, err := machineid.ProtectedID(appID)
 	if err != nil {
-		log.Warn("error fetching machine id", "error", err)
 		machineID = "unknown machine ID"
 	}
 	if len(machineID) > maxMachineIDLen {

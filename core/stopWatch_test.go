@@ -4,10 +4,13 @@ import (
 	"testing"
 	"time"
 
+	"github.com/ElrondNetwork/elrond-go-core/core/mock"
 	"github.com/stretchr/testify/assert"
 )
 
 const identifier = "identifier"
+
+var log = &mock.LoggerMock{}
 
 func TestStopWatch_Start(t *testing.T) {
 	t.Parallel()

@@ -3,7 +3,7 @@ package blake2b
 import (
 	"hash"
 
-	"github.com/ElrondNetwork/elrond-go/hashing"
+	"github.com/ElrondNetwork/elrond-go-core/hashing"
 	blake2bLib "golang.org/x/crypto/blake2b"
 )
 

@@ -5,8 +5,8 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ElrondNetwork/elrond-go/core/alarm"
-	"github.com/ElrondNetwork/elrond-go/core/atomic"
+	"github.com/ElrondNetwork/elrond-go-core/core/alarm"
+	"github.com/ElrondNetwork/elrond-go-core/core/atomic"
 	"github.com/stretchr/testify/require"
 )
 

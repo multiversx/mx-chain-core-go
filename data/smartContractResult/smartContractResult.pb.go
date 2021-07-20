@@ -6,7 +6,7 @@ package smartContractResult
 import (
 	bytes "bytes"
 	fmt "fmt"
-	github_com_ElrondNetwork_elrond_go_data "github.com/ElrondNetwork/elrond-go/data"
+	github_com_ElrondNetwork_elrond_go_data "github.com/ElrondNetwork/elrond-go-core/data"
 	github_com_ElrondNetwork_elrond_vm_common_vmcommon "github.com/ElrondNetwork/elrond-vm-common"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
@@ -31,11 +31,11 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type SmartContractResult struct {
 	Nonce          uint64                                                      `protobuf:"varint,1,opt,name=Nonce,proto3" json:"nonce"`
-	Value          *math_big.Int                                               `protobuf:"bytes,2,opt,name=Value,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go/data.BigIntCaster" json:"value"`
+	Value          *math_big.Int                                               `protobuf:"bytes,2,opt,name=Value,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"value"`
 	RcvAddr        []byte                                                      `protobuf:"bytes,3,opt,name=RcvAddr,proto3" json:"receiver"`
 	SndAddr        []byte                                                      `protobuf:"bytes,4,opt,name=SndAddr,proto3" json:"sender"`
 	RelayerAddr    []byte                                                      `protobuf:"bytes,5,opt,name=RelayerAddr,proto3" json:"relayer"`
-	RelayedValue   *math_big.Int                                               `protobuf:"bytes,6,opt,name=RelayedValue,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go/data.BigIntCaster" json:"relayedValue"`
+	RelayedValue   *math_big.Int                                               `protobuf:"bytes,6,opt,name=RelayedValue,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"relayedValue"`
 	Code           []byte                                                      `protobuf:"bytes,7,opt,name=Code,proto3" json:"code,omitempty"`
 	Data           []byte                                                      `protobuf:"bytes,8,opt,name=Data,proto3" json:"data,omitempty"`
 	PrevTxHash     []byte                                                      `protobuf:"bytes,9,opt,name=PrevTxHash,proto3" json:"prevTxHash"`

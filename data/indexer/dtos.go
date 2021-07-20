@@ -3,7 +3,7 @@ package indexer
 import (
 	"time"
 
-	"github.com/ElrondNetwork/elrond-go/data"
+	"github.com/ElrondNetwork/elrond-go-core/data"
 )
 
 // ArgsSaveBlockData will contains all information that are needed to save block data

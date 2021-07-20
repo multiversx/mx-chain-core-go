@@ -5,21 +5,20 @@ import (
 	"fmt"
 	"time"
 
-	logger "github.com/ElrondNetwork/elrond-go-logger"
-	"github.com/ElrondNetwork/elrond-go/core"
-	"github.com/ElrondNetwork/elrond-go/core/random"
-	"github.com/ElrondNetwork/elrond-go/data/endProcess"
+	"github.com/ElrondNetwork/elrond-go-core/core"
+	"github.com/ElrondNetwork/elrond-go-core/core/check"
+	"github.com/ElrondNetwork/elrond-go-core/core/random"
+	"github.com/ElrondNetwork/elrond-go-core/data/endProcess"
 )
 
 const minDuration = time.Second
-
-var log = logger.GetOrCreate("core/closing")
 
 type shuffleOutCloser struct {
 	minWaitDuration time.Duration
 	maxWaitDuration time.Duration
 	signalChan      chan endProcess.ArgEndProcess
 	randomizer      IntRandomizer
+	log             core.Logger
 	ctx             context.Context
 	cancelFunc      func()
 }
@@ -29,6 +28,7 @@ func NewShuffleOutCloser(
 	minWaitDuration time.Duration,
 	maxWaitDuration time.Duration,
 	signalChan chan endProcess.ArgEndProcess,
+	log core.Logger,
 ) (*shuffleOutCloser, error) {
 
 	if minWaitDuration < minDuration {
@@ -43,12 +43,16 @@ func NewShuffleOutCloser(
 	if signalChan == nil {
 		return nil, core.ErrNilSignalChan
 	}
+	if check.IfNil(log) {
+		return nil, core.ErrNilLogger
+	}
 
 	soc := &shuffleOutCloser{
 		minWaitDuration: minWaitDuration,
 		maxWaitDuration: maxWaitDuration,
 		signalChan:      signalChan,
 		randomizer:      &random.ConcurrentSafeIntRandomizer{},
+		log:             log,
 	}
 	soc.ctx, soc.cancelFunc = context.WithCancel(context.Background())
 
@@ -68,7 +72,7 @@ func (soc *shuffleOutCloser) writeOnChanDelayed(event endProcess.ArgEndProcess) 
 	randDurationBeforeStop := soc.randomizer.Intn(int(delta))
 	timeToWait := soc.minWaitDuration + time.Duration(randDurationBeforeStop)
 
-	log.Info("the application will stop in",
+	soc.log.Info("the application will stop in",
 		"waiting time", fmt.Sprintf("%v", timeToWait),
 		"description", event.Description,
 		"reason", event.Reason)
@@ -76,11 +80,11 @@ func (soc *shuffleOutCloser) writeOnChanDelayed(event endProcess.ArgEndProcess) 
 	select {
 	case <-time.After(timeToWait):
 	case <-soc.ctx.Done():
-		log.Debug("canceled the application stop go routine")
+		soc.log.Debug("canceled the application stop go routine")
 		return
 	}
 
-	log.Info("the application will stop now after",
+	soc.log.Info("the application will stop now after",
 		"waiting time", fmt.Sprintf("%v", timeToWait),
 		"description", event.Description,
 		"reason", event.Reason,

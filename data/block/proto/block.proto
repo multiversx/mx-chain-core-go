@@ -71,8 +71,8 @@ message Header  {
     bytes                    ReceiptsHash           = 19;
     bytes                    ChainID                = 20;
     bytes                    SoftwareVersion        = 21;
-    bytes                    AccumulatedFees        = 22 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go/data.BigIntCaster"];
-    bytes                    DeveloperFees          = 23 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go/data.BigIntCaster"];
+    bytes                    AccumulatedFees        = 22 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
+    bytes                    DeveloperFees          = 23 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
     bytes                    Reserved               = 24;
 }
 
