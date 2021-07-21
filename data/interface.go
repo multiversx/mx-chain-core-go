@@ -186,3 +186,10 @@ type TransactionWithFeeHandler interface {
 	GetRcvAddr() []byte
 	GetValue() *big.Int
 }
+
+type UserAccountHandler interface {
+	GetBalance() *big.Int
+	GetNonce() uint64
+	AddressBytes() []byte
+	IsInterfaceNil() bool
+}
