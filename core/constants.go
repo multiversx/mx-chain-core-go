@@ -84,6 +84,15 @@ const BuiltInFunctionESDTNFTCreateRoleTransfer = "ESDTNFTCreateRoleTransfer"
 // BuiltInFunctionESDTNFTBurn is the key for the elrond standard digital token NFT burn built-in function
 const BuiltInFunctionESDTNFTBurn = "ESDTNFTBurn"
 
+// BuiltInFunctionESDTNFTAddURI is the key for the elrond standard digital token NFT add URI built-in function
+const BuiltInFunctionESDTNFTAddURI = "ESDTNFTAddURI"
+
+// BuiltInFunctionESDTNFTUpdateAttributes is the key for the elrond standard digital token NFT update attributes built-in function
+const BuiltInFunctionESDTNFTUpdateAttributes = "ESDTNFTUpdateAttributes"
+
+// BuiltInFunctionMultiESDTNFTTransfer is the key for the elrond standard digital token multi transfer built-in function
+const BuiltInFunctionMultiESDTNFTTransfer = "MultiESDTNFTTransfer"
+
 // ESDTRoleLocalMint is the constant string for the local role of mint for ESDT tokens
 const ESDTRoleLocalMint = "ESDTRoleLocalMint"
 
@@ -98,6 +107,12 @@ const ESDTRoleNFTAddQuantity = "ESDTRoleNFTAddQuantity"
 
 // ESDTRoleNFTBurn is the constant string for the local role of burn for ESDT NFT tokens
 const ESDTRoleNFTBurn = "ESDTRoleNFTBurn"
+
+// ESDTRoleNFTAddURI is the constant string for the local role of adding a URI for ESDT NFT tokens
+const ESDTRoleNFTAddURI = "ESDTRoleNFTAddURI"
+
+// ESDTRoleNFTUpdateAttributes is the constant string for the local role of updating attributes for ESDT NFT tokens
+const ESDTRoleNFTUpdateAttributes = "ESDTRoleNFTUpdateAttributes"
 
 // ESDTType defines the possible types in case of ESDT tokens
 type ESDTType uint32
@@ -170,3 +185,12 @@ const MinLenArgumentsESDTNFTTransfer = 4
 
 // MaxLenForESDTIssueMint defines the maximum length in bytes for the issued/minted balance
 const MaxLenForESDTIssueMint = 100
+
+// BaseOperationCostString represents the field name for base operation costs
+const BaseOperationCostString = "BaseOperationCost"
+
+// BuiltInCostString represents the field name for built in operation costs
+const BuiltInCostString = "BuiltInCost"
+
+// ESDTSCAddress is the hard-coded address for esdt issuing smart contract
+var ESDTSCAddress = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 255, 255}
