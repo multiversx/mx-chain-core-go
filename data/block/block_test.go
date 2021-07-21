@@ -6,6 +6,7 @@ import (
 
 	"github.com/ElrondNetwork/elrond-go-core/data"
 	"github.com/ElrondNetwork/elrond-go-core/data/block"
+	"github.com/ElrondNetwork/elrond-go-core/data/headerVersionData"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -136,8 +137,9 @@ func TestHeader_SetEpoch(t *testing.T) {
 
 	epoch := uint32(10)
 	h := block.Header{}
-	h.SetEpoch(epoch)
+	err := h.SetEpoch(epoch)
 
+	assert.Nil(t, err)
 	assert.Equal(t, epoch, h.GetEpoch())
 }
 
@@ -146,8 +148,9 @@ func TestHeader_SetNonce(t *testing.T) {
 
 	nonce := uint64(11)
 	h := block.Header{}
-	h.SetNonce(nonce)
+	err := h.SetNonce(nonce)
 
+	assert.Nil(t, err)
 	assert.Equal(t, nonce, h.GetNonce())
 }
 
@@ -156,8 +159,9 @@ func TestHeader_SetPrevHash(t *testing.T) {
 
 	prevHash := []byte("prev hash")
 	h := block.Header{}
-	h.SetPrevHash(prevHash)
+	err := h.SetPrevHash(prevHash)
 
+	assert.Nil(t, err)
 	assert.Equal(t, prevHash, h.GetPrevHash())
 }
 
@@ -166,8 +170,9 @@ func TestHeader_SetPrevRandSeed(t *testing.T) {
 
 	prevRandSeed := []byte("prev random seed")
 	h := block.Header{}
-	h.SetPrevRandSeed(prevRandSeed)
+	err := h.SetPrevRandSeed(prevRandSeed)
 
+	assert.Nil(t, err)
 	assert.Equal(t, prevRandSeed, h.GetPrevRandSeed())
 }
 
@@ -176,8 +181,9 @@ func TestHeader_SetRandSeed(t *testing.T) {
 
 	randSeed := []byte("random seed")
 	h := block.Header{}
-	h.SetRandSeed(randSeed)
+	err := h.SetRandSeed(randSeed)
 
+	assert.Nil(t, err)
 	assert.Equal(t, randSeed, h.GetRandSeed())
 }
 
@@ -186,8 +192,9 @@ func TestHeader_SetPubKeysBitmap(t *testing.T) {
 
 	pubKeysBitmap := []byte{12, 13, 14, 15}
 	h := block.Header{}
-	h.SetPubKeysBitmap(pubKeysBitmap)
+	err := h.SetPubKeysBitmap(pubKeysBitmap)
 
+	assert.Nil(t, err)
 	assert.Equal(t, pubKeysBitmap, h.GetPubKeysBitmap())
 }
 
@@ -196,8 +203,9 @@ func TestHeader_SetRootHash(t *testing.T) {
 
 	rootHash := []byte("root hash")
 	h := block.Header{}
-	h.SetRootHash(rootHash)
+	err := h.SetRootHash(rootHash)
 
+	assert.Nil(t, err)
 	assert.Equal(t, rootHash, h.GetRootHash())
 }
 
@@ -206,8 +214,9 @@ func TestHeader_SetRound(t *testing.T) {
 
 	rootHash := []byte("root hash")
 	h := block.Header{}
-	h.SetRootHash(rootHash)
+	err := h.SetRootHash(rootHash)
 
+	assert.Nil(t, err)
 	assert.Equal(t, rootHash, h.GetRootHash())
 }
 
@@ -216,8 +225,9 @@ func TestHeader_SetSignature(t *testing.T) {
 
 	signature := []byte("signature")
 	h := block.Header{}
-	h.SetSignature(signature)
+	err := h.SetSignature(signature)
 
+	assert.Nil(t, err)
 	assert.Equal(t, signature, h.GetSignature())
 }
 
@@ -226,8 +236,9 @@ func TestHeader_SetTimeStamp(t *testing.T) {
 
 	timeStamp := uint64(100000)
 	h := block.Header{}
-	h.SetTimeStamp(timeStamp)
+	err := h.SetTimeStamp(timeStamp)
 
+	assert.Nil(t, err)
 	assert.Equal(t, timeStamp, h.GetTimeStamp())
 }
 
@@ -236,8 +247,9 @@ func TestHeader_SetTxCount(t *testing.T) {
 
 	txCount := uint32(10)
 	h := block.Header{}
-	h.SetTxCount(txCount)
+	err := h.SetTxCount(txCount)
 
+	assert.Nil(t, err)
 	assert.Equal(t, txCount, h.GetTxCount())
 }
 
@@ -245,7 +257,7 @@ func TestBody_IntegrityAndValidityNil(t *testing.T) {
 	t.Parallel()
 
 	var body *block.Body = nil
-	assert.Equal(t, data.ErrNilBlockBody, body.IntegrityAndValidity())
+	assert.Equal(t, data.ErrNilPointerReceiver, body.IntegrityAndValidity())
 }
 
 func TestBody_IntegrityAndValidityEmptyMiniblockShouldThrowException(t *testing.T) {
@@ -378,4 +390,30 @@ func TestMiniBlock_Clone(t *testing.T) {
 	clonedMB := miniBlock.Clone()
 
 	assert.True(t, reflect.DeepEqual(miniBlock, clonedMB))
+}
+
+func TestHeader_SetScheduledRootHash(t *testing.T) {
+	t.Parallel()
+
+	header := &block.Header{}
+	err := header.SetScheduledRootHash([]byte("root hash"))
+	require.Equal(t, data.ErrScheduledRootHashNotSupported, err)
+}
+
+func TestHeader_ValidateHeaderVersion(t *testing.T) {
+	t.Parallel()
+
+	header := &block.Header{}
+	err := header.ValidateHeaderVersion()
+	require.Nil(t, err)
+}
+
+func TestHeader_SetAdditionalDataShouldDoNothing(t *testing.T) {
+	t.Parallel()
+
+	var shardBlock *block.Header
+
+	//goland:noinspection ALL
+	err := shardBlock.SetAdditionalData(&headerVersionData.AdditionalData{})
+	assert.Nil(t, err)
 }
