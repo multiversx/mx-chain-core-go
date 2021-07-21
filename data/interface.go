@@ -177,3 +177,12 @@ type SyncStatisticsHandler interface {
 	NumMissing() int
 	IsInterfaceNil() bool
 }
+
+// TransactionWithFeeHandler represents a transaction structure that has economics variables defined
+type TransactionWithFeeHandler interface {
+	GetGasLimit() uint64
+	GetGasPrice() uint64
+	GetData() []byte
+	GetRcvAddr() []byte
+	GetValue() *big.Int
+}
