@@ -187,6 +187,7 @@ type TransactionWithFeeHandler interface {
 	GetValue() *big.Int
 }
 
+// UserAccountHandler models a user account
 type UserAccountHandler interface {
 	GetBalance() *big.Int
 	GetNonce() uint64
