@@ -4,6 +4,8 @@ import (
 	"encoding/hex"
 	"fmt"
 	"math/big"
+
+	vmcommon "github.com/ElrondNetwork/elrond-vm-common"
 )
 
 // VMOutputApi is a wrapper over the vmcommon's VMOutput
@@ -35,16 +37,16 @@ type OutputAccountApi struct {
 	Code            []byte                       `json:"code"`
 	CodeMetadata    []byte                       `json:"codeMetaData"`
 	OutputTransfers []OutputTransferApi          `json:"outputTransfers"`
-	CallType        CallType                     `json:"callType"`
+	CallType        vmcommon.CallType            `json:"callType"`
 }
 
 // OutputTransferApi is a wrapper over vmcommon's OutputTransfer
 type OutputTransferApi struct {
-	Value         *big.Int `json:"value"`
-	GasLimit      uint64   `json:"gasLimit"`
-	Data          []byte   `json:"data"`
-	CallType      CallType `json:"callType"`
-	SenderAddress string   `json:"senderAddress"`
+	Value         *big.Int          `json:"value"`
+	GasLimit      uint64            `json:"gasLimit"`
+	Data          []byte            `json:"data"`
+	CallType      vmcommon.CallType `json:"callType"`
+	SenderAddress string            `json:"senderAddress"`
 }
 
 // LogEntryApi is a wrapper over vmcommon's LogEntry
@@ -56,7 +58,7 @@ type LogEntryApi struct {
 }
 
 // GetFirstReturnData is a helper function that returns the first ReturnData of VMOutput, interpreted as specified.
-func (vmOutput *VMOutputApi) GetFirstReturnData(asType ReturnDataKind) (interface{}, error) {
+func (vmOutput *VMOutputApi) GetFirstReturnData(asType vmcommon.ReturnDataKind) (interface{}, error) {
 	if len(vmOutput.ReturnData) == 0 {
 		return nil, fmt.Errorf("no return data")
 	}
@@ -64,13 +66,13 @@ func (vmOutput *VMOutputApi) GetFirstReturnData(asType ReturnDataKind) (interfac
 	returnData := vmOutput.ReturnData[0]
 
 	switch asType {
-	case AsBigInt:
+	case vmcommon.AsBigInt:
 		return big.NewInt(0).SetBytes(returnData), nil
-	case AsBigIntString:
+	case vmcommon.AsBigIntString:
 		return big.NewInt(0).SetBytes(returnData).String(), nil
-	case AsString:
+	case vmcommon.AsString:
 		return string(returnData), nil
-	case AsHex:
+	case vmcommon.AsHex:
 		return hex.EncodeToString(returnData), nil
 	}
 

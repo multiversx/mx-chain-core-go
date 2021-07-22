@@ -5,6 +5,7 @@ import (
 	"math/big"
 	"testing"
 
+	vmcommon "github.com/ElrondNetwork/elrond-vm-common"
 	"github.com/stretchr/testify/require"
 )
 
@@ -17,7 +18,7 @@ func TestVMOutputApi_GetFirstReturnDataAsBigInt(t *testing.T) {
 		ReturnData: [][]byte{big.NewInt(int64(expectedRes)).Bytes()},
 	}
 
-	res, err := vmOutputApi.GetFirstReturnData(AsBigInt)
+	res, err := vmOutputApi.GetFirstReturnData(vmcommon.AsBigInt)
 	require.NoError(t, err)
 
 	resBigInt, ok := res.(*big.Int)
@@ -35,7 +36,7 @@ func TestVMOutputApi_GetFirstReturnDataAsBigIntString(t *testing.T) {
 		ReturnData: [][]byte{bi.Bytes()},
 	}
 
-	res, err := vmOutputApi.GetFirstReturnData(AsBigIntString)
+	res, err := vmOutputApi.GetFirstReturnData(vmcommon.AsBigIntString)
 	require.NoError(t, err)
 
 	resBigIntString, ok := res.(string)
@@ -53,7 +54,7 @@ func TestVMOutputApi_GetFirstReturnDataAsHex(t *testing.T) {
 		ReturnData: [][]byte{resBytes},
 	}
 
-	res, err := vmOutputApi.GetFirstReturnData(AsHex)
+	res, err := vmOutputApi.GetFirstReturnData(vmcommon.AsHex)
 	require.NoError(t, err)
 
 	resHexString, ok := res.(string)
@@ -69,7 +70,7 @@ func TestVMOutputApi_GetFirstReturnDataAsString(t *testing.T) {
 		ReturnData: [][]byte{[]byte(expectedRes)},
 	}
 
-	res, err := vmOutputApi.GetFirstReturnData(AsString)
+	res, err := vmOutputApi.GetFirstReturnData(vmcommon.AsString)
 	require.NoError(t, err)
 
 	resString, ok := res.(string)
