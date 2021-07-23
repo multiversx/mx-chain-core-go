@@ -15,6 +15,10 @@ const pkPrefixSize = 12
 // FileModeUserReadWrite represents the permission for a file which allows the user for reading and writing
 const FileModeUserReadWrite = 0600
 
+// FileModeReadWrite represents the permission for a file which allows reading and writing for user and group and read
+// for others
+const FileModeReadWrite = 0664
+
 // MetachainShardId will be used to identify a shard ID as metachain
 const MetachainShardId = uint32(0xFFFFFFFF)
 
