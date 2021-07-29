@@ -67,13 +67,13 @@ const BuiltInFunctionSetESDTRole = "ESDTSetRole"
 // BuiltInFunctionUnSetESDTRole is the key for the elrond standard digital token unset built-in function
 const BuiltInFunctionUnSetESDTRole = "ESDTUnSetRole"
 
-// BuiltInFunctionSetTransferRole is the key for the elrond standard digital token built-in function which sets the property
-// for the token to be transferrable only through accounts with transfer roles
-const BuiltInFunctionSetESDTTransferRole = "ESDTSetTransferOnlyThroughRole"
+// BuiltInFunctionESDTSetTransferOnlyThroughAccountsWithRoles is the key for the elrond standard digital token built-in function which sets the property
+// for the token to be transferable only through accounts with transfer roles
+const BuiltInFunctionESDTSetTransferOnlyThroughAccountsWithRoles = "ESDTSetTransferOnlyThroughAccountsWithRoles"
 
-// BuiltInFunctionSetTransferRole is the key for the elrond standard digital token built-in function which unsets the property
-// for the token to be transferrable only through accounts with transfer roles
-const BuiltInFunctionUnSetESDTTransferRole = "ESDTUnSetTransferOnlyThroughRole"
+// BuiltInFunctionESDTUnSetTransferOnlyThroughAccountsWithRoles is the key for the elrond standard digital token built-in function which unsets the property
+// for the token to be transferable only through accounts with transfer roles
+const BuiltInFunctionESDTUnSetTransferOnlyThroughAccountsWithRoles = "ESDTUnSetTransferOnlyThroughAccountsWithRoles"
 
 // BuiltInFunctionESDTLocalMint is the key for the elrond standard digital token local mint built-in function
 const BuiltInFunctionESDTLocalMint = "ESDTLocalMint"
