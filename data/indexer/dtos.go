@@ -38,5 +38,6 @@ type RoundInfo struct {
 	SignersIndexes   []uint64
 	BlockWasProposed bool
 	ShardId          uint32
+	Epoch            uint32
 	Timestamp        time.Duration
 }
