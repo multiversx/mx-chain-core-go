@@ -126,8 +126,8 @@ const ESDTRoleNFTAddURI = "ESDTRoleNFTAddURI"
 // ESDTRoleNFTUpdateAttributes is the constant string for the local role of updating attributes for ESDT NFT tokens
 const ESDTRoleNFTUpdateAttributes = "ESDTRoleNFTUpdateAttributes"
 
-// ESDTTransferRole is the constant string for the local role to transfer ESDT, only for special tokens
-const ESDTTransferRole = "ESDTTransferRole"
+// ESDTRoleTransfer is the constant string for the local role to transfer ESDT, only for special tokens
+const ESDTRoleTransfer = "ESDTTransferRole"
 
 // ESDTType defines the possible types in case of ESDT tokens
 type ESDTType uint32
