@@ -37,11 +37,11 @@ func (h *Header) SetRootHash(rHash []byte) {
 	h.RootHash = rHash
 }
 
-// SetValidatorStatsRootHash set's the root hash for the validator statistics trie
+// SetValidatorStatsRootHash sets the root hash for the validator statistics trie
 func (h *Header) SetValidatorStatsRootHash(_ []byte) {
 }
 
-// GetValidatorStatsRootHash set's the root hash for the validator statistics trie
+// GetValidatorStatsRootHash returns the root hash for the validator statistics trie
 func (h *Header) GetValidatorStatsRootHash() []byte {
 	return []byte{}
 }
@@ -61,7 +61,7 @@ func (h *Header) SetRandSeed(randSeed []byte) {
 	h.RandSeed = randSeed
 }
 
-// SetPubKeysBitmap sets publick key bitmap
+// SetPubKeysBitmap sets public key bitmap
 func (h *Header) SetPubKeysBitmap(pkbm []byte) {
 	h.PubKeysBitmap = pkbm
 }

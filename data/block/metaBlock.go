@@ -37,7 +37,7 @@ func (m *MetaBlock) SetRootHash(rHash []byte) {
 	m.RootHash = rHash
 }
 
-// SetValidatorStatsRootHash set's the root hash for the validator statistics trie
+// SetValidatorStatsRootHash sets the root hash for the validator statistics trie
 func (m *MetaBlock) SetValidatorStatsRootHash(rHash []byte) {
 	m.ValidatorStatsRootHash = rHash
 }
