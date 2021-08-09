@@ -63,7 +63,7 @@ func (m *MetaBlock) SetRootHash(rHash []byte) error {
 	return nil
 }
 
-// SetValidatorStatsRootHash set's the root hash for the validator statistics trie
+// SetValidatorStatsRootHash sets the root hash for the validator statistics trie
 func (m *MetaBlock) SetValidatorStatsRootHash(rHash []byte) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver

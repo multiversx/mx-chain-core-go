@@ -15,6 +15,10 @@ const pkPrefixSize = 12
 // FileModeUserReadWrite represents the permission for a file which allows the user for reading and writing
 const FileModeUserReadWrite = 0600
 
+// FileModeReadWrite represents the permission for a file which allows reading and writing for user and group and read
+// for others
+const FileModeReadWrite = 0664
+
 // MetachainShardId will be used to identify a shard ID as metachain
 const MetachainShardId = uint32(0xFFFFFFFF)
 
@@ -63,6 +67,14 @@ const BuiltInFunctionSetESDTRole = "ESDTSetRole"
 // BuiltInFunctionUnSetESDTRole is the key for the elrond standard digital token unset built-in function
 const BuiltInFunctionUnSetESDTRole = "ESDTUnSetRole"
 
+// BuiltInFunctionESDTSetLimitedTransfer is the key for the elrond standard digital token built-in function which sets the property
+// for the token to be transferable only through accounts with transfer roles
+const BuiltInFunctionESDTSetLimitedTransfer = "ESDTSetLimitedTransfer"
+
+// BuiltInFunctionESDTUnSetLimitedTransfer is the key for the elrond standard digital token built-in function which unsets the property
+// for the token to be transferable only through accounts with transfer roles
+const BuiltInFunctionESDTUnSetLimitedTransfer = "ESDTUnSetLimitedTransfer"
+
 // BuiltInFunctionESDTLocalMint is the key for the elrond standard digital token local mint built-in function
 const BuiltInFunctionESDTLocalMint = "ESDTLocalMint"
 
@@ -84,6 +96,15 @@ const BuiltInFunctionESDTNFTCreateRoleTransfer = "ESDTNFTCreateRoleTransfer"
 // BuiltInFunctionESDTNFTBurn is the key for the elrond standard digital token NFT burn built-in function
 const BuiltInFunctionESDTNFTBurn = "ESDTNFTBurn"
 
+// BuiltInFunctionESDTNFTAddURI is the key for the elrond standard digital token NFT add URI built-in function
+const BuiltInFunctionESDTNFTAddURI = "ESDTNFTAddURI"
+
+// BuiltInFunctionESDTNFTUpdateAttributes is the key for the elrond standard digital token NFT update attributes built-in function
+const BuiltInFunctionESDTNFTUpdateAttributes = "ESDTNFTUpdateAttributes"
+
+// BuiltInFunctionMultiESDTNFTTransfer is the key for the elrond standard digital token multi transfer built-in function
+const BuiltInFunctionMultiESDTNFTTransfer = "MultiESDTNFTTransfer"
+
 // ESDTRoleLocalMint is the constant string for the local role of mint for ESDT tokens
 const ESDTRoleLocalMint = "ESDTRoleLocalMint"
 
@@ -98,6 +119,15 @@ const ESDTRoleNFTAddQuantity = "ESDTRoleNFTAddQuantity"
 
 // ESDTRoleNFTBurn is the constant string for the local role of burn for ESDT NFT tokens
 const ESDTRoleNFTBurn = "ESDTRoleNFTBurn"
+
+// ESDTRoleNFTAddURI is the constant string for the local role of adding a URI for ESDT NFT tokens
+const ESDTRoleNFTAddURI = "ESDTRoleNFTAddURI"
+
+// ESDTRoleNFTUpdateAttributes is the constant string for the local role of updating attributes for ESDT NFT tokens
+const ESDTRoleNFTUpdateAttributes = "ESDTRoleNFTUpdateAttributes"
+
+// ESDTRoleTransfer is the constant string for the local role to transfer ESDT, only for special tokens
+const ESDTRoleTransfer = "ESDTTransferRole"
 
 // ESDTType defines the possible types in case of ESDT tokens
 type ESDTType uint32
@@ -170,3 +200,18 @@ const MinLenArgumentsESDTNFTTransfer = 4
 
 // MaxLenForESDTIssueMint defines the maximum length in bytes for the issued/minted balance
 const MaxLenForESDTIssueMint = 100
+
+// BaseOperationCostString represents the field name for base operation costs
+const BaseOperationCostString = "BaseOperationCost"
+
+// BuiltInCostString represents the field name for built in operation costs
+const BuiltInCostString = "BuiltInCost"
+
+// ESDTSCAddress is the hard-coded address for esdt issuing smart contract
+var ESDTSCAddress = []byte{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 255, 255}
+
+// SCDeployIdentifier is the identifier for a smart contract deploy
+const SCDeployIdentifier = "SCDeploy"
+
+// SCUpgradeIdentifier is the identifier for a smart contract upgrade
+const SCUpgradeIdentifier = "SCUpgrade"
