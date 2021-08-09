@@ -62,6 +62,10 @@ func (h *Header) SetRootHash(rHash []byte) error {
 	return nil
 }
 
+// SetValidatorStatsRootHash sets the root hash for the validator statistics trie
+func (h *Header) SetValidatorStatsRootHash(_ []byte) {
+}
+
 // SetPrevHash sets prev hash
 func (h *Header) SetPrevHash(pvHash []byte) error {
 	if h == nil {
@@ -72,7 +76,7 @@ func (h *Header) SetPrevHash(pvHash []byte) error {
 	return nil
 }
 
-// GetValidatorStatsRootHash set's the root hash for the validator statistics trie
+// GetValidatorStatsRootHash returns the root hash for the validator statistics trie
 func (h *Header) GetValidatorStatsRootHash() []byte {
 	return []byte{}
 }

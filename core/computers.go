@@ -175,7 +175,8 @@ func SafeAddUint64(a, b uint64) (uint64, error) {
 // IsValidESDTRole returns true if the input string represents a valid ESDT role
 func IsValidESDTRole(role string) bool {
 	switch role {
-	case ESDTRoleNFTCreate, ESDTRoleNFTAddQuantity, ESDTRoleNFTBurn, ESDTRoleLocalMint, ESDTRoleLocalBurn:
+	case ESDTRoleNFTCreate, ESDTRoleNFTAddQuantity, ESDTRoleNFTBurn, ESDTRoleLocalMint, ESDTRoleLocalBurn, ESDTRoleNFTUpdateAttributes,
+		ESDTRoleNFTAddURI, ESDTRoleTransfer:
 		return true
 	default:
 		return false

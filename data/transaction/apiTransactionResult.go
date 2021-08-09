@@ -4,7 +4,7 @@ import (
 	"math/big"
 
 	"github.com/ElrondNetwork/elrond-go-core/data"
-	vmcommon "github.com/ElrondNetwork/elrond-vm-common"
+	"github.com/ElrondNetwork/elrond-go-core/data/vm"
 )
 
 // ApiTransactionResult is the data transfer object which will be returned on the get transaction by hash endpoint
@@ -47,36 +47,26 @@ type ApiTransactionResult struct {
 	Status                            TxStatus                  `json:"status,omitempty"`
 }
 
-// SimulationResults is the data transfer object which will hold results for simulation a transaction's execution
-type SimulationResults struct {
-	Status     TxStatus                           `json:"status,omitempty"`
-	FailReason string                             `json:"failReason,omitempty"`
-	ScResults  map[string]*ApiSmartContractResult `json:"scResults,omitempty"`
-	Receipts   map[string]*ApiReceipt             `json:"receipts,omitempty"`
-	Hash       string                             `json:"hash,omitempty"`
-	VMOutput   *vmcommon.VMOutput                 `json:"-"`
-}
-
 // ApiSmartContractResult represents a smart contract result with changed fields' types in order to make it friendly for API's json
 type ApiSmartContractResult struct {
-	Hash           string            `json:"hash,omitempty"`
-	Nonce          uint64            `json:"nonce"`
-	Value          *big.Int          `json:"value"`
-	RcvAddr        string            `json:"receiver"`
-	SndAddr        string            `json:"sender"`
-	RelayerAddr    string            `json:"relayerAddress,omitempty"`
-	RelayedValue   *big.Int          `json:"relayedValue,omitempty"`
-	Code           string            `json:"code,omitempty"`
-	Data           string            `json:"data,omitempty"`
-	PrevTxHash     string            `json:"prevTxHash"`
-	OriginalTxHash string            `json:"originalTxHash"`
-	GasLimit       uint64            `json:"gasLimit"`
-	GasPrice       uint64            `json:"gasPrice"`
-	CallType       vmcommon.CallType `json:"callType"`
-	CodeMetadata   string            `json:"codeMetadata,omitempty"`
-	ReturnMessage  string            `json:"returnMessage,omitempty"`
-	OriginalSender string            `json:"originalSender,omitempty"`
-	Logs           *ApiLogs          `json:"logs,omitempty"`
+	Hash           string      `json:"hash,omitempty"`
+	Nonce          uint64      `json:"nonce"`
+	Value          *big.Int    `json:"value"`
+	RcvAddr        string      `json:"receiver"`
+	SndAddr        string      `json:"sender"`
+	RelayerAddr    string      `json:"relayerAddress,omitempty"`
+	RelayedValue   *big.Int    `json:"relayedValue,omitempty"`
+	Code           string      `json:"code,omitempty"`
+	Data           string      `json:"data,omitempty"`
+	PrevTxHash     string      `json:"prevTxHash"`
+	OriginalTxHash string      `json:"originalTxHash"`
+	GasLimit       uint64      `json:"gasLimit"`
+	GasPrice       uint64      `json:"gasPrice"`
+	CallType       vm.CallType `json:"callType"`
+	CodeMetadata   string      `json:"codeMetadata,omitempty"`
+	ReturnMessage  string      `json:"returnMessage,omitempty"`
+	OriginalSender string      `json:"originalSender,omitempty"`
+	Logs           *ApiLogs    `json:"logs,omitempty"`
 }
 
 // ApiReceipt represents a receipt with changed fields' types in order to make it friendly for API's json
