@@ -32,6 +32,7 @@ type HeaderHandler interface {
 	GetMiniBlockHeadersHashes() [][]byte
 	GetMiniBlockHeaderHandlers() []MiniBlockHeaderHandler
 	HasScheduledSupport() bool
+	GetAdditionalData() headerVersionData.HeaderAdditionalData
 
 	SetAccumulatedFees(value *big.Int) error
 	SetDeveloperFees(value *big.Int) error
@@ -219,7 +220,6 @@ type ChainHandler interface {
 	GetCurrentBlockHeaderHash() []byte
 	SetCurrentBlockHeaderHash(hash []byte)
 	IsInterfaceNil() bool
-	CreateNewHeader() HeaderHandler
 }
 
 // TransactionHandler defines the type of executable transaction

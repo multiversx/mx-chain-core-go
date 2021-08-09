@@ -81,7 +81,6 @@ func (h *Header) GetValidatorStatsRootHash() []byte {
 	return []byte{}
 }
 
-
 // SetPrevRandSeed sets previous random seed
 func (h *Header) SetPrevRandSeed(pvRandSeed []byte) error {
 	if h == nil {
@@ -451,4 +450,10 @@ func (h *Header) SetAdditionalData(_ headerVersionData.HeaderAdditionalData) err
 // HasScheduledSupport returns false as the first block version does not support scheduled data
 func (h *Header) HasScheduledSupport() bool {
 	return false
+}
+
+// GetAdditionalData gets the additional version-related data for the header
+func (h *Header) GetAdditionalData() headerVersionData.HeaderAdditionalData {
+	// no extra data for the initial version of shard block header
+	return nil
 }
