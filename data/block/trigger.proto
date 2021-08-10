@@ -10,25 +10,25 @@ import "block.proto";
 import "blockV2.proto";
 
 message TriggerRegistry {
-    bool IsEpochStart = 1;
-    bool NewEpochHeaderReceived = 2;
-    uint32 Epoch = 3;
-    uint32 MetaEpoch = 4;
-    int64 CurrentRoundIndex = 5;
-    uint64 EpochStartRound = 6;
-    uint64 EpochFinalityAttestingRound = 7;
-    bytes EpochMetaBlockHash = 8;
-    Header EpochStartShardHeader = 9;
+    bool IsEpochStart                   = 1;
+    bool NewEpochHeaderReceived         = 2;
+    uint32 Epoch                        = 3;
+    uint32 MetaEpoch                    = 4;
+    int64 CurrentRoundIndex             = 5;
+    uint64 EpochStartRound              = 6;
+    uint64 EpochFinalityAttestingRound  = 7;
+    bytes EpochMetaBlockHash            = 8;
+    Header EpochStartShardHeader        = 9;
 }
 
 message TriggerRegistryV2 {
-    bool IsEpochStart = 1;
-    bool NewEpochHeaderReceived = 2;
-    uint32 Epoch = 3;
-    uint32 MetaEpoch = 4;
-    int64 CurrentRoundIndex = 5;
-    uint64 EpochStartRound = 6;
-    uint64 EpochFinalityAttestingRound = 7;
-    bytes EpochMetaBlockHash = 8;
-    HeaderV2 EpochStartShardHeader = 9;
+    bool IsEpochStart                   = 1;
+    bool NewEpochHeaderReceived         = 2;
+    uint32 Epoch                        = 3;
+    uint32 MetaEpoch                    = 4;
+    int64 CurrentRoundIndex             = 5;
+    uint64 EpochStartRound              = 6;
+    uint64 EpochFinalityAttestingRound  = 7;
+    bytes EpochMetaBlockHash            = 8;
+    HeaderV2 EpochStartShardHeader      = 9;
 }
