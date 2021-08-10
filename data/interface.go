@@ -16,6 +16,16 @@ type TriggerRegistryHandler interface {
 	GetEpochFinalityAttestingRound() uint64
 	GetEpochMetaBlockHash() []byte
 	GetEpochStartHeaderHandler() HeaderHandler
+
+	SetIsEpochStart(isEpochStart bool) error
+	SetNewEpochHeaderReceived(newEpochHeaderReceived bool) error
+	SetEpoch(epoch uint32) error
+	SetMetaEpoch(metaEpoch uint32) error
+	SetCurrentRoundIndex(roundIndex int64) error
+	SetEpochStartRound(startRound uint64) error
+	SetEpochFinalityAttestingRound(finalityAttestingRound uint64) error
+	SetEpochMetaBlockHash(epochMetaBlockHash []byte) error
+	SetEpochStartHeaderHandler(epochStartHeaderHandler HeaderHandler) error
 }
 
 // HeaderHandler defines getters and setters for header data holder
