@@ -6,6 +6,7 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data/headerVersionData"
 )
 
+// TriggerRegistryHandler defines getters and setters for the trigger registry
 type TriggerRegistryHandler interface {
 	GetIsEpochStart() bool
 	GetNewEpochHeaderReceived() bool
