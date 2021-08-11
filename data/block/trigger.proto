@@ -22,13 +22,13 @@ message TriggerRegistry {
 }
 
 message TriggerRegistryV2 {
-    bool IsEpochStart                   = 1;
-    bool NewEpochHeaderReceived         = 2;
-    uint32 Epoch                        = 3;
-    uint32 MetaEpoch                    = 4;
-    int64 CurrentRoundIndex             = 5;
-    uint64 EpochStartRound              = 6;
-    uint64 EpochFinalityAttestingRound  = 7;
-    bytes EpochMetaBlockHash            = 8;
-    HeaderV2 EpochStartShardHeader      = 9;
+    HeaderV2 EpochStartShardHeader      = 1;
+    bool IsEpochStart                   = 2;
+    bool NewEpochHeaderReceived         = 3;
+    uint32 Epoch                        = 4;
+    uint32 MetaEpoch                    = 5;
+    int64 CurrentRoundIndex             = 6;
+    uint64 EpochStartRound              = 7;
+    uint64 EpochFinalityAttestingRound  = 8;
+    bytes EpochMetaBlockHash            = 9;
 }
