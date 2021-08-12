@@ -6,6 +6,29 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data/headerVersionData"
 )
 
+// TriggerRegistryHandler defines getters and setters for the trigger registry
+type TriggerRegistryHandler interface {
+	GetIsEpochStart() bool
+	GetNewEpochHeaderReceived() bool
+	GetEpoch() uint32
+	GetMetaEpoch() uint32
+	GetCurrentRoundIndex() int64
+	GetEpochStartRound() uint64
+	GetEpochFinalityAttestingRound() uint64
+	GetEpochMetaBlockHash() []byte
+	GetEpochStartHeaderHandler() HeaderHandler
+
+	SetIsEpochStart(isEpochStart bool) error
+	SetNewEpochHeaderReceived(newEpochHeaderReceived bool) error
+	SetEpoch(epoch uint32) error
+	SetMetaEpoch(metaEpoch uint32) error
+	SetCurrentRoundIndex(roundIndex int64) error
+	SetEpochStartRound(startRound uint64) error
+	SetEpochFinalityAttestingRound(finalityAttestingRound uint64) error
+	SetEpochMetaBlockHash(epochMetaBlockHash []byte) error
+	SetEpochStartHeaderHandler(epochStartHeaderHandler HeaderHandler) error
+}
+
 // HeaderHandler defines getters and setters for header data holder
 type HeaderHandler interface {
 	GetShardID() uint32
