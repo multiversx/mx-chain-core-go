@@ -10,9 +10,9 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/smartContractResult/smartContractResult.proto";
 
 message SmartContractResults {
-    repeated SmartContractResult  TxHandlers = 1 [(gogoproto.nullable) = false];
+    repeated SmartContractResult  TxHandlers = 1;
 }
 message ScheduledSCRs {
     bytes rootHash = 1;
-    map<int32, SmartContractResults> scrs = 2;
+    map<int32, SmartContractResults> scrs = 2 [(gogoproto.nullable) = false];
 }
