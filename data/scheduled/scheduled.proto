@@ -13,6 +13,6 @@ message SmartContractResults {
     repeated SmartContractResult  TxHandlers = 1 [(gogoproto.nullable) = false];
 }
 message ScheduledSCRs {
-    repeated bytes rootHash = 1;
+    bytes rootHash = 1;
     map<int32, SmartContractResults> scrs = 2;
 }
