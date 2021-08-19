@@ -48,7 +48,7 @@ func (sscr *ScheduledSCRs) SetTransactionHandlersMap(txHandlersMap map[block.Typ
 			sscr.Scrs[int32(i)] = SmartContractResults{}
 			continue
 		}
-		scrs := make([]*smartContractResult.SmartContractResult, len(txHandlersMap[i]))
+		scrs := make([]*smartContractResult.SmartContractResult, len(txHandlers))
 		for j := range txHandlers {
 			scr, ok := txHandlers[j].(*smartContractResult.SmartContractResult)
 			if !ok {
