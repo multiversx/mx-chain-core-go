@@ -1,0 +1,10 @@
+[FirstConfigSection]
+    Abc = 1
+    Bcd = 3
+    Cde = "test"
+    [FirstConfigSection.InnerConfig]
+        Def = "test"
+        # Efg = 5
+
+[SecondConfigSection]
+    Fgh = 5
