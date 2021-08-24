@@ -31,6 +31,7 @@ type firstConfigSection struct {
 	Bcd         uint32
 	InnerConfig testInnerConfigSection
 	Cde         string
+	Ghi         bool
 }
 
 type testInnerConfigSection struct {
