@@ -14,3 +14,8 @@ message HeaderV2 {
     Header  Header              = 1;
     bytes   ScheduledRootHash   = 2;
 }
+
+message MiniBlockReserved {
+    ProcessingType ExecutionType    = 1;
+    bytes TransactionsType          = 2;
+}

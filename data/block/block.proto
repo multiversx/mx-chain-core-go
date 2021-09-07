@@ -21,8 +21,12 @@ enum Type {
 	SmartContractResultBlock    = 90;
 	InvalidBlock                = 120;
 	ReceiptBlock                = 150;
-	ScheduledBlock              = 180;
 	RewardsBlock                = 255;
+}
+
+enum ProcessingType {
+    Normal      = 0;
+    Scheduled   = 1;
 }
 
 message MiniBlock {

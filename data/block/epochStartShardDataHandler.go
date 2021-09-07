@@ -126,3 +126,14 @@ func (essd *EpochStartShardData) SetPendingMiniBlockHeaders(miniBlockHeaderHandl
 
 	return nil
 }
+
+// SetScheduledRootHash sets the scheduled root hash
+func (essd *EpochStartShardData) SetScheduledRootHash(schRootHash []byte) error {
+	if essd == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	essd.ScheduledRootHash = schRootHash
+
+	return nil
+}
