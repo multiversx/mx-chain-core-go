@@ -447,7 +447,7 @@ func (mb *MiniBlock) GetMiniBlockReserved() (*MiniBlockReserved, error) {
 	return nil, nil
 }
 
-// SetMiniBlockReserved returns the unmarshalled reserved field for the miniblock
+// SetMiniBlockReserved sets the reserved field for the miniBlock with the given parameter
 func (mb *MiniBlock) SetMiniBlockReserved(mbr *MiniBlockReserved) error {
 	if mbr == nil {
 		mb.Reserved = nil
@@ -465,18 +465,16 @@ func (mb *MiniBlock) SetMiniBlockReserved(mbr *MiniBlockReserved) error {
 
 // IsScheduledMiniBlock returns if the mini block is of type scheduled or not
 func (mb *MiniBlock) IsScheduledMiniBlock() bool {
-	if mb == nil {
+	if mb == nil || len(mb.Reserved) == 0 {
 		return false
 	}
-	if len(mb.Reserved) > 0 {
-		mbr := &MiniBlockReserved{}
-		err := mbr.Unmarshal(mb.Reserved)
-		if err != nil {
-			return false
-		}
-		return mbr.ExecutionType == Scheduled
+
+	mbr := &MiniBlockReserved{}
+	err := mbr.Unmarshal(mb.Reserved)
+	if err != nil {
+		return false
 	}
-	return false
+	return mbr.ExecutionType == Scheduled
 }
 
 // SetAdditionalData sets the additional data for the header
