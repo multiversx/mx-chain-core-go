@@ -480,6 +480,72 @@ func (mb *MiniBlock) IsScheduledMiniBlock() bool {
 	return mbr.ExecutionType == Scheduled
 }
 
+// GetTxsTypeFromMiniBlock returns all the txs type from mini block
+func (mb *MiniBlock) GetTxsTypeFromMiniBlock() ([]Type, error) {
+	if mb == nil {
+		return nil, data.ErrNilPointerReceiver
+	}
+
+	if len(mb.Reserved) == 0 {
+		return mb.getTxsTypeOfMiniBlock()
+	}
+
+	mbr := &MiniBlockReserved{}
+	err := mbr.Unmarshal(mb.Reserved)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(mbr.TransactionsType) == 0 {
+		return mb.getTxsTypeOfMiniBlock()
+	}
+
+	return mb.getTxsType(mbr)
+}
+
+func (mb *MiniBlock) getTxsTypeOfMiniBlock() ([]Type, error) {
+	numTxs := len(mb.TxHashes)
+	txsType := make([]Type, numTxs)
+	for i := 0; i < numTxs; i++ {
+		txsType[i] = mb.Type
+	}
+	return txsType, nil
+}
+
+func (mb *MiniBlock) getTxsType(mbr *MiniBlockReserved) ([]Type, error) {
+	numTxs := len(mb.TxHashes)
+	err := checkTransactionsTypeValidity(mbr, numTxs)
+	if err != nil {
+		return nil, err
+	}
+
+	txsType := make([]Type, numTxs)
+	for i := 0; i < numTxs; i++ {
+		isTxBlockType := (mbr.TransactionsType[i/8] & (1 << (uint16(i) % 8))) == 0
+		if isTxBlockType {
+			txsType[i] = TxBlock
+		} else {
+			// we assume that we have only two types of txs, TxBlock and SmartContractResultBlock, included in mini blocks of type TxBlock
+			txsType[i] = SmartContractResultBlock
+		}
+	}
+
+	return txsType, nil
+}
+
+func checkTransactionsTypeValidity(mbr *MiniBlockReserved, numTxs int) error {
+	transactionsTypeSize := numTxs / 8
+	if numTxs%8 != 0 {
+		transactionsTypeSize++
+	}
+
+	if len(mbr.TransactionsType) != transactionsTypeSize {
+		return data.ErrWrongTransactionsTypeSize
+	}
+
+	return nil
+}
+
 // SetAdditionalData sets the additional data for the header
 func (h *Header) SetAdditionalData(_ headerVersionData.HeaderAdditionalData) error {
 	// first header version does not have any additional data

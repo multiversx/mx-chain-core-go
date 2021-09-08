@@ -385,6 +385,7 @@ func TestMiniBlock_Clone(t *testing.T) {
 		ReceiverShardID: 1,
 		SenderShardID:   2,
 		Type:            0,
+		Reserved:        []byte("something"),
 	}
 
 	clonedMB := miniBlock.Clone()
