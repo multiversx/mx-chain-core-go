@@ -13,8 +13,14 @@ type ArgsSaveBlockData struct {
 	Header                 data.HeaderHandler
 	SignersIndexes         []uint64
 	NotarizedHeadersHashes []string
-	HeaderTotalGas         uint64
+	HeaderGasConsumption   HeaderGasConsumption
 	TransactionsPool       *Pool
+}
+
+// HeaderGasConsumption holds the data needed to save gas consumption of a header
+type HeaderGasConsumption struct {
+	GasConsumed    uint64
+	MaxGasPerBlock uint64
 }
 
 // Pool will holds all types of transaction
