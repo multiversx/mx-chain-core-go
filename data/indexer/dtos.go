@@ -13,6 +13,7 @@ type ArgsSaveBlockData struct {
 	Header                 data.HeaderHandler
 	SignersIndexes         []uint64
 	NotarizedHeadersHashes []string
+	HeaderTotalGas         uint64
 	TransactionsPool       *Pool
 }
 
