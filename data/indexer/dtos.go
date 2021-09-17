@@ -20,7 +20,7 @@ type ArgsSaveBlockData struct {
 // HeaderGasConsumption holds the data needed to save gas consumption of a header
 type HeaderGasConsumption struct {
 	GasConsumed    uint64
-	GasReturned    uint64
+	GasRefunded    uint64
 	MaxGasPerBlock uint64
 }
 
