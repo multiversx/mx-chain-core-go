@@ -114,6 +114,9 @@ const ESDTRoleLocalBurn = "ESDTRoleLocalBurn"
 // ESDTRoleNFTCreate is the constant string for the local role of create for ESDT NFT tokens
 const ESDTRoleNFTCreate = "ESDTRoleNFTCreate"
 
+// ESDTRoleNFTCreateMultiShard is the constant string for the local role of create for ESDT NFT tokens multishard
+const ESDTRoleNFTCreateMultiShard = "ESDTRoleNFTCreateMultiShard"
+
 // ESDTRoleNFTAddQuantity is the constant string for the local role of adding quantity for existing ESDT NFT tokens
 const ESDTRoleNFTAddQuantity = "ESDTRoleNFTAddQuantity"
 
