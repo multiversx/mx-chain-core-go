@@ -1,0 +1,26 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "proof";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "github.com/ElrondNetwork/elrond-go-core/data/block/block.proto";
+
+enum SlashingType {
+    None = 0;
+    MultipleProposal = 1;
+    MultipleSigning = 2;
+}
+
+enum ThreatLevel {
+    Low = 0;
+    Medium = 1;
+    High = 2;
+}
+
+message MultipleHeaderProposal {
+    ThreatLevel     Level = 1;
+	repeated Header Headers = 2;
+}
