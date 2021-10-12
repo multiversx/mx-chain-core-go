@@ -1,0 +1,15 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "slash";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "slash.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+message MultipleHeaderSigningProof {
+  repeated bytes           PubKeys = 2;
+  map<string, ThreatLevel> Levels = 1;
+  map<string, Headers>     Headers = 3;
+}
