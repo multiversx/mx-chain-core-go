@@ -9,6 +9,6 @@ import "slash.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 message MultipleHeaderProposalProof {
-  ThreatLevel Level = 1;
+  ThreatLevel Level   = 1;
   Headers     Headers = 2;
 }

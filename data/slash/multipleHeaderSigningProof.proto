@@ -5,11 +5,11 @@ package proto;
 option go_package = "slash";
 option (gogoproto.stable_marshaler_all) = true;
 
-import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "slash.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 message MultipleHeaderSigningProof {
   repeated bytes           PubKeys = 1;
-  map<string, ThreatLevel> Levels = 2;
-  map<string, Headers> Headers = 3;
+  map<string, ThreatLevel> Levels  = 2;
+  map<string, Headers>     Headers = 3;
 }
