@@ -430,15 +430,120 @@ func (mb *MiniBlock) Clone() *MiniBlock {
 	newMb.TxHashes = make([][]byte, len(mb.TxHashes))
 	copy(newMb.TxHashes, mb.TxHashes)
 
+	newMb.Reserved = make([]byte, len(mb.Reserved))
+	copy(newMb.Reserved, mb.Reserved)
+
 	return newMb
+}
+
+// GetMiniBlockReserved returns the unmarshalled reserved field for the miniblock
+func (mb *MiniBlock) GetMiniBlockReserved() (*MiniBlockReserved, error) {
+	if len(mb.Reserved) > 0 {
+		mbr := &MiniBlockReserved{}
+		err := mbr.Unmarshal(mb.Reserved)
+		if err != nil {
+			return nil, err
+		}
+
+		return mbr, nil
+	}
+	return nil, nil
+}
+
+// SetMiniBlockReserved sets the reserved field for the miniBlock with the given parameter
+func (mb *MiniBlock) SetMiniBlockReserved(mbr *MiniBlockReserved) error {
+	if mbr == nil {
+		mb.Reserved = nil
+		return nil
+	}
+
+	reserved, err := mbr.Marshal()
+	if err != nil {
+		return err
+	}
+	mb.Reserved = reserved
+
+	return nil
 }
 
 // IsScheduledMiniBlock returns if the mini block is of type scheduled or not
 func (mb *MiniBlock) IsScheduledMiniBlock() bool {
-	if mb == nil {
+	if mb == nil || len(mb.Reserved) == 0 {
 		return false
 	}
-	return len(mb.Reserved) > 0 && mb.Reserved[0] == byte(ScheduledBlock)
+
+	mbr := &MiniBlockReserved{}
+	err := mbr.Unmarshal(mb.Reserved)
+	if err != nil {
+		return false
+	}
+	return mbr.ExecutionType == Scheduled
+}
+
+// GetTxsTypeFromMiniBlock returns all the txs type from mini block
+func (mb *MiniBlock) GetTxsTypeFromMiniBlock() ([]Type, error) {
+	if mb == nil {
+		return nil, data.ErrNilPointerReceiver
+	}
+
+	if len(mb.Reserved) == 0 {
+		return mb.getTxsTypeOfMiniBlock()
+	}
+
+	mbr := &MiniBlockReserved{}
+	err := mbr.Unmarshal(mb.Reserved)
+	if err != nil {
+		return nil, err
+	}
+
+	if len(mbr.TransactionsType) == 0 {
+		return mb.getTxsTypeOfMiniBlock()
+	}
+
+	return mb.getTxsType(mbr)
+}
+
+func (mb *MiniBlock) getTxsTypeOfMiniBlock() ([]Type, error) {
+	numTxs := len(mb.TxHashes)
+	txsType := make([]Type, numTxs)
+	for i := 0; i < numTxs; i++ {
+		txsType[i] = mb.Type
+	}
+	return txsType, nil
+}
+
+func (mb *MiniBlock) getTxsType(mbr *MiniBlockReserved) ([]Type, error) {
+	numTxs := len(mb.TxHashes)
+	err := checkTransactionsTypeValidity(mbr, numTxs)
+	if err != nil {
+		return nil, err
+	}
+
+	txsType := make([]Type, numTxs)
+	for i := 0; i < numTxs; i++ {
+		isTxBlockType := (mbr.TransactionsType[i/8] & (1 << (uint16(i) % 8))) == 0
+		if isTxBlockType {
+			txsType[i] = TxBlock
+		} else {
+			// we assume that we have only two types of txs, TxBlock and SmartContractResultBlock, included in mini blocks of type TxBlock
+			txsType[i] = SmartContractResultBlock
+		}
+	}
+
+	return txsType, nil
+}
+
+func checkTransactionsTypeValidity(mbr *MiniBlockReserved, numTxs int) error {
+	transactionsTypeSize := numTxs / 8
+	if numTxs%8 != 0 {
+		transactionsTypeSize++
+	}
+
+	if len(mbr.TransactionsType) != transactionsTypeSize {
+		return data.ErrWrongTransactionsTypeSize
+	}
+
+	return nil
 }
 
 // SetAdditionalData sets the additional data for the header
