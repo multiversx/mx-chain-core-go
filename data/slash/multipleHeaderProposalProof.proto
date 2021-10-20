@@ -10,5 +10,5 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 message MultipleHeaderProposalProof {
   ThreatLevel Level   = 1;
-  Headers     Headers = 2;
+  Headers     Headers = 2 [(gogoproto.nullable) = false];
 }
