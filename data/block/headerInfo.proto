@@ -12,3 +12,7 @@ message HeaderInfo {
   HeaderV2 Header = 1;
   bytes    Hash   = 2;
 }
+
+message HeaderInfoList{
+  repeated HeaderInfo Headers = 1;
+}

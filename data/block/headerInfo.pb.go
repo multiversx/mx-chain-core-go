@@ -73,14 +73,54 @@ func (m *HeaderInfo) GetHash() []byte {
 	return nil
 }
 
+type HeaderInfoList struct {
+	Headers []*HeaderInfo `protobuf:"bytes,1,rep,name=Headers,proto3" json:"Headers,omitempty"`
+}
+
+func (m *HeaderInfoList) Reset()      { *m = HeaderInfoList{} }
+func (*HeaderInfoList) ProtoMessage() {}
+func (*HeaderInfoList) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f4bbbba9a375b11e, []int{1}
+}
+func (m *HeaderInfoList) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *HeaderInfoList) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *HeaderInfoList) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_HeaderInfoList.Merge(m, src)
+}
+func (m *HeaderInfoList) XXX_Size() int {
+	return m.Size()
+}
+func (m *HeaderInfoList) XXX_DiscardUnknown() {
+	xxx_messageInfo_HeaderInfoList.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_HeaderInfoList proto.InternalMessageInfo
+
+func (m *HeaderInfoList) GetHeaders() []*HeaderInfo {
+	if m != nil {
+		return m.Headers
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*HeaderInfo)(nil), "proto.HeaderInfo")
+	proto.RegisterType((*HeaderInfoList)(nil), "proto.HeaderInfoList")
 }
 
 func init() { proto.RegisterFile("headerInfo.proto", fileDescriptor_f4bbbba9a375b11e) }
 
 var fileDescriptor_f4bbbba9a375b11e = []byte{
-	// 205 bytes of a gzipped FileDescriptorProto
+	// 237 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0x12, 0xc8, 0x48, 0x4d, 0x4c,
 	0x49, 0x2d, 0xf2, 0xcc, 0x4b, 0xcb, 0xd7, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x05, 0x53,
 	0x52, 0xba, 0xe9, 0x99, 0x25, 0x19, 0xa5, 0x49, 0x7a, 0xc9, 0xf9, 0xb9, 0xfa, 0xe9, 0xf9, 0xe9,
@@ -88,12 +128,14 @@ var fileDescriptor_f4bbbba9a375b11e = []byte{
 	0x93, 0x72, 0xf2, 0x93, 0xb3, 0xc3, 0x8c, 0x20, 0x5c, 0x25, 0x4f, 0x2e, 0x2e, 0x0f, 0xb8, 0xc1,
 	0x42, 0xea, 0x5c, 0x6c, 0x10, 0x9e, 0x04, 0xa3, 0x02, 0xa3, 0x06, 0xb7, 0x11, 0x3f, 0x44, 0x95,
 	0x1e, 0x44, 0x30, 0xcc, 0x28, 0x08, 0x2a, 0x2d, 0x24, 0xc4, 0xc5, 0xe2, 0x91, 0x58, 0x9c, 0x21,
-	0xc1, 0xa4, 0xc0, 0xa8, 0xc1, 0x13, 0x04, 0x66, 0x3b, 0xd9, 0x5f, 0x78, 0x28, 0xc7, 0x70, 0xe3,
-	0xa1, 0x1c, 0xc3, 0x87, 0x87, 0x72, 0x8c, 0x0d, 0x8f, 0xe4, 0x18, 0x57, 0x3c, 0x92, 0x63, 0x3c,
-	0xf1, 0x48, 0x8e, 0xf1, 0xc2, 0x23, 0x39, 0xc6, 0x1b, 0x8f, 0xe4, 0x18, 0x1f, 0x3c, 0x92, 0x63,
-	0x7c, 0xf1, 0x48, 0x8e, 0xe1, 0xc3, 0x23, 0x39, 0xc6, 0x09, 0x8f, 0xe5, 0x18, 0x2e, 0x3c, 0x96,
-	0x63, 0xb8, 0xf1, 0x58, 0x8e, 0x21, 0x8a, 0x15, 0xec, 0xa6, 0x24, 0x36, 0xb0, 0x65, 0xc6, 0x80,
-	0x00, 0x00, 0x00, 0xff, 0xff, 0x01, 0xfb, 0x05, 0xc9, 0xeb, 0x00, 0x00, 0x00,
+	0xc1, 0xa4, 0xc0, 0xa8, 0xc1, 0x13, 0x04, 0x66, 0x2b, 0xd9, 0x72, 0xf1, 0x21, 0x8c, 0xf2, 0xc9,
+	0x2c, 0x2e, 0x11, 0xd2, 0xe6, 0x62, 0x87, 0x88, 0x14, 0x4b, 0x30, 0x2a, 0x30, 0x6b, 0x70, 0x1b,
+	0x09, 0xa2, 0x98, 0x07, 0x52, 0x17, 0x04, 0x53, 0xe1, 0x64, 0x7f, 0xe1, 0xa1, 0x1c, 0xc3, 0x8d,
+	0x87, 0x72, 0x0c, 0x1f, 0x1e, 0xca, 0x31, 0x36, 0x3c, 0x92, 0x63, 0x5c, 0xf1, 0x48, 0x8e, 0xf1,
+	0xc4, 0x23, 0x39, 0xc6, 0x0b, 0x8f, 0xe4, 0x18, 0x6f, 0x3c, 0x92, 0x63, 0x7c, 0xf0, 0x48, 0x8e,
+	0xf1, 0xc5, 0x23, 0x39, 0x86, 0x0f, 0x8f, 0xe4, 0x18, 0x27, 0x3c, 0x96, 0x63, 0xb8, 0xf0, 0x58,
+	0x8e, 0xe1, 0xc6, 0x63, 0x39, 0x86, 0x28, 0x56, 0xb0, 0x97, 0x92, 0xd8, 0xc0, 0x66, 0x1b, 0x03,
+	0x02, 0x00, 0x00, 0xff, 0xff, 0xf2, 0x31, 0x64, 0xd8, 0x2a, 0x01, 0x00, 0x00,
 }
 
 func (this *HeaderInfo) Equal(that interface{}) bool {
@@ -123,6 +165,35 @@ func (this *HeaderInfo) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *HeaderInfoList) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*HeaderInfoList)
+	if !ok {
+		that2, ok := that.(HeaderInfoList)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.Headers) != len(that1.Headers) {
+		return false
+	}
+	for i := range this.Headers {
+		if !this.Headers[i].Equal(that1.Headers[i]) {
+			return false
+		}
+	}
+	return true
+}
 func (this *HeaderInfo) GoString() string {
 	if this == nil {
 		return "nil"
@@ -133,6 +204,18 @@ func (this *HeaderInfo) GoString() string {
 		s = append(s, "Header: "+fmt.Sprintf("%#v", this.Header)+",\n")
 	}
 	s = append(s, "Hash: "+fmt.Sprintf("%#v", this.Hash)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *HeaderInfoList) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&block.HeaderInfoList{")
+	if this.Headers != nil {
+		s = append(s, "Headers: "+fmt.Sprintf("%#v", this.Headers)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -186,6 +269,43 @@ func (m *HeaderInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *HeaderInfoList) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *HeaderInfoList) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *HeaderInfoList) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Headers) > 0 {
+		for iNdEx := len(m.Headers) - 1; iNdEx >= 0; iNdEx-- {
+			{
+				size, err := m.Headers[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				if err != nil {
+					return 0, err
+				}
+				i -= size
+				i = encodeVarintHeaderInfo(dAtA, i, uint64(size))
+			}
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintHeaderInfo(dAtA []byte, offset int, v uint64) int {
 	offset -= sovHeaderInfo(v)
 	base := offset
@@ -214,6 +334,21 @@ func (m *HeaderInfo) Size() (n int) {
 	return n
 }
 
+func (m *HeaderInfoList) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.Headers) > 0 {
+		for _, e := range m.Headers {
+			l = e.Size()
+			n += 1 + l + sovHeaderInfo(uint64(l))
+		}
+	}
+	return n
+}
+
 func sovHeaderInfo(x uint64) (n int) {
 	return (math_bits.Len64(x|1) + 6) / 7
 }
@@ -227,6 +362,21 @@ func (this *HeaderInfo) String() string {
 	s := strings.Join([]string{`&HeaderInfo{`,
 		`Header:` + strings.Replace(fmt.Sprintf("%v", this.Header), "HeaderV2", "HeaderV2", 1) + `,`,
 		`Hash:` + fmt.Sprintf("%v", this.Hash) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *HeaderInfoList) String() string {
+	if this == nil {
+		return "nil"
+	}
+	repeatedStringForHeaders := "[]*HeaderInfo{"
+	for _, f := range this.Headers {
+		repeatedStringForHeaders += strings.Replace(f.String(), "HeaderInfo", "HeaderInfo", 1) + ","
+	}
+	repeatedStringForHeaders += "}"
+	s := strings.Join([]string{`&HeaderInfoList{`,
+		`Headers:` + repeatedStringForHeaders + `,`,
 		`}`,
 	}, "")
 	return s
@@ -336,6 +486,93 @@ func (m *HeaderInfo) Unmarshal(dAtA []byte) error {
 			m.Hash = append(m.Hash[:0], dAtA[iNdEx:postIndex]...)
 			if m.Hash == nil {
 				m.Hash = []byte{}
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipHeaderInfo(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthHeaderInfo
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthHeaderInfo
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *HeaderInfoList) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowHeaderInfo
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: HeaderInfoList: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: HeaderInfoList: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Headers", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowHeaderInfo
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthHeaderInfo
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthHeaderInfo
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Headers = append(m.Headers, &HeaderInfo{})
+			if err := m.Headers[len(m.Headers)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
 			}
 			iNdEx = postIndex
 		default:
