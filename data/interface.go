@@ -4,6 +4,7 @@ import (
 	"math/big"
 
 	"github.com/ElrondNetwork/elrond-go-core/data/headerVersionData"
+	"github.com/ElrondNetwork/elrond-go-core/data/slash"
 )
 
 // TriggerRegistryHandler defines getters and setters for the trigger registry
@@ -82,6 +83,12 @@ type HeaderHandler interface {
 	IsStartOfEpochBlock() bool
 	ShallowClone() HeaderHandler
 	IsInterfaceNil() bool
+}
+
+// HeaderInfoHandler defines a HeaderHandler and its coressponding hash
+type HeaderInfoHandler interface {
+	GetHeaderHandler() HeaderHandler
+	GetHash() []byte
 }
 
 // ShardHeaderHandler defines getters and setters for the shard block header
@@ -193,7 +200,7 @@ type EpochStartShardDataHandler interface {
 	SetPendingMiniBlockHeaders([]MiniBlockHeaderHandler) error
 }
 
-// EconomicHandler defines setters and getters for Economics
+// EconomicsHandler defines setters and getters for Economics
 type EconomicsHandler interface {
 	GetTotalSupply() *big.Int
 	GetTotalToDistribute() *big.Int
@@ -360,4 +367,10 @@ type UserAccountHandler interface {
 	GetNonce() uint64
 	AddressBytes() []byte
 	IsInterfaceNil() bool
+}
+
+// SlashingProofHandler - contains a proof for a slashing event and can be wrapped in a transaction
+type SlashingProofHandler interface {
+	//GetType - contains the type of slashing detection
+	GetType() slash.SlashingType
 }
