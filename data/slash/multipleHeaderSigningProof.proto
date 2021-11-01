@@ -9,7 +9,8 @@ import "slash.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 message MultipleHeaderSigningProof {
-  repeated bytes           PubKeys = 1;
-  map<string, ThreatLevel> Levels  = 2;
-  map<string, Headers>     Headers = 3 [(gogoproto.nullable) = false];
+  SlashingType             Type    = 1;
+  repeated bytes           PubKeys = 2;
+  map<string, ThreatLevel> Levels  = 3;
+  map<string, Headers>     Headers = 4 [(gogoproto.nullable) = false];
 }
