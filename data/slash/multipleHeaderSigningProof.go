@@ -36,7 +36,7 @@ func (m *MultipleHeaderSigningProof) GetHeaders(pubKey []byte) []data.HeaderInfo
 		return nil
 	}
 
-	ret := make([]data.HeaderInfoHandler, len(headersInfo.Headers))
+	ret := make([]data.HeaderInfoHandler, 0, len(headersInfo.Headers))
 	for _, headerInfo := range headersInfo.GetHeaders() {
 		ret = append(ret, headerInfo)
 	}
@@ -46,7 +46,7 @@ func (m *MultipleHeaderSigningProof) GetHeaders(pubKey []byte) []data.HeaderInfo
 
 func NewMultipleSigningProof(slashResult map[string]SlashingResult) (MultipleSigningProofHandler, error) {
 	if slashResult == nil {
-		return nil, nil //process.ErrNilSlashResult
+		return nil, data.ErrNilSlashResult
 	}
 
 	pubKeys := make([][]byte, 0, len(slashResult))

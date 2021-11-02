@@ -17,7 +17,7 @@ func (m *MultipleHeaderProposalProof) GetHeaders() []data.HeaderInfoHandler {
 	if m == nil {
 		return nil
 	}
-	ret := make([]data.HeaderInfoHandler, len(m.HeadersInfo.Headers))
+	ret := make([]data.HeaderInfoHandler, 0, len(m.HeadersInfo.Headers))
 
 	for _, headerInfo := range m.HeadersInfo.GetHeaders() {
 		ret = append(ret, headerInfo)
@@ -28,10 +28,10 @@ func (m *MultipleHeaderProposalProof) GetHeaders() []data.HeaderInfoHandler {
 
 func NewMultipleProposalProof(slashResult *SlashingResult) (MultipleProposalProofHandler, error) {
 	if slashResult == nil {
-		return nil, nil //process.ErrNilSlashResult
+		return nil, data.ErrNilSlashResult
 	}
 	if slashResult.Headers == nil {
-		return nil, nil //process.ErrNilHeaderHandler
+		return nil, data.ErrNilHeaderHandler
 	}
 
 	headersInfo := block.HeaderInfoList{}
