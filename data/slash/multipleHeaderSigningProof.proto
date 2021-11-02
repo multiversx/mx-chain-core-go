@@ -10,8 +10,7 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/block/headerInfo.proto";
 
 message MultipleHeaderSigningProof {
-  SlashingType                    Type        = 1;
-  repeated bytes                  PubKeys     = 2;
-  map<string, ThreatLevel>        Levels      = 3;
-  map<string, HeaderInfoList>     HeadersInfo = 4 [(gogoproto.nullable) = false];
+  repeated bytes                  PubKeys     = 1;
+  map<string, ThreatLevel>        Levels      = 2;
+  map<string, HeaderInfoList>     HeadersInfo = 3 [(gogoproto.nullable) = false];
 }

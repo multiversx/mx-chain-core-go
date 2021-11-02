@@ -10,3 +10,22 @@ func (m *HeaderInfo) GetHeaderHandler() data.HeaderHandler {
 
 	return m.Header
 }
+
+func (m *HeaderInfoList) SetHeadersInfo(headers []data.HeaderInfoHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	m.Headers = nil
+	for _, header := range headers {
+		headerHandler := header.GetHeaderHandler()
+		hdr, castOk := headerHandler.(*HeaderV2)
+		if !castOk {
+			return data.ErrInvalidTypeAssertion
+		}
+
+		m.Headers = append(m.Headers, &HeaderInfo{Header: hdr, Hash: header.GetHash()})
+	}
+
+	return nil
+}

@@ -10,7 +10,6 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/block/headerInfo.proto";
 
 message MultipleHeaderProposalProof {
-  SlashingType   Type        = 1;
-  ThreatLevel    Level       = 2;
-  HeaderInfoList HeadersInfo = 3 [(gogoproto.nullable) = false];
+  ThreatLevel    Level       = 1;
+  HeaderInfoList HeadersInfo = 2 [(gogoproto.nullable) = false];
 }
