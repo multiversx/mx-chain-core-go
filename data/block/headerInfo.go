@@ -3,6 +3,18 @@ package block
 
 import "github.com/ElrondNetwork/elrond-go-core/data"
 
+func NewHeaderInfo(header data.HeaderHandler, hash []byte) (data.HeaderInfoHandler, error) {
+	hdr, castOk := header.(*HeaderV2)
+	if !castOk {
+		return nil, data.ErrInvalidHeaderType
+	}
+
+	return &HeaderInfo{
+		Header: hdr,
+		Hash:   hash,
+	}, nil
+}
+
 func (m *HeaderInfo) GetHeaderHandler() data.HeaderHandler {
 	if m == nil {
 		return nil
