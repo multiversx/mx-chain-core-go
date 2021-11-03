@@ -29,7 +29,7 @@ func TestNewMultipleProposalProof(t *testing.T) {
 		},
 		{
 			args: func() *slash.SlashingResult {
-				return &slash.SlashingResult{SlashingLevel: slash.Medium, Headers: []data.HeaderInfoHandler{}}
+				return &slash.SlashingResult{SlashingLevel: slash.Medium, Headers: []data.HeaderHandler{}}
 			},
 			expectedErr: nil,
 		},
@@ -42,18 +42,12 @@ func TestNewMultipleProposalProof(t *testing.T) {
 }
 
 func TestMultipleProposalProof_GetHeaders_GetLevel_GetType(t *testing.T) {
-	h1 := &block.HeaderInfo{
-		Header: &block.HeaderV2{Header: &block.Header{TimeStamp: 1}},
-		Hash:   []byte("h1"),
-	}
-	h2 := &block.HeaderInfo{
-		Header: &block.HeaderV2{Header: &block.Header{TimeStamp: 2}},
-		Hash:   []byte("h2"),
-	}
+	h1 := &block.HeaderV2{Header: &block.Header{TimeStamp: 1}}
+	h2 := &block.HeaderV2{Header: &block.Header{TimeStamp: 2}}
 
 	slashRes := &slash.SlashingResult{
 		SlashingLevel: slash.Medium,
-		Headers:       []data.HeaderInfoHandler{h1, h2}}
+		Headers:       []data.HeaderHandler{h1, h2}}
 
 	proof, err := slash.NewMultipleProposalProof(slashRes)
 	require.Nil(t, err)

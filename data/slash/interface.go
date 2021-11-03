@@ -17,7 +17,7 @@ type MultipleProposalProofHandler interface {
 	// multiple colluding parties should have a higher level
 	GetLevel() ThreatLevel
 	//GetHeaders - returns the slashable proposed headers
-	GetHeaders() []data.HeaderInfoHandler
+	GetHeaders() []data.HeaderHandler
 }
 
 // MultipleSigningProofHandler contains proof data for a multiple header signing slashing event
@@ -28,5 +28,5 @@ type MultipleSigningProofHandler interface {
 	// GetLevel - returns the slashing level for a given validator
 	GetLevel(pubKey []byte) ThreatLevel
 	// GetHeaders - returns the slashable signed headers proposed by a given validator
-	GetHeaders(pubKey []byte) []data.HeaderInfoHandler
+	GetHeaders(pubKey []byte) []data.HeaderHandler
 }

@@ -6,5 +6,5 @@ import "github.com/ElrondNetwork/elrond-go-core/data"
 // for a possible malicious validator
 type SlashingResult struct {
 	SlashingLevel ThreatLevel
-	Headers       []data.HeaderInfoHandler
+	Headers       []data.HeaderHandler
 }

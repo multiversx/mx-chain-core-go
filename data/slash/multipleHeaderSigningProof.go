@@ -3,7 +3,6 @@ package slash
 
 import (
 	"github.com/ElrondNetwork/elrond-go-core/data"
-	"github.com/ElrondNetwork/elrond-go-core/data/block"
 )
 
 func (m *MultipleHeaderSigningProof) GetType() SlashingType {
@@ -26,22 +25,17 @@ func (m *MultipleHeaderSigningProof) GetLevel(pubKey []byte) ThreatLevel {
 	return level
 }
 
-func (m *MultipleHeaderSigningProof) GetHeaders(pubKey []byte) []data.HeaderInfoHandler {
+func (m *MultipleHeaderSigningProof) GetHeaders(pubKey []byte) []data.HeaderHandler {
 	if m == nil {
 		return nil
 	}
 
-	headersInfo, exist := m.HeadersInfo[string(pubKey)]
+	headersV2, exist := m.HeadersV2[string(pubKey)]
 	if !exist {
 		return nil
 	}
 
-	ret := make([]data.HeaderInfoHandler, 0, len(headersInfo.Headers))
-	for _, headerInfo := range headersInfo.GetHeaders() {
-		ret = append(ret, headerInfo)
-	}
-
-	return ret
+	return headersV2.GetHeaderHandlers()
 }
 
 func NewMultipleSigningProof(slashResult map[string]SlashingResult) (MultipleSigningProofHandler, error) {
@@ -51,14 +45,14 @@ func NewMultipleSigningProof(slashResult map[string]SlashingResult) (MultipleSig
 
 	pubKeys := make([][]byte, 0, len(slashResult))
 	levels := make(map[string]ThreatLevel, len(slashResult))
-	headers := make(map[string]block.HeaderInfoList, len(slashResult))
+	headers := make(map[string]HeadersV2, len(slashResult))
 
 	for pubKey, res := range slashResult {
 		pubKeys = append(pubKeys, []byte(pubKey))
 		levels[pubKey] = res.SlashingLevel
 
-		tmp := block.HeaderInfoList{}
-		err := tmp.SetHeadersInfo(res.Headers)
+		tmp := HeadersV2{}
+		err := tmp.SetHeaders(res.Headers)
 		if err != nil {
 			return nil, err
 		}
@@ -66,8 +60,8 @@ func NewMultipleSigningProof(slashResult map[string]SlashingResult) (MultipleSig
 	}
 
 	return &MultipleHeaderSigningProof{
-		PubKeys:     pubKeys,
-		Levels:      levels,
-		HeadersInfo: headers,
+		PubKeys:   pubKeys,
+		Levels:    levels,
+		HeadersV2: headers,
 	}, nil
 }

@@ -3,7 +3,6 @@ package slash
 
 import (
 	"github.com/ElrondNetwork/elrond-go-core/data"
-	"github.com/ElrondNetwork/elrond-go-core/data/block"
 )
 
 func (m *MultipleHeaderProposalProof) GetType() SlashingType {
@@ -13,17 +12,12 @@ func (m *MultipleHeaderProposalProof) GetType() SlashingType {
 	return MultipleProposal
 }
 
-func (m *MultipleHeaderProposalProof) GetHeaders() []data.HeaderInfoHandler {
+func (m *MultipleHeaderProposalProof) GetHeaders() []data.HeaderHandler {
 	if m == nil {
 		return nil
 	}
-	ret := make([]data.HeaderInfoHandler, 0, len(m.HeadersInfo.Headers))
 
-	for _, headerInfo := range m.HeadersInfo.GetHeaders() {
-		ret = append(ret, headerInfo)
-	}
-
-	return ret
+	return m.HeadersV2.GetHeaderHandlers()
 }
 
 func NewMultipleProposalProof(slashResult *SlashingResult) (MultipleProposalProofHandler, error) {
@@ -34,13 +28,14 @@ func NewMultipleProposalProof(slashResult *SlashingResult) (MultipleProposalProo
 		return nil, data.ErrNilHeaderHandler
 	}
 
-	headersInfo := block.HeaderInfoList{}
-	err := headersInfo.SetHeadersInfo(slashResult.Headers)
+	headersV2 := HeadersV2{}
+	err := headersV2.SetHeaders(slashResult.Headers)
 	if err != nil {
 		return nil, err
 	}
+
 	return &MultipleHeaderProposalProof{
-		Level:       slashResult.SlashingLevel,
-		HeadersInfo: headersInfo,
+		Level:     slashResult.SlashingLevel,
+		HeadersV2: headersV2,
 	}, nil
 }
