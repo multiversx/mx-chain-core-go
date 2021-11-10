@@ -9,8 +9,7 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data/typeConverters/uint64ByteSlice"
 	"github.com/ElrondNetwork/elrond-go-core/marshal"
 	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
-	factory2 "github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/factory"
-	factory3 "github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/factory"
+	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/factory"
 )
 
 var jsonMarshaller = &marshal.JsonMarshalizer{}
@@ -41,14 +40,29 @@ func main() {
 
 func doAction(server Driver) {
 	fmt.Println("called SaveBlock")
-	server.SaveBlock(&indexer.ArgsSaveBlockData{HeaderHash: []byte("header hash")})
-	server.SaveAccounts(1155, nil)
-	server.FinalizedBlock([]byte("reverted header hash"))
-	server.SaveRoundsInfo(nil)
+	err := server.SaveBlock(&indexer.ArgsSaveBlockData{HeaderHash: []byte("header hash")})
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	err = server.SaveAccounts(1155, nil)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	err = server.FinalizedBlock([]byte("reverted header hash"))
+	if err != nil {
+		fmt.Println(err.Error())
+	}
+
+	err = server.SaveRoundsInfo(nil)
+	if err != nil {
+		fmt.Println(err.Error())
+	}
 }
 
 func createServer() (Driver, error) {
-	factory, err := factory3.NewOutportDriverWebSocketSenderFactory(factory2.OutportDriverWebSocketSenderFactoryArgs{
+	wsFactory, err := factory.NewOutportDriverWebSocketSenderFactory(factory.OutportDriverWebSocketSenderFactoryArgs{
 		Marshaller: jsonMarshaller,
 		WebSocketConfig: data.WebSocketConfig{
 			URL: "127.0.0.1:21111",
@@ -60,5 +74,5 @@ func createServer() (Driver, error) {
 		return nil, err
 	}
 
-	return factory.Create()
+	return wsFactory.Create()
 }

@@ -68,6 +68,7 @@ func (o *outportDriverWebSocketSenderFactory) Create() (Driver, error) {
 			WebsocketSender:          webSocketSender,
 			WebSocketConfig:          data2.WebSocketConfig{},
 			Uint64ByteSliceConverter: o.uint64ByteSliceConverter,
+			Log:                      o.log,
 		},
 	)
 }
