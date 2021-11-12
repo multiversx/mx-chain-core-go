@@ -5,6 +5,7 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data"
 )
 
+// GetType returns MultipleSigning
 func (m *MultipleHeaderSigningProof) GetType() SlashingType {
 	if m == nil {
 		return None
@@ -12,6 +13,7 @@ func (m *MultipleHeaderSigningProof) GetType() SlashingType {
 	return MultipleSigning
 }
 
+// GetLevel returns the ThreatLevel of a possible malicious validator
 func (m *MultipleHeaderSigningProof) GetLevel(pubKey []byte) ThreatLevel {
 	if m == nil {
 		return Low
@@ -25,6 +27,7 @@ func (m *MultipleHeaderSigningProof) GetLevel(pubKey []byte) ThreatLevel {
 	return level
 }
 
+// GetHeaders returns all headers that have been signed by a possible malicious validator
 func (m *MultipleHeaderSigningProof) GetHeaders(pubKey []byte) []data.HeaderHandler {
 	if m == nil {
 		return nil
@@ -38,6 +41,7 @@ func (m *MultipleHeaderSigningProof) GetHeaders(pubKey []byte) []data.HeaderHand
 	return headersV2.GetHeaderHandlers()
 }
 
+// NewMultipleSigningProof returns a MultipleSigningProofHandler from a slashing result
 func NewMultipleSigningProof(slashResult map[string]SlashingResult) (MultipleSigningProofHandler, error) {
 	if slashResult == nil {
 		return nil, data.ErrNilSlashResult

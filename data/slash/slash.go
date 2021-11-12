@@ -6,6 +6,8 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data/block"
 )
 
+// GetHeaderHandlers returns a slice with all data.HeaderHandler.
+// Used so we can work with interfaces instead of defined types
 func (m *HeadersV2) GetHeaderHandlers() []data.HeaderHandler {
 	if m == nil {
 		return nil
@@ -20,6 +22,8 @@ func (m *HeadersV2) GetHeaderHandlers() []data.HeaderHandler {
 	return ret
 }
 
+// SetHeaders sets internal header structs to a given slice of data.HeaderHandler.
+// Used so we can work with interfaces instead of defined types
 func (m *HeadersV2) SetHeaders(headers []data.HeaderHandler) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver

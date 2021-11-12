@@ -5,6 +5,7 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data"
 )
 
+// GetType returns MultipleProposal
 func (m *MultipleHeaderProposalProof) GetType() SlashingType {
 	if m == nil {
 		return None
@@ -12,6 +13,7 @@ func (m *MultipleHeaderProposalProof) GetType() SlashingType {
 	return MultipleProposal
 }
 
+// GetHeaders returns all headers that have been proposed by a possible malicious validator
 func (m *MultipleHeaderProposalProof) GetHeaders() []data.HeaderHandler {
 	if m == nil {
 		return nil
@@ -20,6 +22,7 @@ func (m *MultipleHeaderProposalProof) GetHeaders() []data.HeaderHandler {
 	return m.HeadersV2.GetHeaderHandlers()
 }
 
+// NewMultipleProposalProof returns a MultipleProposalProofHandler from a slashing result
 func NewMultipleProposalProof(slashResult *SlashingResult) (MultipleProposalProofHandler, error) {
 	if slashResult == nil {
 		return nil, data.ErrNilSlashResult

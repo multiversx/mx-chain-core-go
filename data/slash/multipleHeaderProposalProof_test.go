@@ -1,7 +1,6 @@
 package slash_test
 
 import (
-	"fmt"
 	"testing"
 
 	"github.com/ElrondNetwork/elrond-go-core/data"
@@ -55,8 +54,6 @@ func TestMultipleProposalProof_GetHeaders_GetLevel_GetType(t *testing.T) {
 	require.Equal(t, slash.MultipleProposal, proof.GetType())
 	require.Equal(t, slash.Medium, proof.GetLevel())
 
-	x := proof.GetHeaders()
-	fmt.Println(len(x))
 	require.Len(t, proof.GetHeaders(), 2)
 	require.Contains(t, proof.GetHeaders(), h1)
 	require.Contains(t, proof.GetHeaders(), h2)
