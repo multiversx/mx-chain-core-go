@@ -118,3 +118,36 @@ func testCleanTickerResetMightCallTwice(t *testing.T) {
 		fmt.Println("found one extra call")
 	}
 }
+
+func TestCleanTicker_Stop(t *testing.T) {
+	t.Parallel()
+
+	ct := NewCleanTicker(time.Millisecond * 10)
+	ctx, cancel := context.WithCancel(context.Background())
+	defer cancel()
+
+	numCalls := uint32(0)
+
+	go func() {
+		for {
+			select {
+			case <-ctx.Done():
+				return
+			case <-ct.Chan():
+				atomic.AddUint32(&numCalls, 1)
+			}
+		}
+	}()
+
+	time.Sleep(time.Second)
+	ct.Stop()
+	// avoid ambiguity between which one was done first: get or add
+	time.Sleep(time.Millisecond * 100)
+
+	currentCalls := atomic.LoadUint32(&numCalls)
+	time.Sleep(time.Second)
+
+	checkCalls := atomic.LoadUint32(&numCalls)
+
+	require.Equal(t, currentCalls, checkCalls)
+}
