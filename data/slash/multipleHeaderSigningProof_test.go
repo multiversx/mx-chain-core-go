@@ -47,17 +47,19 @@ func TestNewMultipleSigningProof(t *testing.T) {
 func TestMultipleSigningProof_GetHeaders_GetLevel_GetType(t *testing.T) {
 	h1 := &block.HeaderV2{Header: &block.Header{TimeStamp: 1}}
 	h2 := &block.HeaderV2{Header: &block.Header{TimeStamp: 2}}
+	h3 := &block.HeaderV2{Header: &block.Header{TimeStamp: 3}}
 
 	hInfo1 := &dataMock.HeaderInfoStub{Header: h1, Hash: []byte("h1")}
 	hInfo2 := &dataMock.HeaderInfoStub{Header: h2, Hash: []byte("h2")}
+	hInfo3 := &dataMock.HeaderInfoStub{Header: h3, Hash: []byte("h3")}
 
 	slashRes1 := slash.SlashingResult{
-		SlashingLevel: slash.Medium,
-		Headers:       []data.HeaderInfoHandler{hInfo1},
+		SlashingLevel: slash.High,
+		Headers:       []data.HeaderInfoHandler{hInfo1, hInfo2},
 	}
 	slashRes2 := slash.SlashingResult{
-		SlashingLevel: slash.High,
-		Headers:       []data.HeaderInfoHandler{hInfo2},
+		SlashingLevel: slash.Medium,
+		Headers:       []data.HeaderInfoHandler{hInfo3},
 	}
 	slashRes := map[string]slash.SlashingResult{
 		"pubKey1": slashRes1,
@@ -68,16 +70,17 @@ func TestMultipleSigningProof_GetHeaders_GetLevel_GetType(t *testing.T) {
 	require.Nil(t, err)
 
 	require.Equal(t, slash.MultipleSigning, proof.GetType())
-	require.Equal(t, slash.Medium, proof.GetLevel([]byte("pubKey1")))
-	require.Equal(t, slash.High, proof.GetLevel([]byte("pubKey2")))
-	require.Equal(t, slash.Low, proof.GetLevel([]byte("pubKey3")))
+	require.Equal(t, slash.High, proof.GetLevel([]byte("pubKey1")))
+	require.Equal(t, slash.Medium, proof.GetLevel([]byte("pubKey2")))
+	require.Equal(t, slash.Zero, proof.GetLevel([]byte("pubKey3")))
 
-	require.Len(t, proof.GetHeaders([]byte("pubKey1")), 1)
+	require.Len(t, proof.GetHeaders([]byte("pubKey1")), 2)
 	require.Len(t, proof.GetHeaders([]byte("pubKey2")), 1)
 	require.Len(t, proof.GetHeaders([]byte("pubKey3")), 0)
 
-	require.Contains(t, proof.GetHeaders([]byte("pubKey1")), h1)
-	require.Contains(t, proof.GetHeaders([]byte("pubKey2")), h2)
+	require.Equal(t, proof.GetHeaders([]byte("pubKey1"))[0], h1)
+	require.Equal(t, proof.GetHeaders([]byte("pubKey1"))[1], h2)
+	require.Equal(t, proof.GetHeaders([]byte("pubKey2"))[0], h3)
 	require.Nil(t, proof.GetHeaders([]byte("pubKey3")))
 }
 

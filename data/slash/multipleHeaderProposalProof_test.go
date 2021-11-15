@@ -59,8 +59,8 @@ func TestMultipleProposalProof_GetHeaders_GetLevel_GetType(t *testing.T) {
 	require.Equal(t, slash.Medium, proof.GetLevel())
 
 	require.Len(t, proof.GetHeaders(), 2)
-	require.Contains(t, proof.GetHeaders(), h1)
-	require.Contains(t, proof.GetHeaders(), h2)
+	require.Equal(t, proof.GetHeaders()[0], h1)
+	require.Equal(t, proof.GetHeaders()[1], h2)
 }
 
 func TestMultipleHeaderProposalProof_Marshal_Unmarshal(t *testing.T) {

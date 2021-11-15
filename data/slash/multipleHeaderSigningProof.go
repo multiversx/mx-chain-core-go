@@ -18,12 +18,12 @@ func (m *MultipleHeaderSigningProof) GetType() SlashingType {
 // GetLevel returns the ThreatLevel of a possible malicious validator
 func (m *MultipleHeaderSigningProof) GetLevel(pubKey []byte) ThreatLevel {
 	if m == nil {
-		return Low
+		return Zero
 	}
 
 	level, exists := m.Levels[string(pubKey)]
 	if !exists {
-		return Low
+		return Zero
 	}
 
 	return level
