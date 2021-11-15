@@ -10,3 +10,9 @@ var ErrNilUint64ByteSliceConverter = errors.New("nil uint64 byte slice converter
 
 // ErrNilLogger signals that a nil instance of logger has been provided
 var ErrNilLogger = errors.New("nil logger")
+
+// ErrEmptyDataToSend signals that the data that should be sent via websocket is empty
+var ErrEmptyDataToSend = errors.New("empty data to send")
+
+// ErrNoClientToSendTo signals that the list of clients listening to messages is empty
+var ErrNoClientToSendTo = errors.New("no client to send to")

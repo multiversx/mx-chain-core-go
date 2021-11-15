@@ -1,6 +1,7 @@
 package sender
 
 import (
+	"fmt"
 	"net/http"
 	"sync"
 	"time"
@@ -11,8 +12,6 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
 	"github.com/gorilla/websocket"
 )
-
-const retrialTimeoutMS = 50
 
 var (
 	prefixWithAck    = []byte{1}
@@ -25,13 +24,14 @@ type webSocketClient struct {
 }
 
 type webSocketSender struct {
-	log                      core.Logger
+	log core.Logger
+	// TODO: use an interface for http server (or simply provide the URL only) in order to make this component easy testable
 	server                   *http.Server
 	counter                  atomic.Uint64
+	mutCounterOperations     sync.RWMutex
 	uint64ByteSliceConverter Uint64ByteSliceConverter
-	clients                  map[string]*webSocketClient
-	mutClients               sync.RWMutex
-	acknowledges             map[string]map[uint64]struct{}
+	clientsHolder            *websocketClientsHolder
+	acknowledges             map[string]*websocketClientAcknowledgesHolder
 	mutAcknowledges          sync.RWMutex
 	withAcknowledge          bool
 }
@@ -64,8 +64,8 @@ func NewWebSocketSender(args WebSocketSenderArgs) (*webSocketSender, error) {
 		server:                   args.Server,
 		counter:                  atomicCounter,
 		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
-		clients:                  make(map[string]*webSocketClient),
-		acknowledges:             make(map[string]map[uint64]struct{}),
+		clientsHolder:            NewWebsocketClientsHolder(),
+		acknowledges:             make(map[string]*websocketClientAcknowledgesHolder),
 		withAcknowledge:          args.WithAcknowledge,
 	}
 
@@ -74,27 +74,24 @@ func NewWebSocketSender(args WebSocketSenderArgs) (*webSocketSender, error) {
 	return ws, nil
 }
 
+// AddClient will add the client to internal maps and will also start
 func (w *webSocketSender) AddClient(wss WSConn, remoteAddr string) {
 	client := &webSocketClient{
 		conn:       wss,
 		remoteAddr: remoteAddr,
 	}
-	w.mutClients.Lock()
-	w.clients[remoteAddr] = client
-	w.mutClients.Unlock()
+
+	w.clientsHolder.AddClient(client)
 
 	w.mutAcknowledges.Lock()
-	w.acknowledges[remoteAddr] = make(map[uint64]struct{})
+	w.acknowledges[remoteAddr] = NewWebsocketClientAcknowledgesHolder()
 	w.mutAcknowledges.Unlock()
 
+	if !w.withAcknowledge {
+		return
+	}
+
 	go w.handleReceiveAck(client)
-}
-
-func (w *webSocketSender) getClients() map[string]*webSocketClient {
-	w.mutClients.RLock()
-	defer w.mutClients.RUnlock()
-
-	return w.clients
 }
 
 func (w *webSocketSender) handleReceiveAck(client *webSocketClient) {
@@ -102,9 +99,7 @@ func (w *webSocketSender) handleReceiveAck(client *webSocketClient) {
 		mType, message, err := client.conn.ReadMessage()
 		if err != nil {
 			w.log.Error("cannot read message", "remote addr", client.remoteAddr, "error", err)
-			w.mutClients.Lock()
-			delete(w.clients, client.remoteAddr)
-			w.mutClients.Unlock()
+			w.clientsHolder.Remove(client.remoteAddr)
 
 			break
 		}
@@ -114,7 +109,7 @@ func (w *webSocketSender) handleReceiveAck(client *webSocketClient) {
 			continue
 		}
 
-		w.log.Info("received ack", "remote addr", client.remoteAddr, "message", message)
+		w.log.Debug("received ack", "remote addr", client.remoteAddr, "message", message)
 		counter, err := w.uint64ByteSliceConverter.ToUint64(message)
 		if err != nil {
 			w.log.Warn("cannot decode counter: bytes to uint64",
@@ -126,7 +121,7 @@ func (w *webSocketSender) handleReceiveAck(client *webSocketClient) {
 		}
 
 		w.mutAcknowledges.Lock()
-		w.acknowledges[client.remoteAddr][counter] = struct{}{}
+		w.acknowledges[client.remoteAddr].Add(counter)
 		w.mutAcknowledges.Unlock()
 	}
 }
@@ -138,71 +133,58 @@ func (w *webSocketSender) start() {
 	}
 }
 
-func (w *webSocketSender) sendWithRetrial(data []byte, ackData []byte, counter uint64) {
-	clients := w.getClients()
-	if len(clients) == 0 {
-		w.log.Warn("no client to send to")
-	}
-
-	ticker := time.NewTicker(time.Millisecond * retrialTimeoutMS)
-	defer ticker.Stop()
-
-	for {
-		select {
-		case <-ticker.C:
-			clients = w.getClients()
-			if len(clients) == 0 {
-				continue
-			}
-			dataSent := w.sendDataToClients(data, ackData, clients, counter)
-			if dataSent {
-				return
-			}
-		}
-	}
-}
-
 func (w *webSocketSender) sendDataToClients(
 	data []byte,
-	ackData []byte,
-	clients map[string]*webSocketClient,
 	counter uint64,
-) bool {
+) error {
+	numSent := 0
+	var err error
 
-	for _, client := range clients {
-		result := w.sendData(data, ackData, *client, counter)
-		if !result {
-			return false
-		}
+	clients := w.clientsHolder.GetAll()
+	if len(clients) == 0 {
+		return ErrNoClientToSendTo
 	}
 
-	return true
+	for _, client := range w.clientsHolder.GetAll() {
+		err = w.sendData(data, *client, counter)
+		if err != nil {
+			w.log.Error("couldn't send data to client", "error", err)
+			continue
+		}
+
+		numSent++
+	}
+
+	if numSent == 0 {
+		return fmt.Errorf("data wasn't sent to any client. last known error: %w", err)
+	}
+
+	return nil
 }
 
 func (w *webSocketSender) sendData(
 	data []byte,
-	ackData []byte,
 	client webSocketClient,
 	counter uint64,
-) bool {
+) error {
+	if len(data) == 0 {
+		return ErrEmptyDataToSend
+	}
+
 	errSend := client.conn.WriteMessage(websocket.BinaryMessage, data)
 	if errSend != nil {
 		w.log.Warn("could not send data to client", "remote addr", client.remoteAddr, "error", errSend)
-		return false
+		return fmt.Errorf("%w while writing message to client %s", errSend, client.remoteAddr)
 	}
 
-	if len(data) == 0 || len(ackData) == 0 {
-		return false
-	}
-
-	if ackData[0] == prefixWithoutAck[0] {
-		return true
+	if !w.withAcknowledge {
+		return nil
 	}
 
 	// TODO: might refactor this (send to each clients, then wait for all VS send to one client, wait for it, move to next)
 	w.waitForAck(client.remoteAddr, counter)
 
-	return true
+	return nil
 }
 
 func (w *webSocketSender) waitForAck(remoteAddr string, counter uint64) {
@@ -214,9 +196,8 @@ func (w *webSocketSender) waitForAck(remoteAddr string, counter uint64) {
 			return
 		}
 
-		_, ok = acksForAddress[counter]
+		ok = acksForAddress.ProcessAcknowledged(counter)
 		if ok {
-			w.removeAcknowledge(remoteAddr, counter)
 			return
 		}
 
@@ -224,40 +205,22 @@ func (w *webSocketSender) waitForAck(remoteAddr string, counter uint64) {
 	}
 }
 
-func (w *webSocketSender) getAcknowledges() map[string]map[uint64]struct{} {
+func (w *webSocketSender) getAcknowledges() map[string]*websocketClientAcknowledgesHolder {
 	w.mutAcknowledges.RLock()
 	defer w.mutAcknowledges.RUnlock()
 
 	return w.acknowledges
 }
 
-func (w *webSocketSender) addCounterToAcknowledges(remoteAddr string, counter uint64) {
-	w.mutAcknowledges.Lock()
-	_, exists := w.acknowledges[remoteAddr]
-	if exists {
-		w.acknowledges[remoteAddr][counter] = struct{}{}
-		w.mutAcknowledges.Unlock()
-
-		return
-	}
-
-	w.log.Warn("adding counter to non-existing remote addr", "remote addr", remoteAddr, "counter", counter)
-	w.acknowledges[remoteAddr] = make(map[uint64]struct{}) // should never reach here
-}
-
-func (w *webSocketSender) removeAcknowledge(remoteAddr string, counter uint64) {
-	// for a better performance (avoid existing checks), this function relies on the fact that the value exists in the map
-	w.mutAcknowledges.Lock()
-	acks := w.acknowledges[remoteAddr]
-	delete(acks, counter)
-	w.mutAcknowledges.Unlock()
-}
-
-// SendOnRoute will make the request accordingly to the received arguments
-func (w *webSocketSender) SendOnRoute(args data.WsSendArgs) error {
+// Send will make the request accordingly to the received arguments
+func (w *webSocketSender) Send(args data.WsSendArgs) error {
+	w.mutCounterOperations.Lock()
 	assignedCounter := w.counter.Get()
-	w.log.Info("counter", "value", assignedCounter)
 	w.counter.Set(assignedCounter + 1)
+	w.mutCounterOperations.Unlock()
+
+	w.log.Debug("counter", "value", assignedCounter)
+
 	ackData := prefixWithoutAck
 
 	if w.withAcknowledge {
@@ -266,9 +229,7 @@ func (w *webSocketSender) SendOnRoute(args data.WsSendArgs) error {
 
 	newPayload := append(ackData, args.Payload...)
 
-	w.sendWithRetrial(newPayload, ackData, assignedCounter)
-
-	return nil
+	return w.sendDataToClients(newPayload, assignedCounter)
 }
 
 // IsInterfaceNil returns true if there is no value under the interface

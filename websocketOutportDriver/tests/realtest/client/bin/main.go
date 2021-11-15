@@ -10,7 +10,7 @@ import (
 
 var (
 	addr = flag.String("name", "client 0", "-")
-	port = flag.Int("port", 21111, "-")
+	port = flag.Int("port", 21112, "-")
 )
 
 func main() {
@@ -18,6 +18,8 @@ func main() {
 	if err != nil {
 		log.Fatal(err.Error())
 	}
+
+	defer tc.Stop()
 
 	tc.Run(*port)
 }

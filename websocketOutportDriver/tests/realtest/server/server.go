@@ -32,7 +32,7 @@ func main() {
 		case <-timeoutChan:
 			return
 		default:
-			time.Sleep(1 * time.Second)
+			time.Sleep(2 * time.Second)
 			doAction(server)
 		}
 	}
@@ -65,7 +65,7 @@ func createServer() (Driver, error) {
 	wsFactory, err := factory.NewOutportDriverWebSocketSenderFactory(factory.OutportDriverWebSocketSenderFactoryArgs{
 		Marshaller: jsonMarshaller,
 		WebSocketConfig: data.WebSocketConfig{
-			URL: "127.0.0.1:21111",
+			URL: "127.0.0.1:21112",
 		},
 		Uint64ByteSliceConverter: uint64ByteSlice.NewBigEndianConverter(),
 		Log:                      &mock.LoggerMock{},

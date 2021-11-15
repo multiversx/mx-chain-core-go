@@ -18,7 +18,7 @@ func TestNewWebsocketOutportDriverNodePart(t *testing.T) {
 
 	t.Run("nil marshalizer", func(t *testing.T) {
 		args := getMockArgs()
-		args.Marshalizer = nil
+		args.Marshaller = nil
 
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.Nil(t, o)
@@ -61,7 +61,8 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_ErrWhileSendingOnRoute(t *test
 	o, err := NewWebsocketOutportDriverNodePart(args)
 	require.NoError(t, err)
 
-	o.SaveBlock(&indexer.ArgsSaveBlockData{})
+	err = o.SaveBlock(&indexer.ArgsSaveBlockData{})
+	require.NoError(t, err)
 }
 
 func TestWebsocketOutportDriverNodePart_SaveBlock_ShouldWork(t *testing.T) {
@@ -75,7 +76,8 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_ShouldWork(t *testing.T) {
 	o, err := NewWebsocketOutportDriverNodePart(args)
 	require.NoError(t, err)
 
-	o.SaveBlock(&indexer.ArgsSaveBlockData{})
+	err = o.SaveBlock(&indexer.ArgsSaveBlockData{})
+	require.NoError(t, err)
 }
 
 func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
@@ -83,7 +85,7 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 
 	args := getMockArgs()
 
-	marshaledData, _ := args.Marshalizer.Marshal(&indexer.ArgsSaveBlockData{})
+	marshaledData, _ := args.Marshaller.Marshal(&indexer.ArgsSaveBlockData{})
 
 	args.WebsocketSender = &mock.WebSocketSenderStub{
 		SendOnRouteCalled: func(args data.WsSendArgs) error {
@@ -100,13 +102,14 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 	o, err := NewWebsocketOutportDriverNodePart(args)
 	require.NoError(t, err)
 
-	o.SaveBlock(&indexer.ArgsSaveBlockData{})
+	err = o.SaveBlock(&indexer.ArgsSaveBlockData{})
+	require.NoError(t, err)
 }
 
 func getMockArgs() WebsocketOutportDriverNodePartArgs {
 	return WebsocketOutportDriverNodePartArgs{
-		Enabled:     true,
-		Marshalizer: &marshal.JsonMarshalizer{},
+		Enabled:    true,
+		Marshaller: &marshal.JsonMarshalizer{},
 		WebSocketConfig: data.WebSocketConfig{
 			URL: "localhost:5555",
 		},

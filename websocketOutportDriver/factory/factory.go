@@ -6,8 +6,8 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/core"
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
 	"github.com/ElrondNetwork/elrond-go-core/marshal"
-	outportdriverwebsocketsender "github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver"
-	data2 "github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
+	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver"
+	outportData "github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
 	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/sender"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
@@ -17,20 +17,20 @@ const operationsPath = "/operations"
 
 // OutportDriverWebSocketSenderFactoryArgs holds the arguments needed for creating a outportDriverWebSocketSenderFactory
 type OutportDriverWebSocketSenderFactoryArgs struct {
-	WebSocketConfig          data2.WebSocketConfig
+	WebSocketConfig          outportData.WebSocketConfig
 	Marshaller               marshal.Marshalizer
 	Actions                  map[string]struct{}
-	Uint64ByteSliceConverter Uint64ByteSliceConverter
+	Uint64ByteSliceConverter websocketOutportDriver.Uint64ByteSliceConverter
 	Log                      core.Logger
 	WithAcknowledge          bool
 }
 
 type outportDriverWebSocketSenderFactory struct {
-	webSocketConfig          data2.WebSocketConfig
+	webSocketConfig          outportData.WebSocketConfig
 	marshaller               marshal.Marshalizer
-	uint64ByteSliceConverter Uint64ByteSliceConverter
-	withAcknowledge          bool
+	uint64ByteSliceConverter websocketOutportDriver.Uint64ByteSliceConverter
 	log                      core.Logger
+	withAcknowledge          bool
 }
 
 // NewOutportDriverWebSocketSenderFactory will return a new instance of outportDriverWebSocketSenderFactory
@@ -55,25 +55,25 @@ func NewOutportDriverWebSocketSenderFactory(args OutportDriverWebSocketSenderFac
 
 // Create will handle the creation of all the components needed to create an outport driver that sends data over
 // web socket and return it afterwards
-func (o *outportDriverWebSocketSenderFactory) Create() (Driver, error) {
+func (o *outportDriverWebSocketSenderFactory) Create() (websocketOutportDriver.Driver, error) {
 	webSocketSender, err := o.createWebSocketSender()
 	if err != nil {
 		return nil, err
 	}
 
-	return outportdriverwebsocketsender.NewWebsocketOutportDriverNodePart(
-		outportdriverwebsocketsender.WebsocketOutportDriverNodePartArgs{
+	return websocketOutportDriver.NewWebsocketOutportDriverNodePart(
+		websocketOutportDriver.WebsocketOutportDriverNodePartArgs{
 			Enabled:                  false,
-			Marshalizer:              o.marshaller,
+			Marshaller:               o.marshaller,
 			WebsocketSender:          webSocketSender,
-			WebSocketConfig:          data2.WebSocketConfig{},
+			WebSocketConfig:          outportData.WebSocketConfig{},
 			Uint64ByteSliceConverter: o.uint64ByteSliceConverter,
 			Log:                      o.log,
 		},
 	)
 }
 
-func (o *outportDriverWebSocketSenderFactory) createWebSocketSender() (WebSocketSenderHandler, error) {
+func (o *outportDriverWebSocketSenderFactory) createWebSocketSender() (websocketOutportDriver.WebSocketSenderHandler, error) {
 	router := mux.NewRouter()
 	server := &http.Server{
 		Addr:    o.webSocketConfig.URL,
@@ -99,7 +99,7 @@ func (o *outportDriverWebSocketSenderFactory) createWebSocketSender() (WebSocket
 	return webSocketSender, nil
 }
 
-func (o *outportDriverWebSocketSenderFactory) registerRoute(router *mux.Router, webSocketHandler WebSocketSenderHandler, path string) error {
+func (o *outportDriverWebSocketSenderFactory) registerRoute(router *mux.Router, webSocketHandler websocketOutportDriver.WebSocketSenderHandler, path string) error {
 	var upgrader = websocket.Upgrader{
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
@@ -112,7 +112,7 @@ func (o *outportDriverWebSocketSenderFactory) registerRoute(router *mux.Router, 
 
 		ws, errUpgrade := upgrader.Upgrade(w, r, nil)
 		if errUpgrade != nil {
-			o.log.Warn("could not upgrade http connection to sender", "error", errUpgrade)
+			o.log.Warn("could not websocket connection", "remote address", r.RemoteAddr, "error", errUpgrade)
 			return
 		}
 

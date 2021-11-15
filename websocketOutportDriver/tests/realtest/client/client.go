@@ -1,7 +1,6 @@
 package client
 
 import (
-	"bytes"
 	"errors"
 	"fmt"
 	"io"
@@ -13,7 +12,10 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
 	"github.com/ElrondNetwork/elrond-go-core/core/mock"
 	"github.com/ElrondNetwork/elrond-go-core/data/indexer"
+	"github.com/ElrondNetwork/elrond-go-core/data/typeConverters/uint64ByteSlice"
 	"github.com/ElrondNetwork/elrond-go-core/marshal"
+	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver"
+	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
 	"github.com/gorilla/websocket"
 )
 
@@ -25,8 +27,9 @@ type WSConn interface {
 }
 
 var (
-	log              = &mock.LoggerMock{}
-	errNilMarshaller = errors.New("nil marshaller")
+	log                      = &mock.LoggerMock{}
+	errNilMarshaller         = errors.New("nil marshaller")
+	uint64ByteSliceConverter = uint64ByteSlice.NewBigEndianConverter()
 )
 
 type tempClient struct {
@@ -79,15 +82,14 @@ func (tc *tempClient) Run(port int) {
 		}
 	}()
 
-	ticker := time.NewTicker(time.Second)
-	defer ticker.Stop()
+	timer := time.NewTimer(time.Second)
+	defer timer.Stop()
 
 	for {
 		select {
 		case <-done:
 			return
-		case t := <-ticker.C:
-			_ = t
+		case <-timer.C:
 		case <-interrupt:
 			log.Info(tc.name + " -> interrupt")
 
@@ -113,27 +115,21 @@ func (tc *tempClient) verifyPayloadAndSendAckIfNeeded(payload []byte, ackHandler
 		return
 	}
 
-	withAck := false
-	if payload[0] == byte(1) {
-		withAck = true
+	payloadParser, _ := websocketOutportDriver.NewWebSocketPayloadParser(uint64ByteSliceConverter)
+	payloadData, err := payloadParser.ExtractPayloadData(payload)
+	if err != nil {
+		log.Error(tc.name + " -> error while extracting payload data: " + err.Error())
+		return
 	}
 
-	payload = payload[1:]
-	counter := payload[:8]
-	payload = payload[8:]
-	opType := payload[:4]
-	payload = payload[4:]
-	msgLength := payload[:4]
-	payload = payload[4:]
-
 	log.Info(tc.name+" -> processing payload",
-		"counter", counter,
-		"operation type", opType,
-		"message length", msgLength,
-		"data", payload,
+		"counter", payloadData.Counter,
+		"operation type", payloadData.OperationType,
+		"message length", len(payloadData.Payload),
+		"data", payloadData.Payload,
 	)
 
-	if bytes.Compare(opType, []byte{0, 0, 0, 0}) == 0 {
+	if payloadData.OperationType.Uint32() == data.OperationSaveBlock.Uint32() {
 		log.Debug(tc.name + " -> save block operation")
 		var argsBlock indexer.ArgsSaveBlockData
 		err := tc.marshaller.Unmarshal(&argsBlock, payload)
@@ -145,14 +141,16 @@ func (tc *tempClient) verifyPayloadAndSendAckIfNeeded(payload []byte, ackHandler
 
 	}
 
-	if withAck {
-		err := ackHandler.WriteMessage(websocket.BinaryMessage, counter)
+	if payloadData.WithAcknowledge {
+		counterBytes := uint64ByteSliceConverter.ToByteSlice(payloadData.Counter)
+		err := ackHandler.WriteMessage(websocket.BinaryMessage, counterBytes)
 		if err != nil {
 			log.Error(tc.name + " -> " + err.Error())
 		}
 	}
 }
 
+// Stop -
 func (tc *tempClient) Stop() {
 	tc.chanStop <- true
 }
