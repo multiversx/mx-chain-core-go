@@ -2,6 +2,8 @@
 package slash
 
 import (
+	"sort"
+
 	"github.com/ElrondNetwork/elrond-go-core/data"
 )
 
@@ -51,16 +53,16 @@ func NewMultipleSigningProof(slashResult map[string]SlashingResult) (MultipleSig
 	levels := make(map[string]ThreatLevel, len(slashResult))
 	headers := make(map[string]HeadersV2, len(slashResult))
 
-	for pubKey, res := range slashResult {
+	sortedPubKeys := getSortedPubKeys(slashResult)
+	for _, pubKey := range sortedPubKeys {
 		pubKeys = append(pubKeys, []byte(pubKey))
-		levels[pubKey] = res.SlashingLevel
+		levels[pubKey] = slashResult[pubKey].SlashingLevel
 
-		tmp := HeadersV2{}
-		err := tmp.SetHeaders(res.Headers)
+		sortedHeaders, err := getSortedHeadersV2(slashResult[pubKey].Headers)
 		if err != nil {
 			return nil, err
 		}
-		headers[pubKey] = tmp
+		headers[pubKey] = sortedHeaders
 	}
 
 	return &MultipleHeaderSigningProof{
@@ -68,4 +70,15 @@ func NewMultipleSigningProof(slashResult map[string]SlashingResult) (MultipleSig
 		Levels:    levels,
 		HeadersV2: headers,
 	}, nil
+}
+
+func getSortedPubKeys(slashResult map[string]SlashingResult) []string {
+	sortedPubKeys := make([]string, 0, len(slashResult))
+
+	for pubKey := range slashResult {
+		sortedPubKeys = append(sortedPubKeys, pubKey)
+	}
+	sort.Strings(sortedPubKeys)
+
+	return sortedPubKeys
 }

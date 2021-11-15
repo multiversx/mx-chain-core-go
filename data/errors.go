@@ -84,3 +84,12 @@ var ErrNilSlashResult = errors.New("slash result is nil")
 
 // ErrNilHeaderHandler signals that a nil header handler has been provided
 var ErrNilHeaderHandler = errors.New("nil header handler")
+
+// ErrNilHeaderInfoList signals that a nil header info list has been provided
+var ErrNilHeaderInfoList = errors.New("nil header info list")
+
+// ErrNilHeaderInfo signals that a nil header info has been provided
+var ErrNilHeaderInfo = errors.New("nil header info")
+
+// ErrNilHash signals that a nil hash has been provided
+var ErrNilHash = errors.New("nil hash provided")
