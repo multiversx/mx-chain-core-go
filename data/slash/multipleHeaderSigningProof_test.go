@@ -84,6 +84,61 @@ func TestMultipleSigningProof_GetHeaders_GetLevel_GetType(t *testing.T) {
 	require.Nil(t, proof.GetHeaders([]byte("pubKey3")))
 }
 
+func TestMultipleSigningProof_GetProofTxData_EnoughPublicKeysProvided_ExpectError(t *testing.T) {
+	proof := slash.MultipleHeaderSigningProof{}
+
+	proofTxData, err := proof.GetProofTxData()
+	require.Nil(t, proofTxData)
+	require.Equal(t, data.ErrNotEnoughPublicKeysProvided, err)
+}
+
+func TestMultipleSigningProof_GetProofTxData_NotEnoughHeadersProvided_ExpectError(t *testing.T) {
+	proof := slash.MultipleHeaderSigningProof{PubKeys: [][]byte{[]byte("pub key")}}
+
+	proofTxData, err := proof.GetProofTxData()
+	require.Nil(t, proofTxData)
+	require.Equal(t, data.ErrNotEnoughHeadersProvided, err)
+}
+
+func TestMultipleSigningProof_GetProofTxData_NilHeaderHandler_ExpectError(t *testing.T) {
+	proof := slash.MultipleHeaderSigningProof{
+		PubKeys: [][]byte{[]byte("pub key")},
+		HeadersV2: map[string]slash.HeadersV2{
+			"pub key": {Headers: []*block.HeaderV2{nil}},
+		},
+	}
+
+	proofTxData, err := proof.GetProofTxData()
+	require.Nil(t, proofTxData)
+	require.Equal(t, data.ErrNilHeaderHandler, err)
+}
+
+func TestMultipleSigningProof_GetProofTxData(t *testing.T) {
+	round := uint64(1)
+	shardID := uint32(2)
+
+	header := &block.HeaderV2{
+		Header: &block.Header{
+			Round:   round,
+			ShardID: shardID,
+		},
+	}
+	proof := slash.MultipleHeaderSigningProof{
+		PubKeys: [][]byte{[]byte("pub key")},
+		HeadersV2: map[string]slash.HeadersV2{
+			"pub key": {Headers: []*block.HeaderV2{header}},
+		},
+	}
+	expectedProofTxData := &slash.ProofTxData{
+		Round:   round,
+		ShardID: shardID,
+	}
+
+	proofTxData, err := proof.GetProofTxData()
+	require.Equal(t, expectedProofTxData, proofTxData)
+	require.Nil(t, err)
+}
+
 func TestMultipleSigningProof_Marshal_Unmarshal(t *testing.T) {
 	h1 := &block.HeaderV2{Header: &block.Header{TimeStamp: 1}}
 	h2 := &block.HeaderV2{Header: &block.Header{TimeStamp: 2}}

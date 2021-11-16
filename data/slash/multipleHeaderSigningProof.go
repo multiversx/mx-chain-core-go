@@ -45,11 +45,14 @@ func (m *MultipleHeaderSigningProof) GetHeaders(pubKey []byte) []data.HeaderHand
 }
 
 func (m *MultipleHeaderSigningProof) GetProofTxData() (*ProofTxData, error) {
+	if m == nil {
+		return nil, data.ErrNilPointerReceiver
+	}
+
 	pubKeys := m.GetPubKeys()
 	if len(pubKeys) == 0 {
 		return nil, data.ErrNotEnoughPublicKeysProvided
 	}
-
 	pubKey := pubKeys[0]
 	headers := m.GetHeaders(pubKey)
 	if len(headers) == 0 {
