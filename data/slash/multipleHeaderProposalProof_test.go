@@ -63,6 +63,51 @@ func TestMultipleProposalProof_GetHeaders_GetLevel_GetType(t *testing.T) {
 	require.Equal(t, proof.GetHeaders()[1], h2)
 }
 
+func TestMultipleHeaderProposalProof_GetProofTxData_NotEnoughHeaders_ExpectError(t *testing.T) {
+	proof := slash.MultipleHeaderProposalProof{}
+
+	proofTxData, err := proof.GetProofTxData()
+	require.Nil(t, proofTxData)
+	require.Equal(t, data.ErrNotEnoughHeadersProvided, err)
+}
+
+func TestMultipleHeaderProposalProof_GetProofTxData_NilHeader_ExpectError(t *testing.T) {
+	proof := slash.MultipleHeaderProposalProof{
+		HeadersV2: slash.HeadersV2{
+			Headers: []*block.HeaderV2{nil},
+		},
+	}
+
+	proofTxData, err := proof.GetProofTxData()
+	require.Nil(t, proofTxData)
+	require.Equal(t, data.ErrNilHeaderHandler, err)
+}
+
+func TestMultipleHeaderProposalProof_GetProofTxData(t *testing.T) {
+	round := uint64(1)
+	shardID := uint32(2)
+
+	header := &block.HeaderV2{
+		Header: &block.Header{
+			Round:   round,
+			ShardID: shardID,
+		},
+	}
+	proof := slash.MultipleHeaderProposalProof{
+		HeadersV2: slash.HeadersV2{
+			Headers: []*block.HeaderV2{header},
+		},
+	}
+	expectedProofTxData := &slash.ProofTxData{
+		Round:   round,
+		ShardID: shardID,
+	}
+
+	proofTxData, err := proof.GetProofTxData()
+	require.Equal(t, expectedProofTxData, proofTxData)
+	require.Nil(t, err)
+}
+
 func TestMultipleHeaderProposalProof_Marshal_Unmarshal(t *testing.T) {
 	h1 := &block.HeaderV2{Header: &block.Header{TimeStamp: 1, LeaderSignature: []byte("sig1")}}
 	h2 := &block.HeaderV2{Header: &block.Header{TimeStamp: 2, LeaderSignature: []byte("sig2")}}

@@ -24,6 +24,10 @@ func (m *MultipleHeaderProposalProof) GetHeaders() []data.HeaderHandler {
 }
 
 func (m *MultipleHeaderProposalProof) GetProofTxData() (*ProofTxData, error) {
+	if m == nil {
+		return nil, data.ErrNilPointerReceiver
+	}
+
 	headers := m.GetHeaders()
 	if len(headers) == 0 {
 		return nil, data.ErrNotEnoughHeadersProvided
