@@ -93,3 +93,9 @@ var ErrNilHeaderInfo = errors.New("nil header info")
 
 // ErrNilHash signals that a nil hash has been provided
 var ErrNilHash = errors.New("nil hash provided")
+
+// ErrNotEnoughHeadersProvided signals that not enough headers have been provided for a multiple header proof
+var ErrNotEnoughHeadersProvided = errors.New("not enough headers have been provided for a multiple header proof")
+
+// ErrNotEnoughPublicKeysProvided signals that not enough public keys have been provided for a multiple header proof
+var ErrNotEnoughPublicKeysProvided = errors.New("not enough public keys have been provided for a multiple header proof")

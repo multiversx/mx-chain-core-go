@@ -4,6 +4,7 @@ package slash
 import (
 	"sort"
 
+	"github.com/ElrondNetwork/elrond-go-core/core/check"
 	"github.com/ElrondNetwork/elrond-go-core/data"
 )
 
@@ -41,6 +42,27 @@ func (m *MultipleHeaderSigningProof) GetHeaders(pubKey []byte) []data.HeaderHand
 	}
 
 	return headersV2.GetHeaderHandlers()
+}
+
+func (m *MultipleHeaderSigningProof) GetProofTxData() (*ProofTxData, error) {
+	pubKeys := m.GetPubKeys()
+	if len(pubKeys) == 0 {
+		return nil, data.ErrNotEnoughPublicKeysProvided
+	}
+
+	pubKey := pubKeys[0]
+	headers := m.GetHeaders(pubKey)
+	if len(headers) == 0 {
+		return nil, data.ErrNotEnoughHeadersProvided
+	}
+	if check.IfNil(headers[0]) {
+		return nil, data.ErrNilHeaderHandler
+	}
+
+	return &ProofTxData{
+		Round:   headers[0].GetRound(),
+		ShardID: headers[0].GetShardID(),
+	}, nil
 }
 
 // NewMultipleSigningProof returns a MultipleSigningProofHandler from a slashing result

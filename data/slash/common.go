@@ -14,6 +14,13 @@ type SlashingResult struct {
 	Headers       []data.HeaderInfoHandler
 }
 
+// ProofTxData represents necessary data to be used in a slashing commitment proof tx by a slashing notifier.
+// Each field is required to be added in a transaction.data field
+type ProofTxData struct {
+	Round   uint64
+	ShardID uint32
+}
+
 func getSortedHeadersV2(headersInfo []data.HeaderInfoHandler) (HeadersV2, error) {
 	if headersInfo == nil {
 		return HeadersV2{}, data.ErrNilHeaderInfoList

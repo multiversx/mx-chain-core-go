@@ -8,6 +8,8 @@ import (
 type SlashingProofHandler interface {
 	//GetType - contains the type of slashing detection
 	GetType() SlashingType
+	// GetProofTxData extracts proof tx data(see ProofTxData) from a slashing proof
+	GetProofTxData() (*ProofTxData, error)
 }
 
 // MultipleProposalProofHandler contains proof data for a multiple header proposal slashing event

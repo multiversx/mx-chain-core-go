@@ -2,6 +2,7 @@
 package slash
 
 import (
+	"github.com/ElrondNetwork/elrond-go-core/core/check"
 	"github.com/ElrondNetwork/elrond-go-core/data"
 )
 
@@ -20,6 +21,21 @@ func (m *MultipleHeaderProposalProof) GetHeaders() []data.HeaderHandler {
 	}
 
 	return m.HeadersV2.GetHeaderHandlers()
+}
+
+func (m *MultipleHeaderProposalProof) GetProofTxData() (*ProofTxData, error) {
+	headers := m.GetHeaders()
+	if len(headers) == 0 {
+		return nil, data.ErrNotEnoughHeadersProvided
+	}
+	if check.IfNil(headers[0]) {
+		return nil, data.ErrNilHeaderHandler
+	}
+
+	return &ProofTxData{
+		Round:   headers[0].GetRound(),
+		ShardID: headers[0].GetShardID(),
+	}, nil
 }
 
 // NewMultipleProposalProof returns a MultipleProposalProofHandler from a slashing result
