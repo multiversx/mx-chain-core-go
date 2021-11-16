@@ -138,7 +138,6 @@ func (tc *tempClient) verifyPayloadAndSendAckIfNeeded(payload []byte, ackHandler
 		} else {
 			log.Info(tc.name+" -> successfully unmarshalled block", "hash", argsBlock.HeaderHash)
 		}
-
 	}
 
 	if payloadData.WithAcknowledge {

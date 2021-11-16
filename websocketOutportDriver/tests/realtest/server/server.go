@@ -39,7 +39,6 @@ func main() {
 }
 
 func doAction(server Driver) {
-	fmt.Println("called SaveBlock")
 	err := server.SaveBlock(&indexer.ArgsSaveBlockData{HeaderHash: []byte("header hash")})
 	if err != nil {
 		fmt.Println(err.Error())

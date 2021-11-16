@@ -222,12 +222,12 @@ func (w *webSocketSender) Send(args data.WsSendArgs) error {
 	w.log.Debug("counter", "value", assignedCounter)
 
 	ackData := prefixWithoutAck
-
 	if w.withAcknowledge {
-		ackData = append(prefixWithAck, w.uint64ByteSliceConverter.ToByteSlice(assignedCounter)...)
+		ackData = prefixWithAck
 	}
 
-	newPayload := append(ackData, args.Payload...)
+	newPayload := append(ackData, w.uint64ByteSliceConverter.ToByteSlice(assignedCounter)...)
+	newPayload = append(newPayload, args.Payload...)
 
 	return w.sendDataToClients(newPayload, assignedCounter)
 }

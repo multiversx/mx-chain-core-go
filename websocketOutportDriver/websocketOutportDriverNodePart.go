@@ -148,8 +148,11 @@ func (o *websocketOutportDriverNodePart) handleAction(args interface{}, operatio
 
 func (o *websocketOutportDriverNodePart) preparePayload(operation outportSenderData.OperationType, data []byte) []byte {
 	opBytes := o.uint64ByteSliceConverter.ToByteSlice(uint64(operation.Uint32()))
+	opBytes = opBytes[uint32NumBytes:]
+
 	messageLength := uint32(len(data))
 	messageLengthBytes := o.uint64ByteSliceConverter.ToByteSlice(uint64(messageLength))
+	messageLengthBytes = messageLengthBytes[uint32NumBytes:]
 
 	payload := append(opBytes, messageLengthBytes...)
 	payload = append(payload, data...)
