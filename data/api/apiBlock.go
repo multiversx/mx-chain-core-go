@@ -81,8 +81,9 @@ type DelegatedValue struct {
 
 // Delegator holds the delegator address and the slice of delegated values
 type Delegator struct {
-	DelegatorAddress string            `json:"delegatorAddress"`
-	DelegatedTo      []*DelegatedValue `json:"delegatedTo"`
+	DelegatorAddress string               `json:"delegatorAddress"`
+	DelegatedTo         []*DelegatedValue `json:"delegatedTo"`
+	Total               string            `json:"total"`
 	UnclaimedTotal      string            `json:"unclaimedTotal"`
 	UndelegatedTotal    string            `json:"undelegatedTotal"`
 	TotalAsBigInt       *big.Int          `json:"-"`
