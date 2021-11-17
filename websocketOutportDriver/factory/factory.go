@@ -1,7 +1,9 @@
 package factory
 
 import (
+	"context"
 	"net/http"
+	"time"
 
 	"github.com/ElrondNetwork/elrond-go-core/core"
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
@@ -56,7 +58,8 @@ func NewOutportDriverWebSocketSenderFactory(args OutportDriverWebSocketSenderFac
 // Create will handle the creation of all the components needed to create an outport driver that sends data over
 // web socket and return it afterwards
 func (o *outportDriverWebSocketSenderFactory) Create() (websocketOutportDriver.Driver, error) {
-	webSocketSender, err := o.createWebSocketSender()
+	chanStop := make(chan struct{})
+	webSocketSender, err := o.createWebSocketSender(chanStop)
 	if err != nil {
 		return nil, err
 	}
@@ -69,22 +72,35 @@ func (o *outportDriverWebSocketSenderFactory) Create() (websocketOutportDriver.D
 			WebSocketConfig:          outportData.WebSocketConfig{},
 			Uint64ByteSliceConverter: o.uint64ByteSliceConverter,
 			Log:                      o.log,
+			ChanStop:                 chanStop,
 		},
 	)
 }
 
-func (o *outportDriverWebSocketSenderFactory) createWebSocketSender() (websocketOutportDriver.WebSocketSenderHandler, error) {
+func (o *outportDriverWebSocketSenderFactory) createWebSocketSender(chanStop chan struct{}) (websocketOutportDriver.WebSocketSenderHandler, error) {
 	router := mux.NewRouter()
 	server := &http.Server{
 		Addr:    o.webSocketConfig.URL,
 		Handler: router,
 	}
 
+	go func() {
+		select {
+		case <-chanStop:
+			o.log.Info("closing the http server due to received signal")
+			ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+			err := server.Shutdown(ctx)
+			o.log.LogIfError(err)
+			cancel()
+		}
+	}()
+
 	webSocketSenderArgs := sender.WebSocketSenderArgs{
 		Server:                   server,
 		Uint64ByteSliceConverter: o.uint64ByteSliceConverter,
 		WithAcknowledge:          o.withAcknowledge,
 		Log:                      o.log,
+		ChanStop:                 chanStop,
 	}
 	webSocketSender, err := sender.NewWebSocketSender(webSocketSenderArgs)
 	if err != nil {

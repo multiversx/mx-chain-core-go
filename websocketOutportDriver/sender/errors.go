@@ -16,3 +16,6 @@ var ErrEmptyDataToSend = errors.New("empty data to send")
 
 // ErrNoClientToSendTo signals that the list of clients listening to messages is empty
 var ErrNoClientToSendTo = errors.New("no client to send to")
+
+// ErrNilStopChannel signals that the stoppage channel provided is nil
+var ErrNilStopChannel = errors.New("nil stoppage channel")
