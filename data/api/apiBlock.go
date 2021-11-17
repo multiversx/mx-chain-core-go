@@ -68,11 +68,14 @@ type DirectStakedValue struct {
 	BaseStaked string `json:"baseStaked"`
 	TopUp      string `json:"topUp"`
 	Total      string `json:"total"`
+	Unstaked   string `json:"unstaked"`
 }
 
 // DelegatedValue holds the value and the delegation system SC address
 type DelegatedValue struct {
 	DelegationScAddress string `json:"delegationScAddress"`
+	UnclaimedRewards    string `json:"unclaimedRewards"`
+	UndelegatedValue    string `json:"undelegatedValue"`
 	Value               string `json:"value"`
 }
 
@@ -80,6 +83,16 @@ type DelegatedValue struct {
 type Delegator struct {
 	DelegatorAddress string            `json:"delegatorAddress"`
 	DelegatedTo      []*DelegatedValue `json:"delegatedTo"`
-	Total            string            `json:"total"`
-	TotalAsBigInt    *big.Int          `json:"-"`
+	UnclaimedTotal      string            `json:"unclaimedTotal"`
+	UndelegatedTotal    string            `json:"undelegatedTotal"`
+	TotalAsBigInt       *big.Int          `json:"-"`
+	UnclaimedAsBigInt   *big.Int          `json:"-"`
+	UndelegatedAsBigInt *big.Int          `json:"-"`
+}
+
+// Account holds the balance and relevant info for an account listing
+type Account struct {
+	Address         string   `json:"address"`
+	Balance         string   `json:"balance"`
+	BalanceAsBigInt *big.Int `json:"-"`
 }
