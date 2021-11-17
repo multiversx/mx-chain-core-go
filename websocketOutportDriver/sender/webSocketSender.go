@@ -3,7 +3,6 @@ package sender
 import (
 	"fmt"
 	"net/http"
-	"strings"
 	"sync"
 	"time"
 
@@ -34,7 +33,6 @@ type webSocketSender struct {
 	clientsHolder            *websocketClientsHolder
 	acknowledges             map[string]*websocketClientAcknowledgesHolder
 	mutAcknowledges          sync.RWMutex
-	chanStop                 chan struct{}
 	withAcknowledge          bool
 }
 
@@ -42,9 +40,8 @@ type webSocketSender struct {
 type WebSocketSenderArgs struct {
 	Server                   *http.Server
 	Uint64ByteSliceConverter Uint64ByteSliceConverter
-	Log                      core.Logger
-	ChanStop                 chan struct{}
 	WithAcknowledge          bool
+	Log                      core.Logger
 }
 
 // NewWebSocketSender returns a new instance of webSocketSender
@@ -58,9 +55,6 @@ func NewWebSocketSender(args WebSocketSenderArgs) (*webSocketSender, error) {
 	if check.IfNil(args.Log) {
 		return nil, ErrNilLogger
 	}
-	if args.ChanStop == nil {
-		return nil, ErrNilStopChannel
-	}
 
 	atomicCounter := atomic.Uint64{}
 	atomicCounter.Set(0)
@@ -73,7 +67,6 @@ func NewWebSocketSender(args WebSocketSenderArgs) (*webSocketSender, error) {
 		clientsHolder:            NewWebsocketClientsHolder(),
 		acknowledges:             make(map[string]*websocketClientAcknowledgesHolder),
 		withAcknowledge:          args.WithAcknowledge,
-		chanStop:                 args.ChanStop,
 	}
 
 	go ws.start()
@@ -103,13 +96,6 @@ func (w *webSocketSender) AddClient(wss WSConn, remoteAddr string) {
 
 func (w *webSocketSender) handleReceiveAck(client *webSocketClient) {
 	for {
-		select {
-		case <-w.chanStop:
-			w.log.Info("received the signal to stop receiving acknowledges", "remote addr", client.remoteAddr)
-			w.log.LogIfError(client.conn.Close())
-			return
-		default:
-		}
 		mType, message, err := client.conn.ReadMessage()
 		if err != nil {
 			w.log.Error("cannot read message", "remote addr", client.remoteAddr, "error", err)
@@ -142,7 +128,7 @@ func (w *webSocketSender) handleReceiveAck(client *webSocketClient) {
 
 func (w *webSocketSender) start() {
 	err := w.server.ListenAndServe()
-	if err != nil && !strings.Contains(err.Error(), "http: Server closed") {
+	if err != nil {
 		w.log.Error("could not initialize webserver", "error", err)
 	}
 }

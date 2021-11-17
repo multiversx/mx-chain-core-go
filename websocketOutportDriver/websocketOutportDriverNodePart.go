@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/ElrondNetwork/elrond-go-core/core"
-	"github.com/ElrondNetwork/elrond-go-core/core/atomic"
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
 	"github.com/ElrondNetwork/elrond-go-core/data"
 	"github.com/ElrondNetwork/elrond-go-core/data/indexer"
@@ -19,7 +18,6 @@ type WebsocketOutportDriverNodePartArgs struct {
 	WebsocketSender          WebSocketSenderHandler
 	WebSocketConfig          outportSenderData.WebSocketConfig
 	Uint64ByteSliceConverter Uint64ByteSliceConverter
-	ChanStop                 chan struct{}
 	Log                      core.Logger
 }
 
@@ -28,8 +26,6 @@ type websocketOutportDriverNodePart struct {
 	log                      core.Logger
 	uint64ByteSliceConverter Uint64ByteSliceConverter
 	webSocketSender          WebSocketSenderHandler
-	chanStop                 chan struct{}
-	isClosed                 atomic.Flag
 }
 
 // NewWebsocketOutportDriverNodePart will create a new instance of websocketOutportDriverNodePart
@@ -46,20 +42,12 @@ func NewWebsocketOutportDriverNodePart(args WebsocketOutportDriverNodePartArgs) 
 	if check.IfNil(args.Log) {
 		return nil, ErrNilLogger
 	}
-	if args.ChanStop == nil {
-		return nil, ErrNilStopChannel
-	}
-
-	isClosed := atomic.Flag{}
-	isClosed.Toggle(false)
 
 	return &websocketOutportDriverNodePart{
 		marshalizer:              args.Marshaller,
 		webSocketSender:          args.WebsocketSender,
 		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
 		log:                      args.Log,
-		chanStop:                 args.ChanStop,
-		isClosed:                 isClosed,
 	}, nil
 }
 
@@ -128,8 +116,7 @@ func (o *websocketOutportDriverNodePart) FinalizedBlock(headerHash []byte) error
 
 // Close will handle the closing of the outport driver web socket sender
 func (o *websocketOutportDriverNodePart) Close() error {
-	o.chanStop <- struct{}{}
-	o.isClosed.Toggle(true)
+	// TODO: close the web socket here
 	return nil
 }
 
@@ -139,10 +126,6 @@ func (o *websocketOutportDriverNodePart) IsInterfaceNil() bool {
 }
 
 func (o *websocketOutportDriverNodePart) handleAction(args interface{}, operation outportSenderData.OperationType) error {
-	if o.isClosed.IsSet() {
-		return ErrServerIsClosed
-	}
-
 	marshaledBlock, err := o.marshalizer.Marshal(args)
 	if err != nil {
 		o.log.Error("cannot marshal block", "operation", operation.String(), "error", err)
