@@ -1,13 +1,14 @@
 package sender
 
 import (
+	"context"
 	"fmt"
 	"net/http"
-	"sync"
+	"strings"
+	"sync/atomic"
 	"time"
 
 	"github.com/ElrondNetwork/elrond-go-core/core"
-	"github.com/ElrondNetwork/elrond-go-core/core/atomic"
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
 	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
 	"github.com/gorilla/websocket"
@@ -27,12 +28,10 @@ type webSocketSender struct {
 	log core.Logger
 	// TODO: use an interface for http server (or simply provide the URL only) in order to make this component easy testable
 	server                   *http.Server
-	counter                  atomic.Uint64
-	mutCounterOperations     sync.RWMutex
+	counter                  uint64
 	uint64ByteSliceConverter Uint64ByteSliceConverter
 	clientsHolder            *websocketClientsHolder
-	acknowledges             map[string]*websocketClientAcknowledgesHolder
-	mutAcknowledges          sync.RWMutex
+	acknowledges             *acknowledgesHolder
 	withAcknowledge          bool
 }
 
@@ -56,16 +55,13 @@ func NewWebSocketSender(args WebSocketSenderArgs) (*webSocketSender, error) {
 		return nil, ErrNilLogger
 	}
 
-	atomicCounter := atomic.Uint64{}
-	atomicCounter.Set(0)
-
 	ws := &webSocketSender{
 		log:                      args.Log,
 		server:                   args.Server,
-		counter:                  atomicCounter,
+		counter:                  0,
 		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
 		clientsHolder:            NewWebsocketClientsHolder(),
-		acknowledges:             make(map[string]*websocketClientAcknowledgesHolder),
+		acknowledges:             NewAcknowledgesHolder(),
 		withAcknowledge:          args.WithAcknowledge,
 	}
 
@@ -83,9 +79,7 @@ func (w *webSocketSender) AddClient(wss WSConn, remoteAddr string) {
 
 	w.clientsHolder.AddClient(client)
 
-	w.mutAcknowledges.Lock()
-	w.acknowledges[remoteAddr] = NewWebsocketClientAcknowledgesHolder()
-	w.mutAcknowledges.Unlock()
+	w.acknowledges.AddEntryForClient(remoteAddr)
 
 	if !w.withAcknowledge {
 		return
@@ -120,15 +114,13 @@ func (w *webSocketSender) handleReceiveAck(client *webSocketClient) {
 			continue
 		}
 
-		w.mutAcknowledges.Lock()
-		w.acknowledges[client.remoteAddr].Add(counter)
-		w.mutAcknowledges.Unlock()
+		w.acknowledges.AddReceivedAcknowledge(client.remoteAddr, counter)
 	}
 }
 
 func (w *webSocketSender) start() {
 	err := w.server.ListenAndServe()
-	if err != nil {
+	if err != nil && !strings.Contains(err.Error(), "http: Server closed") {
 		w.log.Error("could not initialize webserver", "error", err)
 	}
 }
@@ -189,8 +181,7 @@ func (w *webSocketSender) sendData(
 
 func (w *webSocketSender) waitForAck(remoteAddr string, counter uint64) {
 	for {
-		acknowledges := w.getAcknowledges()
-		acksForAddress, ok := acknowledges[remoteAddr]
+		acksForAddress, ok := w.acknowledges.GetAcknowledgesOfAddress(remoteAddr)
 		if !ok {
 			w.log.Warn("waiting acknowledge for an address that isn't present anymore in clients map", "remote addr", remoteAddr)
 			return
@@ -205,19 +196,9 @@ func (w *webSocketSender) waitForAck(remoteAddr string, counter uint64) {
 	}
 }
 
-func (w *webSocketSender) getAcknowledges() map[string]*websocketClientAcknowledgesHolder {
-	w.mutAcknowledges.RLock()
-	defer w.mutAcknowledges.RUnlock()
-
-	return w.acknowledges
-}
-
 // Send will make the request accordingly to the received arguments
 func (w *webSocketSender) Send(args data.WsSendArgs) error {
-	w.mutCounterOperations.Lock()
-	assignedCounter := w.counter.Get()
-	w.counter.Set(assignedCounter + 1)
-	w.mutCounterOperations.Unlock()
+	assignedCounter := atomic.AddUint64(&w.counter, 1)
 
 	w.log.Debug("counter", "value", assignedCounter)
 
@@ -230,6 +211,24 @@ func (w *webSocketSender) Send(args data.WsSendArgs) error {
 	newPayload = append(newPayload, args.Payload...)
 
 	return w.sendDataToClients(newPayload, assignedCounter)
+}
+
+// Close will close the server and the connections with the clients
+func (w *webSocketSender) Close() error {
+	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
+	defer cancel()
+
+	err := w.server.Shutdown(ctx)
+	if err != nil {
+		w.log.Error("cannot close the server", "error", err)
+	}
+
+	for _, client := range w.clientsHolder.GetAll() {
+		err = client.conn.Close()
+		w.log.LogIfError(err)
+	}
+
+	return nil
 }
 
 // IsInterfaceNil returns true if there is no value under the interface

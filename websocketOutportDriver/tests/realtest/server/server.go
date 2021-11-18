@@ -23,14 +23,21 @@ func main() {
 
 	timeoutChan := make(chan bool)
 	go func(tChan chan bool) {
-		time.Sleep(5 * time.Minute)
+		time.Sleep(1 * time.Minute)
 		tChan <- true
 	}(timeoutChan)
+
+	funcCloseServer := func() {
+		err = server.Close()
+		if err != nil {
+			fmt.Println(err.Error())
+		}
+	}
 
 	for {
 		select {
 		case <-timeoutChan:
-			return
+			funcCloseServer()
 		default:
 			time.Sleep(2 * time.Second)
 			doAction(server)
@@ -68,6 +75,7 @@ func createServer() (Driver, error) {
 		},
 		Uint64ByteSliceConverter: uint64ByteSlice.NewBigEndianConverter(),
 		Log:                      &mock.LoggerMock{},
+		WithAcknowledge:          true,
 	})
 	if err != nil {
 		return nil, err

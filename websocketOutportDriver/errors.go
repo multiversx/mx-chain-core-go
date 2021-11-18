@@ -13,3 +13,6 @@ var ErrNilUint64ByteSliceConverter = errors.New("nil uint64 byte slice converter
 
 // ErrNilLogger signals that a nil logger instance has been provided
 var ErrNilLogger = errors.New("nil logger")
+
+// ErrServerIsClosed signals that the server was closed while trying to perform actions
+var ErrServerIsClosed = errors.New("server is closed")

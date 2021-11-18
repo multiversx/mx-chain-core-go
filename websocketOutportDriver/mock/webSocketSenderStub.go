@@ -9,6 +9,7 @@ import (
 type WebSocketSenderStub struct {
 	SendOnRouteCalled func(args data.WsSendArgs) error
 	AddClientCalled   func(wss sender.WSConn, remoteAddr string)
+	CloseCalled       func() error
 }
 
 // AddClient -
@@ -18,10 +19,19 @@ func (w *WebSocketSenderStub) AddClient(wss sender.WSConn, remoteAddr string) {
 	}
 }
 
-// SendOnRoute -
+// Send -
 func (w *WebSocketSenderStub) Send(args data.WsSendArgs) error {
 	if w.SendOnRouteCalled != nil {
 		return w.SendOnRouteCalled(args)
+	}
+
+	return nil
+}
+
+// Close -
+func (w *WebSocketSenderStub) Close() error {
+	if w.CloseCalled != nil {
+		return w.CloseCalled()
 	}
 
 	return nil

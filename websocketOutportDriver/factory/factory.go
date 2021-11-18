@@ -112,7 +112,7 @@ func (o *outportDriverWebSocketSenderFactory) registerRoute(router *mux.Router, 
 
 		ws, errUpgrade := upgrader.Upgrade(w, r, nil)
 		if errUpgrade != nil {
-			o.log.Warn("could not websocket connection", "remote address", r.RemoteAddr, "error", errUpgrade)
+			o.log.Warn("could not update websocket connection", "remote address", r.RemoteAddr, "error", errUpgrade)
 			return
 		}
 

@@ -25,6 +25,7 @@ type Driver interface {
 type WebSocketSenderHandler interface {
 	Send(args outportSenderData.WsSendArgs) error
 	AddClient(wss sender.WSConn, remoteAddr string)
+	Close() error
 	IsInterfaceNil() bool
 }
 
