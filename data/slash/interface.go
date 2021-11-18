@@ -6,8 +6,6 @@ import (
 
 // SlashingProofHandler - contains a proof for a slashing event and can be wrapped in a transaction
 type SlashingProofHandler interface {
-	//GetType - contains the type of slashing detection
-	GetType() SlashingType
 	// GetProofTxData extracts proof tx data(see ProofTxData) from a slashing proof
 	GetProofTxData() (*ProofTxData, error)
 }

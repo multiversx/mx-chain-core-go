@@ -19,7 +19,20 @@ type SlashingResult struct {
 type ProofTxData struct {
 	Round   uint64
 	ShardID uint32
+	ProofID ProofID
 }
+
+type ProofID byte
+
+// Used by slashing notifier to create a slashing transaction
+// from a proof. Each transaction identifies a different
+// slashing event based on this ID
+const (
+	// MultipleProposalProofID = MultipleProposal's ID
+	MultipleProposalProofID ProofID = 0x1
+	// MultipleSigningProofID = MultipleSigning's ID
+	MultipleSigningProofID ProofID = 0x2
+)
 
 func getSortedHeadersV2(headersInfo []data.HeaderInfoHandler) (HeadersV2, error) {
 	if headersInfo == nil {

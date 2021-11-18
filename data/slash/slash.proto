@@ -8,12 +8,6 @@ option (gogoproto.stable_marshaler_all) = true;
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/block/blockV2.proto";
 
-enum SlashingType {
-  None             = 0;
-  MultipleProposal = 1;
-  MultipleSigning  = 2;
-}
-
 enum ThreatLevel {
   Zero   = 0;
   Low    = 1;

@@ -69,7 +69,6 @@ func TestMultipleSigningProof_GetHeaders_GetLevel_GetType(t *testing.T) {
 	proof, err := slash.NewMultipleSigningProof(slashRes)
 	require.Nil(t, err)
 
-	require.Equal(t, slash.MultipleSigning, proof.GetType())
 	require.Equal(t, slash.High, proof.GetLevel([]byte("pubKey1")))
 	require.Equal(t, slash.Medium, proof.GetLevel([]byte("pubKey2")))
 	require.Equal(t, slash.Zero, proof.GetLevel([]byte("pubKey3")))
@@ -132,6 +131,7 @@ func TestMultipleSigningProof_GetProofTxData(t *testing.T) {
 	expectedProofTxData := &slash.ProofTxData{
 		Round:   round,
 		ShardID: shardID,
+		ProofID: slash.MultipleSigningProofID,
 	}
 
 	proofTxData, err := proof.GetProofTxData()

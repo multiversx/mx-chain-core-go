@@ -40,7 +40,7 @@ func TestNewMultipleProposalProof(t *testing.T) {
 	}
 }
 
-func TestMultipleProposalProof_GetHeaders_GetLevel_GetType(t *testing.T) {
+func TestMultipleProposalProof_GetHeaders_GetLevel(t *testing.T) {
 	h1 := &block.HeaderV2{Header: &block.Header{TimeStamp: 1}}
 	h2 := &block.HeaderV2{Header: &block.Header{TimeStamp: 2}}
 
@@ -54,8 +54,6 @@ func TestMultipleProposalProof_GetHeaders_GetLevel_GetType(t *testing.T) {
 
 	proof, err := slash.NewMultipleProposalProof(slashRes)
 	require.Nil(t, err)
-
-	require.Equal(t, slash.MultipleProposal, proof.GetType())
 	require.Equal(t, slash.Medium, proof.GetLevel())
 
 	require.Len(t, proof.GetHeaders(), 2)
@@ -101,6 +99,7 @@ func TestMultipleHeaderProposalProof_GetProofTxData(t *testing.T) {
 	expectedProofTxData := &slash.ProofTxData{
 		Round:   round,
 		ShardID: shardID,
+		ProofID: slash.MultipleProposalProofID,
 	}
 
 	proofTxData, err := proof.GetProofTxData()
