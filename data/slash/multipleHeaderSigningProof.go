@@ -7,6 +7,8 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data"
 )
 
+const byteSize = 8
+
 // GetPubKeys - returns all validator's public keys which have signed multiple headers
 func (m *MultipleHeaderSigningProof) GetPubKeys() [][]byte {
 	if m == nil {
@@ -108,7 +110,7 @@ func NewMultipleSigningProof(slashResult map[string]SlashingResult) (MultipleSig
 	}
 
 	signersSlashData := make(map[string]SignerSlashingData)
-	bitMapLen := len(sortedHeaders)/8 + 1
+	bitMapLen := len(sortedHeaders)/byteSize + 1
 	for pubKey, res := range slashResult {
 		bitmap := make([]byte, bitMapLen)
 		for _, header := range res.Headers {
