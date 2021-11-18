@@ -24,7 +24,7 @@ func TestNewMultipleSigningProof(t *testing.T) {
 			args: map[string]slash.SlashingResult{
 				"pubKey": {Headers: nil},
 			},
-			expectedErr: data.ErrNilHeaderInfoList,
+			expectedErr: nil, //data.ErrNilHeaderInfoList,
 		},
 		{
 			args: map[string]slash.SlashingResult{
@@ -107,14 +107,12 @@ func TestMultipleSigningProof_GetProofTxData_NotEnoughHeadersProvided_ExpectErro
 }
 
 func TestMultipleSigningProof_GetProofTxData_NilHeaderHandler_ExpectError(t *testing.T) {
-	slashResPubKey1 := slash.SlashingResult{
-		SlashingLevel: slash.High,
-		Headers:       []data.HeaderInfoHandler{nil},
+	proof := &slash.MultipleHeaderSigningProof{
+		HeadersV2: slash.HeadersV2{Headers: []*block.HeaderV2{nil}},
+		SignersSlashData: map[string]slash.SignerSlashingData{
+			"pubKey1": {SignedHeadersBitMap: []byte{0x1}},
+		},
 	}
-	slashRes := map[string]slash.SlashingResult{
-		"pubKey1": slashResPubKey1,
-	}
-	proof, _ := slash.NewMultipleSigningProof(slashRes)
 
 	proofTxData, err := proof.GetProofTxData()
 	require.Nil(t, proofTxData)

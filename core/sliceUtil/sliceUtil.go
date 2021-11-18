@@ -23,3 +23,15 @@ func IsIndexSetInBitmap(index uint32, bitmap []byte) bool {
 	mask := uint8(1 << bitPos)
 	return (byteInMap & mask) != 0
 }
+
+func SetIndexInBitmap(index uint32, bitmap []byte) {
+	indexOutOfBounds := index >= uint32(len(bitmap))*8
+	if indexOutOfBounds {
+		return
+	}
+
+	bytePos := index / 8
+	bitPos := index % 8
+	mask := uint8(1 << bitPos)
+	bitmap[bytePos] |= mask
+}
