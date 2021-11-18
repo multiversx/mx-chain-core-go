@@ -92,7 +92,14 @@ func TestMultipleSigningProof_GetProofTxData_EnoughPublicKeysProvided_ExpectErro
 }
 
 func TestMultipleSigningProof_GetProofTxData_NotEnoughHeadersProvided_ExpectError(t *testing.T) {
-	proof := slash.MultipleHeaderSigningProof{PubKeys: [][]byte{[]byte("pub key")}}
+	slashResPubKey1 := slash.SlashingResult{
+		SlashingLevel: slash.High,
+		Headers:       []data.HeaderInfoHandler{},
+	}
+	slashRes := map[string]slash.SlashingResult{
+		"pubKey1": slashResPubKey1,
+	}
+	proof, _ := slash.NewMultipleSigningProof(slashRes)
 
 	proofTxData, err := proof.GetProofTxData()
 	require.Nil(t, proofTxData)
@@ -100,12 +107,14 @@ func TestMultipleSigningProof_GetProofTxData_NotEnoughHeadersProvided_ExpectErro
 }
 
 func TestMultipleSigningProof_GetProofTxData_NilHeaderHandler_ExpectError(t *testing.T) {
-	proof := slash.MultipleHeaderSigningProof{
-		PubKeys: [][]byte{[]byte("pub key")},
-		HeadersV2: map[string]slash.HeadersV2{
-			"pub key": {Headers: []*block.HeaderV2{nil}},
-		},
+	slashResPubKey1 := slash.SlashingResult{
+		SlashingLevel: slash.High,
+		Headers:       []data.HeaderInfoHandler{nil},
 	}
+	slashRes := map[string]slash.SlashingResult{
+		"pubKey1": slashResPubKey1,
+	}
+	proof, _ := slash.NewMultipleSigningProof(slashRes)
 
 	proofTxData, err := proof.GetProofTxData()
 	require.Nil(t, proofTxData)
@@ -122,12 +131,15 @@ func TestMultipleSigningProof_GetProofTxData(t *testing.T) {
 			ShardID: shardID,
 		},
 	}
-	proof := slash.MultipleHeaderSigningProof{
-		PubKeys: [][]byte{[]byte("pub key")},
-		HeadersV2: map[string]slash.HeadersV2{
-			"pub key": {Headers: []*block.HeaderV2{header}},
-		},
+	slashResPubKey1 := slash.SlashingResult{
+		SlashingLevel: slash.High,
+		Headers:       []data.HeaderInfoHandler{&dataMock.HeaderInfoStub{Header: header, Hash: []byte("hash")}},
 	}
+	slashRes := map[string]slash.SlashingResult{
+		"pubKey1": slashResPubKey1,
+	}
+	proof, _ := slash.NewMultipleSigningProof(slashRes)
+
 	expectedProofTxData := &slash.ProofTxData{
 		Round:   round,
 		ShardID: shardID,

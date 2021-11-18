@@ -8,8 +8,12 @@ option (gogoproto.stable_marshaler_all) = true;
 import "slash.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
+message SignerSlashingData {
+  bytes SignedHeadersBitMap = 1;
+  ThreatLevel ThreatLevel   = 2;
+}
+
 message MultipleHeaderSigningProof {
-  repeated bytes           PubKeys   = 1;
-  map<string, ThreatLevel> Levels    = 2;
-  map<string, HeadersV2>   HeadersV2 = 3 [(gogoproto.nullable) = false];
+  HeadersV2 HeadersV2                              = 1 [(gogoproto.nullable) = false];
+  map<string, SignerSlashingData> SignersSlashData = 2 [(gogoproto.nullable) = false];
 }
