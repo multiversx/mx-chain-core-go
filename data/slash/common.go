@@ -64,7 +64,9 @@ func getSortedHeadersV2(headersInfo []data.HeaderInfoHandler) (HeadersV2, error)
 
 func sortHeadersByHash(headersInfo []data.HeaderInfoHandler) {
 	sortFunc := func(i, j int) bool {
-		// TODO: CHECK IF INTERFACE IS NIL
+		if headersInfo[i] == nil || headersInfo[j] == nil {
+			return false
+		}
 		hash1 := string(headersInfo[i].GetHash())
 		hash2 := string(headersInfo[j].GetHash())
 

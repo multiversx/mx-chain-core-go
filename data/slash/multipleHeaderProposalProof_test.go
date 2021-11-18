@@ -21,15 +21,24 @@ func TestNewMultipleProposalProof(t *testing.T) {
 			expectedErr: data.ErrNilSlashResult,
 		},
 		{
-			args:        &slash.SlashingResult{SlashingLevel: slash.Medium, Headers: nil},
+			args: &slash.SlashingResult{
+				SlashingLevel: slash.Medium,
+				Headers:       nil,
+			},
 			expectedErr: data.ErrNilHeaderInfoList,
 		},
 		{
-			args:        &slash.SlashingResult{SlashingLevel: slash.Medium, Headers: []data.HeaderInfoHandler{nil}},
+			args: &slash.SlashingResult{
+				SlashingLevel: slash.Medium,
+				Headers:       []data.HeaderInfoHandler{nil, &dataMock.HeaderInfoStub{Header: &block.HeaderV2{}, Hash: []byte("h")}, nil},
+			},
 			expectedErr: data.ErrNilHeaderInfo,
 		},
 		{
-			args:        &slash.SlashingResult{SlashingLevel: slash.Medium, Headers: []data.HeaderInfoHandler{}},
+			args: &slash.SlashingResult{
+				SlashingLevel: slash.Medium,
+				Headers:       []data.HeaderInfoHandler{},
+			},
 			expectedErr: nil,
 		},
 	}

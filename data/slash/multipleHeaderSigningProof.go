@@ -108,11 +108,8 @@ func NewMultipleSigningProof(slashResult map[string]SlashingResult) (MultipleSig
 	}
 
 	signersSlashData := make(map[string]SignerSlashingData)
+	bitMapLen := len(sortedHeaders)/8 + 1
 	for pubKey, res := range slashResult {
-		bitMapLen := 1
-		if len(sortedHeaders) > 8 {
-			bitMapLen = len(sortedHeaders) / 8
-		}
 		bitmap := make([]byte, bitMapLen)
 		for _, header := range res.Headers {
 			index, exists := hashIndexMap[string(header.GetHash())]
@@ -125,12 +122,13 @@ func NewMultipleSigningProof(slashResult map[string]SlashingResult) (MultipleSig
 			ThreatLevel:         res.SlashingLevel,
 		}
 	}
-	headersV2 := HeadersV2{}
 
+	headersV2 := HeadersV2{}
 	err = headersV2.SetHeaders(sortedHeaders)
 	if err != nil {
 		return nil, err
 	}
+
 	return &MultipleHeaderSigningProof{
 		HeadersV2:        headersV2,
 		SignersSlashData: signersSlashData,
