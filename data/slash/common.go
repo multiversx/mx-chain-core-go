@@ -34,32 +34,38 @@ const (
 	MultipleSigningProofID ProofID = 0x2
 )
 
-func getSortedHeadersV2(headersInfo []data.HeaderInfoHandler) (HeadersV2, error) {
+func getSortedHeaders(headersInfo []data.HeaderInfoHandler) ([]data.HeaderHandler, error) {
 	if headersInfo == nil {
-		return HeadersV2{}, data.ErrNilHeaderInfoList
+		return nil, data.ErrNilHeaderInfoList
 	}
 
 	sortHeadersByHash(headersInfo)
 	headers := make([]data.HeaderHandler, 0, len(headersInfo))
+	hashes := make(map[string]struct{})
 	for _, headerInfo := range headersInfo {
 		if headerInfo == nil {
-			return HeadersV2{}, data.ErrNilHeaderInfo
+			return nil, data.ErrNilHeaderInfo
 		}
 
 		headerHandler := headerInfo.GetHeaderHandler()
 		hash := headerInfo.GetHash()
+		hashStr := string(hash)
+		_, exists := hashes[hashStr]
+		if exists {
+			return nil, data.ErrHeadersSameHash
+		}
 		if check.IfNil(headerHandler) {
-			return HeadersV2{}, data.ErrNilHeaderHandler
+			return nil, data.ErrNilHeaderHandler
 		}
 		if hash == nil {
-			return HeadersV2{}, data.ErrNilHash
+			return nil, data.ErrNilHash
 		}
 
 		headers = append(headers, headerHandler)
+		hashes[hashStr] = struct{}{}
 	}
 
-	headersV2 := HeadersV2{}
-	return headersV2, headersV2.SetHeaders(headers)
+	return headers, nil
 }
 
 func sortHeadersByHash(headersInfo []data.HeaderInfoHandler) {

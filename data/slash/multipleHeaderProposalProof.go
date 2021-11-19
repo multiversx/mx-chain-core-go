@@ -44,13 +44,19 @@ func NewMultipleProposalProof(slashResult *SlashingResult) (MultipleProposalProo
 		return nil, data.ErrNilHeaderInfoList
 	}
 
-	sortedHeaders, err := getSortedHeadersV2(slashResult.Headers)
+	sortedHeaders, err := getSortedHeaders(slashResult.Headers)
+	if err != nil {
+		return nil, err
+	}
+
+	headersV2 := HeadersV2{}
+	err = headersV2.SetHeaders(sortedHeaders)
 	if err != nil {
 		return nil, err
 	}
 
 	return &MultipleHeaderProposalProof{
 		Level:     slashResult.SlashingLevel,
-		HeadersV2: sortedHeaders,
+		HeadersV2: headersV2,
 	}, nil
 }

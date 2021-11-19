@@ -30,9 +30,19 @@ func TestNewMultipleProposalProof(t *testing.T) {
 		{
 			args: &slash.SlashingResult{
 				SlashingLevel: slash.Medium,
-				Headers:       []data.HeaderInfoHandler{nil, &dataMock.HeaderInfoStub{Header: &block.HeaderV2{}, Hash: []byte("h")}, nil},
+				Headers:       []data.HeaderInfoHandler{nil, &dataMock.HeaderInfoStub{}, nil},
 			},
 			expectedErr: data.ErrNilHeaderInfo,
+		},
+		{
+			args: &slash.SlashingResult{
+				SlashingLevel: slash.Medium,
+				Headers: []data.HeaderInfoHandler{
+					&dataMock.HeaderInfoStub{Header: &block.HeaderV2{}, Hash: []byte("h")},
+					&dataMock.HeaderInfoStub{Header: &block.HeaderV2{}, Hash: []byte("h")},
+				},
+			},
+			expectedErr: data.ErrHeadersSameHash,
 		},
 		{
 			args: &slash.SlashingResult{
@@ -52,22 +62,25 @@ func TestNewMultipleProposalProof(t *testing.T) {
 func TestMultipleProposalProof_GetHeaders_GetLevel(t *testing.T) {
 	h1 := &block.HeaderV2{Header: &block.Header{TimeStamp: 1}}
 	h2 := &block.HeaderV2{Header: &block.Header{TimeStamp: 2}}
+	h3 := &block.HeaderV2{Header: &block.Header{TimeStamp: 3}}
 
 	hInfo1 := &dataMock.HeaderInfoStub{Header: h1, Hash: []byte("h1")}
 	hInfo2 := &dataMock.HeaderInfoStub{Header: h2, Hash: []byte("h2")}
+	hInfo3 := &dataMock.HeaderInfoStub{Header: h3, Hash: []byte("h3")}
 
 	slashRes := &slash.SlashingResult{
 		SlashingLevel: slash.Medium,
-		Headers:       []data.HeaderInfoHandler{hInfo1, hInfo2},
+		Headers:       []data.HeaderInfoHandler{hInfo2, hInfo1, hInfo3},
 	}
 
 	proof, err := slash.NewMultipleProposalProof(slashRes)
 	require.Nil(t, err)
 	require.Equal(t, slash.Medium, proof.GetLevel())
 
-	require.Len(t, proof.GetHeaders(), 2)
+	require.Len(t, proof.GetHeaders(), 3)
 	require.Equal(t, proof.GetHeaders()[0], h1)
 	require.Equal(t, proof.GetHeaders()[1], h2)
+	require.Equal(t, proof.GetHeaders()[2], h3)
 }
 
 func TestMultipleHeaderProposalProof_GetProofTxData_NotEnoughHeaders_ExpectError(t *testing.T) {

@@ -94,6 +94,9 @@ var ErrNilHeaderInfo = errors.New("nil header info")
 // ErrNilHash signals that a nil hash has been provided
 var ErrNilHash = errors.New("nil hash provided")
 
+// ErrHeadersSameHash signals that headers have the same hash in a multiple header proof
+var ErrHeadersSameHash = errors.New("headers have the same hash in a multiple header proof")
+
 // ErrNotEnoughHeadersProvided signals that not enough headers have been provided for a multiple header proof
 var ErrNotEnoughHeadersProvided = errors.New("not enough headers have been provided for a multiple header proof")
 

@@ -142,18 +142,25 @@ func getAllUniqueHeaders(slashResult map[string]SlashingResult) ([]data.HeaderIn
 	hashes := make(map[string]struct{})
 
 	for _, res := range slashResult {
+		hashesPerPubKey := make(map[string]struct{})
 		for _, currHeaderInfo := range res.Headers {
 			if currHeaderInfo == nil {
 				return nil, data.ErrNilHeaderInfo
 			}
 
 			currHash := string(currHeaderInfo.GetHash())
-			_, exists := hashes[currHash]
+			_, exists := hashesPerPubKey[currHash]
+			if exists {
+				return nil, data.ErrHeadersSameHash
+			}
+
+			_, exists = hashes[currHash]
 			if exists {
 				continue
 			}
 
 			hashes[currHash] = struct{}{}
+			hashesPerPubKey[currHash] = struct{}{}
 			headersInfo = append(headersInfo, currHeaderInfo)
 		}
 	}

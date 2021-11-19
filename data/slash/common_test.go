@@ -10,21 +10,21 @@ import (
 )
 
 func TestGetSortedHeadersV2_NilHeaderInfoList_ExpectError(t *testing.T) {
-	sortedHeaders, err := getSortedHeadersV2(nil)
-	require.Equal(t, HeadersV2{}, sortedHeaders)
+	sortedHeaders, err := getSortedHeaders(nil)
+	require.Nil(t, sortedHeaders)
 	require.Equal(t, data.ErrNilHeaderInfoList, err)
 }
 
 func TestGetSortedHeadersV2_NilHeaderInfo_ExpectError(t *testing.T) {
 	headerInfoList := []data.HeaderInfoHandler{nil}
-	sortedHeaders, err := getSortedHeadersV2(headerInfoList)
-	require.Equal(t, HeadersV2{}, sortedHeaders)
+	sortedHeaders, err := getSortedHeaders(headerInfoList)
+	require.Nil(t, sortedHeaders)
 	require.Equal(t, data.ErrNilHeaderInfo, err)
 }
 
 func TestGetSortedHeadersV2_EmptyHeaderInfoList_ExpectEmptyResult(t *testing.T) {
-	sortedHeaders, err := getSortedHeadersV2([]data.HeaderInfoHandler{})
-	require.Equal(t, HeadersV2{}, sortedHeaders)
+	sortedHeaders, err := getSortedHeaders([]data.HeaderInfoHandler{})
+	require.Len(t, sortedHeaders, 0)
 	require.Nil(t, err)
 }
 
@@ -35,21 +35,49 @@ func TestGetSortedHeadersV2_NilHeaderHandler_ExpectError(t *testing.T) {
 	}
 	headerInfoList := []data.HeaderInfoHandler{headerInfo}
 
-	sortedHeaders, err := getSortedHeadersV2(headerInfoList)
-	require.Equal(t, HeadersV2{}, sortedHeaders)
+	sortedHeaders, err := getSortedHeaders(headerInfoList)
+	require.Nil(t, sortedHeaders)
 	require.Equal(t, data.ErrNilHeaderHandler, err)
 }
 
+func TestGetSortedHeadersV2_HeadersSameHash_ExpectError(t *testing.T) {
+	header1 := &block.HeaderV2{Header: &block.Header{TimeStamp: 1}}
+	header2 := &block.HeaderV2{Header: &block.Header{TimeStamp: 2}}
+	header3 := &block.HeaderV2{Header: &block.Header{TimeStamp: 3}}
+	headerInfo1 := &mock.HeaderInfoStub{
+		Header: header1,
+		Hash:   []byte("hash1"),
+	}
+	headerInfo2 := &mock.HeaderInfoStub{
+		Header: header2,
+		Hash:   []byte("hash2"),
+	}
+	headerInfo3 := &mock.HeaderInfoStub{
+		Header: header3,
+		Hash:   []byte("hash2"),
+	}
+	headerInfoList := []data.HeaderInfoHandler{headerInfo1, headerInfo2, headerInfo3}
+
+	sortedHeaders, err := getSortedHeaders(headerInfoList)
+	require.Nil(t, sortedHeaders)
+	require.Equal(t, data.ErrHeadersSameHash, err)
+}
+
 func TestGetSortedHeadersV2_NilHash_ExpectError(t *testing.T) {
-	header := &block.HeaderV2{Header: &block.Header{TimeStamp: 1}}
-	headerInfo := &mock.HeaderInfoStub{
-		Header: header,
+	header1 := &block.HeaderV2{Header: &block.Header{TimeStamp: 1}}
+	header2 := &block.HeaderV2{Header: &block.Header{TimeStamp: 2}}
+	headerInfo1 := &mock.HeaderInfoStub{
+		Header: header1,
+		Hash:   []byte("hash"),
+	}
+	headerInfo2 := &mock.HeaderInfoStub{
+		Header: header2,
 		Hash:   nil,
 	}
-	headerInfoList := []data.HeaderInfoHandler{headerInfo}
+	headerInfoList := []data.HeaderInfoHandler{headerInfo1, headerInfo2}
 
-	sortedHeaders, err := getSortedHeadersV2(headerInfoList)
-	require.Equal(t, HeadersV2{}, sortedHeaders)
+	sortedHeaders, err := getSortedHeaders(headerInfoList)
+	require.Nil(t, sortedHeaders)
 	require.Equal(t, data.ErrNilHash, err)
 }
 
@@ -72,9 +100,10 @@ func TestGetSortedHeadersV2(t *testing.T) {
 	}
 
 	headersInfo := []data.HeaderInfoHandler{hInfo3, hInfo1, hInfo2}
-	sortedHeaders, _ := getSortedHeadersV2(headersInfo)
+	sortedHeaders, err := getSortedHeaders(headersInfo)
+	require.Nil(t, err)
 
-	require.Equal(t, h1, sortedHeaders.Headers[0])
-	require.Equal(t, h2, sortedHeaders.Headers[1])
-	require.Equal(t, h3, sortedHeaders.Headers[2])
+	require.Equal(t, h1, sortedHeaders[0])
+	require.Equal(t, h2, sortedHeaders[1])
+	require.Equal(t, h3, sortedHeaders[2])
 }

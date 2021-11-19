@@ -33,6 +33,15 @@ func TestNewMultipleSigningProof(t *testing.T) {
 			expectedErr: data.ErrNilHeaderInfo,
 		},
 		{
+			args: map[string]slash.SlashingResult{
+				"pubKey": {Headers: []data.HeaderInfoHandler{
+					&dataMock.HeaderInfoStub{Header: &block.HeaderV2{}, Hash: []byte("h")},
+					&dataMock.HeaderInfoStub{Header: &block.HeaderV2{}, Hash: []byte("h")}},
+				},
+			},
+			expectedErr: data.ErrHeadersSameHash,
+		},
+		{
 			args:        make(map[string]slash.SlashingResult),
 			expectedErr: nil,
 		},
@@ -66,13 +75,18 @@ func TestMultipleSigningProof_GetHeaders_GetLevel(t *testing.T) {
 		Headers:       []data.HeaderInfoHandler{hInfo3, hInfo5, hInfo4},
 	}
 	slashRes3 := slash.SlashingResult{
-		SlashingLevel: slash.Medium,
+		SlashingLevel: slash.Zero,
+		Headers:       []data.HeaderInfoHandler{},
+	}
+	slashRes4 := slash.SlashingResult{
+		SlashingLevel: slash.Zero,
 		Headers:       nil,
 	}
 	slashRes := map[string]slash.SlashingResult{
 		"pubKey1": slashRes1,
 		"pubKey2": slashRes2,
 		"pubKey3": slashRes3,
+		"pubKey4": slashRes4,
 	}
 
 	proof, err := slash.NewMultipleSigningProof(slashRes)
@@ -80,13 +94,15 @@ func TestMultipleSigningProof_GetHeaders_GetLevel(t *testing.T) {
 
 	require.Equal(t, slash.High, proof.GetLevel([]byte("pubKey1")))
 	require.Equal(t, slash.Medium, proof.GetLevel([]byte("pubKey2")))
-	require.Equal(t, slash.Medium, proof.GetLevel([]byte("pubKey3")))
+	require.Equal(t, slash.Zero, proof.GetLevel([]byte("pubKey3")))
 	require.Equal(t, slash.Zero, proof.GetLevel([]byte("pubKey4")))
+	require.Equal(t, slash.Zero, proof.GetLevel([]byte("pubKey5")))
 
 	require.Len(t, proof.GetHeaders([]byte("pubKey1")), 4)
 	require.Len(t, proof.GetHeaders([]byte("pubKey2")), 3)
 	require.Len(t, proof.GetHeaders([]byte("pubKey3")), 0)
 	require.Len(t, proof.GetHeaders([]byte("pubKey4")), 0)
+	require.Len(t, proof.GetHeaders([]byte("pubKey5")), 0)
 
 	require.Equal(t, proof.GetHeaders([]byte("pubKey1"))[0], h1)
 	require.Equal(t, proof.GetHeaders([]byte("pubKey1"))[1], h2)
@@ -95,7 +111,6 @@ func TestMultipleSigningProof_GetHeaders_GetLevel(t *testing.T) {
 	require.Equal(t, proof.GetHeaders([]byte("pubKey2"))[0], h3)
 	require.Equal(t, proof.GetHeaders([]byte("pubKey2"))[1], h4)
 	require.Equal(t, proof.GetHeaders([]byte("pubKey2"))[2], h5)
-	require.Nil(t, proof.GetHeaders([]byte("pubKey4")))
 }
 
 func TestMultipleSigningProof_GetProofTxData_NotEnoughPublicKeysProvided_ExpectError(t *testing.T) {
