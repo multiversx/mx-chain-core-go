@@ -79,7 +79,7 @@ func (w *webSocketSender) AddClient(wss WSConn, remoteAddr string) {
 
 	w.clientsHolder.AddClient(client)
 
-	w.acknowledges.AddEntryForClient(remoteAddr)
+	w.acknowledges.AddEntryForAddress(remoteAddr)
 
 	if !w.withAcknowledge {
 		return
@@ -94,6 +94,7 @@ func (w *webSocketSender) handleReceiveAck(client *webSocketClient) {
 		if err != nil {
 			w.log.Error("cannot read message", "remote addr", client.remoteAddr, "error", err)
 			w.clientsHolder.Remove(client.remoteAddr)
+			w.acknowledges.RemoveEntryForAddress(client.remoteAddr)
 
 			break
 		}

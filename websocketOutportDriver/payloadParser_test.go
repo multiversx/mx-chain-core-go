@@ -104,7 +104,6 @@ func testExtractPayloadDataInvalidMessageCounterByteSlice(t *testing.T) {
 func testExtractPayloadDataMessageCounterDoesNotMatchActualPayloadSize(t *testing.T) {
 	uint64ConvStub := &mock.Uint64ByteSliceConverterStub{
 		ToUint64Called: func(_ []byte) (uint64, error) {
-
 			return 0, nil
 		},
 	}
@@ -133,9 +132,9 @@ func testExtractPayloadDataShouldWork(t *testing.T) {
 	operationBytes[uint32NumBytes-1] = byte(expectedOperation.Uint32())
 	payload = append(payload, operationBytes...)
 
-	msgCounterBytes := bytes.Repeat([]byte{0}, uint32NumBytes)
-	msgCounterBytes[uint32NumBytes-1] = byte(len(expectedPayload))
-	payload = append(payload, msgCounterBytes...)
+	messageLenBytes := bytes.Repeat([]byte{0}, uint32NumBytes)
+	messageLenBytes[uint32NumBytes-1] = byte(len(expectedPayload))
+	payload = append(payload, messageLenBytes...)
 
 	payload = append(payload, expectedPayload...)
 

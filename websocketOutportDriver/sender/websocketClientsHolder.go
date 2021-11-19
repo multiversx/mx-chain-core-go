@@ -21,19 +21,6 @@ func (wch *websocketClientsHolder) AddClient(client *webSocketClient) {
 	wch.mut.Unlock()
 }
 
-// GetClient will return a client based on the provided remote address
-func (wch *websocketClientsHolder) GetClient(remoteAddr string) (*webSocketClient, bool) {
-	wch.mut.RLock()
-	defer wch.mut.RUnlock()
-
-	client, found := wch.clients[remoteAddr]
-	if !found {
-		return nil, false
-	}
-
-	return client, true
-}
-
 // GetAll will return all the clients
 func (wch *websocketClientsHolder) GetAll() map[string]*webSocketClient {
 	wch.mut.RLock()

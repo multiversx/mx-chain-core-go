@@ -81,16 +81,16 @@ func (wpp *websocketPayloadParser) ExtractPayloadData(payload []byte) (*PayloadD
 	payloadData.OperationType = data.OperationTypeFromUint64(operationTypeUint64)
 	payload = payload[uint32NumBytes:]
 
-	var messageCounter uint64
-	messageCounter, err = wpp.uint64ByteSliceConverter.ToUint64(padUint32ByteSlice(payload[:uint32NumBytes]))
+	var messageLen uint64
+	messageLen, err = wpp.uint64ByteSliceConverter.ToUint64(padUint32ByteSlice(payload[:uint32NumBytes]))
 	if err != nil {
 		return nil, fmt.Errorf("%w while extracting the message length", err)
 	}
 	payload = payload[uint32NumBytes:]
 
-	if messageCounter != uint64(len(payload)) {
+	if messageLen != uint64(len(payload)) {
 		return nil, fmt.Errorf("message counter is not equal to the actual payload. provided: %d, actual: %d",
-			messageCounter, len(payload))
+			messageLen, len(payload))
 	}
 
 	payloadData.Payload = payload

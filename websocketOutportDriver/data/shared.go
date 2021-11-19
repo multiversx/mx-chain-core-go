@@ -7,9 +7,8 @@ import (
 
 // WsSendArgs holds the arguments needed for performing a web socket request
 type WsSendArgs struct {
-	Payload   []byte
-	Operation OperationType
-	Route     string
+	Payload []byte
+	Route   string
 }
 
 // ArgsRevertIndexedBlock holds the driver's arguments needed for reverting an indexed block

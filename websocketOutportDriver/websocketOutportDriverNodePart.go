@@ -145,8 +145,7 @@ func (o *websocketOutportDriverNodePart) handleAction(args interface{}, operatio
 	payload := o.preparePayload(operation, marshaledBlock)
 
 	err = o.webSocketSender.Send(outportSenderData.WsSendArgs{
-		Payload:   payload,
-		Operation: operation,
+		Payload: payload,
 	})
 	if err != nil {
 		o.log.Error("cannot send on route", "operation", operation.String(), "error", err)
@@ -160,8 +159,8 @@ func (o *websocketOutportDriverNodePart) preparePayload(operation outportSenderD
 	opBytes := o.uint64ByteSliceConverter.ToByteSlice(uint64(operation.Uint32()))
 	opBytes = opBytes[uint32NumBytes:]
 
-	messageLength := uint32(len(data))
-	messageLengthBytes := o.uint64ByteSliceConverter.ToByteSlice(uint64(messageLength))
+	messageLength := uint64(len(data))
+	messageLengthBytes := o.uint64ByteSliceConverter.ToByteSlice(messageLength)
 	messageLengthBytes = messageLengthBytes[uint32NumBytes:]
 
 	payload := append(opBytes, messageLengthBytes...)
