@@ -34,9 +34,24 @@ const (
 	MultipleSigningProofID ProofID = 0x2
 )
 
-func getSortedHeaders(headersInfo []data.HeaderInfoHandler) ([]data.HeaderHandler, error) {
-	if headersInfo == nil {
-		return nil, data.ErrNilHeaderInfoList
+func sortAndGetHeadersV2(headersInfo []data.HeaderInfoHandler) (*HeadersV2, error) {
+	sortedHeaders, err := sortHeaders(headersInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	headersV2 := &HeadersV2{}
+	err = headersV2.SetHeaders(sortedHeaders)
+	if err != nil {
+		return nil, err
+	}
+
+	return headersV2, nil
+}
+
+func sortHeaders(headersInfo []data.HeaderInfoHandler) ([]data.HeaderHandler, error) {
+	if len(headersInfo) == 0 {
+		return nil, data.ErrEmptyHeaderInfoList
 	}
 
 	sortHeadersByHash(headersInfo)
@@ -47,18 +62,20 @@ func getSortedHeaders(headersInfo []data.HeaderInfoHandler) ([]data.HeaderHandle
 			return nil, data.ErrNilHeaderInfo
 		}
 
-		headerHandler := headerInfo.GetHeaderHandler()
 		hash := headerInfo.GetHash()
+		if hash == nil {
+			return nil, data.ErrNilHash
+		}
+
 		hashStr := string(hash)
 		_, exists := hashes[hashStr]
 		if exists {
 			return nil, data.ErrHeadersSameHash
 		}
+
+		headerHandler := headerInfo.GetHeaderHandler()
 		if check.IfNil(headerHandler) {
 			return nil, data.ErrNilHeaderHandler
-		}
-		if hash == nil {
-			return nil, data.ErrNilHash
 		}
 
 		headers = append(headers, headerHandler)

@@ -99,41 +99,16 @@ func NewMultipleSigningProof(slashResult map[string]SlashingResult) (MultipleSig
 	if err != nil {
 		return nil, err
 	}
-	sortHeadersByHash(headersInfo)
-
-	idx := uint32(0)
-	hashIndexMap := make(map[string]uint32)
-	sortedHeaders := make([]data.HeaderHandler, 0, len(headersInfo))
-	for _, headerInfo := range headersInfo {
-		hashIndexMap[string(headerInfo.GetHash())] = idx
-		sortedHeaders = append(sortedHeaders, headerInfo.GetHeaderHandler())
-		idx++
-	}
-
-	signersSlashData := make(map[string]SignerSlashingData)
-	bitMapLen := len(sortedHeaders)/byteSize + 1
-	for pubKey, res := range slashResult {
-		bitmap := make([]byte, bitMapLen)
-		for _, header := range res.Headers {
-			index, exists := hashIndexMap[string(header.GetHash())]
-			if exists {
-				sliceUtil.SetIndexInBitmap(index, bitmap)
-			}
-		}
-		signersSlashData[pubKey] = SignerSlashingData{
-			SignedHeadersBitMap: bitmap,
-			ThreatLevel:         res.SlashingLevel,
-		}
-	}
-
-	headersV2 := HeadersV2{}
-	err = headersV2.SetHeaders(sortedHeaders)
+	sortedHeaders, err := sortAndGetHeadersV2(headersInfo)
 	if err != nil {
 		return nil, err
 	}
 
+	hashIndexMap := calcHashIndexMap(headersInfo)
+	signersSlashData := computeSignersSlashData(hashIndexMap, slashResult)
+
 	return &MultipleHeaderSigningProof{
-		HeadersV2:        headersV2,
+		HeadersV2:        *sortedHeaders,
 		SignersSlashData: signersSlashData,
 	}, nil
 }
@@ -167,4 +142,35 @@ func getAllUniqueHeaders(slashResult map[string]SlashingResult) ([]data.HeaderIn
 	}
 
 	return headersInfo, nil
+}
+
+func calcHashIndexMap(headersInfo []data.HeaderInfoHandler) map[string]uint32 {
+	idx := uint32(0)
+	hashIndexMap := make(map[string]uint32)
+	for _, headerInfo := range headersInfo {
+		hashIndexMap[string(headerInfo.GetHash())] = idx
+		idx++
+	}
+
+	return hashIndexMap
+}
+
+func computeSignersSlashData(hashIndexMap map[string]uint32, slashResult map[string]SlashingResult) map[string]SignerSlashingData {
+	signersSlashData := make(map[string]SignerSlashingData)
+	bitMapLen := len(hashIndexMap)/byteSize + 1
+	for pubKey, res := range slashResult {
+		bitmap := make([]byte, bitMapLen)
+		for _, header := range res.Headers {
+			index, exists := hashIndexMap[string(header.GetHash())]
+			if exists {
+				sliceUtil.SetIndexInBitmap(index, bitmap)
+			}
+		}
+		signersSlashData[pubKey] = SignerSlashingData{
+			SignedHeadersBitMap: bitmap,
+			ThreatLevel:         res.SlashingLevel,
+		}
+	}
+
+	return signersSlashData
 }

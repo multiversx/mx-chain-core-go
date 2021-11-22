@@ -21,10 +21,14 @@ func TestNewMultipleSigningProof(t *testing.T) {
 			expectedErr: data.ErrNilSlashResult,
 		},
 		{
+			args:        make(map[string]slash.SlashingResult),
+			expectedErr: data.ErrEmptyHeaderInfoList,
+		},
+		{
 			args: map[string]slash.SlashingResult{
 				"pubKey": {Headers: nil},
 			},
-			expectedErr: nil,
+			expectedErr: data.ErrEmptyHeaderInfoList,
 		},
 		{
 			args: map[string]slash.SlashingResult{
@@ -40,10 +44,6 @@ func TestNewMultipleSigningProof(t *testing.T) {
 				},
 			},
 			expectedErr: data.ErrHeadersSameHash,
-		},
-		{
-			args:        make(map[string]slash.SlashingResult),
-			expectedErr: nil,
 		},
 	}
 
@@ -122,14 +122,12 @@ func TestMultipleSigningProof_GetProofTxDataNotEnoughPublicKeysProvidedExpectErr
 }
 
 func TestMultipleSigningProof_GetProofTxDataNotEnoughHeadersProvidedExpectError(t *testing.T) {
-	slashResPubKey1 := slash.SlashingResult{
-		SlashingLevel: slash.High,
-		Headers:       []data.HeaderInfoHandler{},
+	proof := slash.MultipleHeaderSigningProof{
+		HeadersV2: slash.HeadersV2{},
+		SignersSlashData: map[string]slash.SignerSlashingData{
+			"pubKey1": {},
+		},
 	}
-	slashRes := map[string]slash.SlashingResult{
-		"pubKey1": slashResPubKey1,
-	}
-	proof, _ := slash.NewMultipleSigningProof(slashRes)
 
 	proofTxData, err := proof.GetProofTxData()
 	require.Nil(t, proofTxData)

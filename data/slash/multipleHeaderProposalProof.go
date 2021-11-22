@@ -42,22 +42,16 @@ func NewMultipleProposalProof(slashResult *SlashingResult) (MultipleProposalProo
 		return nil, data.ErrNilSlashResult
 	}
 	if slashResult.Headers == nil {
-		return nil, data.ErrNilHeaderInfoList
+		return nil, data.ErrEmptyHeaderInfoList
 	}
 
-	sortedHeaders, err := getSortedHeaders(slashResult.Headers)
-	if err != nil {
-		return nil, err
-	}
-
-	headersV2 := HeadersV2{}
-	err = headersV2.SetHeaders(sortedHeaders)
+	sortedHeaders, err := sortAndGetHeadersV2(slashResult.Headers)
 	if err != nil {
 		return nil, err
 	}
 
 	return &MultipleHeaderProposalProof{
 		Level:     slashResult.SlashingLevel,
-		HeadersV2: headersV2,
+		HeadersV2: *sortedHeaders,
 	}, nil
 }

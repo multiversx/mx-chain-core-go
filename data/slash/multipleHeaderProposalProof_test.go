@@ -25,12 +25,19 @@ func TestNewMultipleProposalProof(t *testing.T) {
 				SlashingLevel: slash.Medium,
 				Headers:       nil,
 			},
-			expectedErr: data.ErrNilHeaderInfoList,
+			expectedErr: data.ErrEmptyHeaderInfoList,
 		},
 		{
 			args: &slash.SlashingResult{
 				SlashingLevel: slash.Medium,
-				Headers:       []data.HeaderInfoHandler{nil, &dataMock.HeaderInfoStub{}, nil},
+				Headers:       []data.HeaderInfoHandler{},
+			},
+			expectedErr: data.ErrEmptyHeaderInfoList,
+		},
+		{
+			args: &slash.SlashingResult{
+				SlashingLevel: slash.Medium,
+				Headers:       []data.HeaderInfoHandler{nil, &dataMock.HeaderInfoStub{}},
 			},
 			expectedErr: data.ErrNilHeaderInfo,
 		},
@@ -43,13 +50,6 @@ func TestNewMultipleProposalProof(t *testing.T) {
 				},
 			},
 			expectedErr: data.ErrHeadersSameHash,
-		},
-		{
-			args: &slash.SlashingResult{
-				SlashingLevel: slash.Medium,
-				Headers:       []data.HeaderInfoHandler{},
-			},
-			expectedErr: nil,
 		},
 	}
 
