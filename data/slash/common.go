@@ -1,6 +1,7 @@
 package slash
 
 import (
+	"encoding/hex"
 	"fmt"
 	"sort"
 
@@ -71,12 +72,12 @@ func sortHeaders(headersInfo []data.HeaderInfoHandler) ([]data.HeaderHandler, er
 		hashStr := string(hash)
 		_, exists := hashes[hashStr]
 		if exists {
-			return nil, fmt.Errorf("%w, duplicated hash: %s", data.ErrHeadersSameHash, hashStr)
+			return nil, fmt.Errorf("%w, duplicated hash: %s", data.ErrHeadersSameHash, hex.EncodeToString(hash))
 		}
 
 		headerHandler := headerInfo.GetHeaderHandler()
 		if check.IfNil(headerHandler) {
-			return nil, fmt.Errorf("%w in sorted headers for hash: %s", data.ErrNilHeaderHandler, hashStr)
+			return nil, fmt.Errorf("%w in sorted headers for hash: %s", data.ErrNilHeaderHandler, hex.EncodeToString(hash))
 		}
 
 		headers = append(headers, headerHandler)
