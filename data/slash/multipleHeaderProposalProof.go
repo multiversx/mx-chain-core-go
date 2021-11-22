@@ -15,6 +15,7 @@ func (m *MultipleHeaderProposalProof) GetHeaders() []data.HeaderHandler {
 	return m.HeadersV2.GetHeaderHandlers()
 }
 
+// GetProofTxData returns the necessary ProofTxData to issue a commitment slash tx
 func (m *MultipleHeaderProposalProof) GetProofTxData() (*ProofTxData, error) {
 	if m == nil {
 		return nil, data.ErrNilPointerReceiver

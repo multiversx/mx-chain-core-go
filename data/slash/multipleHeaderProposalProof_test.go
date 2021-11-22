@@ -59,7 +59,7 @@ func TestNewMultipleProposalProof(t *testing.T) {
 	}
 }
 
-func TestMultipleProposalProof_GetHeaders_GetLevel(t *testing.T) {
+func TestMultipleProposalProof_GetHeadersGetLevel(t *testing.T) {
 	h1 := &block.HeaderV2{Header: &block.Header{TimeStamp: 1}}
 	h2 := &block.HeaderV2{Header: &block.Header{TimeStamp: 2}}
 	h3 := &block.HeaderV2{Header: &block.Header{TimeStamp: 3}}
@@ -83,7 +83,7 @@ func TestMultipleProposalProof_GetHeaders_GetLevel(t *testing.T) {
 	require.Equal(t, proof.GetHeaders()[2], h3)
 }
 
-func TestMultipleHeaderProposalProof_GetProofTxData_NotEnoughHeaders_ExpectError(t *testing.T) {
+func TestMultipleHeaderProposalProof_GetProofTxDataNotEnoughHeadersExpectError(t *testing.T) {
 	proof := slash.MultipleHeaderProposalProof{}
 
 	proofTxData, err := proof.GetProofTxData()
@@ -91,7 +91,7 @@ func TestMultipleHeaderProposalProof_GetProofTxData_NotEnoughHeaders_ExpectError
 	require.Equal(t, data.ErrNotEnoughHeadersProvided, err)
 }
 
-func TestMultipleHeaderProposalProof_GetProofTxData_NilHeader_ExpectError(t *testing.T) {
+func TestMultipleHeaderProposalProof_GetProofTxDataNilHeaderExpectError(t *testing.T) {
 	proof := slash.MultipleHeaderProposalProof{
 		HeadersV2: slash.HeadersV2{
 			Headers: []*block.HeaderV2{nil},
@@ -129,7 +129,7 @@ func TestMultipleHeaderProposalProof_GetProofTxData(t *testing.T) {
 	require.Nil(t, err)
 }
 
-func TestMultipleHeaderProposalProof_Marshal_Unmarshal(t *testing.T) {
+func TestMultipleHeaderProposalProof_MarshalUnmarshal(t *testing.T) {
 	h1 := &block.HeaderV2{Header: &block.Header{TimeStamp: 1, LeaderSignature: []byte("sig1")}}
 	h2 := &block.HeaderV2{Header: &block.Header{TimeStamp: 2, LeaderSignature: []byte("sig2")}}
 

@@ -53,7 +53,7 @@ func TestNewMultipleSigningProof(t *testing.T) {
 	}
 }
 
-func TestMultipleSigningProof_GetHeaders_GetLevel(t *testing.T) {
+func TestMultipleSigningProof_GetHeadersGetLevel(t *testing.T) {
 	h1 := &block.HeaderV2{Header: &block.Header{TimeStamp: 1}}
 	h2 := &block.HeaderV2{Header: &block.Header{TimeStamp: 2}}
 	h3 := &block.HeaderV2{Header: &block.Header{TimeStamp: 3}}
@@ -113,7 +113,7 @@ func TestMultipleSigningProof_GetHeaders_GetLevel(t *testing.T) {
 	require.Equal(t, proof.GetHeaders([]byte("pubKey2"))[2], h5)
 }
 
-func TestMultipleSigningProof_GetProofTxData_NotEnoughPublicKeysProvided_ExpectError(t *testing.T) {
+func TestMultipleSigningProof_GetProofTxDataNotEnoughPublicKeysProvidedExpectError(t *testing.T) {
 	proof := slash.MultipleHeaderSigningProof{}
 
 	proofTxData, err := proof.GetProofTxData()
@@ -121,7 +121,7 @@ func TestMultipleSigningProof_GetProofTxData_NotEnoughPublicKeysProvided_ExpectE
 	require.Equal(t, data.ErrNotEnoughPublicKeysProvided, err)
 }
 
-func TestMultipleSigningProof_GetProofTxData_NotEnoughHeadersProvided_ExpectError(t *testing.T) {
+func TestMultipleSigningProof_GetProofTxDataNotEnoughHeadersProvidedExpectError(t *testing.T) {
 	slashResPubKey1 := slash.SlashingResult{
 		SlashingLevel: slash.High,
 		Headers:       []data.HeaderInfoHandler{},
@@ -136,7 +136,7 @@ func TestMultipleSigningProof_GetProofTxData_NotEnoughHeadersProvided_ExpectErro
 	require.Equal(t, data.ErrNotEnoughHeadersProvided, err)
 }
 
-func TestMultipleSigningProof_GetProofTxData_NilHeaderHandler_ExpectError(t *testing.T) {
+func TestMultipleSigningProof_GetProofTxDataNilHeaderHandlerExpectError(t *testing.T) {
 	proof := &slash.MultipleHeaderSigningProof{
 		HeadersV2: slash.HeadersV2{Headers: []*block.HeaderV2{nil}},
 		SignersSlashData: map[string]slash.SignerSlashingData{

@@ -9,26 +9,26 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestGetSortedHeadersV2_NilHeaderInfoList_ExpectError(t *testing.T) {
+func TestGetSortedHeadersV2_NilHeaderInfoListExpectError(t *testing.T) {
 	sortedHeaders, err := getSortedHeaders(nil)
 	require.Nil(t, sortedHeaders)
 	require.Equal(t, data.ErrNilHeaderInfoList, err)
 }
 
-func TestGetSortedHeadersV2_NilHeaderInfo_ExpectError(t *testing.T) {
+func TestGetSortedHeadersV2_NilHeaderInfoExpectError(t *testing.T) {
 	headerInfoList := []data.HeaderInfoHandler{nil}
 	sortedHeaders, err := getSortedHeaders(headerInfoList)
 	require.Nil(t, sortedHeaders)
 	require.Equal(t, data.ErrNilHeaderInfo, err)
 }
 
-func TestGetSortedHeadersV2_EmptyHeaderInfoList_ExpectEmptyResult(t *testing.T) {
+func TestGetSortedHeadersV2_EmptyHeaderInfoListExpectEmptyResult(t *testing.T) {
 	sortedHeaders, err := getSortedHeaders([]data.HeaderInfoHandler{})
 	require.Len(t, sortedHeaders, 0)
 	require.Nil(t, err)
 }
 
-func TestGetSortedHeadersV2_NilHeaderHandler_ExpectError(t *testing.T) {
+func TestGetSortedHeadersV2_NilHeaderHandlerExpectError(t *testing.T) {
 	headerInfo := &mock.HeaderInfoStub{
 		Header: nil,
 		Hash:   []byte("hash1"),
@@ -63,7 +63,7 @@ func TestGetSortedHeadersV2_HeadersSameHash_ExpectError(t *testing.T) {
 	require.Equal(t, data.ErrHeadersSameHash, err)
 }
 
-func TestGetSortedHeadersV2_NilHash_ExpectError(t *testing.T) {
+func TestGetSortedHeadersV2_NilHashExpectError(t *testing.T) {
 	header1 := &block.HeaderV2{Header: &block.Header{TimeStamp: 1}}
 	header2 := &block.HeaderV2{Header: &block.Header{TimeStamp: 2}}
 	headerInfo1 := &mock.HeaderInfoStub{
