@@ -1,6 +1,7 @@
 package slash
 
 import (
+	"fmt"
 	"sort"
 
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
@@ -57,25 +58,25 @@ func sortHeaders(headersInfo []data.HeaderInfoHandler) ([]data.HeaderHandler, er
 	sortHeadersByHash(headersInfo)
 	headers := make([]data.HeaderHandler, 0, len(headersInfo))
 	hashes := make(map[string]struct{})
-	for _, headerInfo := range headersInfo {
+	for idx, headerInfo := range headersInfo {
 		if headerInfo == nil {
-			return nil, data.ErrNilHeaderInfo
+			return nil, fmt.Errorf("%w in sorted headers at index: %v", data.ErrNilHeaderInfo, idx)
 		}
 
 		hash := headerInfo.GetHash()
 		if hash == nil {
-			return nil, data.ErrNilHash
+			return nil, fmt.Errorf("%w in sorted headers at index: %v", data.ErrNilHash, idx)
 		}
 
 		hashStr := string(hash)
 		_, exists := hashes[hashStr]
 		if exists {
-			return nil, data.ErrHeadersSameHash
+			return nil, fmt.Errorf("%w, duplicated hash: %s", data.ErrHeadersSameHash, hashStr)
 		}
 
 		headerHandler := headerInfo.GetHeaderHandler()
 		if check.IfNil(headerHandler) {
-			return nil, data.ErrNilHeaderHandler
+			return nil, fmt.Errorf("%w in sorted headers for hash: %s", data.ErrNilHeaderHandler, hashStr)
 		}
 
 		headers = append(headers, headerHandler)

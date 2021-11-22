@@ -1,6 +1,7 @@
 package slash_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/ElrondNetwork/elrond-go-core/data"
@@ -49,7 +50,8 @@ func TestNewMultipleSigningProof(t *testing.T) {
 
 	for _, currTest := range tests {
 		_, err := slash.NewMultipleSigningProof(currTest.args)
-		require.Equal(t, currTest.expectedErr, err)
+		require.Error(t, err)
+		require.True(t, strings.Contains(err.Error(), currTest.expectedErr.Error()))
 	}
 }
 

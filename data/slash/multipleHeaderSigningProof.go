@@ -2,6 +2,8 @@
 package slash
 
 import (
+	"fmt"
+
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
 	"github.com/ElrondNetwork/elrond-go-core/core/sliceUtil"
 	"github.com/ElrondNetwork/elrond-go-core/data"
@@ -117,17 +119,17 @@ func getAllUniqueHeaders(slashResult map[string]SlashingResult) ([]data.HeaderIn
 	headersInfo := make([]data.HeaderInfoHandler, 0, len(slashResult))
 	hashes := make(map[string]struct{})
 
-	for _, res := range slashResult {
+	for pubKey, res := range slashResult {
 		hashesPerPubKey := make(map[string]struct{})
 		for _, currHeaderInfo := range res.Headers {
 			if currHeaderInfo == nil {
-				return nil, data.ErrNilHeaderInfo
+				return nil, fmt.Errorf("%w in slash result for multiple header signing proof for public key: %s", data.ErrNilHeaderInfo, pubKey)
 			}
 
 			currHash := string(currHeaderInfo.GetHash())
 			_, exists := hashesPerPubKey[currHash]
 			if exists {
-				return nil, data.ErrHeadersSameHash
+				return nil, fmt.Errorf("%w, duplicated hash: %s", data.ErrHeadersSameHash, currHash)
 			}
 
 			_, exists = hashes[currHash]

@@ -1,6 +1,7 @@
 package slash
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/ElrondNetwork/elrond-go-core/data"
@@ -25,7 +26,8 @@ func TestSortHeaders_NilHeaderInfoExpectError(t *testing.T) {
 	headerInfoList := []data.HeaderInfoHandler{nil}
 	sortedHeaders, err := sortHeaders(headerInfoList)
 	require.Nil(t, sortedHeaders)
-	require.Equal(t, data.ErrNilHeaderInfo, err)
+	require.Error(t, err)
+	require.True(t, strings.Contains(err.Error(), data.ErrNilHeaderInfo.Error()))
 }
 
 func TestSortHeaders_NilHeaderHandlerExpectError(t *testing.T) {
@@ -37,7 +39,8 @@ func TestSortHeaders_NilHeaderHandlerExpectError(t *testing.T) {
 
 	sortedHeaders, err := sortHeaders(headerInfoList)
 	require.Nil(t, sortedHeaders)
-	require.Equal(t, data.ErrNilHeaderHandler, err)
+	require.Error(t, err)
+	require.True(t, strings.Contains(err.Error(), data.ErrNilHeaderHandler.Error()))
 }
 
 func TestSortHeaders_NilHashExpectError(t *testing.T) {
@@ -55,7 +58,8 @@ func TestSortHeaders_NilHashExpectError(t *testing.T) {
 
 	sortedHeaders, err := sortHeaders(headerInfoList)
 	require.Nil(t, sortedHeaders)
-	require.Equal(t, data.ErrNilHash, err)
+	require.Error(t, err)
+	require.True(t, strings.Contains(err.Error(), data.ErrNilHash.Error()))
 }
 
 func TestSortHeaders_HeadersSameHashExpectError(t *testing.T) {
@@ -78,7 +82,8 @@ func TestSortHeaders_HeadersSameHashExpectError(t *testing.T) {
 
 	sortedHeaders, err := sortHeaders(headerInfoList)
 	require.Nil(t, sortedHeaders)
-	require.Equal(t, data.ErrHeadersSameHash, err)
+	require.Error(t, err)
+	require.True(t, strings.Contains(err.Error(), data.ErrHeadersSameHash.Error()))
 }
 
 func TestSortHeaders(t *testing.T) {
