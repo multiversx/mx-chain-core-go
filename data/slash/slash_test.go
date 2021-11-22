@@ -9,7 +9,7 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func TestHeaders_SetHeaders_InvalidHeaders_ExpectError(t *testing.T) {
+func TestHeaders_SetHeadersInvalidHeadersExpectError(t *testing.T) {
 	header := &block.Header{TimeStamp: 1}
 	headers := slash.HeadersV2{}
 
@@ -17,7 +17,7 @@ func TestHeaders_SetHeaders_InvalidHeaders_ExpectError(t *testing.T) {
 	require.Equal(t, data.ErrInvalidTypeAssertion, err)
 }
 
-func TestHeaders_SetHeaders_GetHeaders_GetHeaderHandlers(t *testing.T) {
+func TestHeaders_SetHeadersGetHeadersGetHeaderHandlers(t *testing.T) {
 	header1 := &block.HeaderV2{
 		Header: &block.Header{
 			TimeStamp: 1,

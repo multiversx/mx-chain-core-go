@@ -44,6 +44,7 @@ func (m *MultipleHeaderSigningProof) GetHeaders(pubKey []byte) []data.HeaderHand
 	return headersV2.GetHeaderHandlers()
 }
 
+// GetProofTxData returns the necessary ProofTxData to issue a commitment slash tx
 func (m *MultipleHeaderSigningProof) GetProofTxData() (*ProofTxData, error) {
 	if m == nil {
 		return nil, data.ErrNilPointerReceiver

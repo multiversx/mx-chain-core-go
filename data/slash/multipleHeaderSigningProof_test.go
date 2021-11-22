@@ -44,7 +44,7 @@ func TestNewMultipleSigningProof(t *testing.T) {
 	}
 }
 
-func TestMultipleSigningProof_GetHeaders_GetLevel_GetType(t *testing.T) {
+func TestMultipleSigningProof_GetHeadersGetLevelGetType(t *testing.T) {
 	h1 := &block.HeaderV2{Header: &block.Header{TimeStamp: 1}}
 	h2 := &block.HeaderV2{Header: &block.Header{TimeStamp: 2}}
 	h3 := &block.HeaderV2{Header: &block.Header{TimeStamp: 3}}
@@ -84,7 +84,7 @@ func TestMultipleSigningProof_GetHeaders_GetLevel_GetType(t *testing.T) {
 	require.Nil(t, proof.GetHeaders([]byte("pubKey3")))
 }
 
-func TestMultipleSigningProof_GetProofTxData_EnoughPublicKeysProvided_ExpectError(t *testing.T) {
+func TestMultipleSigningProof_GetProofTxData_EnoughPublicKeysProvidedExpectError(t *testing.T) {
 	proof := slash.MultipleHeaderSigningProof{}
 
 	proofTxData, err := proof.GetProofTxData()
@@ -92,7 +92,7 @@ func TestMultipleSigningProof_GetProofTxData_EnoughPublicKeysProvided_ExpectErro
 	require.Equal(t, data.ErrNotEnoughPublicKeysProvided, err)
 }
 
-func TestMultipleSigningProof_GetProofTxData_NotEnoughHeadersProvided_ExpectError(t *testing.T) {
+func TestMultipleSigningProof_GetProofTxData_NotEnoughHeadersProvidedExpectError(t *testing.T) {
 	proof := slash.MultipleHeaderSigningProof{PubKeys: [][]byte{[]byte("pub key")}}
 
 	proofTxData, err := proof.GetProofTxData()
@@ -100,7 +100,7 @@ func TestMultipleSigningProof_GetProofTxData_NotEnoughHeadersProvided_ExpectErro
 	require.Equal(t, data.ErrNotEnoughHeadersProvided, err)
 }
 
-func TestMultipleSigningProof_GetProofTxData_NilHeaderHandler_ExpectError(t *testing.T) {
+func TestMultipleSigningProof_GetProofTxData_NilHeaderHandlerExpectError(t *testing.T) {
 	proof := slash.MultipleHeaderSigningProof{
 		PubKeys: [][]byte{[]byte("pub key")},
 		HeadersV2: map[string]slash.HeadersV2{
@@ -139,7 +139,7 @@ func TestMultipleSigningProof_GetProofTxData(t *testing.T) {
 	require.Nil(t, err)
 }
 
-func TestMultipleSigningProof_Marshal_Unmarshal(t *testing.T) {
+func TestMultipleSigningProof_MarshalUnmarshal(t *testing.T) {
 	h1 := &block.HeaderV2{Header: &block.Header{TimeStamp: 1}}
 	h2 := &block.HeaderV2{Header: &block.Header{TimeStamp: 2}}
 	h3 := &block.HeaderV2{Header: &block.Header{TimeStamp: 3}}
