@@ -1,16 +1,14 @@
 package slash_test
 
 import (
-	"fmt"
 	"strings"
 	"testing"
 
-	"github.com/ElrondNetwork/elrond-go-core/core"
-	"github.com/ElrondNetwork/elrond-go-core/core/mock"
 	"github.com/ElrondNetwork/elrond-go-core/data"
 	"github.com/ElrondNetwork/elrond-go-core/data/block"
 	dataMock "github.com/ElrondNetwork/elrond-go-core/data/mock"
 	"github.com/ElrondNetwork/elrond-go-core/data/slash"
+	testscommon "github.com/ElrondNetwork/elrond-go-core/data/testscommon/slash"
 	"github.com/ElrondNetwork/elrond-go-core/marshal"
 	"github.com/stretchr/testify/require"
 )
@@ -257,7 +255,7 @@ func BenchmarkNewMultipleSigningProof(b *testing.B) {
 	// Worst case scenario: 25% of a consensus group of 400 validators on metachain
 	noOfPubKeys := uint32(0.25 * 400)
 	noOfHeaders := uint32(3)
-	slashRes := generateSlashResults(b, noOfPubKeys, noOfHeaders)
+	slashRes := testscommon.GenerateSlashResults(b, noOfPubKeys, noOfHeaders)
 
 	for n := 0; n < b.N; n++ {
 		proof, err := slash.NewMultipleSigningProof(slashRes)
@@ -267,30 +265,4 @@ func BenchmarkNewMultipleSigningProof(b *testing.B) {
 		require.Nil(b, err)
 		b.StartTimer()
 	}
-}
-
-func generateSlashResults(b *testing.B, noOfPubKeys uint32, noOfHeaders uint32) map[string]slash.SlashingResult {
-	hasher := &mock.HasherMock{}
-	marshaller := &marshal.GogoProtoMarshalizer{}
-
-	headers := make([]data.HeaderInfoHandler, 0, noOfHeaders)
-	for i := 0; i < int(noOfHeaders); i++ {
-		header := &block.HeaderV2{Header: &block.Header{Round: 1, TimeStamp: uint64(i)}}
-		hash, err := core.CalculateHash(marshaller, hasher, header)
-		require.Nil(b, err)
-
-		headerInfo := &dataMock.HeaderInfoStub{Header: header, Hash: hash}
-		headers = append(headers, headerInfo)
-	}
-
-	slashRes := make(map[string]slash.SlashingResult, noOfPubKeys)
-	for i := 0; i < int(noOfPubKeys); i++ {
-		tmp := fmt.Sprintf("pubKey%v", i)
-		pubKey := hasher.Compute(tmp)
-		slashRes[string(pubKey)] = slash.SlashingResult{
-			Headers: headers,
-		}
-	}
-
-	return slashRes
 }
