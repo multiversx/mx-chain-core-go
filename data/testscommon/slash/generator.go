@@ -28,12 +28,19 @@ func GenerateSlashResults(b *testing.B, noOfPubKeys uint32, noOfHeaders uint32) 
 		headers = append(headers, headerInfo)
 	}
 
+	threatLevel := slash.Zero
+	if noOfHeaders == slash.MinSlashableNoOfHeaders {
+		threatLevel = slash.Medium
+	} else if noOfHeaders >= slash.MinSlashableNoOfHeaders {
+		threatLevel = slash.High
+	}
 	slashRes := make(map[string]slash.SlashingResult, noOfPubKeys)
 	for i := 0; i < int(noOfPubKeys); i++ {
 		tmp := fmt.Sprintf("pubKey%v", i)
 		pubKey := hasher.Compute(tmp)
 		slashRes[string(pubKey)] = slash.SlashingResult{
-			Headers: headers,
+			Headers:       headers,
+			SlashingLevel: threatLevel,
 		}
 	}
 

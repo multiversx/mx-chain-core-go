@@ -9,6 +9,10 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data"
 )
 
+// MinSlashableNoOfHeaders represents the min number of headers required for a
+// multiple proposal/signing proof to be considered slashable
+const MinSlashableNoOfHeaders = 2
+
 // SlashingResult contains the slashable data as well as the severity(slashing level)
 // for a possible malicious validator
 type SlashingResult struct {
