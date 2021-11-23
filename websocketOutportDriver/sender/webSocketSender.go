@@ -79,11 +79,11 @@ func (w *webSocketSender) AddClient(wss WSConn, remoteAddr string) {
 
 	w.clientsHolder.AddClient(client)
 
-	w.acknowledges.AddEntryForAddress(remoteAddr)
-
 	if !w.withAcknowledge {
 		return
 	}
+
+	w.acknowledges.AddEntry(remoteAddr)
 
 	go w.handleReceiveAck(client)
 }
@@ -121,7 +121,7 @@ func (w *webSocketSender) handleReceiveAck(client *webSocketClient) {
 
 func (w *webSocketSender) start() {
 	err := w.server.ListenAndServe()
-	if err != nil && !strings.Contains(err.Error(), "http: Server closed") {
+	if err != nil && !strings.Contains(err.Error(), ErrServerIsClosed.Error()) {
 		w.log.Error("could not initialize webserver", "error", err)
 	}
 }

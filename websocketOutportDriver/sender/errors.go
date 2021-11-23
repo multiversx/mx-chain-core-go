@@ -16,3 +16,6 @@ var ErrEmptyDataToSend = errors.New("empty data to send")
 
 // ErrNoClientToSendTo signals that the list of clients listening to messages is empty
 var ErrNoClientToSendTo = errors.New("no client to send to")
+
+// ErrServerIsClosed represents the error thrown by the server's ListenAndServe() function when the server is closed
+var ErrServerIsClosed = errors.New("http: Server closed")

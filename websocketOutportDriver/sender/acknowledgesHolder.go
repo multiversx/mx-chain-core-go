@@ -14,8 +14,8 @@ func NewAcknowledgesHolder() *acknowledgesHolder {
 	}
 }
 
-// AddEntryForAddress will add the client to the inner map
-func (ah *acknowledgesHolder) AddEntryForAddress(remoteAddr string) {
+// AddEntry will add the client to the inner map
+func (ah *acknowledgesHolder) AddEntry(remoteAddr string) {
 	ah.mut.Lock()
 	ah.acknowledges[remoteAddr] = NewWebsocketClientAcknowledgesHolder()
 	ah.mut.Unlock()
