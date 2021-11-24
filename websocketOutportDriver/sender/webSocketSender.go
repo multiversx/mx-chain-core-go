@@ -10,7 +10,7 @@ import (
 
 	"github.com/ElrondNetwork/elrond-go-core/core"
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
-	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
+	outportData "github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
 	"github.com/gorilla/websocket"
 )
 
@@ -30,12 +30,13 @@ type webSocketSender struct {
 	server                   *http.Server
 	counter                  uint64
 	uint64ByteSliceConverter Uint64ByteSliceConverter
-	clientsHolder            *websocketClientsHolder
-	acknowledges             *acknowledgesHolder
-	withAcknowledge          bool
+	// TODO: use interfaces instead of direct instances + analyze returning pointers vs values on exported functions
+	clientsHolder   *websocketClientsHolder
+	acknowledges    *acknowledgesHolder
+	withAcknowledge bool
 }
 
-// WebSocketSenderArgs holds the arguments needed for creating a new instance of webSockerSender
+// WebSocketSenderArgs holds the arguments needed for creating a new instance of webSocketSender
 type WebSocketSenderArgs struct {
 	Server                   *http.Server
 	Uint64ByteSliceConverter Uint64ByteSliceConverter
@@ -46,13 +47,13 @@ type WebSocketSenderArgs struct {
 // NewWebSocketSender returns a new instance of webSocketSender
 func NewWebSocketSender(args WebSocketSenderArgs) (*webSocketSender, error) {
 	if args.Server == nil {
-		return nil, ErrNilHttpServer
+		return nil, outportData.ErrNilHttpServer
 	}
 	if check.IfNil(args.Uint64ByteSliceConverter) {
-		return nil, ErrNilUint64ByteSliceConverter
+		return nil, outportData.ErrNilUint64ByteSliceConverter
 	}
 	if check.IfNil(args.Log) {
-		return nil, ErrNilLogger
+		return nil, outportData.ErrNilLogger
 	}
 
 	ws := &webSocketSender{
@@ -79,6 +80,7 @@ func (w *webSocketSender) AddClient(wss WSConn, remoteAddr string) {
 
 	w.clientsHolder.AddClient(client)
 
+	// TODO: maybe multiple clients types could be supported: some require ack, while some don't require ack
 	if !w.withAcknowledge {
 		return
 	}
@@ -93,7 +95,10 @@ func (w *webSocketSender) handleReceiveAck(client *webSocketClient) {
 		mType, message, err := client.conn.ReadMessage()
 		if err != nil {
 			w.log.Error("cannot read message", "remote addr", client.remoteAddr, "error", err)
-			w.clientsHolder.Remove(client.remoteAddr)
+
+			err = w.clientsHolder.CloseAndRemove(client.remoteAddr)
+			w.log.LogIfError(err)
+
 			w.acknowledges.RemoveEntryForAddress(client.remoteAddr)
 
 			break
@@ -121,7 +126,7 @@ func (w *webSocketSender) handleReceiveAck(client *webSocketClient) {
 
 func (w *webSocketSender) start() {
 	err := w.server.ListenAndServe()
-	if err != nil && !strings.Contains(err.Error(), ErrServerIsClosed.Error()) {
+	if err != nil && !strings.Contains(err.Error(), outportData.ErrServerIsClosed.Error()) {
 		w.log.Error("could not initialize webserver", "error", err)
 	}
 }
@@ -135,7 +140,7 @@ func (w *webSocketSender) sendDataToClients(
 
 	clients := w.clientsHolder.GetAll()
 	if len(clients) == 0 {
-		return ErrNoClientToSendTo
+		return outportData.ErrNoClientToSendTo
 	}
 
 	for _, client := range w.clientsHolder.GetAll() {
@@ -161,11 +166,12 @@ func (w *webSocketSender) sendData(
 	counter uint64,
 ) error {
 	if len(data) == 0 {
-		return ErrEmptyDataToSend
+		return outportData.ErrEmptyDataToSend
 	}
 
 	errSend := client.conn.WriteMessage(websocket.BinaryMessage, data)
 	if errSend != nil {
+		// TODO: test if this is a situation when the client connection should be dropped
 		w.log.Warn("could not send data to client", "remote addr", client.remoteAddr, "error", errSend)
 		return fmt.Errorf("%w while writing message to client %s", errSend, client.remoteAddr)
 	}
@@ -198,7 +204,7 @@ func (w *webSocketSender) waitForAck(remoteAddr string, counter uint64) {
 }
 
 // Send will make the request accordingly to the received arguments
-func (w *webSocketSender) Send(args data.WsSendArgs) error {
+func (w *webSocketSender) Send(args outportData.WsSendArgs) error {
 	assignedCounter := atomic.AddUint64(&w.counter, 1)
 
 	w.log.Debug("counter", "value", assignedCounter)

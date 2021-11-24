@@ -1,6 +1,10 @@
 package sender
 
-import "sync"
+import (
+	"sync"
+
+	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
+)
 
 type websocketClientsHolder struct {
 	clients map[string]*webSocketClient
@@ -34,9 +38,17 @@ func (wch *websocketClientsHolder) GetAll() map[string]*webSocketClient {
 	return clientsMap
 }
 
-// Remove will remove the client from the map
-func (wch *websocketClientsHolder) Remove(remoteAddr string) {
+// CloseAndRemove will handle the closing of the connection and the deletion from the internal map
+func (wch *websocketClientsHolder) CloseAndRemove(remoteAddr string) error {
 	wch.mut.Lock()
+	defer wch.mut.Unlock()
+
+	client, ok := wch.clients[remoteAddr]
+	if !ok {
+		return data.ErrWebSocketClientNotFound
+	}
+
 	delete(wch.clients, remoteAddr)
-	wch.mut.Unlock()
+
+	return client.conn.Close()
 }

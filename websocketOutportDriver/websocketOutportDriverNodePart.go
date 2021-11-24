@@ -33,16 +33,16 @@ type websocketOutportDriverNodePart struct {
 // NewWebsocketOutportDriverNodePart will create a new instance of websocketOutportDriverNodePart
 func NewWebsocketOutportDriverNodePart(args WebsocketOutportDriverNodePartArgs) (*websocketOutportDriverNodePart, error) {
 	if check.IfNil(args.Marshaller) {
-		return nil, ErrNilMarshalizer
+		return nil, outportSenderData.ErrNilMarshalizer
 	}
 	if check.IfNil(args.WebsocketSender) {
-		return nil, ErrNilWebSocketSender
+		return nil, outportSenderData.ErrNilWebSocketSender
 	}
 	if check.IfNil(args.Uint64ByteSliceConverter) {
-		return nil, ErrNilUint64ByteSliceConverter
+		return nil, outportSenderData.ErrNilUint64ByteSliceConverter
 	}
 	if check.IfNil(args.Log) {
-		return nil, ErrNilLogger
+		return nil, outportSenderData.ErrNilLogger
 	}
 
 	isClosedFlag := atomic.Flag{}
@@ -133,7 +133,7 @@ func (o *websocketOutportDriverNodePart) IsInterfaceNil() bool {
 
 func (o *websocketOutportDriverNodePart) handleAction(args interface{}, operation outportSenderData.OperationType) error {
 	if o.isClosed.IsSet() {
-		return ErrServerIsClosed
+		return outportSenderData.ErrWebSocketServerIsClosed
 	}
 
 	marshaledBlock, err := o.marshalizer.Marshal(args)

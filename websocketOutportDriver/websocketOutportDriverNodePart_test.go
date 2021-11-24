@@ -22,7 +22,7 @@ func TestNewWebsocketOutportDriverNodePart(t *testing.T) {
 
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.Nil(t, o)
-		require.Equal(t, ErrNilMarshalizer, err)
+		require.Equal(t, data.ErrNilMarshalizer, err)
 	})
 
 	t.Run("nil logger", func(t *testing.T) {
@@ -31,7 +31,7 @@ func TestNewWebsocketOutportDriverNodePart(t *testing.T) {
 
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.Nil(t, o)
-		require.Equal(t, ErrNilLogger, err)
+		require.Equal(t, data.ErrNilLogger, err)
 	})
 
 	t.Run("should work", func(t *testing.T) {

@@ -33,7 +33,7 @@ type websocketPayloadParser struct {
 // NewWebSocketPayloadParser returns a new instance of websocketPayloadParser
 func NewWebSocketPayloadParser(uint64ByteSliceConverter Uint64ByteSliceConverter) (*websocketPayloadParser, error) {
 	if check.IfNil(uint64ByteSliceConverter) {
-		return nil, ErrNilUint64ByteSliceConverter
+		return nil, data.ErrNilUint64ByteSliceConverter
 	}
 
 	return &websocketPayloadParser{

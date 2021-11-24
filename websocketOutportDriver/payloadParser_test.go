@@ -19,7 +19,7 @@ func TestNewWebSocketPayloadParser(t *testing.T) {
 
 	t.Run("nil uint64 byte slice converter", func(t *testing.T) {
 		wpp, err := NewWebSocketPayloadParser(nil)
-		require.Equal(t, ErrNilUint64ByteSliceConverter, err)
+		require.Equal(t, data.ErrNilUint64ByteSliceConverter, err)
 		require.Nil(t, wpp)
 	})
 
