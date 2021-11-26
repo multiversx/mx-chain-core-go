@@ -4,7 +4,6 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data"
 	"github.com/ElrondNetwork/elrond-go-core/data/indexer"
 	outportSenderData "github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
-	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/sender"
 )
 
 // Driver is an interface for saving node specific data to other storage.
@@ -24,7 +23,7 @@ type Driver interface {
 // WebSocketSenderHandler defines what the actions that a web socket sender should do
 type WebSocketSenderHandler interface {
 	Send(args outportSenderData.WsSendArgs) error
-	AddClient(wss sender.WSConn, remoteAddr string)
+	AddClient(wss outportSenderData.WSConn, remoteAddr string)
 	Close() error
 	IsInterfaceNil() bool
 }

@@ -31,3 +31,6 @@ var ErrWebSocketServerIsClosed = errors.New("server is closed")
 
 // ErrWebSocketClientNotFound signals that the provided websocket client was not found
 var ErrWebSocketClientNotFound = errors.New("websocket client not found")
+
+// ErrNilWebSocketClient signals that a nil websocket client has been provided
+var ErrNilWebSocketClient = errors.New("nil websocket client")

@@ -19,10 +19,16 @@ func NewWebsocketClientsHolder() *websocketClientsHolder {
 }
 
 // AddClient will add the provided client to the internal members
-func (wch *websocketClientsHolder) AddClient(client *webSocketClient) {
+func (wch *websocketClientsHolder) AddClient(client *webSocketClient) error {
+	if client == nil {
+		return data.ErrNilWebSocketClient
+	}
+
 	wch.mut.Lock()
 	wch.clients[client.remoteAddr] = client
 	wch.mut.Unlock()
+
+	return nil
 }
 
 // GetAll will return all the clients

@@ -20,7 +20,7 @@ var (
 )
 
 type webSocketClient struct {
-	conn       WSConn
+	conn       outportData.WSConn
 	remoteAddr string
 }
 
@@ -72,13 +72,17 @@ func NewWebSocketSender(args WebSocketSenderArgs) (*webSocketSender, error) {
 }
 
 // AddClient will add the client to internal maps and will also start
-func (w *webSocketSender) AddClient(wss WSConn, remoteAddr string) {
+func (w *webSocketSender) AddClient(wss outportData.WSConn, remoteAddr string) {
 	client := &webSocketClient{
 		conn:       wss,
 		remoteAddr: remoteAddr,
 	}
 
-	w.clientsHolder.AddClient(client)
+	err := w.clientsHolder.AddClient(client)
+	if err != nil {
+		w.log.Warn("cannot AddClient", "error", err)
+		return
+	}
 
 	// TODO: maybe multiple clients types could be supported: some require ack, while some don't require ack
 	if !w.withAcknowledge {
