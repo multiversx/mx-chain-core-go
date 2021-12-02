@@ -40,6 +40,14 @@ func (m *MultipleHeaderSigningProof) GetLevel(pubKey []byte) ThreatLevel {
 	return slashData.ThreatLevel
 }
 
+func (m *MultipleHeaderSigningProof) GetAllHeaders() []data.HeaderHandler {
+	if m == nil {
+		return nil
+	}
+
+	return m.HeadersV2.GetHeaderHandlers()
+}
+
 // GetHeaders returns all headers that have been signed by a possible malicious validator
 func (m *MultipleHeaderSigningProof) GetHeaders(pubKey []byte) []data.HeaderHandler {
 	if m == nil {

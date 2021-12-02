@@ -29,4 +29,6 @@ type MultipleSigningProofHandler interface {
 	GetLevel(pubKey []byte) ThreatLevel
 	// GetHeaders - returns the slashable signed headers proposed by a given validator
 	GetHeaders(pubKey []byte) []data.HeaderHandler
+	// GetAllHeaders returns all signed headers
+	GetAllHeaders() []data.HeaderHandler
 }
