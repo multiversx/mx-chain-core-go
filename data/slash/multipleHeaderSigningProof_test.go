@@ -252,7 +252,7 @@ func TestMultipleSigningProof_Marshal_Unmarshal(t *testing.T) {
 }
 
 func BenchmarkNewMultipleSigningProof(b *testing.B) {
-	// Worst case scenario: 25% of a consensus group of 400 validators on metachain
+	// Worst case scenario: 25% of a consensus group of 400 validators on metachain signed 3 different headers
 	noOfPubKeys := uint32(0.25 * 400)
 	noOfHeaders := uint32(3)
 	slashRes := testscommon.GenerateSlashResults(b, noOfPubKeys, noOfHeaders)
