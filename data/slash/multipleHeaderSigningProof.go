@@ -48,6 +48,19 @@ func (m *MultipleHeaderSigningProof) GetAllHeaders() []data.HeaderHandler {
 	return m.HeadersV2.GetHeaderHandlers()
 }
 
+func (m *MultipleHeaderSigningProof) GetBitmap(pubKey []byte) []byte {
+	if m == nil {
+		return nil
+	}
+
+	slashData, exists := m.SignersSlashData[string(pubKey)]
+	if !exists {
+		return nil
+	}
+
+	return slashData.GetSignedHeadersBitMap()
+}
+
 // GetHeaders returns all headers that have been signed by a possible malicious validator
 func (m *MultipleHeaderSigningProof) GetHeaders(pubKey []byte) []data.HeaderHandler {
 	if m == nil {
@@ -142,13 +155,13 @@ func getAllUniqueHeaders(slashResult map[string]SlashingResult) ([]data.HeaderIn
 				return nil, fmt.Errorf("%w, duplicated hash: %s", data.ErrHeadersSameHash, hex.EncodeToString(currHeaderInfo.GetHash()))
 			}
 
+			hashesPerPubKey[currHash] = struct{}{}
 			_, exists = hashes[currHash]
 			if exists {
 				continue
 			}
 
 			hashes[currHash] = struct{}{}
-			hashesPerPubKey[currHash] = struct{}{}
 			headersInfo = append(headersInfo, currHeaderInfo)
 		}
 	}

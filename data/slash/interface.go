@@ -31,4 +31,6 @@ type MultipleSigningProofHandler interface {
 	GetHeaders(pubKey []byte) []data.HeaderHandler
 	// GetAllHeaders returns all signed headers
 	GetAllHeaders() []data.HeaderHandler
+	// GetBitmap returns a bitmap representing the slashable signed headers proposed by a given validator
+	GetBitmap(pubKey []byte) []byte
 }
