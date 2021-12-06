@@ -25,12 +25,10 @@ type MultipleSigningProofHandler interface {
 	SlashingProofHandler
 	// GetPubKeys - returns all validator's public keys which have signed multiple headers
 	GetPubKeys() [][]byte
+	// GetAllHeaders returns all signed headers
+	GetAllHeaders() []data.HeaderHandler
 	// GetLevel - returns the slashing level for a given validator
 	GetLevel(pubKey []byte) ThreatLevel
 	// GetHeaders - returns the slashable signed headers proposed by a given validator
 	GetHeaders(pubKey []byte) []data.HeaderHandler
-	// GetAllHeaders returns all signed headers
-	GetAllHeaders() []data.HeaderHandler
-	// GetBitmap returns a bitmap representing the slashable signed headers proposed by a given validator
-	GetBitmap(pubKey []byte) []byte
 }
