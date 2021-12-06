@@ -74,17 +74,12 @@ func TestMultipleSigningProof_GetHeadersGetLevelGetType(t *testing.T) {
 	require.Equal(t, slash.Medium, proof.GetLevel([]byte("pubKey2")))
 	require.Equal(t, slash.Zero, proof.GetLevel([]byte("pubKey3")))
 
-	require.Len(t, proof.GetHeaders([]byte("pubKey1")), 2)
-	require.Len(t, proof.GetHeaders([]byte("pubKey2")), 1)
-	require.Len(t, proof.GetHeaders([]byte("pubKey3")), 0)
-
-	require.Equal(t, proof.GetHeaders([]byte("pubKey1"))[0], h1)
-	require.Equal(t, proof.GetHeaders([]byte("pubKey1"))[1], h2)
-	require.Equal(t, proof.GetHeaders([]byte("pubKey2"))[0], h3)
+	require.Equal(t, []data.HeaderHandler{h1, h2}, proof.GetHeaders([]byte("pubKey1")))
+	require.Equal(t, []data.HeaderHandler{h3}, proof.GetHeaders([]byte("pubKey2")))
 	require.Nil(t, proof.GetHeaders([]byte("pubKey3")))
 }
 
-func TestMultipleSigningProof_GetProofTxData_EnoughPublicKeysProvidedExpectError(t *testing.T) {
+func TestMultipleSigningProof_GetProofTxData_NotEnoughPublicKeysProvidedExpectError(t *testing.T) {
 	proof := slash.MultipleHeaderSigningProof{}
 
 	proofTxData, err := proof.GetProofTxData()

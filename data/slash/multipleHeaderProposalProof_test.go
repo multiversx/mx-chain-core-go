@@ -57,10 +57,7 @@ func TestMultipleProposalProof_GetHeadersGetLevelGetType(t *testing.T) {
 
 	require.Equal(t, slash.MultipleProposal, proof.GetType())
 	require.Equal(t, slash.Medium, proof.GetLevel())
-
-	require.Len(t, proof.GetHeaders(), 2)
-	require.Equal(t, proof.GetHeaders()[0], h1)
-	require.Equal(t, proof.GetHeaders()[1], h2)
+	require.Equal(t, []data.HeaderHandler{h1, h2}, proof.GetHeaders())
 }
 
 func TestMultipleHeaderProposalProof_GetProofTxDataNotEnoughHeadersExpectError(t *testing.T) {
