@@ -163,9 +163,9 @@ func calcHashIndexMap(headersInfo []data.HeaderInfoHandler) map[string]uint32 {
 
 func computeSignersSlashData(hashIndexMap map[string]uint32, slashResult map[string]SlashingResult) map[string]SignerSlashingData {
 	signersSlashData := make(map[string]SignerSlashingData)
-	bitMapLen := len(hashIndexMap)/byteSize + 1
+	bitMapSize := CalcBitmapSize(len(hashIndexMap))
 	for pubKey, res := range slashResult {
-		bitmap := make([]byte, bitMapLen)
+		bitmap := make([]byte, bitMapSize)
 		for _, header := range res.Headers {
 			index, exists := hashIndexMap[string(header.GetHash())]
 			if exists {

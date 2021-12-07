@@ -38,6 +38,16 @@ const (
 	MultipleSigningProofID byte = 0x2
 )
 
+// CalcBitmapSize returns the min required bitmap size, which
+// can hold a noOfBits
+func CalcBitmapSize(noOfBits int) uint32 {
+	bitmapSize := noOfBits / 8
+	if noOfBits%8 != 0 {
+		bitmapSize++
+	}
+	return uint32(bitmapSize)
+}
+
 func sortAndGetHeadersV2(headersInfo []data.HeaderInfoHandler) (*HeadersV2, error) {
 	sortedHeaders, err := sortHeaders(headersInfo)
 	if err != nil {
