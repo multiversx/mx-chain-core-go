@@ -53,6 +53,30 @@ func sortAndGetHeadersV2(headersInfo []data.HeaderInfoHandler) (*HeadersV2, erro
 	return headersV2, nil
 }
 
+func checkHeaderInfo(headerInfo data.HeaderInfoHandler, hashes map[string]struct{}) (string, error) {
+	if headerInfo == nil {
+		return "", data.ErrNilHeaderInfo
+	}
+
+	hash := headerInfo.GetHash()
+	if hash == nil {
+		return "", data.ErrNilHash
+	}
+
+	headerHandler := headerInfo.GetHeaderHandler()
+	if check.IfNil(headerHandler) {
+		return "", fmt.Errorf("%w in header info for hash: %s", data.ErrNilHeaderHandler, hex.EncodeToString(hash))
+	}
+
+	hashStr := string(hash)
+	_, exists := hashes[hashStr]
+	if exists {
+		return "", fmt.Errorf("%w, duplicated hash: %s", data.ErrHeadersSameHash, hex.EncodeToString(hash))
+	}
+
+	return hashStr, nil
+}
+
 func sortHeaders(headersInfo []data.HeaderInfoHandler) ([]data.HeaderHandler, error) {
 	if len(headersInfo) == 0 {
 		return nil, data.ErrEmptyHeaderInfoList
@@ -62,28 +86,13 @@ func sortHeaders(headersInfo []data.HeaderInfoHandler) ([]data.HeaderHandler, er
 	headers := make([]data.HeaderHandler, 0, len(headersInfo))
 	hashes := make(map[string]struct{})
 	for idx, headerInfo := range headersInfo {
-		if headerInfo == nil {
-			return nil, fmt.Errorf("%w in sorted headers at index: %v", data.ErrNilHeaderInfo, idx)
+		hash, err := checkHeaderInfo(headerInfo, hashes)
+		if err != nil {
+			return nil, fmt.Errorf("%w in sorted header list at index: %d", err, idx)
 		}
 
-		hash := headerInfo.GetHash()
-		if hash == nil {
-			return nil, fmt.Errorf("%w in sorted headers at index: %v", data.ErrNilHash, idx)
-		}
-
-		hashStr := string(hash)
-		_, exists := hashes[hashStr]
-		if exists {
-			return nil, fmt.Errorf("%w, duplicated hash: %s", data.ErrHeadersSameHash, hex.EncodeToString(hash))
-		}
-
-		headerHandler := headerInfo.GetHeaderHandler()
-		if check.IfNil(headerHandler) {
-			return nil, fmt.Errorf("%w in sorted headers for hash: %s", data.ErrNilHeaderHandler, hex.EncodeToString(hash))
-		}
-
-		headers = append(headers, headerHandler)
-		hashes[hashStr] = struct{}{}
+		headers = append(headers, headerInfo.GetHeaderHandler())
+		hashes[hash] = struct{}{}
 	}
 
 	return headers, nil

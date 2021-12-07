@@ -130,26 +130,20 @@ func getAllUniqueHeaders(slashResult map[string]SlashingResult) ([]data.HeaderIn
 
 	for pubKey, res := range slashResult {
 		hashesPerPubKey := make(map[string]struct{})
-		for _, currHeaderInfo := range res.Headers {
-			if currHeaderInfo == nil {
-				return nil, fmt.Errorf("%w in slash result for multiple header signing proof for public key: %s",
-					data.ErrNilHeaderInfo, hex.EncodeToString([]byte(pubKey)))
+		for _, headerInfo := range res.Headers {
+			hash, err := checkHeaderInfo(headerInfo, hashesPerPubKey)
+			if err != nil {
+				return nil, fmt.Errorf("%w in slash result for public key: %s", err, hex.EncodeToString([]byte(pubKey)))
 			}
 
-			currHash := string(currHeaderInfo.GetHash())
-			_, exists := hashesPerPubKey[currHash]
-			if exists {
-				return nil, fmt.Errorf("%w, duplicated hash: %s", data.ErrHeadersSameHash, hex.EncodeToString(currHeaderInfo.GetHash()))
-			}
-
-			hashesPerPubKey[currHash] = struct{}{}
-			_, exists = hashes[currHash]
+			hashesPerPubKey[hash] = struct{}{}
+			_, exists := hashes[hash]
 			if exists {
 				continue
 			}
 
-			hashes[currHash] = struct{}{}
-			headersInfo = append(headersInfo, currHeaderInfo)
+			hashes[hash] = struct{}{}
+			headersInfo = append(headersInfo, headerInfo)
 		}
 	}
 
