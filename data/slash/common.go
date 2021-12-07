@@ -63,7 +63,7 @@ func checkHeaderInfo(headerInfo data.HeaderInfoHandler, hashes map[string]struct
 
 	headerHandler := headerInfo.GetHeaderHandler()
 	if check.IfNil(headerHandler) {
-		return "", fmt.Errorf("%w in header list for hash: %s", data.ErrNilHeaderHandler, hex.EncodeToString(hash))
+		return "", fmt.Errorf("%w in header info for hash: %s", data.ErrNilHeaderHandler, hex.EncodeToString(hash))
 	}
 
 	hashStr := string(hash)

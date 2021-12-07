@@ -125,16 +125,16 @@ func getAllUniqueHeaders(slashResult map[string]SlashingResult) ([]data.HeaderIn
 		for _, headerInfo := range res.Headers {
 			hash, err := checkHeaderInfo(headerInfo, hashesPerPubKey)
 			if err != nil {
-				return nil, fmt.Errorf("%w for public key: %s", err, hex.EncodeToString([]byte(pubKey)))
+				return nil, fmt.Errorf("%w in slash result for public key: %s", err, hex.EncodeToString([]byte(pubKey)))
 			}
 
+			hashesPerPubKey[hash] = struct{}{}
 			_, exists := hashes[hash]
 			if exists {
 				continue
 			}
 
 			hashes[hash] = struct{}{}
-			hashesPerPubKey[hash] = struct{}{}
 			headersInfo = append(headersInfo, headerInfo)
 		}
 	}
