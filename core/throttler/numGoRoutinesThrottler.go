@@ -1,15 +1,16 @@
 package throttler
 
 import (
-	"sync/atomic"
+	"sync"
 
 	"github.com/ElrondNetwork/elrond-go-core/core"
 )
 
 // NumGoRoutinesThrottler can limit the number of go routines launched
 type NumGoRoutinesThrottler struct {
-	max     int32
-	counter int32
+	max        int32
+	mutCounter sync.RWMutex
+	counter    int32
 }
 
 // NewNumGoRoutinesThrottler creates a new num go routine throttler instance
@@ -25,19 +26,31 @@ func NewNumGoRoutinesThrottler(max int32) (*NumGoRoutinesThrottler, error) {
 
 // CanProcess returns true if current counter is less than max
 func (ngrt *NumGoRoutinesThrottler) CanProcess() bool {
-	valCounter := atomic.LoadInt32(&ngrt.counter)
+	ngrt.mutCounter.RLock()
+	defer ngrt.mutCounter.RUnlock()
 
-	return valCounter < ngrt.max
+	return ngrt.counter < ngrt.max
 }
 
-// StartProcessing will increment current counter
-func (ngrt *NumGoRoutinesThrottler) StartProcessing() {
-	atomic.AddInt32(&ngrt.counter, 1)
+// StartProcessingIfCanProcess returns true if current counter is less than max. It also increments the counter
+func (ngrt *NumGoRoutinesThrottler) StartProcessingIfCanProcess() bool {
+	ngrt.mutCounter.Lock()
+	defer ngrt.mutCounter.Unlock()
+
+	canIncrement := ngrt.counter < ngrt.max
+	if canIncrement {
+		ngrt.counter++
+	}
+
+	return canIncrement
 }
 
 // EndProcessing will decrement current counter
 func (ngrt *NumGoRoutinesThrottler) EndProcessing() {
-	atomic.AddInt32(&ngrt.counter, -1)
+	ngrt.mutCounter.Lock()
+	defer ngrt.mutCounter.Unlock()
+
+	ngrt.counter--
 }
 
 // IsInterfaceNil returns true if there is no value under the interface
