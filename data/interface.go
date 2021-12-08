@@ -151,14 +151,6 @@ type ShardValidatorInfoHandler interface {
 	IsInterfaceNil() bool
 }
 
-// GoRoutineThrottler can monitor the number of the currently running go routines
-type GoRoutineThrottler interface {
-	CanProcess() bool
-	StartProcessing()
-	EndProcessing()
-	IsInterfaceNil() bool
-}
-
 // MiniBlockInfo holds information about a cross miniblock referenced in a received block
 type MiniBlockInfo struct {
 	Hash          []byte
