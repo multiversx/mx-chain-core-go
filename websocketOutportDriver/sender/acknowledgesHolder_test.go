@@ -50,6 +50,8 @@ func TestAcknowledgesHolder_GetAcknowledgesOfAddress(t *testing.T) {
 	t.Parallel()
 
 	t.Run("GetAcknowledgesOfAddress: not found", func(t *testing.T) {
+		t.Parallel()
+
 		ah := NewAcknowledgesHolder()
 
 		res, found := ah.GetAcknowledgesOfAddress("new addr")
@@ -58,6 +60,8 @@ func TestAcknowledgesHolder_GetAcknowledgesOfAddress(t *testing.T) {
 	})
 
 	t.Run("GetAcknowledgesOfAddress: should work", func(t *testing.T) {
+		t.Parallel()
+
 		remAddr := "test address"
 		counter0, counter1 := uint64(37), uint64(38)
 		ah := NewAcknowledgesHolder()

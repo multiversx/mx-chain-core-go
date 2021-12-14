@@ -30,6 +30,8 @@ func TestWebsocketClientAcknowledgesHolder_Add(t *testing.T) {
 }
 
 func TestWebsocketClientAcknowledgesHolder_ProcessAcknowledged(t *testing.T) {
+	t.Parallel()
+
 	t.Run("ProcessAcknowledged: should not find", func(t *testing.T) {
 		t.Parallel()
 

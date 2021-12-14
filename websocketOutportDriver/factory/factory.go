@@ -36,7 +36,7 @@ type outportDriverWebSocketSenderFactory struct {
 // NewOutportDriverWebSocketSenderFactory will return a new instance of outportDriverWebSocketSenderFactory
 func NewOutportDriverWebSocketSenderFactory(args OutportDriverWebSocketSenderFactoryArgs) (*outportDriverWebSocketSenderFactory, error) {
 	if check.IfNil(args.Marshaller) {
-		return nil, outportData.ErrNilMarshalizer
+		return nil, outportData.ErrNilMarshaller
 	}
 	if check.IfNil(args.Uint64ByteSliceConverter) {
 		return nil, outportData.ErrNilUint64ByteSliceConverter

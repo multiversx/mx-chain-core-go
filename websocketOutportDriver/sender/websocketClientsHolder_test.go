@@ -16,6 +16,8 @@ func TestNewWebsocketClientsHolder(t *testing.T) {
 }
 
 func TestWebsocketClientsHolder_AddClient(t *testing.T) {
+	t.Parallel()
+
 	t.Run("nil web socket client", func(t *testing.T) {
 		t.Parallel()
 
@@ -52,6 +54,8 @@ func TestWebsocketClientsHolder_GetAll(t *testing.T) {
 }
 
 func TestWebsocketClientsHolder_CloseAndRemove(t *testing.T) {
+	t.Parallel()
+
 	t.Run("CloseAndRemove should error because the client is not found", func(t *testing.T) {
 		t.Parallel()
 
