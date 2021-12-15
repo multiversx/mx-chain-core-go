@@ -20,8 +20,8 @@ var ErrNoClientToSendTo = errors.New("no client to send to")
 // ErrServerIsClosed represents the error thrown by the server's ListenAndServe() function when the server is closed
 var ErrServerIsClosed = errors.New("http: Server closed")
 
-// ErrNilMarshalizer signals that a nil marshalizer has been provided
-var ErrNilMarshalizer = errors.New("nil marshalizer")
+// ErrNilMarshaller signals that a nil marshaller has been provided
+var ErrNilMarshaller = errors.New("nil marshaller")
 
 // ErrNilWebSocketSender signals that a nil web socket sender has been provided
 var ErrNilWebSocketSender = errors.New("nil sender sender")
@@ -31,3 +31,6 @@ var ErrWebSocketServerIsClosed = errors.New("server is closed")
 
 // ErrWebSocketClientNotFound signals that the provided websocket client was not found
 var ErrWebSocketClientNotFound = errors.New("websocket client not found")
+
+// ErrNilWebSocketClient signals that a nil websocket client has been provided
+var ErrNilWebSocketClient = errors.New("nil websocket client")

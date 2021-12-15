@@ -13,19 +13,47 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+var cannotSendOnRouteErr = errors.New("cannot send on route")
+
 func TestNewWebsocketOutportDriverNodePart(t *testing.T) {
 	t.Parallel()
 
-	t.Run("nil marshalizer", func(t *testing.T) {
+	t.Run("nil marshaller", func(t *testing.T) {
+		t.Parallel()
+
 		args := getMockArgs()
 		args.Marshaller = nil
 
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.Nil(t, o)
-		require.Equal(t, data.ErrNilMarshalizer, err)
+		require.Equal(t, data.ErrNilMarshaller, err)
+	})
+
+	t.Run("nil uint64 byte slice converter", func(t *testing.T) {
+		t.Parallel()
+
+		args := getMockArgs()
+		args.Uint64ByteSliceConverter = nil
+
+		o, err := NewWebsocketOutportDriverNodePart(args)
+		require.Nil(t, o)
+		require.Equal(t, data.ErrNilUint64ByteSliceConverter, err)
+	})
+
+	t.Run("nil uint64 byte slice converter", func(t *testing.T) {
+		t.Parallel()
+
+		args := getMockArgs()
+		args.Uint64ByteSliceConverter = nil
+
+		o, err := NewWebsocketOutportDriverNodePart(args)
+		require.Nil(t, o)
+		require.Equal(t, data.ErrNilUint64ByteSliceConverter, err)
 	})
 
 	t.Run("nil logger", func(t *testing.T) {
+		t.Parallel()
+
 		args := getMockArgs()
 		args.Log = nil
 
@@ -35,49 +63,242 @@ func TestNewWebsocketOutportDriverNodePart(t *testing.T) {
 	})
 
 	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
 		args := getMockArgs()
 
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NotNil(t, o)
 		require.NoError(t, err)
+		require.False(t, o.IsInterfaceNil())
 	})
 }
 
-func TestWebsocketOutportDriverNodePart_SaveBlock_ErrWhileSendingOnRoute(t *testing.T) {
-	t.Skip("this test will run continuously so it should be run only when trying to reach that code area")
-
-	expectedErr := errors.New("cannot send on route")
-	defer func() {
-		r := recover()
-		require.Contains(t, r, expectedErr.Error())
-	}()
-
-	args := getMockArgs()
-	args.WebsocketSender = &mock.WebSocketSenderStub{
-		SendOnRouteCalled: func(_ data.WsSendArgs) error {
-			return expectedErr
-		},
-	}
-	o, err := NewWebsocketOutportDriverNodePart(args)
-	require.NoError(t, err)
-
-	err = o.SaveBlock(&indexer.ArgsSaveBlockData{})
-	require.NoError(t, err)
-}
-
-func TestWebsocketOutportDriverNodePart_SaveBlock_ShouldWork(t *testing.T) {
+func TestWebsocketOutportDriverNodePart_SaveBlock(t *testing.T) {
 	t.Parallel()
 
-	defer func() {
-		r := recover()
-		require.Nil(t, r)
-	}()
-	args := getMockArgs()
-	o, err := NewWebsocketOutportDriverNodePart(args)
-	require.NoError(t, err)
+	t.Run("SaveBlock - should error", func(t *testing.T) {
+		t.Parallel()
 
-	err = o.SaveBlock(&indexer.ArgsSaveBlockData{})
-	require.NoError(t, err)
+		args := getMockArgs()
+		args.WebsocketSender = &mock.WebSocketSenderStub{
+			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+				return cannotSendOnRouteErr
+			},
+		}
+		o, err := NewWebsocketOutportDriverNodePart(args)
+		require.NoError(t, err)
+
+		err = o.SaveBlock(&indexer.ArgsSaveBlockData{})
+		require.True(t, errors.Is(err, cannotSendOnRouteErr))
+	})
+
+	t.Run("SaveBlock - should work", func(t *testing.T) {
+		t.Parallel()
+
+		defer func() {
+			r := recover()
+			require.Nil(t, r)
+		}()
+		args := getMockArgs()
+		o, err := NewWebsocketOutportDriverNodePart(args)
+		require.NoError(t, err)
+
+		err = o.SaveBlock(&indexer.ArgsSaveBlockData{})
+		require.NoError(t, err)
+	})
+}
+
+func TestWebsocketOutportDriverNodePart_FinalizedBlock(t *testing.T) {
+	t.Parallel()
+
+	t.Run("Finalized block - should error", func(t *testing.T) {
+		args := getMockArgs()
+		args.WebsocketSender = &mock.WebSocketSenderStub{
+			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+				return cannotSendOnRouteErr
+			},
+		}
+		o, err := NewWebsocketOutportDriverNodePart(args)
+		require.NoError(t, err)
+
+		err = o.FinalizedBlock([]byte("header hash"))
+		require.True(t, errors.Is(err, cannotSendOnRouteErr))
+	})
+
+	t.Run("Finalized block - should work", func(t *testing.T) {
+		args := getMockArgs()
+		args.WebsocketSender = &mock.WebSocketSenderStub{
+			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+				return nil
+			},
+		}
+		o, err := NewWebsocketOutportDriverNodePart(args)
+		require.NoError(t, err)
+
+		err = o.FinalizedBlock([]byte("header hash"))
+		require.NoError(t, err)
+	})
+}
+
+func TestWebsocketOutportDriverNodePart_RevertIndexedBlock(t *testing.T) {
+	t.Parallel()
+
+	t.Run("RevertIndexedBlock - should error", func(t *testing.T) {
+		args := getMockArgs()
+		args.WebsocketSender = &mock.WebSocketSenderStub{
+			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+				return cannotSendOnRouteErr
+			},
+		}
+		o, err := NewWebsocketOutportDriverNodePart(args)
+		require.NoError(t, err)
+
+		err = o.RevertIndexedBlock(nil, nil)
+		require.True(t, errors.Is(err, cannotSendOnRouteErr))
+	})
+
+	t.Run("RevertIndexedBlock block - should work", func(t *testing.T) {
+		args := getMockArgs()
+		args.WebsocketSender = &mock.WebSocketSenderStub{
+			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+				return nil
+			},
+		}
+		o, err := NewWebsocketOutportDriverNodePart(args)
+		require.NoError(t, err)
+
+		err = o.RevertIndexedBlock(nil, nil)
+		require.NoError(t, err)
+	})
+}
+
+func TestWebsocketOutportDriverNodePart_SaveAccounts(t *testing.T) {
+	t.Parallel()
+
+	t.Run("SaveAccounts - should error", func(t *testing.T) {
+		args := getMockArgs()
+		args.WebsocketSender = &mock.WebSocketSenderStub{
+			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+				return cannotSendOnRouteErr
+			},
+		}
+		o, err := NewWebsocketOutportDriverNodePart(args)
+		require.NoError(t, err)
+
+		err = o.SaveAccounts(0, nil)
+		require.True(t, errors.Is(err, cannotSendOnRouteErr))
+	})
+
+	t.Run("SaveAccounts block - should work", func(t *testing.T) {
+		args := getMockArgs()
+		args.WebsocketSender = &mock.WebSocketSenderStub{
+			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+				return nil
+			},
+		}
+		o, err := NewWebsocketOutportDriverNodePart(args)
+		require.NoError(t, err)
+
+		err = o.SaveAccounts(0, nil)
+		require.NoError(t, err)
+	})
+}
+
+func TestWebsocketOutportDriverNodePart_SaveRoundsInfo(t *testing.T) {
+	t.Parallel()
+
+	t.Run("SaveRoundsInfo - should error", func(t *testing.T) {
+		args := getMockArgs()
+		args.WebsocketSender = &mock.WebSocketSenderStub{
+			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+				return cannotSendOnRouteErr
+			},
+		}
+		o, err := NewWebsocketOutportDriverNodePart(args)
+		require.NoError(t, err)
+
+		err = o.SaveRoundsInfo(nil)
+		require.True(t, errors.Is(err, cannotSendOnRouteErr))
+	})
+
+	t.Run("SaveRoundsInfo block - should work", func(t *testing.T) {
+		args := getMockArgs()
+		args.WebsocketSender = &mock.WebSocketSenderStub{
+			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+				return nil
+			},
+		}
+		o, err := NewWebsocketOutportDriverNodePart(args)
+		require.NoError(t, err)
+
+		err = o.SaveRoundsInfo(nil)
+		require.NoError(t, err)
+	})
+}
+
+func TestWebsocketOutportDriverNodePart_SaveValidatorsPubKeys(t *testing.T) {
+	t.Parallel()
+
+	t.Run("SaveValidatorsPubKeys - should error", func(t *testing.T) {
+		args := getMockArgs()
+		args.WebsocketSender = &mock.WebSocketSenderStub{
+			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+				return cannotSendOnRouteErr
+			},
+		}
+		o, err := NewWebsocketOutportDriverNodePart(args)
+		require.NoError(t, err)
+
+		err = o.SaveValidatorsPubKeys(nil, 0)
+		require.True(t, errors.Is(err, cannotSendOnRouteErr))
+	})
+
+	t.Run("SaveValidatorsPubKeys block - should work", func(t *testing.T) {
+		args := getMockArgs()
+		args.WebsocketSender = &mock.WebSocketSenderStub{
+			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+				return nil
+			},
+		}
+		o, err := NewWebsocketOutportDriverNodePart(args)
+		require.NoError(t, err)
+
+		err = o.SaveValidatorsPubKeys(nil, 0)
+		require.NoError(t, err)
+	})
+}
+
+func TestWebsocketOutportDriverNodePart_SaveValidatorsRating(t *testing.T) {
+	t.Parallel()
+
+	t.Run("SaveValidatorsRating - should error", func(t *testing.T) {
+		args := getMockArgs()
+		args.WebsocketSender = &mock.WebSocketSenderStub{
+			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+				return cannotSendOnRouteErr
+			},
+		}
+		o, err := NewWebsocketOutportDriverNodePart(args)
+		require.NoError(t, err)
+
+		err = o.SaveValidatorsRating("", nil)
+		require.True(t, errors.Is(err, cannotSendOnRouteErr))
+	})
+
+	t.Run("SaveValidatorsRating block - should work", func(t *testing.T) {
+		args := getMockArgs()
+		args.WebsocketSender = &mock.WebSocketSenderStub{
+			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+				return nil
+			},
+		}
+		o, err := NewWebsocketOutportDriverNodePart(args)
+		require.NoError(t, err)
+
+		err = o.SaveValidatorsRating("", nil)
+		require.NoError(t, err)
+	})
 }
 
 func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
@@ -104,6 +325,26 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 
 	err = o.SaveBlock(&indexer.ArgsSaveBlockData{})
 	require.NoError(t, err)
+}
+
+func TestWebsocketOutportDriverNodePart_Close(t *testing.T) {
+	t.Parallel()
+
+	closedWasCalled := false
+	args := getMockArgs()
+	args.WebsocketSender = &mock.WebSocketSenderStub{
+		CloseCalled: func() error {
+			closedWasCalled = true
+			return nil
+		},
+	}
+
+	o, err := NewWebsocketOutportDriverNodePart(args)
+	require.NoError(t, err)
+
+	err = o.Close()
+	require.NoError(t, err)
+	require.True(t, closedWasCalled)
 }
 
 func getMockArgs() WebsocketOutportDriverNodePartArgs {

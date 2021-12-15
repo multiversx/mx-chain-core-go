@@ -2,18 +2,17 @@ package mock
 
 import (
 	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
-	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/sender"
 )
 
 // WebSocketSenderStub -
 type WebSocketSenderStub struct {
 	SendOnRouteCalled func(args data.WsSendArgs) error
-	AddClientCalled   func(wss sender.WSConn, remoteAddr string)
+	AddClientCalled   func(wss data.WSConn, remoteAddr string)
 	CloseCalled       func() error
 }
 
 // AddClient -
-func (w *WebSocketSenderStub) AddClient(wss sender.WSConn, remoteAddr string) {
+func (w *WebSocketSenderStub) AddClient(wss data.WSConn, remoteAddr string) {
 	if w.AddClientCalled != nil {
 		w.AddClientCalled(wss, remoteAddr)
 	}

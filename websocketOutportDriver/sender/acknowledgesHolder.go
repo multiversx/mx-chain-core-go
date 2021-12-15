@@ -38,8 +38,15 @@ func (ah *acknowledgesHolder) RemoveEntryForAddress(remoteAddr string) {
 }
 
 // AddReceivedAcknowledge will add the received acknowledge as a counter for the given address
-func (ah *acknowledgesHolder) AddReceivedAcknowledge(remoteAddr string, counter uint64) {
+func (ah *acknowledgesHolder) AddReceivedAcknowledge(remoteAddr string, counter uint64) bool {
 	ah.mut.Lock()
-	ah.acknowledges[remoteAddr].Add(counter)
-	ah.mut.Unlock()
+	defer ah.mut.Unlock()
+
+	acks, found := ah.acknowledges[remoteAddr]
+	if !found {
+		return false
+	}
+
+	acks.Add(counter)
+	return true
 }

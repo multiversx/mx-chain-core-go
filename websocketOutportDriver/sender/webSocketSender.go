@@ -3,7 +3,6 @@ package sender
 import (
 	"context"
 	"fmt"
-	"net/http"
 	"strings"
 	"sync/atomic"
 	"time"
@@ -20,14 +19,14 @@ var (
 )
 
 type webSocketClient struct {
-	conn       WSConn
+	conn       outportData.WSConn
 	remoteAddr string
 }
 
 type webSocketSender struct {
 	log core.Logger
 	// TODO: use an interface for http server (or simply provide the URL only) in order to make this component easy testable
-	server                   *http.Server
+	server                   HttpServerHandler
 	counter                  uint64
 	uint64ByteSliceConverter Uint64ByteSliceConverter
 	// TODO: use interfaces instead of direct instances + analyze returning pointers vs values on exported functions
@@ -38,7 +37,7 @@ type webSocketSender struct {
 
 // WebSocketSenderArgs holds the arguments needed for creating a new instance of webSocketSender
 type WebSocketSenderArgs struct {
-	Server                   *http.Server
+	Server                   HttpServerHandler
 	Uint64ByteSliceConverter Uint64ByteSliceConverter
 	WithAcknowledge          bool
 	Log                      core.Logger
@@ -72,13 +71,22 @@ func NewWebSocketSender(args WebSocketSenderArgs) (*webSocketSender, error) {
 }
 
 // AddClient will add the client to internal maps and will also start
-func (w *webSocketSender) AddClient(wss WSConn, remoteAddr string) {
+func (w *webSocketSender) AddClient(wss outportData.WSConn, remoteAddr string) {
+	if wss == nil {
+		w.log.Warn("nil ws connection provider", "remote addr", remoteAddr)
+		return
+	}
+
 	client := &webSocketClient{
 		conn:       wss,
 		remoteAddr: remoteAddr,
 	}
 
-	w.clientsHolder.AddClient(client)
+	err := w.clientsHolder.AddClient(client)
+	if err != nil {
+		w.log.Warn("cannot AddClient", "error", err)
+		return
+	}
 
 	// TODO: maybe multiple clients types could be supported: some require ack, while some don't require ack
 	if !w.withAcknowledge {

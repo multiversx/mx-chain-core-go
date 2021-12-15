@@ -33,7 +33,7 @@ type websocketOutportDriverNodePart struct {
 // NewWebsocketOutportDriverNodePart will create a new instance of websocketOutportDriverNodePart
 func NewWebsocketOutportDriverNodePart(args WebsocketOutportDriverNodePartArgs) (*websocketOutportDriverNodePart, error) {
 	if check.IfNil(args.Marshaller) {
-		return nil, outportSenderData.ErrNilMarshalizer
+		return nil, outportSenderData.ErrNilMarshaller
 	}
 	if check.IfNil(args.WebsocketSender) {
 		return nil, outportSenderData.ErrNilWebSocketSender
