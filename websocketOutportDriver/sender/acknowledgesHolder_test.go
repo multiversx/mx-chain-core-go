@@ -112,10 +112,10 @@ func TestAcknowledgesHolder_ConcurrentOperations(t *testing.T) {
 	wg.Add(100)
 
 	for i := uint64(0); i < 100; i++ {
-		go func(i uint64) {
-			switch i % 4 {
+		go func(index uint64) {
+			switch index % 4 {
 			case 0:
-				ah.AddReceivedAcknowledge("addr", i)
+				ah.AddReceivedAcknowledge("addr", index)
 			case 1:
 				_, _ = ah.GetAcknowledgesOfAddress("addr")
 			case 2:

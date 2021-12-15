@@ -70,12 +70,12 @@ func TestWebsocketClientAcknowledgesHolder_ConcurrentOperations(t *testing.T) {
 	wg.Add(100)
 
 	for i := uint64(0); i < 100; i++ {
-		go func(i uint64) {
-			switch i % 2 {
+		go func(index uint64) {
+			switch index % 2 {
 			case 0:
-				wcah.Add(i)
+				wcah.Add(index)
 			case 1:
-				wcah.ProcessAcknowledged(i)
+				wcah.ProcessAcknowledged(index)
 			}
 			wg.Done()
 		}(i)
