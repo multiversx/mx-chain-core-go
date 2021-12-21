@@ -50,3 +50,9 @@ type RoundInfo struct {
 	Epoch            uint32
 	Timestamp        time.Duration
 }
+
+// LogData holds the data needed for indexing logs and events
+type LogData struct {
+	data.LogHandler
+	TxHash string
+}
