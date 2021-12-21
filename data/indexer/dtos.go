@@ -32,7 +32,7 @@ type Pool struct {
 	Rewards  map[string]data.TransactionHandler
 	Invalid  map[string]data.TransactionHandler
 	Receipts map[string]data.TransactionHandler
-	Logs     map[string]data.LogHandler
+	Logs     []LogData
 }
 
 // ValidatorRatingInfo is a structure containing validator rating information
