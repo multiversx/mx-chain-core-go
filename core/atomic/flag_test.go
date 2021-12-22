@@ -16,12 +16,12 @@ func TestFlag_Set(t *testing.T) {
 	wg.Add(2)
 
 	go func() {
-		flag.Set()
+		_ = flag.SetReturningPrevious()
 		wg.Done()
 	}()
 
 	go func() {
-		flag.Set()
+		_ = flag.SetReturningPrevious()
 		wg.Done()
 	}()
 
@@ -29,22 +29,22 @@ func TestFlag_Set(t *testing.T) {
 	require.True(t, flag.IsSet())
 }
 
-func TestFlag_Unset(t *testing.T) {
+func TestFlag_Reset(t *testing.T) {
 	var flag Flag
 	var wg sync.WaitGroup
 
-	flag.Set()
+	_ = flag.SetReturningPrevious()
 	require.True(t, flag.IsSet())
 
 	wg.Add(2)
 
 	go func() {
-		flag.Unset()
+		flag.Reset()
 		wg.Done()
 	}()
 
 	go func() {
-		flag.Unset()
+		flag.Reset()
 		wg.Done()
 	}()
 
