@@ -32,7 +32,7 @@ type Pool struct {
 	Rewards  map[string]data.TransactionHandler
 	Invalid  map[string]data.TransactionHandler
 	Receipts map[string]data.TransactionHandler
-	Logs     []*LogData
+	Logs     []*data.LogData
 }
 
 // ValidatorRatingInfo is a structure containing validator rating information
@@ -49,10 +49,4 @@ type RoundInfo struct {
 	ShardId          uint32
 	Epoch            uint32
 	Timestamp        time.Duration
-}
-
-// LogData holds the data needed for indexing logs and events
-type LogData struct {
-	data.LogHandler
-	TxHash string
 }
