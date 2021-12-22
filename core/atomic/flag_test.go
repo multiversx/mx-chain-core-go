@@ -1,7 +1,6 @@
 package atomic
 
 import (
-	"github.com/stretchr/testify/assert"
 	"sync"
 	"testing"
 
@@ -94,26 +93,4 @@ func TestFlag_SetValue(t *testing.T) {
 
 	wg.Wait()
 	require.False(t, flag.IsSet())
-}
-
-func TestFlag_Toggle(t *testing.T) {
-	t.Parallel()
-
-	f := Flag{}
-	f.SetValue(true)
-
-	numToggles := 51
-	wg := sync.WaitGroup{}
-	wg.Add(numToggles)
-	for i := 0; i < numToggles; i++ {
-		go func() {
-			f.Toggle()
-
-			wg.Done()
-		}()
-	}
-
-	wg.Wait()
-
-	assert.False(t, f.IsSet())
 }
