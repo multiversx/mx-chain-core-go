@@ -1,6 +1,7 @@
 package atomic
 
 import (
+	"github.com/stretchr/testify/assert"
 	"sync"
 	"testing"
 
@@ -8,6 +9,8 @@ import (
 )
 
 func TestFlag_Set(t *testing.T) {
+	t.Parallel()
+
 	var flag Flag
 	var wg sync.WaitGroup
 
@@ -30,6 +33,8 @@ func TestFlag_Set(t *testing.T) {
 }
 
 func TestFlag_Reset(t *testing.T) {
+	t.Parallel()
+
 	var flag Flag
 	var wg sync.WaitGroup
 
@@ -52,7 +57,9 @@ func TestFlag_Reset(t *testing.T) {
 	require.False(t, flag.IsSet())
 }
 
-func TestFlag_Toggle(t *testing.T) {
+func TestFlag_SetValue(t *testing.T) {
+	t.Parallel()
+
 	var flag Flag
 	var wg sync.WaitGroup
 
@@ -60,12 +67,12 @@ func TestFlag_Toggle(t *testing.T) {
 	wg.Add(2)
 
 	go func() {
-		flag.Toggle(true)
+		flag.SetValue(true)
 		wg.Done()
 	}()
 
 	go func() {
-		flag.Toggle(true)
+		flag.SetValue(true)
 		wg.Done()
 	}()
 
@@ -76,15 +83,37 @@ func TestFlag_Toggle(t *testing.T) {
 	wg.Add(2)
 
 	go func() {
-		flag.Toggle(false)
+		flag.SetValue(false)
 		wg.Done()
 	}()
 
 	go func() {
-		flag.Toggle(false)
+		flag.SetValue(false)
 		wg.Done()
 	}()
 
 	wg.Wait()
 	require.False(t, flag.IsSet())
+}
+
+func TestFlag_Toggle(t *testing.T) {
+	t.Parallel()
+
+	f := Flag{}
+	f.SetValue(true)
+
+	numToggles := 51
+	wg := sync.WaitGroup{}
+	wg.Add(numToggles)
+	for i := 0; i < numToggles; i++ {
+		go func() {
+			f.Toggle()
+
+			wg.Done()
+		}()
+	}
+
+	wg.Wait()
+
+	assert.False(t, f.IsSet())
 }

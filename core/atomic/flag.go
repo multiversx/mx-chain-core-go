@@ -1,34 +1,50 @@
 package atomic
 
-import "sync/atomic"
+import (
+	"sync"
+)
 
 // Flag is an atomic flag
 type Flag struct {
-	value uint32
+	mut   sync.RWMutex
+	value bool
 }
 
 // SetReturningPrevious sets flag and returns its previous value
 func (flag *Flag) SetReturningPrevious() bool {
-	previousValue := atomic.SwapUint32(&flag.value, 1)
-	return previousValue == 1
+	flag.mut.Lock()
+	previousValue := flag.value
+	flag.value = true
+	flag.mut.Unlock()
+
+	return previousValue
 }
 
 // Reset resets the flag, putting it in off position
 func (flag *Flag) Reset() {
-	atomic.StoreUint32(&flag.value, 0)
+	flag.mut.Lock()
+	flag.value = false
+	flag.mut.Unlock()
 }
 
 // IsSet checks whether flag is set
 func (flag *Flag) IsSet() bool {
-	value := atomic.LoadUint32(&flag.value)
-	return value == 1
+	flag.mut.RLock()
+	defer flag.mut.RUnlock()
+
+	return flag.value
 }
 
 // Toggle toggles the flag
-func (flag *Flag) Toggle(set bool) {
-	if set {
-		_ = flag.SetReturningPrevious()
-	} else {
-		flag.Reset()
-	}
+func (flag *Flag) Toggle() {
+	flag.mut.Lock()
+	flag.value = !flag.value
+	flag.mut.Unlock()
+}
+
+// SetValue sets the new value in the flag
+func (flag *Flag) SetValue(newValue bool) {
+	flag.mut.Lock()
+	flag.value = newValue
+	flag.mut.Unlock()
 }
