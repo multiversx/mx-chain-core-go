@@ -59,16 +59,14 @@ func (m *MultipleHeaderSigningProof) GetHeaders(pubKey []byte) []data.HeaderHand
 		return nil
 	}
 
-	idx := uint32(0)
 	bitmap := slashData.GetSignedHeadersBitMap()
 	headers := m.HeadersV2.GetHeaderHandlers()
 
 	ret := make([]data.HeaderHandler, 0)
-	for _, header := range headers {
-		if sliceUtil.IsIndexSetInBitmap(idx, bitmap) {
+	for idx, header := range headers {
+		if sliceUtil.IsIndexSetInBitmap(uint32(idx), bitmap) {
 			ret = append(ret, header)
 		}
-		idx++
 	}
 
 	return ret
@@ -131,7 +129,7 @@ func getAllUniqueHeaders(slashResult map[string]SlashingResult) ([]data.HeaderIn
 	for pubKey, res := range slashResult {
 		hashesPerPubKey := make(map[string]struct{})
 		for _, headerInfo := range res.Headers {
-			hash, err := checkHeaderInfo(headerInfo, hashesPerPubKey)
+			hash, err := getAndCheckUniqueHeaderHash(headerInfo, hashesPerPubKey)
 			if err != nil {
 				return nil, fmt.Errorf("%w in slash result for public key: %s", err, hex.EncodeToString([]byte(pubKey)))
 			}
@@ -151,11 +149,9 @@ func getAllUniqueHeaders(slashResult map[string]SlashingResult) ([]data.HeaderIn
 }
 
 func calcHashIndexMap(headersInfo []data.HeaderInfoHandler) map[string]uint32 {
-	idx := uint32(0)
 	hashIndexMap := make(map[string]uint32)
-	for _, headerInfo := range headersInfo {
-		hashIndexMap[string(headerInfo.GetHash())] = idx
-		idx++
+	for idx, headerInfo := range headersInfo {
+		hashIndexMap[string(headerInfo.GetHash())] = uint32(idx)
 	}
 
 	return hashIndexMap
