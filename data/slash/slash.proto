@@ -9,17 +9,18 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/block/blockV2.proto";
 
 enum SlashingType {
-  None = 0;
+  None             = 0;
   MultipleProposal = 1;
-  MultipleSigning = 2;
+  MultipleSigning  = 2;
 }
 
 enum ThreatLevel {
-  Low = 0;
-  Medium = 1;
-  High = 2;
+  Zero   = 0;
+  Low    = 1;
+  Medium = 2;
+  High   = 3;
 }
 
-message Headers{
+message HeadersV2{
   repeated HeaderV2 Headers = 1;
 }

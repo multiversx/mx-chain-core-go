@@ -78,3 +78,24 @@ var ErrScheduledRootHashNotSupported = errors.New("scheduled root hash is not su
 
 // ErrWrongTransactionsTypeSize signals that size of transactions type buffer from mini block reserved field is wrong
 var ErrWrongTransactionsTypeSize = errors.New("wrong transactions type size")
+
+// ErrNilSlashResult signals that a nil slash result has been provided
+var ErrNilSlashResult = errors.New("slash result is nil")
+
+// ErrNilHeaderHandler signals that a nil header handler has been provided
+var ErrNilHeaderHandler = errors.New("nil header handler")
+
+// ErrNilHeaderInfoList signals that a nil header info list has been provided
+var ErrNilHeaderInfoList = errors.New("nil header info list")
+
+// ErrNilHeaderInfo signals that a nil header info has been provided
+var ErrNilHeaderInfo = errors.New("nil header info")
+
+// ErrNilHash signals that a nil hash has been provided
+var ErrNilHash = errors.New("nil hash provided")
+
+// ErrNotEnoughHeadersProvided signals that not enough headers have been provided for a multiple header proof
+var ErrNotEnoughHeadersProvided = errors.New("not enough headers have been provided for a multiple header proof")
+
+// ErrNotEnoughPublicKeysProvided signals that not enough public keys have been provided for a multiple header proof
+var ErrNotEnoughPublicKeysProvided = errors.New("not enough public keys have been provided for a multiple header proof")
