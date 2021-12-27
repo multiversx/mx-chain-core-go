@@ -7,14 +7,14 @@ type Flag struct {
 	value uint32
 }
 
-// Set sets flag and returns its previous value
-func (flag *Flag) Set() bool {
+// SetReturningPrevious sets flag and returns its previous value
+func (flag *Flag) SetReturningPrevious() bool {
 	previousValue := atomic.SwapUint32(&flag.value, 1)
 	return previousValue == 1
 }
 
-// Unset sets flag
-func (flag *Flag) Unset() {
+// Reset resets the flag, putting it in off position
+func (flag *Flag) Reset() {
 	atomic.StoreUint32(&flag.value, 0)
 }
 
@@ -24,11 +24,11 @@ func (flag *Flag) IsSet() bool {
 	return value == 1
 }
 
-// Toggle toggles the flag
-func (flag *Flag) Toggle(set bool) {
-	if set {
-		flag.Set()
+// SetValue sets the new value in the flag
+func (flag *Flag) SetValue(newValue bool) {
+	if newValue {
+		_ = flag.SetReturningPrevious()
 	} else {
-		flag.Unset()
+		flag.Reset()
 	}
 }
