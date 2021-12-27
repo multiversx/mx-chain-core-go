@@ -8,8 +8,6 @@ import (
 )
 
 func TestFlag_Set(t *testing.T) {
-	t.Parallel()
-
 	var flag Flag
 	var wg sync.WaitGroup
 
@@ -18,12 +16,12 @@ func TestFlag_Set(t *testing.T) {
 	wg.Add(2)
 
 	go func() {
-		_ = flag.SetReturningPrevious()
+		flag.Set()
 		wg.Done()
 	}()
 
 	go func() {
-		_ = flag.SetReturningPrevious()
+		flag.Set()
 		wg.Done()
 	}()
 
@@ -31,24 +29,22 @@ func TestFlag_Set(t *testing.T) {
 	require.True(t, flag.IsSet())
 }
 
-func TestFlag_Reset(t *testing.T) {
-	t.Parallel()
-
+func TestFlag_Unset(t *testing.T) {
 	var flag Flag
 	var wg sync.WaitGroup
 
-	_ = flag.SetReturningPrevious()
+	flag.Set()
 	require.True(t, flag.IsSet())
 
 	wg.Add(2)
 
 	go func() {
-		flag.Reset()
+		flag.Unset()
 		wg.Done()
 	}()
 
 	go func() {
-		flag.Reset()
+		flag.Unset()
 		wg.Done()
 	}()
 
@@ -56,9 +52,7 @@ func TestFlag_Reset(t *testing.T) {
 	require.False(t, flag.IsSet())
 }
 
-func TestFlag_SetValue(t *testing.T) {
-	t.Parallel()
-
+func TestFlag_Toggle(t *testing.T) {
 	var flag Flag
 	var wg sync.WaitGroup
 
@@ -66,12 +60,12 @@ func TestFlag_SetValue(t *testing.T) {
 	wg.Add(2)
 
 	go func() {
-		flag.SetValue(true)
+		flag.Toggle(true)
 		wg.Done()
 	}()
 
 	go func() {
-		flag.SetValue(true)
+		flag.Toggle(true)
 		wg.Done()
 	}()
 
@@ -82,12 +76,12 @@ func TestFlag_SetValue(t *testing.T) {
 	wg.Add(2)
 
 	go func() {
-		flag.SetValue(false)
+		flag.Toggle(false)
 		wg.Done()
 	}()
 
 	go func() {
-		flag.SetValue(false)
+		flag.Toggle(false)
 		wg.Done()
 	}()
 
