@@ -4,7 +4,24 @@ import (
 	"time"
 
 	"github.com/ElrondNetwork/elrond-go-core/data"
+	"github.com/ElrondNetwork/elrond-go-core/data/esdt"
 )
+
+// AccountTokenData holds the data needed for indexing a token of an altered account
+type AccountTokenData struct {
+	Identifier string         `json:"identifier"`
+	Balance    string         `json:"balance"`
+	Nonce      uint64         `json:"nonce"`
+	MetaData   *esdt.MetaData `json:"metadata"`
+}
+
+// AlteredAccount holds the data needed of an altered account in a block
+type AlteredAccount struct {
+	Address string              `json:"address"`
+	Balance string              `json:"balance,omitempty"`
+	Nonce   uint64              `json:"nonce"`
+	Tokens  []*AccountTokenData `json:"tokens"`
+}
 
 // ArgsSaveBlockData will contains all information that are needed to save block data
 type ArgsSaveBlockData struct {
@@ -15,6 +32,7 @@ type ArgsSaveBlockData struct {
 	NotarizedHeadersHashes []string
 	HeaderGasConsumption   HeaderGasConsumption
 	TransactionsPool       *Pool
+	AlteredAccounts        map[string]*AlteredAccount
 }
 
 // HeaderGasConsumption holds the data needed to save the gas consumption of a header
