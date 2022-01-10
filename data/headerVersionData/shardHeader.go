@@ -8,9 +8,9 @@ type HeaderAdditionalData interface {
 	GetScheduledRootHash() []byte
 	GetScheduledAccumulatedFees() *big.Int
 	GetScheduledDeveloperFees() *big.Int
-	GetGasProvided() uint64
-	GetGasPenalized() uint64
-	GetGasRefunded() uint64
+	GetScheduledGasProvided() uint64
+	GetScheduledGasPenalized() uint64
+	GetScheduledGasRefunded() uint64
 	IsInterfaceNil() bool
 }
 
@@ -20,9 +20,9 @@ type AdditionalData struct {
 	ScheduledRootHash        []byte
 	ScheduledAccumulatedFees *big.Int
 	ScheduledDeveloperFees   *big.Int
-	GasProvided              uint64
-	GasPenalized             uint64
-	GasRefunded              uint64
+	ScheduledGasProvided     uint64
+	ScheduledGasPenalized    uint64
+	ScheduledGasRefunded     uint64
 }
 
 // GetScheduledRootHash returns the scheduled RootHash
@@ -52,31 +52,31 @@ func (ad *AdditionalData) GetScheduledDeveloperFees() *big.Int {
 	return ad.ScheduledDeveloperFees
 }
 
-// GetGasProvided returns the gas provided on scheduled SC calls for previous block
-func (ad *AdditionalData) GetGasProvided() uint64 {
+// GetScheduledGasProvided returns the gas provided on scheduled SC calls for previous block
+func (ad *AdditionalData) GetScheduledGasProvided() uint64 {
 	if ad == nil {
 		return 0
 	}
 
-	return ad.GasProvided
+	return ad.ScheduledGasProvided
 }
 
-// GetGasPenalized returns the gas penalized on scheduled SC calls for previous block
-func (ad *AdditionalData) GetGasPenalized() uint64 {
+// GetScheduledGasPenalized returns the gas penalized on scheduled SC calls for previous block
+func (ad *AdditionalData) GetScheduledGasPenalized() uint64 {
 	if ad == nil {
 		return 0
 	}
 
-	return ad.GasPenalized
+	return ad.ScheduledGasPenalized
 }
 
-// GetGasRefunded returns the gas refunded on scheduled SC calls for previous block
-func (ad *AdditionalData) GetGasRefunded() uint64 {
+// GetScheduledGasRefunded returns the gas refunded on scheduled SC calls for previous block
+func (ad *AdditionalData) GetScheduledGasRefunded() uint64 {
 	if ad == nil {
 		return 0
 	}
 
-	return ad.GasRefunded
+	return ad.ScheduledGasRefunded
 }
 
 // IsInterfaceNil returns true if there is no value under the interface
