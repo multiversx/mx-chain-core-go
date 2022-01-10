@@ -599,8 +599,8 @@ func (hv2 *HeaderV2) GetAdditionalData() headerVersionData.HeaderAdditionalData 
 
 	additionalVersionData := &headerVersionData.AdditionalData{
 		ScheduledRootHash:        hv2.GetScheduledRootHash(),
-		ScheduledAccumulatedFees: hv2.GetScheduledAccumulatedFees(),
-		ScheduledDeveloperFees:   hv2.GetScheduledDeveloperFees(),
+		ScheduledAccumulatedFees: big.NewInt(0).Set(hv2.GetScheduledAccumulatedFees()),
+		ScheduledDeveloperFees:   big.NewInt(0).Set(hv2.GetScheduledDeveloperFees()),
 		ScheduledGasProvided:     hv2.GetScheduledGasProvided(),
 		ScheduledGasPenalized:    hv2.GetScheduledGasPenalized(),
 		ScheduledGasRefunded:     hv2.GetScheduledGasRefunded(),

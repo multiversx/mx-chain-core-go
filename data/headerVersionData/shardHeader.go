@@ -39,8 +39,10 @@ func (ad *AdditionalData) GetScheduledAccumulatedFees() *big.Int {
 	if ad == nil {
 		return nil
 	}
-
-	return ad.ScheduledAccumulatedFees
+	if ad.ScheduledAccumulatedFees == nil {
+		return big.NewInt(0)
+	}
+	return big.NewInt(0).Set(ad.ScheduledAccumulatedFees)
 }
 
 // GetScheduledDeveloperFees returns the developer fees on scheduled SC calls
@@ -48,8 +50,11 @@ func (ad *AdditionalData) GetScheduledDeveloperFees() *big.Int {
 	if ad == nil {
 		return nil
 	}
+	if ad.ScheduledDeveloperFees == nil {
+		return big.NewInt(0)
+	}
 
-	return ad.ScheduledDeveloperFees
+	return big.NewInt(0).Set(ad.ScheduledDeveloperFees)
 }
 
 // GetScheduledGasProvided returns the gas provided on scheduled SC calls for previous block
