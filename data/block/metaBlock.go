@@ -213,7 +213,7 @@ func (m *MetaBlock) SetDeveloperFees(value *big.Int) error {
 	return nil
 }
 
-// SetDeveloperFees sets the developer fees in the header
+// SetDevFeesInEpoch sets the developer fees in the header
 func (m *MetaBlock) SetDevFeesInEpoch(value *big.Int) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver

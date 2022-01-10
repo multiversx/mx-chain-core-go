@@ -1,6 +1,7 @@
 package block_test
 
 import (
+	"math/big"
 	"testing"
 
 	"github.com/ElrondNetwork/elrond-go-core/data"
@@ -686,7 +687,7 @@ func TestHeaderV2_SetAdditionalDataNilAdditionalDataShouldErr(t *testing.T) {
 	require.Equal(t, data.ErrNilPointerDereference, err)
 }
 
-func TestHeaderV2_SetAdditionalDataShouldWork(t *testing.T) {
+func TestHeaderV2_SetAdditionalDataEmptyFeesShouldWork(t *testing.T) {
 	t.Parallel()
 
 	shardBlock := &block.HeaderV2{
@@ -701,4 +702,29 @@ func TestHeaderV2_SetAdditionalDataShouldWork(t *testing.T) {
 
 	require.Nil(t, err)
 	require.Equal(t, scRootHash, shardBlock.ScheduledRootHash)
+	require.Equal(t, big.NewInt(0), shardBlock.ScheduledAccumulatedFees)
+	require.Equal(t, big.NewInt(0), shardBlock.ScheduledDeveloperFees)
+}
+
+func TestHeaderV2_SetAdditionalDataShouldWork(t *testing.T) {
+	t.Parallel()
+
+	shardBlock := &block.HeaderV2{
+		Header:            &block.Header{},
+		ScheduledRootHash: nil,
+	}
+
+	scRootHash := []byte("scheduledRootHash")
+	accFees := big.NewInt(100)
+	devFees := big.NewInt(10)
+	err := shardBlock.SetAdditionalData(&headerVersionData.AdditionalData{
+		ScheduledRootHash:        scRootHash,
+		ScheduledAccumulatedFees: accFees,
+		ScheduledDeveloperFees:   devFees,
+	})
+
+	require.Nil(t, err)
+	require.Equal(t, scRootHash, shardBlock.ScheduledRootHash)
+	require.Equal(t, accFees, shardBlock.ScheduledAccumulatedFees)
+	require.Equal(t, devFees, shardBlock.ScheduledDeveloperFees)
 }
