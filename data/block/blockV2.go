@@ -549,6 +549,10 @@ func (hv2 *HeaderV2) SetAdditionalData(headerVersionData headerVersionData.Heade
 		return nil
 	}
 
+	hv2.ScheduledGasProvided = headerVersionData.GetGasProvided()
+	hv2.ScheduledGasPenalized = headerVersionData.GetGasPenalized()
+	hv2.ScheduledGasRefunded = headerVersionData.GetGasRefunded()
+
 	err = hv2.SetScheduledAccumulatedFees(headerVersionData.GetScheduledAccumulatedFees())
 	if err != nil {
 		return err
@@ -567,6 +571,9 @@ func (hv2 *HeaderV2) GetAdditionalData() headerVersionData.HeaderAdditionalData 
 		ScheduledRootHash:        hv2.GetScheduledRootHash(),
 		ScheduledAccumulatedFees: hv2.GetScheduledAccumulatedFees(),
 		ScheduledDeveloperFees:   hv2.GetScheduledDeveloperFees(),
+		GasProvided:              hv2.GetScheduledGasProvided(),
+		GasPenalized:             hv2.GetScheduledGasPenalized(),
+		GasRefunded:              hv2.GetScheduledGasRefunded(),
 	}
 	return additionalVersionData
 }

@@ -8,6 +8,9 @@ type HeaderAdditionalData interface {
 	GetScheduledRootHash() []byte
 	GetScheduledAccumulatedFees() *big.Int
 	GetScheduledDeveloperFees() *big.Int
+	GetGasProvided() uint64
+	GetGasPenalized() uint64
+	GetGasRefunded() uint64
 	IsInterfaceNil() bool
 }
 
@@ -17,6 +20,9 @@ type AdditionalData struct {
 	ScheduledRootHash        []byte
 	ScheduledAccumulatedFees *big.Int
 	ScheduledDeveloperFees   *big.Int
+	GasProvided              uint64
+	GasPenalized             uint64
+	GasRefunded              uint64
 }
 
 // GetScheduledRootHash returns the scheduled RootHash
@@ -44,6 +50,33 @@ func (ad *AdditionalData) GetScheduledDeveloperFees() *big.Int {
 	}
 
 	return ad.ScheduledDeveloperFees
+}
+
+// GetGasProvided returns the gas provided on scheduled SC calls for previous block
+func (ad *AdditionalData) GetGasProvided() uint64 {
+	if ad == nil {
+		return 0
+	}
+
+	return ad.GasProvided
+}
+
+// GetGasPenalized returns the gas penalized on scheduled SC calls for previous block
+func (ad *AdditionalData) GetGasPenalized() uint64 {
+	if ad == nil {
+		return 0
+	}
+
+	return ad.GasPenalized
+}
+
+// GetGasRefunded returns the gas refunded on scheduled SC calls for previous block
+func (ad *AdditionalData) GetGasRefunded() uint64 {
+	if ad == nil {
+		return 0
+	}
+
+	return ad.GasRefunded
 }
 
 // IsInterfaceNil returns true if there is no value under the interface
