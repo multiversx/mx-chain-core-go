@@ -516,6 +516,36 @@ func (hv2 *HeaderV2) SetScheduledDeveloperFees(value *big.Int) error {
 	return nil
 }
 
+// SetScheduledGasProvided sets the scheduled SC calls provided gas
+func (hv2 *HeaderV2) SetScheduledGasProvided(gasProvided uint64) error {
+	if hv2 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	hv2.ScheduledGasProvided = gasProvided
+
+	return nil
+}
+
+// SetScheduledGasPenalized sets the scheduled SC calls penalized gas
+func (hv2 *HeaderV2) SetScheduledGasPenalized(gasPenalized uint64) error {
+	if hv2 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	hv2.ScheduledGasPenalized = gasPenalized
+
+	return nil
+}
+
+// SetScheduledGasRefunded sets the scheduled SC calls refunded gas
+func (hv2 *HeaderV2) SetScheduledGasRefunded(gasRefunded uint64) error {
+	if hv2 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	hv2.ScheduledGasRefunded = gasRefunded
+
+	return nil
+}
+
 // ValidateHeaderVersion does extra validation for header version
 func (hv2 *HeaderV2) ValidateHeaderVersion() error {
 	if hv2 == nil {
