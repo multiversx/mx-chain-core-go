@@ -597,10 +597,19 @@ func (hv2 *HeaderV2) GetAdditionalData() headerVersionData.HeaderAdditionalData 
 		return nil
 	}
 
+	accFees := big.NewInt(0)
+	if hv2.GetScheduledAccumulatedFees() != nil {
+		accFees = big.NewInt(0).Set(hv2.GetScheduledAccumulatedFees())
+	}
+	devFees := big.NewInt(0)
+	if hv2.GetDeveloperFees() != nil {
+		devFees = big.NewInt(0).Set(hv2.GetDeveloperFees())
+	}
+
 	additionalVersionData := &headerVersionData.AdditionalData{
 		ScheduledRootHash:        hv2.GetScheduledRootHash(),
-		ScheduledAccumulatedFees: big.NewInt(0).Set(hv2.GetScheduledAccumulatedFees()),
-		ScheduledDeveloperFees:   big.NewInt(0).Set(hv2.GetScheduledDeveloperFees()),
+		ScheduledAccumulatedFees: accFees,
+		ScheduledDeveloperFees:   devFees,
 		ScheduledGasProvided:     hv2.GetScheduledGasProvided(),
 		ScheduledGasPenalized:    hv2.GetScheduledGasPenalized(),
 		ScheduledGasRefunded:     hv2.GetScheduledGasRefunded(),
