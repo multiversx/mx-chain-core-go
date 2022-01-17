@@ -575,10 +575,6 @@ func (hv2 *HeaderV2) SetAdditionalData(headerVersionData headerVersionData.Heade
 		return err
 	}
 
-	if headerVersionData.GetScheduledRootHash() == nil {
-		return nil
-	}
-
 	hv2.ScheduledGasProvided = headerVersionData.GetScheduledGasProvided()
 	hv2.ScheduledGasPenalized = headerVersionData.GetScheduledGasPenalized()
 	hv2.ScheduledGasRefunded = headerVersionData.GetScheduledGasRefunded()

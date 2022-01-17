@@ -704,6 +704,9 @@ func TestHeaderV2_SetAdditionalDataEmptyFeesShouldWork(t *testing.T) {
 	require.Equal(t, scRootHash, shardBlock.ScheduledRootHash)
 	require.Equal(t, big.NewInt(0), shardBlock.ScheduledAccumulatedFees)
 	require.Equal(t, big.NewInt(0), shardBlock.ScheduledDeveloperFees)
+	require.Equal(t, uint64(0), shardBlock.GetScheduledGasPenalized())
+	require.Equal(t, uint64(0), shardBlock.GetScheduledGasRefunded())
+	require.Equal(t, uint64(0), shardBlock.GetScheduledGasProvided())
 }
 
 func TestHeaderV2_SetAdditionalDataShouldWork(t *testing.T) {
@@ -717,14 +720,23 @@ func TestHeaderV2_SetAdditionalDataShouldWork(t *testing.T) {
 	scRootHash := []byte("scheduledRootHash")
 	accFees := big.NewInt(100)
 	devFees := big.NewInt(10)
+	gasProvided := uint64(60)
+	gasRefunded := uint64(10)
+	gasPenalized := uint64(20)
 	err := shardBlock.SetAdditionalData(&headerVersionData.AdditionalData{
 		ScheduledRootHash:        scRootHash,
 		ScheduledAccumulatedFees: accFees,
 		ScheduledDeveloperFees:   devFees,
+		ScheduledGasProvided:     gasProvided,
+		ScheduledGasPenalized:    gasPenalized,
+		ScheduledGasRefunded:     gasRefunded,
 	})
 
 	require.Nil(t, err)
 	require.Equal(t, scRootHash, shardBlock.ScheduledRootHash)
 	require.Equal(t, accFees, shardBlock.ScheduledAccumulatedFees)
 	require.Equal(t, devFees, shardBlock.ScheduledDeveloperFees)
+	require.Equal(t, gasPenalized, shardBlock.GetScheduledGasPenalized())
+	require.Equal(t, gasRefunded, shardBlock.GetScheduledGasRefunded())
+	require.Equal(t, gasProvided, shardBlock.GetScheduledGasProvided())
 }
