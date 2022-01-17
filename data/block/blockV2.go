@@ -484,6 +484,68 @@ func (hv2 *HeaderV2) SetScheduledRootHash(rootHash []byte) error {
 	return nil
 }
 
+// SetScheduledAccumulatedFees sets the scheduled accumulated fees
+func (hv2 *HeaderV2) SetScheduledAccumulatedFees(value *big.Int) error {
+	if hv2 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	if hv2.ScheduledAccumulatedFees == nil {
+		hv2.ScheduledAccumulatedFees = big.NewInt(0)
+	}
+	if value == nil {
+		value = big.NewInt(0)
+	}
+
+	hv2.ScheduledAccumulatedFees.Set(value)
+	return nil
+}
+
+// SetScheduledDeveloperFees sets the scheduled developer fees
+func (hv2 *HeaderV2) SetScheduledDeveloperFees(value *big.Int) error {
+	if hv2 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	if hv2.ScheduledDeveloperFees == nil {
+		hv2.ScheduledDeveloperFees = big.NewInt(0)
+	}
+	if value == nil {
+		value = big.NewInt(0)
+	}
+
+	hv2.ScheduledDeveloperFees.Set(value)
+	return nil
+}
+
+// SetScheduledGasProvided sets the scheduled SC calls provided gas
+func (hv2 *HeaderV2) SetScheduledGasProvided(gasProvided uint64) error {
+	if hv2 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	hv2.ScheduledGasProvided = gasProvided
+
+	return nil
+}
+
+// SetScheduledGasPenalized sets the scheduled SC calls penalized gas
+func (hv2 *HeaderV2) SetScheduledGasPenalized(gasPenalized uint64) error {
+	if hv2 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	hv2.ScheduledGasPenalized = gasPenalized
+
+	return nil
+}
+
+// SetScheduledGasRefunded sets the scheduled SC calls refunded gas
+func (hv2 *HeaderV2) SetScheduledGasRefunded(gasRefunded uint64) error {
+	if hv2 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	hv2.ScheduledGasRefunded = gasRefunded
+
+	return nil
+}
+
 // ValidateHeaderVersion does extra validation for header version
 func (hv2 *HeaderV2) ValidateHeaderVersion() error {
 	if hv2 == nil {
@@ -507,7 +569,22 @@ func (hv2 *HeaderV2) SetAdditionalData(headerVersionData headerVersionData.Heade
 	if check.IfNil(headerVersionData) {
 		return data.ErrNilPointerDereference
 	}
-	return hv2.SetScheduledRootHash(headerVersionData.GetScheduledRootHash())
+
+	err := hv2.SetScheduledRootHash(headerVersionData.GetScheduledRootHash())
+	if err != nil {
+		return err
+	}
+
+	hv2.ScheduledGasProvided = headerVersionData.GetScheduledGasProvided()
+	hv2.ScheduledGasPenalized = headerVersionData.GetScheduledGasPenalized()
+	hv2.ScheduledGasRefunded = headerVersionData.GetScheduledGasRefunded()
+
+	err = hv2.SetScheduledAccumulatedFees(headerVersionData.GetScheduledAccumulatedFees())
+	if err != nil {
+		return err
+	}
+
+	return hv2.SetScheduledDeveloperFees(headerVersionData.GetScheduledDeveloperFees())
 }
 
 // GetAdditionalData gets the additional version related data for the header
@@ -516,8 +593,22 @@ func (hv2 *HeaderV2) GetAdditionalData() headerVersionData.HeaderAdditionalData 
 		return nil
 	}
 
+	accFees := big.NewInt(0)
+	if hv2.GetScheduledAccumulatedFees() != nil {
+		accFees = big.NewInt(0).Set(hv2.GetScheduledAccumulatedFees())
+	}
+	devFees := big.NewInt(0)
+	if hv2.GetDeveloperFees() != nil {
+		devFees = big.NewInt(0).Set(hv2.GetDeveloperFees())
+	}
+
 	additionalVersionData := &headerVersionData.AdditionalData{
-		ScheduledRootHash: hv2.GetScheduledRootHash(),
+		ScheduledRootHash:        hv2.GetScheduledRootHash(),
+		ScheduledAccumulatedFees: accFees,
+		ScheduledDeveloperFees:   devFees,
+		ScheduledGasProvided:     hv2.GetScheduledGasProvided(),
+		ScheduledGasPenalized:    hv2.GetScheduledGasPenalized(),
+		ScheduledGasRefunded:     hv2.GetScheduledGasRefunded(),
 	}
 	return additionalVersionData
 }

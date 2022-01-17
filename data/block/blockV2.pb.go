@@ -6,10 +6,12 @@ package block
 import (
 	bytes "bytes"
 	fmt "fmt"
+	github_com_ElrondNetwork_elrond_go_core_data "github.com/ElrondNetwork/elrond-go-core/data"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	io "io"
 	math "math"
+	math_big "math/big"
 	math_bits "math/bits"
 	reflect "reflect"
 	strings "strings"
@@ -28,8 +30,13 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // HeaderV2 extends the Header structure with extra fields for version 2
 type HeaderV2 struct {
-	Header            *Header `protobuf:"bytes,1,opt,name=Header,proto3" json:"Header,omitempty"`
-	ScheduledRootHash []byte  `protobuf:"bytes,2,opt,name=ScheduledRootHash,proto3" json:"ScheduledRootHash,omitempty"`
+	Header                   *Header       `protobuf:"bytes,1,opt,name=Header,proto3" json:"Header,omitempty"`
+	ScheduledRootHash        []byte        `protobuf:"bytes,2,opt,name=ScheduledRootHash,proto3" json:"ScheduledRootHash,omitempty"`
+	ScheduledAccumulatedFees *math_big.Int `protobuf:"bytes,3,opt,name=ScheduledAccumulatedFees,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"ScheduledAccumulatedFees,omitempty"`
+	ScheduledDeveloperFees   *math_big.Int `protobuf:"bytes,4,opt,name=ScheduledDeveloperFees,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"ScheduledDeveloperFees,omitempty"`
+	ScheduledGasProvided     uint64        `protobuf:"varint,5,opt,name=ScheduledGasProvided,proto3" json:"ScheduledGasProvided,omitempty"`
+	ScheduledGasPenalized    uint64        `protobuf:"varint,6,opt,name=ScheduledGasPenalized,proto3" json:"ScheduledGasPenalized,omitempty"`
+	ScheduledGasRefunded     uint64        `protobuf:"varint,7,opt,name=ScheduledGasRefunded,proto3" json:"ScheduledGasRefunded,omitempty"`
 }
 
 func (m *HeaderV2) Reset()      { *m = HeaderV2{} }
@@ -72,6 +79,41 @@ func (m *HeaderV2) GetScheduledRootHash() []byte {
 		return m.ScheduledRootHash
 	}
 	return nil
+}
+
+func (m *HeaderV2) GetScheduledAccumulatedFees() *math_big.Int {
+	if m != nil {
+		return m.ScheduledAccumulatedFees
+	}
+	return nil
+}
+
+func (m *HeaderV2) GetScheduledDeveloperFees() *math_big.Int {
+	if m != nil {
+		return m.ScheduledDeveloperFees
+	}
+	return nil
+}
+
+func (m *HeaderV2) GetScheduledGasProvided() uint64 {
+	if m != nil {
+		return m.ScheduledGasProvided
+	}
+	return 0
+}
+
+func (m *HeaderV2) GetScheduledGasPenalized() uint64 {
+	if m != nil {
+		return m.ScheduledGasPenalized
+	}
+	return 0
+}
+
+func (m *HeaderV2) GetScheduledGasRefunded() uint64 {
+	if m != nil {
+		return m.ScheduledGasRefunded
+	}
+	return 0
 }
 
 type MiniBlockReserved struct {
@@ -129,26 +171,36 @@ func init() {
 func init() { proto.RegisterFile("blockV2.proto", fileDescriptor_17a3844aa051366e) }
 
 var fileDescriptor_17a3844aa051366e = []byte{
-	// 292 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4d, 0xca, 0xc9, 0x4f,
-	0xce, 0x0e, 0x33, 0xd2, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x62, 0x05, 0x53, 0x52, 0xba, 0xe9,
-	0x99, 0x25, 0x19, 0xa5, 0x49, 0x7a, 0xc9, 0xf9, 0xb9, 0xfa, 0xe9, 0xf9, 0xe9, 0xf9, 0xfa, 0x60,
-	0xe1, 0xa4, 0xd2, 0x34, 0x30, 0x0f, 0xcc, 0x01, 0xb3, 0x20, 0xba, 0xa4, 0xb8, 0xc1, 0x86, 0x40,
-	0x38, 0x4a, 0xf1, 0x5c, 0x1c, 0x1e, 0xa9, 0x89, 0x29, 0xa9, 0x45, 0x61, 0x46, 0x42, 0xaa, 0x5c,
-	0x6c, 0x10, 0xb6, 0x04, 0xa3, 0x02, 0xa3, 0x06, 0xb7, 0x11, 0x2f, 0x44, 0x8d, 0x1e, 0x44, 0x30,
-	0x08, 0x2a, 0x29, 0xa4, 0xc3, 0x25, 0x18, 0x9c, 0x9c, 0x91, 0x9a, 0x52, 0x9a, 0x93, 0x9a, 0x12,
-	0x94, 0x9f, 0x5f, 0xe2, 0x91, 0x58, 0x9c, 0x21, 0xc1, 0xa4, 0xc0, 0xa8, 0xc1, 0x13, 0x84, 0x29,
-	0xa1, 0x54, 0xc3, 0x25, 0xe8, 0x9b, 0x99, 0x97, 0xe9, 0x04, 0xb2, 0x33, 0x28, 0xb5, 0x38, 0xb5,
-	0xa8, 0x2c, 0x35, 0x45, 0xc8, 0x9a, 0x8b, 0xd7, 0xb5, 0x22, 0x35, 0xb9, 0xb4, 0x24, 0x33, 0x3f,
-	0x2f, 0xa4, 0xb2, 0x20, 0x15, 0x6c, 0x21, 0x9f, 0x91, 0x28, 0xd4, 0xc2, 0x80, 0xa2, 0xfc, 0xe4,
-	0xd4, 0xe2, 0xe2, 0xcc, 0xbc, 0x74, 0x90, 0x64, 0x10, 0xaa, 0x5a, 0x21, 0x2d, 0x2e, 0x81, 0x90,
-	0xa2, 0xc4, 0xbc, 0xe2, 0xc4, 0x64, 0x90, 0x50, 0x31, 0x58, 0x3f, 0xc4, 0x7a, 0x0c, 0x71, 0x27,
-	0xfb, 0x0b, 0x0f, 0xe5, 0x18, 0x6e, 0x3c, 0x94, 0x63, 0xf8, 0xf0, 0x50, 0x8e, 0xb1, 0xe1, 0x91,
-	0x1c, 0xe3, 0x8a, 0x47, 0x72, 0x8c, 0x27, 0x1e, 0xc9, 0x31, 0x5e, 0x78, 0x24, 0xc7, 0x78, 0xe3,
-	0x91, 0x1c, 0xe3, 0x83, 0x47, 0x72, 0x8c, 0x2f, 0x1e, 0xc9, 0x31, 0x7c, 0x78, 0x24, 0xc7, 0x38,
-	0xe1, 0xb1, 0x1c, 0xc3, 0x85, 0xc7, 0x72, 0x0c, 0x37, 0x1e, 0xcb, 0x31, 0x44, 0xb1, 0x82, 0x43,
-	0x29, 0x89, 0x0d, 0xec, 0x22, 0x63, 0x40, 0x00, 0x00, 0x00, 0xff, 0xff, 0x2f, 0x2d, 0x39, 0xbb,
-	0x7a, 0x01, 0x00, 0x00,
+	// 457 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x92, 0x3f, 0x6f, 0xd3, 0x40,
+	0x18, 0xc6, 0x7d, 0x90, 0x04, 0x74, 0x25, 0x88, 0x5a, 0x14, 0x59, 0x1d, 0x8e, 0xa8, 0x12, 0x52,
+	0x84, 0x88, 0x2d, 0x19, 0xb6, 0x0e, 0x88, 0x40, 0x4b, 0x8b, 0x04, 0xaa, 0x4c, 0xd5, 0x81, 0xed,
+	0x7c, 0xf7, 0xd6, 0x39, 0xd5, 0xb9, 0x8b, 0xee, 0xce, 0xe1, 0x8f, 0x18, 0x10, 0x03, 0x0b, 0x0b,
+	0x1f, 0x03, 0xf1, 0x49, 0x18, 0x33, 0x66, 0x83, 0x38, 0x0b, 0x63, 0x3f, 0x02, 0xf2, 0xb9, 0x44,
+	0x94, 0x34, 0x1b, 0x93, 0xef, 0x7d, 0x7e, 0xf7, 0xf8, 0x79, 0x4f, 0x7a, 0x70, 0x3b, 0xcd, 0x15,
+	0x3b, 0x39, 0x8a, 0xc3, 0x91, 0x56, 0x56, 0xf9, 0x4d, 0xf7, 0xd9, 0xec, 0x65, 0xc2, 0x0e, 0x8a,
+	0x34, 0x64, 0x6a, 0x18, 0x65, 0x2a, 0x53, 0x91, 0x93, 0xd3, 0xe2, 0xd8, 0x4d, 0x6e, 0x70, 0xa7,
+	0xda, 0xb5, 0xb9, 0xe6, 0x7e, 0x52, 0x0f, 0x5b, 0x9f, 0x1b, 0xf8, 0xea, 0x1e, 0x50, 0x0e, 0xfa,
+	0x28, 0xf6, 0xef, 0xe0, 0x56, 0x7d, 0x0e, 0x50, 0x07, 0x75, 0xd7, 0xe2, 0x76, 0x7d, 0x29, 0xac,
+	0xc5, 0xe4, 0x0c, 0xfa, 0xf7, 0xf0, 0xfa, 0x4b, 0x36, 0x00, 0x5e, 0xe4, 0xc0, 0x13, 0xa5, 0xec,
+	0x1e, 0x35, 0x83, 0xe0, 0x52, 0x07, 0x75, 0xaf, 0x25, 0xcb, 0xc0, 0xff, 0x84, 0x70, 0xb0, 0x50,
+	0x1f, 0x31, 0x56, 0x0c, 0x8b, 0x9c, 0x5a, 0xe0, 0xbb, 0x00, 0x26, 0xb8, 0x5c, 0xb9, 0xfa, 0xcf,
+	0xbe, 0xfd, 0xb8, 0xbd, 0x3b, 0xa4, 0x76, 0x10, 0xa5, 0x22, 0x0b, 0xf7, 0xa5, 0xdd, 0xfe, 0xeb,
+	0x45, 0x3b, 0xb9, 0x56, 0x92, 0xbf, 0x00, 0xfb, 0x5a, 0xe9, 0x93, 0x08, 0xdc, 0xd4, 0xcb, 0x54,
+	0x8f, 0x29, 0x0d, 0x11, 0xa7, 0x96, 0x86, 0x7d, 0x91, 0xed, 0x4b, 0xfb, 0x98, 0x1a, 0x0b, 0x3a,
+	0x59, 0x99, 0xe5, 0x7f, 0x44, 0xf8, 0xd6, 0x02, 0x3e, 0x81, 0x31, 0xe4, 0x6a, 0x04, 0xda, 0xad,
+	0xd1, 0xf8, 0xef, 0x6b, 0xac, 0x48, 0xf2, 0x63, 0x7c, 0x73, 0x41, 0x9e, 0x52, 0x73, 0xa0, 0xd5,
+	0x58, 0x70, 0xe0, 0x41, 0xb3, 0x83, 0xba, 0x8d, 0xe4, 0x42, 0xe6, 0x3f, 0xc0, 0x1b, 0xe7, 0x74,
+	0x90, 0x34, 0x17, 0xef, 0x80, 0x07, 0x2d, 0x67, 0xba, 0x18, 0xfe, 0x9b, 0x94, 0xc0, 0x71, 0x21,
+	0xab, 0xa4, 0x2b, 0xcb, 0x49, 0x7f, 0xd8, 0xd6, 0x7b, 0xbc, 0xfe, 0x5c, 0x48, 0xd1, 0xaf, 0x0a,
+	0x92, 0x80, 0x01, 0x3d, 0x06, 0xee, 0x6f, 0xe3, 0xf6, 0xce, 0x1b, 0x60, 0x85, 0x15, 0x4a, 0x1e,
+	0xbe, 0x1d, 0x81, 0x2b, 0xc7, 0xf5, 0x78, 0xe3, 0xac, 0x1c, 0x07, 0x5a, 0x31, 0x30, 0x46, 0xc8,
+	0xac, 0x82, 0xc9, 0xf9, 0xbb, 0xfe, 0x5d, 0x7c, 0xe3, 0x50, 0x53, 0x69, 0x28, 0xab, 0x24, 0xe3,
+	0xfc, 0x75, 0x55, 0x96, 0xf4, 0xfe, 0xc3, 0xc9, 0x8c, 0x78, 0xd3, 0x19, 0xf1, 0x4e, 0x67, 0x04,
+	0x7d, 0x28, 0x09, 0xfa, 0x5a, 0x12, 0xf4, 0xbd, 0x24, 0x68, 0x52, 0x12, 0x34, 0x2d, 0x09, 0xfa,
+	0x59, 0x12, 0xf4, 0xab, 0x24, 0xde, 0x69, 0x49, 0xd0, 0x97, 0x39, 0xf1, 0x26, 0x73, 0xe2, 0x4d,
+	0xe7, 0xc4, 0x7b, 0xd5, 0x74, 0x95, 0x4e, 0x5b, 0x6e, 0xa3, 0xfb, 0xbf, 0x03, 0x00, 0x00, 0xff,
+	0xff, 0x64, 0xf6, 0x9f, 0x37, 0x27, 0x03, 0x00, 0x00,
 }
 
 func (this *HeaderV2) Equal(that interface{}) bool {
@@ -174,6 +226,27 @@ func (this *HeaderV2) Equal(that interface{}) bool {
 		return false
 	}
 	if !bytes.Equal(this.ScheduledRootHash, that1.ScheduledRootHash) {
+		return false
+	}
+	{
+		__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+		if !__caster.Equal(this.ScheduledAccumulatedFees, that1.ScheduledAccumulatedFees) {
+			return false
+		}
+	}
+	{
+		__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+		if !__caster.Equal(this.ScheduledDeveloperFees, that1.ScheduledDeveloperFees) {
+			return false
+		}
+	}
+	if this.ScheduledGasProvided != that1.ScheduledGasProvided {
+		return false
+	}
+	if this.ScheduledGasPenalized != that1.ScheduledGasPenalized {
+		return false
+	}
+	if this.ScheduledGasRefunded != that1.ScheduledGasRefunded {
 		return false
 	}
 	return true
@@ -209,12 +282,17 @@ func (this *HeaderV2) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 6)
+	s := make([]string, 0, 11)
 	s = append(s, "&block.HeaderV2{")
 	if this.Header != nil {
 		s = append(s, "Header: "+fmt.Sprintf("%#v", this.Header)+",\n")
 	}
 	s = append(s, "ScheduledRootHash: "+fmt.Sprintf("%#v", this.ScheduledRootHash)+",\n")
+	s = append(s, "ScheduledAccumulatedFees: "+fmt.Sprintf("%#v", this.ScheduledAccumulatedFees)+",\n")
+	s = append(s, "ScheduledDeveloperFees: "+fmt.Sprintf("%#v", this.ScheduledDeveloperFees)+",\n")
+	s = append(s, "ScheduledGasProvided: "+fmt.Sprintf("%#v", this.ScheduledGasProvided)+",\n")
+	s = append(s, "ScheduledGasPenalized: "+fmt.Sprintf("%#v", this.ScheduledGasPenalized)+",\n")
+	s = append(s, "ScheduledGasRefunded: "+fmt.Sprintf("%#v", this.ScheduledGasRefunded)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -257,6 +335,43 @@ func (m *HeaderV2) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.ScheduledGasRefunded != 0 {
+		i = encodeVarintBlockV2(dAtA, i, uint64(m.ScheduledGasRefunded))
+		i--
+		dAtA[i] = 0x38
+	}
+	if m.ScheduledGasPenalized != 0 {
+		i = encodeVarintBlockV2(dAtA, i, uint64(m.ScheduledGasPenalized))
+		i--
+		dAtA[i] = 0x30
+	}
+	if m.ScheduledGasProvided != 0 {
+		i = encodeVarintBlockV2(dAtA, i, uint64(m.ScheduledGasProvided))
+		i--
+		dAtA[i] = 0x28
+	}
+	{
+		__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+		size := __caster.Size(m.ScheduledDeveloperFees)
+		i -= size
+		if _, err := __caster.MarshalTo(m.ScheduledDeveloperFees, dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintBlockV2(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x22
+	{
+		__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+		size := __caster.Size(m.ScheduledAccumulatedFees)
+		i -= size
+		if _, err := __caster.MarshalTo(m.ScheduledAccumulatedFees, dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintBlockV2(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x1a
 	if len(m.ScheduledRootHash) > 0 {
 		i -= len(m.ScheduledRootHash)
 		copy(dAtA[i:], m.ScheduledRootHash)
@@ -339,6 +454,25 @@ func (m *HeaderV2) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovBlockV2(uint64(l))
 	}
+	{
+		__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+		l = __caster.Size(m.ScheduledAccumulatedFees)
+		n += 1 + l + sovBlockV2(uint64(l))
+	}
+	{
+		__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+		l = __caster.Size(m.ScheduledDeveloperFees)
+		n += 1 + l + sovBlockV2(uint64(l))
+	}
+	if m.ScheduledGasProvided != 0 {
+		n += 1 + sovBlockV2(uint64(m.ScheduledGasProvided))
+	}
+	if m.ScheduledGasPenalized != 0 {
+		n += 1 + sovBlockV2(uint64(m.ScheduledGasPenalized))
+	}
+	if m.ScheduledGasRefunded != 0 {
+		n += 1 + sovBlockV2(uint64(m.ScheduledGasRefunded))
+	}
 	return n
 }
 
@@ -371,6 +505,11 @@ func (this *HeaderV2) String() string {
 	s := strings.Join([]string{`&HeaderV2{`,
 		`Header:` + strings.Replace(fmt.Sprintf("%v", this.Header), "Header", "Header", 1) + `,`,
 		`ScheduledRootHash:` + fmt.Sprintf("%v", this.ScheduledRootHash) + `,`,
+		`ScheduledAccumulatedFees:` + fmt.Sprintf("%v", this.ScheduledAccumulatedFees) + `,`,
+		`ScheduledDeveloperFees:` + fmt.Sprintf("%v", this.ScheduledDeveloperFees) + `,`,
+		`ScheduledGasProvided:` + fmt.Sprintf("%v", this.ScheduledGasProvided) + `,`,
+		`ScheduledGasPenalized:` + fmt.Sprintf("%v", this.ScheduledGasPenalized) + `,`,
+		`ScheduledGasRefunded:` + fmt.Sprintf("%v", this.ScheduledGasRefunded) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -493,6 +632,139 @@ func (m *HeaderV2) Unmarshal(dAtA []byte) error {
 				m.ScheduledRootHash = []byte{}
 			}
 			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ScheduledAccumulatedFees", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBlockV2
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthBlockV2
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBlockV2
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			{
+				__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+				if tmp, err := __caster.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+					return err
+				} else {
+					m.ScheduledAccumulatedFees = tmp
+				}
+			}
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ScheduledDeveloperFees", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBlockV2
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthBlockV2
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthBlockV2
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			{
+				__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+				if tmp, err := __caster.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+					return err
+				} else {
+					m.ScheduledDeveloperFees = tmp
+				}
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ScheduledGasProvided", wireType)
+			}
+			m.ScheduledGasProvided = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBlockV2
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ScheduledGasProvided |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ScheduledGasPenalized", wireType)
+			}
+			m.ScheduledGasPenalized = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBlockV2
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ScheduledGasPenalized |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ScheduledGasRefunded", wireType)
+			}
+			m.ScheduledGasRefunded = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowBlockV2
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ScheduledGasRefunded |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipBlockV2(dAtA[iNdEx:])

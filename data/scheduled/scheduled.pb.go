@@ -6,12 +6,14 @@ package scheduled
 import (
 	bytes "bytes"
 	fmt "fmt"
+	github_com_ElrondNetwork_elrond_go_core_data "github.com/ElrondNetwork/elrond-go-core/data"
 	smartContractResult "github.com/ElrondNetwork/elrond-go-core/data/smartContractResult"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
 	io "io"
 	math "math"
+	math_big "math/big"
 	math_bits "math/bits"
 	reflect "reflect"
 	strings "strings"
@@ -67,15 +69,87 @@ func (m *SmartContractResults) GetTxHandlers() []*smartContractResult.SmartContr
 	return nil
 }
 
+type GasAndFees struct {
+	AccumulatedFees *math_big.Int `protobuf:"bytes,1,opt,name=AccumulatedFees,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"AccumulatedFees,omitempty"`
+	DeveloperFees   *math_big.Int `protobuf:"bytes,2,opt,name=DeveloperFees,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"DeveloperFees,omitempty"`
+	GasProvided     uint64        `protobuf:"varint,3,opt,name=GasProvided,proto3" json:"GasProvided,omitempty"`
+	GasPenalized    uint64        `protobuf:"varint,4,opt,name=GasPenalized,proto3" json:"GasPenalized,omitempty"`
+	GasRefunded     uint64        `protobuf:"varint,5,opt,name=GasRefunded,proto3" json:"GasRefunded,omitempty"`
+}
+
+func (m *GasAndFees) Reset()      { *m = GasAndFees{} }
+func (*GasAndFees) ProtoMessage() {}
+func (*GasAndFees) Descriptor() ([]byte, []int) {
+	return fileDescriptor_f80076f37bd30c16, []int{1}
+}
+func (m *GasAndFees) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GasAndFees) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *GasAndFees) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GasAndFees.Merge(m, src)
+}
+func (m *GasAndFees) XXX_Size() int {
+	return m.Size()
+}
+func (m *GasAndFees) XXX_DiscardUnknown() {
+	xxx_messageInfo_GasAndFees.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GasAndFees proto.InternalMessageInfo
+
+func (m *GasAndFees) GetAccumulatedFees() *math_big.Int {
+	if m != nil {
+		return m.AccumulatedFees
+	}
+	return nil
+}
+
+func (m *GasAndFees) GetDeveloperFees() *math_big.Int {
+	if m != nil {
+		return m.DeveloperFees
+	}
+	return nil
+}
+
+func (m *GasAndFees) GetGasProvided() uint64 {
+	if m != nil {
+		return m.GasProvided
+	}
+	return 0
+}
+
+func (m *GasAndFees) GetGasPenalized() uint64 {
+	if m != nil {
+		return m.GasPenalized
+	}
+	return 0
+}
+
+func (m *GasAndFees) GetGasRefunded() uint64 {
+	if m != nil {
+		return m.GasRefunded
+	}
+	return 0
+}
+
 type ScheduledSCRs struct {
-	RootHash []byte                         `protobuf:"bytes,1,opt,name=rootHash,proto3" json:"rootHash,omitempty"`
-	Scrs     map[int32]SmartContractResults `protobuf:"bytes,2,rep,name=scrs,proto3" json:"scrs" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	RootHash   []byte                         `protobuf:"bytes,1,opt,name=rootHash,proto3" json:"rootHash,omitempty"`
+	Scrs       map[int32]SmartContractResults `protobuf:"bytes,2,rep,name=scrs,proto3" json:"scrs" protobuf_key:"varint,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	GasAndFees *GasAndFees                    `protobuf:"bytes,3,opt,name=gasAndFees,proto3" json:"gasAndFees,omitempty"`
 }
 
 func (m *ScheduledSCRs) Reset()      { *m = ScheduledSCRs{} }
 func (*ScheduledSCRs) ProtoMessage() {}
 func (*ScheduledSCRs) Descriptor() ([]byte, []int) {
-	return fileDescriptor_f80076f37bd30c16, []int{1}
+	return fileDescriptor_f80076f37bd30c16, []int{2}
 }
 func (m *ScheduledSCRs) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -114,8 +188,16 @@ func (m *ScheduledSCRs) GetScrs() map[int32]SmartContractResults {
 	return nil
 }
 
+func (m *ScheduledSCRs) GetGasAndFees() *GasAndFees {
+	if m != nil {
+		return m.GasAndFees
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*SmartContractResults)(nil), "proto.SmartContractResults")
+	proto.RegisterType((*GasAndFees)(nil), "proto.GasAndFees")
 	proto.RegisterType((*ScheduledSCRs)(nil), "proto.ScheduledSCRs")
 	proto.RegisterMapType((map[int32]SmartContractResults)(nil), "proto.ScheduledSCRs.ScrsEntry")
 }
@@ -123,29 +205,39 @@ func init() {
 func init() { proto.RegisterFile("scheduled.proto", fileDescriptor_f80076f37bd30c16) }
 
 var fileDescriptor_f80076f37bd30c16 = []byte{
-	// 350 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x74, 0x91, 0xbf, 0x6e, 0xf2, 0x30,
-	0x14, 0xc5, 0x63, 0xfe, 0x7c, 0xfa, 0x30, 0xad, 0x5a, 0x45, 0x1d, 0xa2, 0x54, 0xba, 0x45, 0x4c,
-	0x2c, 0x24, 0x2a, 0x5d, 0x10, 0x23, 0x08, 0x89, 0xa9, 0x83, 0xc3, 0xc4, 0x66, 0x12, 0x37, 0x54,
-	0x84, 0xb8, 0xb2, 0x9d, 0xb6, 0x6c, 0x7d, 0x84, 0x3e, 0x46, 0xdf, 0xa1, 0x2f, 0xc0, 0xc8, 0xc8,
-	0x54, 0x15, 0xb3, 0x74, 0xe4, 0x11, 0xaa, 0x3a, 0x02, 0x21, 0x95, 0x4e, 0xbe, 0xe7, 0xde, 0xf3,
-	0xbb, 0xc7, 0x96, 0xf1, 0x99, 0x0c, 0x27, 0x2c, 0xca, 0x12, 0x16, 0x79, 0x0f, 0x82, 0x2b, 0x6e,
-	0x97, 0xcd, 0xe1, 0x36, 0xe3, 0x7b, 0x35, 0xc9, 0xc6, 0x5e, 0xc8, 0x67, 0x7e, 0xcc, 0x63, 0xee,
-	0x9b, 0xf6, 0x38, 0xbb, 0x33, 0xca, 0x08, 0x53, 0xe5, 0x94, 0x3b, 0x3a, 0xb0, 0xf7, 0x13, 0xc1,
-	0xd3, 0xe8, 0x96, 0xa9, 0x27, 0x2e, 0xa6, 0x3e, 0x33, 0xaa, 0x19, 0xf3, 0x66, 0xc8, 0x05, 0xf3,
-	0x23, 0xaa, 0xa8, 0x2f, 0x67, 0x54, 0xa8, 0x1e, 0x4f, 0x95, 0xa0, 0xa1, 0x22, 0x4c, 0x66, 0x89,
-	0x3a, 0xd6, 0xcb, 0x77, 0xd7, 0x09, 0xbe, 0x08, 0x7e, 0x0f, 0xa5, 0xdd, 0xc1, 0x78, 0xf8, 0x3c,
-	0xa0, 0x69, 0x94, 0x30, 0x21, 0x1d, 0x54, 0x2b, 0x36, 0xaa, 0x2d, 0x37, 0x67, 0xbc, 0x23, 0x00,
-	0x39, 0x70, 0xd7, 0xdf, 0x11, 0x3e, 0x0d, 0x76, 0x2f, 0x0f, 0x7a, 0x44, 0xda, 0x2e, 0xfe, 0x2f,
-	0x38, 0x57, 0x03, 0x2a, 0x27, 0x0e, 0xaa, 0xa1, 0xc6, 0x09, 0xd9, 0x6b, 0xbb, 0x8d, 0x4b, 0x32,
-	0x14, 0xd2, 0x29, 0x98, 0x0c, 0xd8, 0x65, 0x1c, 0xf2, 0x5e, 0x10, 0x0a, 0xd9, 0x4f, 0x95, 0x98,
-	0x77, 0x4b, 0x8b, 0x8f, 0x2b, 0x8b, 0x18, 0xc2, 0x1d, 0xe2, 0xca, 0x7e, 0x60, 0x9f, 0xe3, 0xe2,
-	0x94, 0xcd, 0xcd, 0xf6, 0x32, 0xf9, 0x29, 0xed, 0x6b, 0x5c, 0x7e, 0xa4, 0x49, 0xc6, 0x9c, 0x42,
-	0x0d, 0x35, 0xaa, 0xad, 0xcb, 0xbf, 0x6f, 0x2f, 0x49, 0xee, 0xec, 0x14, 0xda, 0xa8, 0xdb, 0x5b,
-	0xae, 0xc1, 0x5a, 0xad, 0xc1, 0xda, 0xae, 0x01, 0xbd, 0x68, 0x40, 0x6f, 0x1a, 0xd0, 0x42, 0x03,
-	0x5a, 0x6a, 0x40, 0x2b, 0x0d, 0xe8, 0x53, 0x03, 0xfa, 0xd2, 0x60, 0x6d, 0x35, 0xa0, 0xd7, 0x0d,
-	0x58, 0xcb, 0x0d, 0x58, 0xab, 0x0d, 0x58, 0xa3, 0xca, 0xfe, 0xbb, 0xc7, 0xff, 0x4c, 0xd6, 0xcd,
-	0x77, 0x00, 0x00, 0x00, 0xff, 0xff, 0x06, 0x1a, 0x9f, 0x5d, 0x02, 0x02, 0x00, 0x00,
+	// 498 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x53, 0x3d, 0x6f, 0xd3, 0x40,
+	0x18, 0xf6, 0xe5, 0x03, 0xd1, 0x4b, 0xab, 0xc2, 0x89, 0x21, 0x32, 0xd2, 0x35, 0xca, 0x94, 0x25,
+	0xb6, 0x1a, 0x96, 0xaa, 0x4c, 0x4d, 0xe8, 0x17, 0x03, 0x42, 0x97, 0x4e, 0xdd, 0x2e, 0xf6, 0x5b,
+	0xc7, 0xaa, 0xe3, 0x8b, 0xee, 0xce, 0x81, 0x32, 0xf1, 0x13, 0xf8, 0x19, 0x88, 0x5f, 0xd2, 0x31,
+	0x63, 0x06, 0x04, 0xc4, 0x59, 0x98, 0x50, 0x7f, 0x02, 0xf2, 0xb9, 0x31, 0x2e, 0x94, 0x01, 0x89,
+	0x29, 0xf7, 0x3e, 0x79, 0x3e, 0xfc, 0xfa, 0x39, 0xe3, 0x6d, 0xe5, 0x8d, 0xc1, 0x4f, 0x22, 0xf0,
+	0x9d, 0xa9, 0x14, 0x5a, 0x90, 0xba, 0xf9, 0xb1, 0xbb, 0x41, 0xa8, 0xc7, 0xc9, 0xc8, 0xf1, 0xc4,
+	0xc4, 0x0d, 0x44, 0x20, 0x5c, 0x03, 0x8f, 0x92, 0x0b, 0x33, 0x99, 0xc1, 0x9c, 0x72, 0x95, 0x7d,
+	0x5e, 0xa2, 0x1f, 0x46, 0x52, 0xc4, 0xfe, 0x2b, 0xd0, 0x6f, 0x84, 0xbc, 0x74, 0xc1, 0x4c, 0xdd,
+	0x40, 0x74, 0x3d, 0x21, 0xc1, 0xf5, 0xb9, 0xe6, 0xae, 0x9a, 0x70, 0xa9, 0x07, 0x22, 0xd6, 0x92,
+	0x7b, 0x9a, 0x81, 0x4a, 0x22, 0x7d, 0x1f, 0x96, 0x7b, 0xb7, 0x19, 0x7e, 0x32, 0xfc, 0xf3, 0x4f,
+	0x45, 0xf6, 0x31, 0x3e, 0x7b, 0x7b, 0xc2, 0x63, 0x3f, 0x02, 0xa9, 0x9a, 0xa8, 0x55, 0xed, 0x34,
+	0x7a, 0x76, 0xae, 0x71, 0xee, 0x11, 0xb0, 0x12, 0xbb, 0xfd, 0xb9, 0x82, 0xf1, 0x31, 0x57, 0x07,
+	0xb1, 0x7f, 0x04, 0xa0, 0x88, 0xc6, 0xdb, 0x07, 0x9e, 0x97, 0x4c, 0x92, 0x88, 0x6b, 0x30, 0x50,
+	0x13, 0xb5, 0x50, 0x67, 0xb3, 0xff, 0xf2, 0xd3, 0xd7, 0x9d, 0xa3, 0x09, 0xd7, 0x63, 0x77, 0x14,
+	0x06, 0xce, 0x69, 0xac, 0x9f, 0xff, 0xcb, 0xa2, 0x4e, 0x3f, 0x0c, 0x4e, 0x63, 0x3d, 0xe0, 0x4a,
+	0x83, 0x64, 0xbf, 0x47, 0x90, 0x29, 0xde, 0x7a, 0x01, 0x33, 0x88, 0xc4, 0x14, 0xa4, 0xc9, 0xac,
+	0xfc, 0xf7, 0xcc, 0xbb, 0x01, 0xa4, 0x85, 0x1b, 0xc7, 0x5c, 0xbd, 0x96, 0x62, 0x16, 0xfa, 0xe0,
+	0x37, 0xab, 0x2d, 0xd4, 0xa9, 0xb1, 0x32, 0x44, 0xda, 0x78, 0x33, 0x1b, 0x21, 0xe6, 0x51, 0xf8,
+	0x0e, 0xfc, 0x66, 0xcd, 0x50, 0xee, 0x60, 0xb7, 0x2e, 0x0c, 0x2e, 0x92, 0x38, 0x73, 0xa9, 0x17,
+	0x2e, 0x6b, 0xa8, 0xfd, 0x03, 0xe1, 0xad, 0xe1, 0xfa, 0x62, 0x0d, 0x07, 0x4c, 0x11, 0x1b, 0x3f,
+	0x94, 0x42, 0xe8, 0x13, 0xae, 0xc6, 0xf9, 0xab, 0x65, 0xc5, 0x4c, 0xf6, 0x70, 0x4d, 0x79, 0x32,
+	0x5b, 0x3f, 0xab, 0x90, 0xae, 0x2b, 0x2c, 0xeb, 0x9d, 0xa1, 0x27, 0xd5, 0x61, 0xac, 0xe5, 0x55,
+	0xbf, 0x76, 0xfd, 0x65, 0xc7, 0x62, 0x46, 0x41, 0x76, 0x31, 0x0e, 0x8a, 0x16, 0xcd, 0x3a, 0x8d,
+	0xde, 0xe3, 0x5b, 0xfd, 0xaf, 0x7a, 0x59, 0x89, 0x64, 0x9f, 0xe1, 0x8d, 0xc2, 0x8b, 0x3c, 0xc2,
+	0xd5, 0x4b, 0xb8, 0x32, 0x0f, 0x54, 0x67, 0xd9, 0x91, 0xec, 0xe2, 0xfa, 0x8c, 0x47, 0x09, 0x98,
+	0x2e, 0x1a, 0xbd, 0xa7, 0x7f, 0xbf, 0x4f, 0x8a, 0xe5, 0xcc, 0xfd, 0xca, 0x1e, 0xea, 0x0f, 0xe6,
+	0x4b, 0x6a, 0x2d, 0x96, 0xd4, 0xba, 0x59, 0x52, 0xf4, 0x3e, 0xa5, 0xe8, 0x63, 0x4a, 0xd1, 0x75,
+	0x4a, 0xd1, 0x3c, 0xa5, 0x68, 0x91, 0x52, 0xf4, 0x2d, 0xa5, 0xe8, 0x7b, 0x4a, 0xad, 0x9b, 0x94,
+	0xa2, 0x0f, 0x2b, 0x6a, 0xcd, 0x57, 0xd4, 0x5a, 0xac, 0xa8, 0x75, 0xbe, 0x51, 0x7c, 0x80, 0xa3,
+	0x07, 0x26, 0xeb, 0xd9, 0xcf, 0x00, 0x00, 0x00, 0xff, 0xff, 0xa8, 0xc2, 0x3d, 0x31, 0x94, 0x03,
+	0x00, 0x00,
 }
 
 func (this *SmartContractResults) Equal(that interface{}) bool {
@@ -174,6 +266,48 @@ func (this *SmartContractResults) Equal(that interface{}) bool {
 		if !this.TxHandlers[i].Equal(that1.TxHandlers[i]) {
 			return false
 		}
+	}
+	return true
+}
+func (this *GasAndFees) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*GasAndFees)
+	if !ok {
+		that2, ok := that.(GasAndFees)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	{
+		__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+		if !__caster.Equal(this.AccumulatedFees, that1.AccumulatedFees) {
+			return false
+		}
+	}
+	{
+		__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+		if !__caster.Equal(this.DeveloperFees, that1.DeveloperFees) {
+			return false
+		}
+	}
+	if this.GasProvided != that1.GasProvided {
+		return false
+	}
+	if this.GasPenalized != that1.GasPenalized {
+		return false
+	}
+	if this.GasRefunded != that1.GasRefunded {
+		return false
 	}
 	return true
 }
@@ -209,6 +343,9 @@ func (this *ScheduledSCRs) Equal(that interface{}) bool {
 			return false
 		}
 	}
+	if !this.GasAndFees.Equal(that1.GasAndFees) {
+		return false
+	}
 	return true
 }
 func (this *SmartContractResults) GoString() string {
@@ -223,11 +360,25 @@ func (this *SmartContractResults) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *GasAndFees) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 9)
+	s = append(s, "&scheduled.GasAndFees{")
+	s = append(s, "AccumulatedFees: "+fmt.Sprintf("%#v", this.AccumulatedFees)+",\n")
+	s = append(s, "DeveloperFees: "+fmt.Sprintf("%#v", this.DeveloperFees)+",\n")
+	s = append(s, "GasProvided: "+fmt.Sprintf("%#v", this.GasProvided)+",\n")
+	s = append(s, "GasPenalized: "+fmt.Sprintf("%#v", this.GasPenalized)+",\n")
+	s = append(s, "GasRefunded: "+fmt.Sprintf("%#v", this.GasRefunded)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *ScheduledSCRs) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 6)
+	s := make([]string, 0, 7)
 	s = append(s, "&scheduled.ScheduledSCRs{")
 	s = append(s, "RootHash: "+fmt.Sprintf("%#v", this.RootHash)+",\n")
 	keysForScrs := make([]int32, 0, len(this.Scrs))
@@ -242,6 +393,9 @@ func (this *ScheduledSCRs) GoString() string {
 	mapStringForScrs += "}"
 	if this.Scrs != nil {
 		s = append(s, "Scrs: "+mapStringForScrs+",\n")
+	}
+	if this.GasAndFees != nil {
+		s = append(s, "GasAndFees: "+fmt.Sprintf("%#v", this.GasAndFees)+",\n")
 	}
 	s = append(s, "}")
 	return strings.Join(s, "")
@@ -291,6 +445,66 @@ func (m *SmartContractResults) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *GasAndFees) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GasAndFees) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GasAndFees) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.GasRefunded != 0 {
+		i = encodeVarintScheduled(dAtA, i, uint64(m.GasRefunded))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.GasPenalized != 0 {
+		i = encodeVarintScheduled(dAtA, i, uint64(m.GasPenalized))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.GasProvided != 0 {
+		i = encodeVarintScheduled(dAtA, i, uint64(m.GasProvided))
+		i--
+		dAtA[i] = 0x18
+	}
+	{
+		__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+		size := __caster.Size(m.DeveloperFees)
+		i -= size
+		if _, err := __caster.MarshalTo(m.DeveloperFees, dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintScheduled(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x12
+	{
+		__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+		size := __caster.Size(m.AccumulatedFees)
+		i -= size
+		if _, err := __caster.MarshalTo(m.AccumulatedFees, dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintScheduled(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
 func (m *ScheduledSCRs) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -311,6 +525,18 @@ func (m *ScheduledSCRs) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.GasAndFees != nil {
+		{
+			size, err := m.GasAndFees.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintScheduled(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x1a
+	}
 	if len(m.Scrs) > 0 {
 		keysForScrs := make([]int32, 0, len(m.Scrs))
 		for k := range m.Scrs {
@@ -374,6 +600,34 @@ func (m *SmartContractResults) Size() (n int) {
 	return n
 }
 
+func (m *GasAndFees) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	{
+		__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+		l = __caster.Size(m.AccumulatedFees)
+		n += 1 + l + sovScheduled(uint64(l))
+	}
+	{
+		__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+		l = __caster.Size(m.DeveloperFees)
+		n += 1 + l + sovScheduled(uint64(l))
+	}
+	if m.GasProvided != 0 {
+		n += 1 + sovScheduled(uint64(m.GasProvided))
+	}
+	if m.GasPenalized != 0 {
+		n += 1 + sovScheduled(uint64(m.GasPenalized))
+	}
+	if m.GasRefunded != 0 {
+		n += 1 + sovScheduled(uint64(m.GasRefunded))
+	}
+	return n
+}
+
 func (m *ScheduledSCRs) Size() (n int) {
 	if m == nil {
 		return 0
@@ -392,6 +646,10 @@ func (m *ScheduledSCRs) Size() (n int) {
 			mapEntrySize := 1 + sovScheduled(uint64(k)) + 1 + l + sovScheduled(uint64(l))
 			n += mapEntrySize + 1 + sovScheduled(uint64(mapEntrySize))
 		}
+	}
+	if m.GasAndFees != nil {
+		l = m.GasAndFees.Size()
+		n += 1 + l + sovScheduled(uint64(l))
 	}
 	return n
 }
@@ -417,6 +675,20 @@ func (this *SmartContractResults) String() string {
 	}, "")
 	return s
 }
+func (this *GasAndFees) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&GasAndFees{`,
+		`AccumulatedFees:` + fmt.Sprintf("%v", this.AccumulatedFees) + `,`,
+		`DeveloperFees:` + fmt.Sprintf("%v", this.DeveloperFees) + `,`,
+		`GasProvided:` + fmt.Sprintf("%v", this.GasProvided) + `,`,
+		`GasPenalized:` + fmt.Sprintf("%v", this.GasPenalized) + `,`,
+		`GasRefunded:` + fmt.Sprintf("%v", this.GasRefunded) + `,`,
+		`}`,
+	}, "")
+	return s
+}
 func (this *ScheduledSCRs) String() string {
 	if this == nil {
 		return "nil"
@@ -434,6 +706,7 @@ func (this *ScheduledSCRs) String() string {
 	s := strings.Join([]string{`&ScheduledSCRs{`,
 		`RootHash:` + fmt.Sprintf("%v", this.RootHash) + `,`,
 		`Scrs:` + mapStringForScrs + `,`,
+		`GasAndFees:` + strings.Replace(this.GasAndFees.String(), "GasAndFees", "GasAndFees", 1) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -509,6 +782,192 @@ func (m *SmartContractResults) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipScheduled(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthScheduled
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthScheduled
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GasAndFees) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowScheduled
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GasAndFees: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GasAndFees: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccumulatedFees", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowScheduled
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthScheduled
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthScheduled
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			{
+				__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+				if tmp, err := __caster.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+					return err
+				} else {
+					m.AccumulatedFees = tmp
+				}
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DeveloperFees", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowScheduled
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthScheduled
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthScheduled
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			{
+				__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+				if tmp, err := __caster.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+					return err
+				} else {
+					m.DeveloperFees = tmp
+				}
+			}
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GasProvided", wireType)
+			}
+			m.GasProvided = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowScheduled
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.GasProvided |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GasPenalized", wireType)
+			}
+			m.GasPenalized = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowScheduled
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.GasPenalized |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GasRefunded", wireType)
+			}
+			m.GasRefunded = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowScheduled
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.GasRefunded |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipScheduled(dAtA[iNdEx:])
@@ -710,6 +1169,42 @@ func (m *ScheduledSCRs) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.Scrs[mapkey] = *mapvalue
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field GasAndFees", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowScheduled
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthScheduled
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthScheduled
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.GasAndFees == nil {
+				m.GasAndFees = &GasAndFees{}
+			}
+			if err := m.GasAndFees.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

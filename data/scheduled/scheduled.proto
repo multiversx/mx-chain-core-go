@@ -12,7 +12,17 @@ import "github.com/ElrondNetwork/elrond-go-core/data/smartContractResult/smartCo
 message SmartContractResults {
     repeated SmartContractResult  TxHandlers = 1;
 }
+
+message GasAndFees {
+    bytes AccumulatedFees = 1 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
+    bytes DeveloperFees = 2 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
+    uint64 GasProvided = 3;
+    uint64 GasPenalized = 4;
+    uint64 GasRefunded = 5;
+}
+
 message ScheduledSCRs {
     bytes rootHash = 1;
     map<int32, SmartContractResults> scrs = 2 [(gogoproto.nullable) = false];
+    GasAndFees gasAndFees = 3;
 }
