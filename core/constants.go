@@ -105,6 +105,12 @@ const BuiltInFunctionESDTNFTUpdateAttributes = "ESDTNFTUpdateAttributes"
 // BuiltInFunctionMultiESDTNFTTransfer is the key for the elrond standard digital token multi transfer built-in function
 const BuiltInFunctionMultiESDTNFTTransfer = "MultiESDTNFTTransfer"
 
+// BuiltInFunctionFreezeAccount is the built-in function key for freezing an account
+const BuiltInFunctionFreezeAccount = "FreezeAccount"
+
+// BuiltInFunctionUnfreezeAccount is the built-in function key for unfreezing an account
+const BuiltInFunctionUnfreezeAccount = "UnfreezeAccount"
+
 // ESDTRoleLocalMint is the constant string for the local role of mint for ESDT tokens
 const ESDTRoleLocalMint = "ESDTRoleLocalMint"
 
