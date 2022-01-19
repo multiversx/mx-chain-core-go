@@ -598,8 +598,8 @@ func (hv2 *HeaderV2) GetAdditionalData() headerVersionData.HeaderAdditionalData 
 		accFees = big.NewInt(0).Set(hv2.GetScheduledAccumulatedFees())
 	}
 	devFees := big.NewInt(0)
-	if hv2.GetDeveloperFees() != nil {
-		devFees = big.NewInt(0).Set(hv2.GetDeveloperFees())
+	if hv2.GetScheduledDeveloperFees() != nil {
+		devFees = big.NewInt(0).Set(hv2.GetScheduledDeveloperFees())
 	}
 
 	additionalVersionData := &headerVersionData.AdditionalData{
