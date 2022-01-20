@@ -10,8 +10,6 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data"
 )
 
-const byteSize = 8
-
 // GetPubKeys - returns all validator's public keys which have signed multiple headers
 func (m *MultipleHeaderSigningProof) GetPubKeys() [][]byte {
 	if m == nil {
@@ -40,6 +38,7 @@ func (m *MultipleHeaderSigningProof) GetLevel(pubKey []byte) ThreatLevel {
 	return slashData.ThreatLevel
 }
 
+// GetAllHeaders returns all header handlers stored in the proof
 func (m *MultipleHeaderSigningProof) GetAllHeaders() []data.HeaderHandler {
 	if m == nil {
 		return nil
