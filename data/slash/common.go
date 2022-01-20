@@ -1,6 +1,8 @@
 package slash
 
 import (
+	"encoding/hex"
+	"fmt"
 	"sort"
 
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
@@ -19,38 +21,86 @@ type SlashingResult struct {
 type ProofTxData struct {
 	Round   uint64
 	ShardID uint32
+	ProofID ProofID
 }
 
-func getSortedHeadersV2(headersInfo []data.HeaderInfoHandler) (HeadersV2, error) {
-	if headersInfo == nil {
-		return HeadersV2{}, data.ErrNilHeaderInfoList
+type ProofID byte
+
+// Used by slashing notifier to create a slashing transaction
+// from a proof. Each transaction identifies a different
+// slashing event based on this ID
+const (
+	// MultipleProposalProofID = MultipleProposal's ID
+	MultipleProposalProofID ProofID = 0x1
+	// MultipleSigningProofID = MultipleSigning's ID
+	MultipleSigningProofID ProofID = 0x2
+)
+
+func getSortedHeadersV2(headersInfo []data.HeaderInfoHandler) (*HeadersV2, error) {
+	sortedHeaders, err := sortHeaders(headersInfo)
+	if err != nil {
+		return nil, err
+	}
+
+	headersV2 := &HeadersV2{}
+	err = headersV2.SetHeaders(sortedHeaders)
+	if err != nil {
+		return nil, err
+	}
+
+	return headersV2, nil
+}
+
+func getHeaderHashIfUnique(headerInfo data.HeaderInfoHandler, hashes map[string]struct{}) (string, error) {
+	if headerInfo == nil {
+		return "", data.ErrNilHeaderInfo
+	}
+
+	hash := headerInfo.GetHash()
+	if hash == nil {
+		return "", data.ErrNilHash
+	}
+
+	headerHandler := headerInfo.GetHeaderHandler()
+	if check.IfNil(headerHandler) {
+		return "", fmt.Errorf("%w in header info for hash: %s", data.ErrNilHeaderHandler, hex.EncodeToString(hash))
+	}
+
+	hashStr := string(hash)
+	_, exists := hashes[hashStr]
+	if exists {
+		return "", fmt.Errorf("%w, duplicated hash: %s", data.ErrHeadersSameHash, hex.EncodeToString(hash))
+	}
+
+	return hashStr, nil
+}
+
+func sortHeaders(headersInfo []data.HeaderInfoHandler) ([]data.HeaderHandler, error) {
+	if len(headersInfo) == 0 {
+		return nil, data.ErrEmptyHeaderInfoList
 	}
 
 	sortHeadersByHash(headersInfo)
 	headers := make([]data.HeaderHandler, 0, len(headersInfo))
-	for _, headerInfo := range headersInfo {
-		if headerInfo == nil {
-			return HeadersV2{}, data.ErrNilHeaderInfo
+	hashes := make(map[string]struct{})
+	for idx, headerInfo := range headersInfo {
+		hash, err := getHeaderHashIfUnique(headerInfo, hashes)
+		if err != nil {
+			return nil, fmt.Errorf("%w in sorted header list at index: %d", err, idx)
 		}
 
-		headerHandler := headerInfo.GetHeaderHandler()
-		hash := headerInfo.GetHash()
-		if check.IfNil(headerHandler) {
-			return HeadersV2{}, data.ErrNilHeaderHandler
-		}
-		if hash == nil {
-			return HeadersV2{}, data.ErrNilHash
-		}
-
-		headers = append(headers, headerHandler)
+		headers = append(headers, headerInfo.GetHeaderHandler())
+		hashes[hash] = struct{}{}
 	}
 
-	headersV2 := HeadersV2{}
-	return headersV2, headersV2.SetHeaders(headers)
+	return headers, nil
 }
 
 func sortHeadersByHash(headersInfo []data.HeaderInfoHandler) {
 	sortFunc := func(i, j int) bool {
+		if headersInfo[i] == nil || headersInfo[j] == nil {
+			return false
+		}
 		hash1 := string(headersInfo[i].GetHash())
 		hash2 := string(headersInfo[j].GetHash())
 

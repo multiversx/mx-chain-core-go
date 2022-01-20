@@ -2,18 +2,28 @@
 package slash
 
 import (
-	"sort"
+	"encoding/hex"
+	"fmt"
 
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
+	"github.com/ElrondNetwork/elrond-go-core/core/sliceUtil"
 	"github.com/ElrondNetwork/elrond-go-core/data"
 )
 
-// GetType returns MultipleSigning
-func (m *MultipleHeaderSigningProof) GetType() SlashingType {
+const byteSize = 8
+
+// GetPubKeys - returns all validator's public keys which have signed multiple headers
+func (m *MultipleHeaderSigningProof) GetPubKeys() [][]byte {
 	if m == nil {
-		return None
+		return nil
 	}
-	return MultipleSigning
+
+	ret := make([][]byte, 0, len(m.SignersSlashData))
+	for pubKey := range m.SignersSlashData {
+		ret = append(ret, []byte(pubKey))
+	}
+
+	return ret
 }
 
 // GetLevel returns the ThreatLevel of a possible malicious validator
@@ -22,12 +32,12 @@ func (m *MultipleHeaderSigningProof) GetLevel(pubKey []byte) ThreatLevel {
 		return Zero
 	}
 
-	level, exists := m.Levels[string(pubKey)]
+	slashData, exists := m.SignersSlashData[string(pubKey)]
 	if !exists {
 		return Zero
 	}
 
-	return level
+	return slashData.ThreatLevel
 }
 
 // GetHeaders returns all headers that have been signed by a possible malicious validator
@@ -36,12 +46,22 @@ func (m *MultipleHeaderSigningProof) GetHeaders(pubKey []byte) []data.HeaderHand
 		return nil
 	}
 
-	headersV2, exist := m.HeadersV2[string(pubKey)]
-	if !exist {
+	slashData, exists := m.SignersSlashData[string(pubKey)]
+	if !exists {
 		return nil
 	}
 
-	return headersV2.GetHeaderHandlers()
+	bitmap := slashData.GetSignedHeadersBitMap()
+	headers := m.HeadersV2.GetHeaderHandlers()
+
+	ret := make([]data.HeaderHandler, 0)
+	for idx, header := range headers {
+		if sliceUtil.IsIndexSetInBitmap(uint32(idx), bitmap) {
+			ret = append(ret, header)
+		}
+	}
+
+	return ret
 }
 
 // GetProofTxData returns the necessary ProofTxData to issue a commitment slash tx
@@ -66,6 +86,7 @@ func (m *MultipleHeaderSigningProof) GetProofTxData() (*ProofTxData, error) {
 	return &ProofTxData{
 		Round:   headers[0].GetRound(),
 		ShardID: headers[0].GetShardID(),
+		ProofID: MultipleSigningProofID,
 	}, nil
 }
 
@@ -75,36 +96,75 @@ func NewMultipleSigningProof(slashResult map[string]SlashingResult) (MultipleSig
 		return nil, data.ErrNilSlashResult
 	}
 
-	pubKeys := make([][]byte, 0, len(slashResult))
-	levels := make(map[string]ThreatLevel, len(slashResult))
-	headers := make(map[string]HeadersV2, len(slashResult))
-
-	sortedPubKeys := getSortedPubKeys(slashResult)
-	for _, pubKey := range sortedPubKeys {
-		pubKeys = append(pubKeys, []byte(pubKey))
-		levels[pubKey] = slashResult[pubKey].SlashingLevel
-
-		sortedHeaders, err := getSortedHeadersV2(slashResult[pubKey].Headers)
-		if err != nil {
-			return nil, err
-		}
-		headers[pubKey] = sortedHeaders
+	headersInfo, err := getAllUniqueHeaders(slashResult)
+	if err != nil {
+		return nil, err
+	}
+	sortedHeaders, err := getSortedHeadersV2(headersInfo)
+	if err != nil {
+		return nil, err
 	}
 
+	hashIndexMap := calcHashIndexMap(headersInfo)
+	signersSlashData := computeSignersSlashData(hashIndexMap, slashResult)
+
 	return &MultipleHeaderSigningProof{
-		PubKeys:   pubKeys,
-		Levels:    levels,
-		HeadersV2: headers,
+		HeadersV2:        *sortedHeaders,
+		SignersSlashData: signersSlashData,
 	}, nil
 }
 
-func getSortedPubKeys(slashResult map[string]SlashingResult) []string {
-	sortedPubKeys := make([]string, 0, len(slashResult))
+func getAllUniqueHeaders(slashResult map[string]SlashingResult) ([]data.HeaderInfoHandler, error) {
+	headersInfo := make([]data.HeaderInfoHandler, 0, len(slashResult))
+	hashes := make(map[string]struct{})
 
-	for pubKey := range slashResult {
-		sortedPubKeys = append(sortedPubKeys, pubKey)
+	for pubKey, res := range slashResult {
+		hashesPerPubKey := make(map[string]struct{})
+		for _, headerInfo := range res.Headers {
+			hash, err := getHeaderHashIfUnique(headerInfo, hashesPerPubKey)
+			if err != nil {
+				return nil, fmt.Errorf("%w in slash result for public key: %s", err, hex.EncodeToString([]byte(pubKey)))
+			}
+
+			hashesPerPubKey[hash] = struct{}{}
+			_, exists := hashes[hash]
+			if exists {
+				continue
+			}
+
+			hashes[hash] = struct{}{}
+			headersInfo = append(headersInfo, headerInfo)
+		}
 	}
-	sort.Strings(sortedPubKeys)
 
-	return sortedPubKeys
+	return headersInfo, nil
+}
+
+func calcHashIndexMap(headersInfo []data.HeaderInfoHandler) map[string]uint32 {
+	hashIndexMap := make(map[string]uint32)
+	for idx, headerInfo := range headersInfo {
+		hashIndexMap[string(headerInfo.GetHash())] = uint32(idx)
+	}
+
+	return hashIndexMap
+}
+
+func computeSignersSlashData(hashIndexMap map[string]uint32, slashResult map[string]SlashingResult) map[string]SignerSlashingData {
+	signersSlashData := make(map[string]SignerSlashingData)
+	bitMapLen := len(hashIndexMap)/byteSize + 1
+	for pubKey, res := range slashResult {
+		bitmap := make([]byte, bitMapLen)
+		for _, header := range res.Headers {
+			index, exists := hashIndexMap[string(header.GetHash())]
+			if exists {
+				sliceUtil.SetIndexInBitmap(index, bitmap)
+			}
+		}
+		signersSlashData[pubKey] = SignerSlashingData{
+			SignedHeadersBitMap: bitmap,
+			ThreatLevel:         res.SlashingLevel,
+		}
+	}
+
+	return signersSlashData
 }

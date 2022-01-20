@@ -1,6 +1,7 @@
 package slash_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/ElrondNetwork/elrond-go-core/data"
@@ -21,10 +22,14 @@ func TestNewMultipleSigningProof(t *testing.T) {
 			expectedErr: data.ErrNilSlashResult,
 		},
 		{
+			args:        make(map[string]slash.SlashingResult),
+			expectedErr: data.ErrEmptyHeaderInfoList,
+		},
+		{
 			args: map[string]slash.SlashingResult{
 				"pubKey": {Headers: nil},
 			},
-			expectedErr: data.ErrNilHeaderInfoList,
+			expectedErr: data.ErrEmptyHeaderInfoList,
 		},
 		{
 			args: map[string]slash.SlashingResult{
@@ -33,53 +38,76 @@ func TestNewMultipleSigningProof(t *testing.T) {
 			expectedErr: data.ErrNilHeaderInfo,
 		},
 		{
-			args:        make(map[string]slash.SlashingResult),
-			expectedErr: nil,
+			args: map[string]slash.SlashingResult{
+				"pubKey": {Headers: []data.HeaderInfoHandler{
+					&dataMock.HeaderInfoStub{Header: &block.HeaderV2{}, Hash: []byte("h")},
+					&dataMock.HeaderInfoStub{Header: &block.HeaderV2{}, Hash: []byte("h")}},
+				},
+			},
+			expectedErr: data.ErrHeadersSameHash,
 		},
 	}
 
 	for _, currTest := range tests {
 		_, err := slash.NewMultipleSigningProof(currTest.args)
-		require.Equal(t, currTest.expectedErr, err)
+		require.Error(t, err)
+		require.True(t, strings.Contains(err.Error(), currTest.expectedErr.Error()))
 	}
 }
 
-func TestMultipleSigningProof_GetHeadersGetLevelGetType(t *testing.T) {
+func TestMultipleSigningProof_GetHeadersGetLevel(t *testing.T) {
 	h1 := &block.HeaderV2{Header: &block.Header{TimeStamp: 1}}
 	h2 := &block.HeaderV2{Header: &block.Header{TimeStamp: 2}}
 	h3 := &block.HeaderV2{Header: &block.Header{TimeStamp: 3}}
+	h4 := &block.HeaderV2{Header: &block.Header{TimeStamp: 4}}
+	h5 := &block.HeaderV2{Header: &block.Header{TimeStamp: 5}}
 
 	hInfo1 := &dataMock.HeaderInfoStub{Header: h1, Hash: []byte("h1")}
 	hInfo2 := &dataMock.HeaderInfoStub{Header: h2, Hash: []byte("h2")}
 	hInfo3 := &dataMock.HeaderInfoStub{Header: h3, Hash: []byte("h3")}
+	hInfo4 := &dataMock.HeaderInfoStub{Header: h4, Hash: []byte("h4")}
+	hInfo5 := &dataMock.HeaderInfoStub{Header: h5, Hash: []byte("h5")}
 
 	slashRes1 := slash.SlashingResult{
 		SlashingLevel: slash.High,
-		Headers:       []data.HeaderInfoHandler{hInfo1, hInfo2},
+		Headers:       []data.HeaderInfoHandler{hInfo4, hInfo2, hInfo1, hInfo3},
 	}
 	slashRes2 := slash.SlashingResult{
 		SlashingLevel: slash.Medium,
-		Headers:       []data.HeaderInfoHandler{hInfo3},
+		Headers:       []data.HeaderInfoHandler{hInfo3, hInfo5, hInfo4},
+	}
+	slashRes3 := slash.SlashingResult{
+		SlashingLevel: slash.Zero,
+		Headers:       []data.HeaderInfoHandler{},
+	}
+	slashRes4 := slash.SlashingResult{
+		SlashingLevel: slash.Zero,
+		Headers:       nil,
 	}
 	slashRes := map[string]slash.SlashingResult{
 		"pubKey1": slashRes1,
 		"pubKey2": slashRes2,
+		"pubKey3": slashRes3,
+		"pubKey4": slashRes4,
 	}
 
 	proof, err := slash.NewMultipleSigningProof(slashRes)
 	require.Nil(t, err)
 
-	require.Equal(t, slash.MultipleSigning, proof.GetType())
 	require.Equal(t, slash.High, proof.GetLevel([]byte("pubKey1")))
 	require.Equal(t, slash.Medium, proof.GetLevel([]byte("pubKey2")))
 	require.Equal(t, slash.Zero, proof.GetLevel([]byte("pubKey3")))
+	require.Equal(t, slash.Zero, proof.GetLevel([]byte("pubKey4")))
+	require.Equal(t, slash.Zero, proof.GetLevel([]byte("pubKey5")))
 
-	require.Equal(t, []data.HeaderHandler{h1, h2}, proof.GetHeaders([]byte("pubKey1")))
-	require.Equal(t, []data.HeaderHandler{h3}, proof.GetHeaders([]byte("pubKey2")))
-	require.Nil(t, proof.GetHeaders([]byte("pubKey3")))
+	require.Equal(t, []data.HeaderHandler{h1, h2, h3, h4}, proof.GetHeaders([]byte("pubKey1")))
+	require.Equal(t, []data.HeaderHandler{h3, h4, h5}, proof.GetHeaders([]byte("pubKey2")))
+	require.Empty(t, proof.GetHeaders([]byte("pubKey3")))
+	require.Empty(t, proof.GetHeaders([]byte("pubKey4")))
+	require.Empty(t, proof.GetHeaders([]byte("pubKey5")))
 }
 
-func TestMultipleSigningProof_GetProofTxData_NotEnoughPublicKeysProvidedExpectError(t *testing.T) {
+func TestMultipleSigningProof_GetProofTxDataNotEnoughPublicKeysProvidedExpectError(t *testing.T) {
 	proof := slash.MultipleHeaderSigningProof{}
 
 	proofTxData, err := proof.GetProofTxData()
@@ -87,19 +115,24 @@ func TestMultipleSigningProof_GetProofTxData_NotEnoughPublicKeysProvidedExpectEr
 	require.Equal(t, data.ErrNotEnoughPublicKeysProvided, err)
 }
 
-func TestMultipleSigningProof_GetProofTxData_NotEnoughHeadersProvidedExpectError(t *testing.T) {
-	proof := slash.MultipleHeaderSigningProof{PubKeys: [][]byte{[]byte("pub key")}}
+func TestMultipleSigningProof_GetProofTxDataNotEnoughHeadersProvidedExpectError(t *testing.T) {
+	proof := slash.MultipleHeaderSigningProof{
+		HeadersV2: slash.HeadersV2{},
+		SignersSlashData: map[string]slash.SignerSlashingData{
+			"pubKey1": {},
+		},
+	}
 
 	proofTxData, err := proof.GetProofTxData()
 	require.Nil(t, proofTxData)
 	require.Equal(t, data.ErrNotEnoughHeadersProvided, err)
 }
 
-func TestMultipleSigningProof_GetProofTxData_NilHeaderHandlerExpectError(t *testing.T) {
-	proof := slash.MultipleHeaderSigningProof{
-		PubKeys: [][]byte{[]byte("pub key")},
-		HeadersV2: map[string]slash.HeadersV2{
-			"pub key": {Headers: []*block.HeaderV2{nil}},
+func TestMultipleSigningProof_GetProofTxDataNilHeaderHandlerExpectError(t *testing.T) {
+	proof := &slash.MultipleHeaderSigningProof{
+		HeadersV2: slash.HeadersV2{Headers: []*block.HeaderV2{nil}},
+		SignersSlashData: map[string]slash.SignerSlashingData{
+			"pubKey1": {SignedHeadersBitMap: []byte{0x1}},
 		},
 	}
 
@@ -118,15 +151,24 @@ func TestMultipleSigningProof_GetProofTxData(t *testing.T) {
 			ShardID: shardID,
 		},
 	}
-	proof := slash.MultipleHeaderSigningProof{
-		PubKeys: [][]byte{[]byte("pub key")},
-		HeadersV2: map[string]slash.HeadersV2{
-			"pub key": {Headers: []*block.HeaderV2{header}},
-		},
+	headerInfo := &dataMock.HeaderInfoStub{
+		Header: header,
+		Hash:   []byte("hash"),
 	}
+
+	slashResPubKey1 := slash.SlashingResult{
+		SlashingLevel: slash.High,
+		Headers:       []data.HeaderInfoHandler{headerInfo},
+	}
+	slashRes := map[string]slash.SlashingResult{
+		"pubKey1": slashResPubKey1,
+	}
+	proof, _ := slash.NewMultipleSigningProof(slashRes)
+
 	expectedProofTxData := &slash.ProofTxData{
 		Round:   round,
 		ShardID: shardID,
+		ProofID: slash.MultipleSigningProofID,
 	}
 
 	proofTxData, err := proof.GetProofTxData()
@@ -134,24 +176,26 @@ func TestMultipleSigningProof_GetProofTxData(t *testing.T) {
 	require.Nil(t, err)
 }
 
-func TestMultipleSigningProof_MarshalUnmarshal(t *testing.T) {
+func TestMultipleSigningProof_Marshal_Unmarshal(t *testing.T) {
 	h1 := &block.HeaderV2{Header: &block.Header{TimeStamp: 1}}
 	h2 := &block.HeaderV2{Header: &block.Header{TimeStamp: 2}}
 	h3 := &block.HeaderV2{Header: &block.Header{TimeStamp: 3}}
 	h4 := &block.HeaderV2{Header: &block.Header{TimeStamp: 4}}
+	h5 := &block.HeaderV2{Header: &block.Header{TimeStamp: 5}}
 
 	hInfo1 := &dataMock.HeaderInfoStub{Header: h1, Hash: []byte("h1")}
 	hInfo2 := &dataMock.HeaderInfoStub{Header: h2, Hash: []byte("h2")}
 	hInfo3 := &dataMock.HeaderInfoStub{Header: h3, Hash: []byte("h3")}
 	hInfo4 := &dataMock.HeaderInfoStub{Header: h4, Hash: []byte("h4")}
+	hInfo5 := &dataMock.HeaderInfoStub{Header: h5, Hash: []byte("h5")}
 
 	slashResPubKey1 := slash.SlashingResult{
 		SlashingLevel: slash.Medium,
-		Headers:       []data.HeaderInfoHandler{hInfo1, hInfo2},
+		Headers:       []data.HeaderInfoHandler{hInfo1, hInfo2, hInfo3},
 	}
 	slashResPubKey2 := slash.SlashingResult{
 		SlashingLevel: slash.High,
-		Headers:       []data.HeaderInfoHandler{hInfo3, hInfo4},
+		Headers:       []data.HeaderInfoHandler{hInfo3, hInfo4, hInfo5},
 	}
 	slashResProof1 := map[string]slash.SlashingResult{
 		"pubKey1": slashResPubKey1,
@@ -161,12 +205,12 @@ func TestMultipleSigningProof_MarshalUnmarshal(t *testing.T) {
 	// Same slash result for pubKey1, but change headers order
 	slashResPubKey1 = slash.SlashingResult{
 		SlashingLevel: slash.Medium,
-		Headers:       []data.HeaderInfoHandler{hInfo2, hInfo1},
+		Headers:       []data.HeaderInfoHandler{hInfo3, hInfo1, hInfo2},
 	}
 	// Same slash result for pubKey2, but change headers order
 	slashResPubKey2 = slash.SlashingResult{
 		SlashingLevel: slash.High,
-		Headers:       []data.HeaderInfoHandler{hInfo4, hInfo3},
+		Headers:       []data.HeaderInfoHandler{hInfo4, hInfo3, hInfo5},
 	}
 
 	// Change pub keys order in map

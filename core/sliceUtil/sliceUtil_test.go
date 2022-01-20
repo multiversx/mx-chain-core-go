@@ -75,3 +75,25 @@ func TestIsIndexSetInBitmap(t *testing.T) {
 		require.False(t, sliceUtil.IsIndexSetInBitmap(i, bitmap))
 	}
 }
+
+func TestSetIndexInBitmap(t *testing.T) {
+	byte1Map, _ := strconv.ParseInt("11001101", 2, 9)
+	byte2Map, _ := strconv.ParseInt("00000101", 2, 9)
+	expectedBitMap := []byte{byte(byte1Map), byte(byte2Map)}
+
+	bitMap := make([]byte, 2)
+
+	sliceUtil.SetIndexInBitmap(0, bitMap)
+	sliceUtil.SetIndexInBitmap(2, bitMap)
+	sliceUtil.SetIndexInBitmap(3, bitMap)
+	sliceUtil.SetIndexInBitmap(6, bitMap)
+	sliceUtil.SetIndexInBitmap(7, bitMap)
+	sliceUtil.SetIndexInBitmap(8, bitMap)
+	sliceUtil.SetIndexInBitmap(10, bitMap)
+
+	for i := uint32(16); i <= 100; i++ {
+		sliceUtil.SetIndexInBitmap(i, bitMap)
+	}
+
+	require.Equal(t, expectedBitMap, bitMap)
+}

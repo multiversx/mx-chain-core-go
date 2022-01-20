@@ -1,6 +1,7 @@
 package slash_test
 
 import (
+	"strings"
 	"testing"
 
 	"github.com/ElrondNetwork/elrond-go-core/data"
@@ -21,43 +22,63 @@ func TestNewMultipleProposalProof(t *testing.T) {
 			expectedErr: data.ErrNilSlashResult,
 		},
 		{
-			args:        &slash.SlashingResult{SlashingLevel: slash.Medium, Headers: nil},
-			expectedErr: data.ErrNilHeaderInfoList,
+			args: &slash.SlashingResult{
+				SlashingLevel: slash.Medium,
+				Headers:       nil,
+			},
+			expectedErr: data.ErrEmptyHeaderInfoList,
 		},
 		{
-			args:        &slash.SlashingResult{SlashingLevel: slash.Medium, Headers: []data.HeaderInfoHandler{nil}},
+			args: &slash.SlashingResult{
+				SlashingLevel: slash.Medium,
+				Headers:       []data.HeaderInfoHandler{},
+			},
+			expectedErr: data.ErrEmptyHeaderInfoList,
+		},
+		{
+			args: &slash.SlashingResult{
+				SlashingLevel: slash.Medium,
+				Headers:       []data.HeaderInfoHandler{nil, &dataMock.HeaderInfoStub{}},
+			},
 			expectedErr: data.ErrNilHeaderInfo,
 		},
 		{
-			args:        &slash.SlashingResult{SlashingLevel: slash.Medium, Headers: []data.HeaderInfoHandler{}},
-			expectedErr: nil,
+			args: &slash.SlashingResult{
+				SlashingLevel: slash.Medium,
+				Headers: []data.HeaderInfoHandler{
+					&dataMock.HeaderInfoStub{Header: &block.HeaderV2{}, Hash: []byte("h")},
+					&dataMock.HeaderInfoStub{Header: &block.HeaderV2{}, Hash: []byte("h")},
+				},
+			},
+			expectedErr: data.ErrHeadersSameHash,
 		},
 	}
 
 	for _, currTest := range tests {
 		_, err := slash.NewMultipleProposalProof(currTest.args)
-		require.Equal(t, currTest.expectedErr, err)
+		require.Error(t, err)
+		require.True(t, strings.Contains(err.Error(), currTest.expectedErr.Error()))
 	}
 }
 
-func TestMultipleProposalProof_GetHeadersGetLevelGetType(t *testing.T) {
+func TestMultipleProposalProof_GetHeadersGetLevel(t *testing.T) {
 	h1 := &block.HeaderV2{Header: &block.Header{TimeStamp: 1}}
 	h2 := &block.HeaderV2{Header: &block.Header{TimeStamp: 2}}
+	h3 := &block.HeaderV2{Header: &block.Header{TimeStamp: 3}}
 
 	hInfo1 := &dataMock.HeaderInfoStub{Header: h1, Hash: []byte("h1")}
 	hInfo2 := &dataMock.HeaderInfoStub{Header: h2, Hash: []byte("h2")}
+	hInfo3 := &dataMock.HeaderInfoStub{Header: h3, Hash: []byte("h3")}
 
 	slashRes := &slash.SlashingResult{
 		SlashingLevel: slash.Medium,
-		Headers:       []data.HeaderInfoHandler{hInfo1, hInfo2},
+		Headers:       []data.HeaderInfoHandler{hInfo2, hInfo1, hInfo3},
 	}
 
 	proof, err := slash.NewMultipleProposalProof(slashRes)
 	require.Nil(t, err)
-
-	require.Equal(t, slash.MultipleProposal, proof.GetType())
 	require.Equal(t, slash.Medium, proof.GetLevel())
-	require.Equal(t, []data.HeaderHandler{h1, h2}, proof.GetHeaders())
+	require.Equal(t, []data.HeaderHandler{h1, h2, h3}, proof.GetHeaders())
 }
 
 func TestMultipleHeaderProposalProof_GetProofTxDataNotEnoughHeadersExpectError(t *testing.T) {
@@ -98,6 +119,7 @@ func TestMultipleHeaderProposalProof_GetProofTxData(t *testing.T) {
 	expectedProofTxData := &slash.ProofTxData{
 		Round:   round,
 		ShardID: shardID,
+		ProofID: slash.MultipleProposalProofID,
 	}
 
 	proofTxData, err := proof.GetProofTxData()

@@ -85,14 +85,17 @@ var ErrNilSlashResult = errors.New("slash result is nil")
 // ErrNilHeaderHandler signals that a nil header handler has been provided
 var ErrNilHeaderHandler = errors.New("nil header handler")
 
-// ErrNilHeaderInfoList signals that a nil header info list has been provided
-var ErrNilHeaderInfoList = errors.New("nil header info list")
+// ErrEmptyHeaderInfoList signals that an empty header info list has been provided
+var ErrEmptyHeaderInfoList = errors.New("empty header info list")
 
 // ErrNilHeaderInfo signals that a nil header info has been provided
 var ErrNilHeaderInfo = errors.New("nil header info")
 
 // ErrNilHash signals that a nil hash has been provided
 var ErrNilHash = errors.New("nil hash provided")
+
+// ErrHeadersSameHash signals that headers have the same hash in a multiple header proof
+var ErrHeadersSameHash = errors.New("headers have the same hash in a multiple header proof")
 
 // ErrNotEnoughHeadersProvided signals that not enough headers have been provided for a multiple header proof
 var ErrNotEnoughHeadersProvided = errors.New("not enough headers have been provided for a multiple header proof")
