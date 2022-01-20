@@ -38,11 +38,13 @@ const (
 	MultipleSigningProofID byte = 0x2
 )
 
+const byteSize = 8
+
 // CalcBitmapSize returns the min required bitmap size, which
 // can hold a noOfBits
 func CalcBitmapSize(noOfBits int) uint32 {
-	bitmapSize := noOfBits / 8
-	if noOfBits%8 != 0 {
+	bitmapSize := noOfBits / byteSize
+	if noOfBits%byteSize != 0 {
 		bitmapSize++
 	}
 	return uint32(bitmapSize)
