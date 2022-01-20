@@ -45,7 +45,7 @@ func NewMultipleProposalProof(slashResult *SlashingResult) (MultipleProposalProo
 		return nil, data.ErrEmptyHeaderInfoList
 	}
 
-	sortedHeaders, err := sortAndGetHeadersV2(slashResult.Headers)
+	sortedHeaders, err := getSortedHeadersV2(slashResult.Headers)
 	if err != nil {
 		return nil, err
 	}

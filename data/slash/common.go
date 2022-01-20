@@ -36,7 +36,7 @@ const (
 	MultipleSigningProofID ProofID = 0x2
 )
 
-func sortAndGetHeadersV2(headersInfo []data.HeaderInfoHandler) (*HeadersV2, error) {
+func getSortedHeadersV2(headersInfo []data.HeaderInfoHandler) (*HeadersV2, error) {
 	sortedHeaders, err := sortHeaders(headersInfo)
 	if err != nil {
 		return nil, err
@@ -51,7 +51,7 @@ func sortAndGetHeadersV2(headersInfo []data.HeaderInfoHandler) (*HeadersV2, erro
 	return headersV2, nil
 }
 
-func getAndCheckUniqueHeaderHash(headerInfo data.HeaderInfoHandler, hashes map[string]struct{}) (string, error) {
+func getHeaderHashIfUnique(headerInfo data.HeaderInfoHandler, hashes map[string]struct{}) (string, error) {
 	if headerInfo == nil {
 		return "", data.ErrNilHeaderInfo
 	}
@@ -84,7 +84,7 @@ func sortHeaders(headersInfo []data.HeaderInfoHandler) ([]data.HeaderHandler, er
 	headers := make([]data.HeaderHandler, 0, len(headersInfo))
 	hashes := make(map[string]struct{})
 	for idx, headerInfo := range headersInfo {
-		hash, err := getAndCheckUniqueHeaderHash(headerInfo, hashes)
+		hash, err := getHeaderHashIfUnique(headerInfo, hashes)
 		if err != nil {
 			return nil, fmt.Errorf("%w in sorted header list at index: %d", err, idx)
 		}

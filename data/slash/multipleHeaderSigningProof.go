@@ -100,7 +100,7 @@ func NewMultipleSigningProof(slashResult map[string]SlashingResult) (MultipleSig
 	if err != nil {
 		return nil, err
 	}
-	sortedHeaders, err := sortAndGetHeadersV2(headersInfo)
+	sortedHeaders, err := getSortedHeadersV2(headersInfo)
 	if err != nil {
 		return nil, err
 	}
@@ -121,7 +121,7 @@ func getAllUniqueHeaders(slashResult map[string]SlashingResult) ([]data.HeaderIn
 	for pubKey, res := range slashResult {
 		hashesPerPubKey := make(map[string]struct{})
 		for _, headerInfo := range res.Headers {
-			hash, err := getAndCheckUniqueHeaderHash(headerInfo, hashesPerPubKey)
+			hash, err := getHeaderHashIfUnique(headerInfo, hashesPerPubKey)
 			if err != nil {
 				return nil, fmt.Errorf("%w in slash result for public key: %s", err, hex.EncodeToString([]byte(pubKey)))
 			}
