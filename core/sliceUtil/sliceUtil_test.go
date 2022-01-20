@@ -1,10 +1,12 @@
 package sliceUtil_test
 
 import (
+	"strconv"
 	"testing"
 
 	"github.com/ElrondNetwork/elrond-go-core/core/sliceUtil"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 func TestTrimSliceSliceByte_EmptyInputShouldDoNothing(t *testing.T) {
@@ -48,4 +50,50 @@ func TestTrimSliceSliceByte_SliceAlreadyOkShouldDoNothing(t *testing.T) {
 	input = sliceUtil.TrimSliceSliceByte(input)
 	assert.Equal(t, 2, len(input))
 	assert.Equal(t, 2, cap(input))
+}
+
+func TestIsIndexSetInBitmap(t *testing.T) {
+	byte1Map, _ := strconv.ParseInt("11001101", 2, 9)
+	byte2Map, _ := strconv.ParseInt("00000101", 2, 9)
+	bitmap := []byte{byte(byte1Map), byte(byte2Map)}
+
+	//Byte 1
+	require.True(t, sliceUtil.IsIndexSetInBitmap(0, bitmap))
+	require.False(t, sliceUtil.IsIndexSetInBitmap(1, bitmap))
+	require.True(t, sliceUtil.IsIndexSetInBitmap(2, bitmap))
+	require.True(t, sliceUtil.IsIndexSetInBitmap(3, bitmap))
+	require.False(t, sliceUtil.IsIndexSetInBitmap(4, bitmap))
+	require.False(t, sliceUtil.IsIndexSetInBitmap(5, bitmap))
+	require.True(t, sliceUtil.IsIndexSetInBitmap(6, bitmap))
+	require.True(t, sliceUtil.IsIndexSetInBitmap(7, bitmap))
+	// Byte 2
+	require.True(t, sliceUtil.IsIndexSetInBitmap(8, bitmap))
+	require.False(t, sliceUtil.IsIndexSetInBitmap(9, bitmap))
+	require.True(t, sliceUtil.IsIndexSetInBitmap(10, bitmap))
+
+	for i := uint32(11); i <= 100; i++ {
+		require.False(t, sliceUtil.IsIndexSetInBitmap(i, bitmap))
+	}
+}
+
+func TestSetIndexInBitmap(t *testing.T) {
+	byte1Map, _ := strconv.ParseInt("11001101", 2, 9)
+	byte2Map, _ := strconv.ParseInt("00000101", 2, 9)
+	expectedBitMap := []byte{byte(byte1Map), byte(byte2Map)}
+
+	bitMap := make([]byte, 2)
+
+	sliceUtil.SetIndexInBitmap(0, bitMap)
+	sliceUtil.SetIndexInBitmap(2, bitMap)
+	sliceUtil.SetIndexInBitmap(3, bitMap)
+	sliceUtil.SetIndexInBitmap(6, bitMap)
+	sliceUtil.SetIndexInBitmap(7, bitMap)
+	sliceUtil.SetIndexInBitmap(8, bitMap)
+	sliceUtil.SetIndexInBitmap(10, bitMap)
+
+	for i := uint32(16); i <= 100; i++ {
+		sliceUtil.SetIndexInBitmap(i, bitMap)
+	}
+
+	require.Equal(t, expectedBitMap, bitMap)
 }

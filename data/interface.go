@@ -84,6 +84,12 @@ type HeaderHandler interface {
 	IsInterfaceNil() bool
 }
 
+// HeaderInfoHandler defines a HeaderHandler and its corresponding hash
+type HeaderInfoHandler interface {
+	GetHeaderHandler() HeaderHandler
+	GetHash() []byte
+}
+
 // ShardHeaderHandler defines getters and setters for the shard block header
 type ShardHeaderHandler interface {
 	HeaderHandler
@@ -193,7 +199,7 @@ type EpochStartShardDataHandler interface {
 	SetPendingMiniBlockHeaders([]MiniBlockHeaderHandler) error
 }
 
-// EconomicHandler defines setters and getters for Economics
+// EconomicsHandler defines setters and getters for Economics
 type EconomicsHandler interface {
 	GetTotalSupply() *big.Int
 	GetTotalToDistribute() *big.Int
