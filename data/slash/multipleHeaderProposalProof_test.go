@@ -8,6 +8,8 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data/block"
 	dataMock "github.com/ElrondNetwork/elrond-go-core/data/mock"
 	"github.com/ElrondNetwork/elrond-go-core/data/slash"
+	testscommon "github.com/ElrondNetwork/elrond-go-core/data/testscommon/slash"
+	"github.com/ElrondNetwork/elrond-go-core/hashing/blake2b"
 	"github.com/ElrondNetwork/elrond-go-core/marshal"
 	"github.com/stretchr/testify/require"
 )
@@ -164,4 +166,24 @@ func TestMultipleHeaderProposalProof_MarshalUnmarshal(t *testing.T) {
 	require.Nil(t, err2)
 	require.Equal(t, proof1Unmarshalled, proof1)
 	require.Equal(t, proof2Unmarshalled, proof2)
+}
+
+func BenchmarkNewMultipleProposalProof(b *testing.B) {
+	hasher, err := blake2b.NewBlake2bWithSize(16)
+	require.Nil(b, err)
+
+	noOfHeaders := uint32(100)
+	headers := testscommon.GenerateDistinctHeadersInfo(b, noOfHeaders, hasher)
+	slashRes := &slash.SlashingResult{
+		SlashingLevel: testscommon.CalcThreatLevel(noOfHeaders),
+		Headers:       headers,
+	}
+	for n := 0; n < b.N; n++ {
+		proof, err := slash.NewMultipleProposalProof(slashRes)
+
+		b.StopTimer()
+		require.NotNil(b, proof)
+		require.Nil(b, err)
+		b.StartTimer()
+	}
 }

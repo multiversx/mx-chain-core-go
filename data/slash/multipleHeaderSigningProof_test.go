@@ -8,6 +8,7 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data/block"
 	dataMock "github.com/ElrondNetwork/elrond-go-core/data/mock"
 	"github.com/ElrondNetwork/elrond-go-core/data/slash"
+	testscommon "github.com/ElrondNetwork/elrond-go-core/data/testscommon/slash"
 	"github.com/ElrondNetwork/elrond-go-core/marshal"
 	"github.com/stretchr/testify/require"
 )
@@ -240,4 +241,20 @@ func TestMultipleSigningProof_Marshal_Unmarshal(t *testing.T) {
 	require.Nil(t, err2)
 	require.Equal(t, proof1Unmarshalled, proof1)
 	require.Equal(t, proof2Unmarshalled, proof2)
+}
+
+func BenchmarkNewMultipleSigningProof(b *testing.B) {
+	// Worst case scenario: 25% of a consensus group of 400 validators on metachain signed 3 different headers
+	noOfPubKeys := uint32(0.25 * 400)
+	noOfHeaders := uint32(3)
+	slashRes := testscommon.GenerateSlashResults(b, noOfPubKeys, noOfHeaders)
+
+	for n := 0; n < b.N; n++ {
+		proof, err := slash.NewMultipleSigningProof(slashRes)
+
+		b.StopTimer()
+		require.NotNil(b, proof)
+		require.Nil(b, err)
+		b.StartTimer()
+	}
 }
