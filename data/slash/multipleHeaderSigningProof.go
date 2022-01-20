@@ -10,8 +10,6 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data"
 )
 
-const byteSize = 8
-
 // GetPubKeys - returns all validator's public keys which have signed multiple headers
 func (m *MultipleHeaderSigningProof) GetPubKeys() [][]byte {
 	if m == nil {
@@ -38,6 +36,15 @@ func (m *MultipleHeaderSigningProof) GetLevel(pubKey []byte) ThreatLevel {
 	}
 
 	return slashData.ThreatLevel
+}
+
+// GetAllHeaders returns all header handlers stored in the proof
+func (m *MultipleHeaderSigningProof) GetAllHeaders() []data.HeaderHandler {
+	if m == nil {
+		return nil
+	}
+
+	return m.HeadersV2.GetHeaderHandlers()
 }
 
 // GetHeaders returns all headers that have been signed by a possible malicious validator
@@ -151,9 +158,9 @@ func calcHashIndexMap(headersInfo []data.HeaderInfoHandler) map[string]uint32 {
 
 func computeSignersSlashData(hashIndexMap map[string]uint32, slashResult map[string]SlashingResult) map[string]SignerSlashingData {
 	signersSlashData := make(map[string]SignerSlashingData)
-	bitMapLen := len(hashIndexMap)/byteSize + 1
+	bitMapSize := CalcBitmapSize(len(hashIndexMap))
 	for pubKey, res := range slashResult {
-		bitmap := make([]byte, bitMapLen)
+		bitmap := make([]byte, bitMapSize)
 		for _, header := range res.Headers {
 			index, exists := hashIndexMap[string(header.GetHash())]
 			if exists {
