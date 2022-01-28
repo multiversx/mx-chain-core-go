@@ -12,6 +12,7 @@ type AccountTokenData struct {
 	Identifier string         `json:"identifier"`
 	Balance    string         `json:"balance"`
 	Nonce      uint64         `json:"nonce"`
+	Properties string         `json:"properties"`
 	MetaData   *esdt.MetaData `json:"metadata"`
 }
 
