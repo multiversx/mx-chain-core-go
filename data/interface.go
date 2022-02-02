@@ -242,7 +242,7 @@ type ChainHandler interface {
 	SetCurrentBlockHeader(bh HeaderHandler) error
 	GetCurrentBlockHeaderHash() []byte
 	SetCurrentBlockHeaderHash(hash []byte)
-	GetCurrentBlockRootHash() []byte
+	GetCurrentBlockCommittedRootHash() []byte
 	IsInterfaceNil() bool
 }
 
