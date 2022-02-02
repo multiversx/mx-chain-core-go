@@ -11,7 +11,7 @@ func (e *Economics) SetTotalSupply(totalSupply *big.Int) error {
 	if e == nil {
 		return data.ErrNilPointerReceiver
 	}
-	if totalSupply == nil{
+	if totalSupply == nil {
 		return data.ErrInvalidValue
 	}
 	if e.TotalSupply == nil {
@@ -45,10 +45,10 @@ func (e *Economics) SetTotalNewlyMinted(totalNewlyMinted *big.Int) error {
 	if e == nil {
 		return data.ErrNilPointerReceiver
 	}
-	if totalNewlyMinted == nil{
+	if totalNewlyMinted == nil {
 		return data.ErrInvalidValue
 	}
-	if e.TotalNewlyMinted == nil{
+	if e.TotalNewlyMinted == nil {
 		e.TotalNewlyMinted = big.NewInt(0)
 	}
 
@@ -60,12 +60,12 @@ func (e *Economics) SetTotalNewlyMinted(totalNewlyMinted *big.Int) error {
 // SetRewardsPerBlock sets the rewards per block
 func (e *Economics) SetRewardsPerBlock(rewardsPerBlock *big.Int) error {
 	if e == nil {
-		 return data.ErrNilPointerReceiver
+		return data.ErrNilPointerReceiver
 	}
-	if rewardsPerBlock == nil{
+	if rewardsPerBlock == nil {
 		return data.ErrInvalidValue
 	}
-	if e.RewardsPerBlock == nil{
+	if e.RewardsPerBlock == nil {
 		e.RewardsPerBlock = big.NewInt(0)
 	}
 
@@ -79,10 +79,10 @@ func (e *Economics) SetRewardsForProtocolSustainability(rewardsForProtocolSustai
 	if e == nil {
 		return data.ErrNilPointerReceiver
 	}
-	if rewardsForProtocolSustainability == nil{
+	if rewardsForProtocolSustainability == nil {
 		return data.ErrInvalidValue
 	}
-	if e.RewardsForProtocolSustainability == nil{
+	if e.RewardsForProtocolSustainability == nil {
 		e.RewardsForProtocolSustainability = big.NewInt(0)
 	}
 
@@ -96,10 +96,10 @@ func (e *Economics) SetNodePrice(nodePrice *big.Int) error {
 	if e == nil {
 		return data.ErrNilPointerReceiver
 	}
-	if nodePrice == nil{
+	if nodePrice == nil {
 		return data.ErrInvalidValue
 	}
-	if e.NodePrice == nil{
+	if e.NodePrice == nil {
 		e.NodePrice = big.NewInt(0)
 	}
 

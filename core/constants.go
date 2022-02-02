@@ -108,6 +108,12 @@ const BuiltInFunctionMultiESDTNFTTransfer = "MultiESDTNFTTransfer"
 // BuiltInFunctionSetGuardian is the key for setting a guardian built-in function
 const BuiltInFunctionSetGuardian = "SetGuardian"
 
+// BuiltInFunctionFreezeAccount is the built-in function key for freezing an account
+const BuiltInFunctionFreezeAccount = "FreezeAccount"
+
+// BuiltInFunctionUnfreezeAccount is the built-in function key for unfreezing an account
+const BuiltInFunctionUnfreezeAccount = "UnfreezeAccount"
+
 // ESDTRoleLocalMint is the constant string for the local role of mint for ESDT tokens
 const ESDTRoleLocalMint = "ESDTRoleLocalMint"
 
