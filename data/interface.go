@@ -193,7 +193,7 @@ type EpochStartShardDataHandler interface {
 	SetPendingMiniBlockHeaders([]MiniBlockHeaderHandler) error
 }
 
-// EconomicHandler defines setters and getters for Economics
+// EconomicsHandler defines setters and getters for Economics
 type EconomicsHandler interface {
 	GetTotalSupply() *big.Int
 	GetTotalToDistribute() *big.Int
@@ -239,9 +239,10 @@ type ChainHandler interface {
 	GetGenesisHeaderHash() []byte
 	SetGenesisHeaderHash(hash []byte)
 	GetCurrentBlockHeader() HeaderHandler
-	SetCurrentBlockHeader(bh HeaderHandler) error
+	SetCurrentBlockHeaderAndRootHash(bh HeaderHandler, rootHash []byte) error
 	GetCurrentBlockHeaderHash() []byte
 	SetCurrentBlockHeaderHash(hash []byte)
+	GetCurrentBlockRootHash() []byte
 	IsInterfaceNil() bool
 }
 

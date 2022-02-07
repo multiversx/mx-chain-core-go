@@ -456,7 +456,7 @@ func TestShardTriggerRegistryV2_SetEpochStartHeaderHandlerNilHeaderToSet(t *test
 
 	str := createDefaultShardTriggerRegistryV2()
 	str.EpochStartShardHeader = &HeaderV2{
-		Header: &Header{},
+		Header:            &Header{},
 		ScheduledRootHash: []byte("scheduled root hash"),
 	}
 	setHeader := data.HeaderHandler(nil)
