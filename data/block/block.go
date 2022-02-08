@@ -428,12 +428,12 @@ func (mb *MiniBlock) Clone() *MiniBlock {
 		Type:            mb.Type,
 	}
 
-	if len(mb.TxHashes) > 0 {
+	if mb.TxHashes != nil {
 		newMb.TxHashes = make([][]byte, len(mb.TxHashes))
 		copy(newMb.TxHashes, mb.TxHashes)
 	}
 
-	if len(mb.Reserved) > 0 {
+	if mb.Reserved != nil {
 		newMb.Reserved = make([]byte, len(mb.Reserved))
 		copy(newMb.Reserved, mb.Reserved)
 	}
