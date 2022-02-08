@@ -5,6 +5,7 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data"
 	"github.com/ElrondNetwork/elrond-go-core/data/block"
 	"github.com/ElrondNetwork/elrond-go-core/data/smartContractResult"
+	"github.com/ElrondNetwork/elrond-go-core/data/transaction"
 )
 
 // GetTransactionHandlersMap returns the smart contract results as a map of transaction handlers
@@ -12,22 +13,22 @@ func (sscr *ScheduledSCRs) GetTransactionHandlersMap() map[block.Type][]data.Tra
 	if sscr == nil {
 		return nil
 	}
-	if len(sscr.Scrs) == 0 {
+	if len(sscr.Scrs) == 0 && len(sscr.InvalidTransactions) == 0 {
 		return nil
 	}
 
 	result := make(map[block.Type][]data.TransactionHandler)
-	for i, scrs := range sscr.Scrs {
-		if len(scrs.TxHandlers) == 0 {
-			result[block.Type(i)] = nil
-			continue
-		}
-		transactionHandlers := make([]data.TransactionHandler, len(scrs.TxHandlers))
-		for j := range scrs.TxHandlers {
-			transactionHandlers[j] = scrs.TxHandlers[j]
-		}
-		result[block.Type(i)] = transactionHandlers
+	var smartContractResults []data.TransactionHandler
+	for i := range sscr.Scrs {
+		smartContractResults = append(smartContractResults, sscr.Scrs[i])
 	}
+	result[block.SmartContractResultBlock] = smartContractResults
+
+	var invalidTxs []data.TransactionHandler
+	for i := range sscr.InvalidTransactions {
+		invalidTxs = append(invalidTxs, sscr.InvalidTransactions[i])
+	}
+	result[block.InvalidBlock] = invalidTxs
 
 	return result
 }
@@ -39,27 +40,31 @@ func (sscr *ScheduledSCRs) SetTransactionHandlersMap(txHandlersMap map[block.Typ
 	}
 	if txHandlersMap == nil {
 		sscr.Scrs = nil
+		sscr.InvalidTransactions = nil
 		return nil
 	}
 
-	sscr.Scrs = make(map[int32]SmartContractResults)
-	for i, txHandlers := range txHandlersMap {
-		if len(txHandlers) == 0 {
-			sscr.Scrs[int32(i)] = SmartContractResults{}
-			continue
+	var smartContractResults []*smartContractResult.SmartContractResult
+	txHandlers := txHandlersMap[block.SmartContractResultBlock]
+	for j := range txHandlers {
+		scr, ok := txHandlers[j].(*smartContractResult.SmartContractResult)
+		if !ok {
+			return data.ErrInvalidTypeAssertion
 		}
-		scrs := make([]*smartContractResult.SmartContractResult, len(txHandlers))
-		for j := range txHandlers {
-			scr, ok := txHandlers[j].(*smartContractResult.SmartContractResult)
-			if !ok {
-				return data.ErrInvalidTypeAssertion
-			}
-			scrs[j] = scr
-		}
-		sscr.Scrs[int32(i)] = SmartContractResults{
-			TxHandlers: scrs,
-		}
+		smartContractResults = append(smartContractResults, scr)
 	}
+	sscr.Scrs = smartContractResults
+
+	var invalidTxs []*transaction.Transaction
+	txHandlers = txHandlersMap[block.InvalidBlock]
+	for j := range txHandlers {
+		invalidTx, ok := txHandlers[j].(*transaction.Transaction)
+		if !ok {
+			return data.ErrInvalidTypeAssertion
+		}
+		invalidTxs = append(invalidTxs, invalidTx)
+	}
+	sscr.InvalidTransactions = invalidTxs
 
 	return nil
 }
