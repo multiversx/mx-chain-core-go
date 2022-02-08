@@ -24,3 +24,8 @@ message MiniBlockReserved {
   ProcessingType ExecutionType = 1;
   bytes TransactionsType = 2;
 }
+
+message MiniBlockHeaderReserved {
+  ProcessingType ExecutionType = 1;
+  MiniBlockState state  = 2;
+}
