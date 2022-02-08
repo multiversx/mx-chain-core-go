@@ -9,10 +9,6 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/smartContractResult/smartContractResult.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/block/block.proto";
 
-message ScheduledMiniBlocks {
-  repeated MiniBlock  MiniBlocks = 1;
-}
-
 message GasAndFees {
   bytes AccumulatedFees = 1 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
   bytes DeveloperFees = 2 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
@@ -23,8 +19,8 @@ message GasAndFees {
 
 message ScheduledSCRs {
   bytes rootHash = 1;
-  repeated SmartContractResult  scrs = 2;
+  repeated SmartContractResult  scrs = 2 [(gogoproto.nullable) = false];
   repeated bytes invalidTxHashes = 3;
-  map<uint32, ScheduledMiniBlocks> scheduledMiniBlocks = 4;
+  repeated MiniBlock scheduledMiniBlocks = 4;
   GasAndFees gasAndFees = 5;
 }
