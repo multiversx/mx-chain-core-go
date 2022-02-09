@@ -317,7 +317,7 @@ func TestHeader_SetShardID(t *testing.T) {
 	err := h.SetShardID(shardId)
 
 	assert.Nil(t, err)
-	assert.Equal(t, t, shardId, h.GetShardID())
+	assert.Equal(t, shardId, shardId, h.GetShardID())
 }
 
 func TestBody_IntegrityAndValidityNil(t *testing.T) {
