@@ -448,7 +448,7 @@ func TestHeaderV2_SetDeveloperFees(t *testing.T) {
 	err := h.SetDeveloperFees(developerFees)
 
 	require.Nil(t, err)
-	require.Equal(t, developerFees, h.GetAccumulatedFees())
+	require.Equal(t, developerFees, h.GetDeveloperFees())
 }
 
 func TestHeaderV2_SetShardID(t *testing.T) {
