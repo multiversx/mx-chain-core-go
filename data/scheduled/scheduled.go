@@ -53,7 +53,6 @@ func (sscr *ScheduledSCRs) SetTransactionHandlersMap(txHandlersMap map[block.Typ
 		}
 		smartContractResults = append(smartContractResults, scr)
 	}
-	sscr.Scrs = smartContractResults
 
 	var invalidTxs []*transaction.Transaction
 	txHandlers = txHandlersMap[block.InvalidBlock]
@@ -64,6 +63,8 @@ func (sscr *ScheduledSCRs) SetTransactionHandlersMap(txHandlersMap map[block.Typ
 		}
 		invalidTxs = append(invalidTxs, invalidTx)
 	}
+
+	sscr.Scrs = smartContractResults
 	sscr.InvalidTransactions = invalidTxs
 
 	return nil
