@@ -129,12 +129,9 @@ func (m *MiniBlockHeader) SetConstructionState(state int32) error {
 
 // IsFinal returns true if the miniBlock is final
 func (m *MiniBlockHeader) IsFinal() bool {
-	miniBlockHeaderReserved, err := m.getMiniBlockHeaderReserved()
-	if err != nil || miniBlockHeaderReserved == nil {
-		return true
-	}
+	state := m.GetConstructionState()
 
-	return miniBlockHeaderReserved.State == Final
+	return state == int32(Final)
 }
 
 // GetMiniBlockHeaderReserved returns the MiniBlockHeader Reserved field as a MiniBlockHeaderReserved
