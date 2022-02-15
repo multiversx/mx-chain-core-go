@@ -130,10 +130,7 @@ func (m *MiniBlockHeader) SetConstructionState(state int32) error {
 // IsFinal returns true if the miniBlock is final
 func (m *MiniBlockHeader) IsFinal() bool {
 	miniBlockHeaderReserved, err := m.getMiniBlockHeaderReserved()
-	if err != nil {
-		return false
-	}
-	if miniBlockHeaderReserved == nil {
+	if err != nil || miniBlockHeaderReserved == nil {
 		return true
 	}
 
@@ -154,7 +151,7 @@ func (m *MiniBlockHeader) getMiniBlockHeaderReserved() (*MiniBlockHeaderReserved
 	return nil, nil
 }
 
-// SetMiniBlockHeaderReserved sets the reserved field for the miniBlock header with the given parameter
+// SetMiniBlockHeaderReserved sets the Reserved field for the miniBlock header with the given parameter
 func (m *MiniBlockHeader) setMiniBlockHeaderReserved(mbhr *MiniBlockHeaderReserved) error {
 	if mbhr == nil {
 		m.Reserved = nil
