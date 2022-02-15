@@ -27,5 +27,5 @@ message MiniBlockReserved {
 
 message MiniBlockHeaderReserved {
   ProcessingType ExecutionType = 1;
-  MiniBlockState state  = 2;
+  MiniBlockState State = 2;
 }
