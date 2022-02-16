@@ -77,6 +77,93 @@ func (m *MiniBlockHeader) SetReserved(reserved []byte) error {
 	return nil
 }
 
+// GetProcessingType returns the miniBlock processing type as a int32
+func (m *MiniBlockHeader) GetProcessingType() int32 {
+	miniBlockHeaderReserved, err := m.getMiniBlockHeaderReserved()
+	if err != nil || miniBlockHeaderReserved == nil {
+		return int32(Normal)
+	}
+
+	return int32(miniBlockHeaderReserved.ExecutionType)
+}
+
+// SetProcessingType sets the miniBlock processing type
+func (m *MiniBlockHeader) SetProcessingType(procType int32) error {
+	var err error
+	mbhr := &MiniBlockHeaderReserved{}
+	if len(m.Reserved) > 0 {
+		mbhr, err = m.getMiniBlockHeaderReserved()
+		if err != nil {
+			return err
+		}
+	}
+	mbhr.ExecutionType = ProcessingType(procType)
+
+	return m.setMiniBlockHeaderReserved(mbhr)
+}
+
+// GetConstructionState returns the construction state of the miniBlock
+func (m *MiniBlockHeader) GetConstructionState() int32 {
+	miniBlockHeaderReserved, err := m.getMiniBlockHeaderReserved()
+	if err != nil || miniBlockHeaderReserved == nil {
+		return int32(Final)
+	}
+
+	return int32(miniBlockHeaderReserved.State)
+}
+
+// SetConstructionState sets the construction state of the miniBlock
+func (m *MiniBlockHeader) SetConstructionState(state int32) error {
+	var err error
+	mbhr := &MiniBlockHeaderReserved{}
+	if len(m.Reserved) > 0 {
+		mbhr, err = m.getMiniBlockHeaderReserved()
+		if err != nil {
+			return err
+		}
+	}
+	mbhr.State = MiniBlockState(state)
+
+	return m.setMiniBlockHeaderReserved(mbhr)
+}
+
+// IsFinal returns true if the miniBlock is final
+func (m *MiniBlockHeader) IsFinal() bool {
+	state := m.GetConstructionState()
+
+	return state == int32(Final)
+}
+
+// GetMiniBlockHeaderReserved returns the MiniBlockHeader Reserved field as a MiniBlockHeaderReserved
+func (m *MiniBlockHeader) getMiniBlockHeaderReserved() (*MiniBlockHeaderReserved, error) {
+	if len(m.Reserved) > 0 {
+		mbhr := &MiniBlockHeaderReserved{}
+		err := mbhr.Unmarshal(m.Reserved)
+		if err != nil {
+			return nil, err
+		}
+
+		return mbhr, nil
+	}
+	return nil, nil
+}
+
+// SetMiniBlockHeaderReserved sets the Reserved field for the miniBlock header with the given parameter
+func (m *MiniBlockHeader) setMiniBlockHeaderReserved(mbhr *MiniBlockHeaderReserved) error {
+	if mbhr == nil {
+		m.Reserved = nil
+		return nil
+	}
+
+	reserved, err := mbhr.Marshal()
+	if err != nil {
+		return err
+	}
+	m.Reserved = reserved
+
+	return nil
+}
+
 // ShallowClone returns the miniBlockHeader swallow clone
 func (m *MiniBlockHeader) ShallowClone() data.MiniBlockHeaderHandler {
 	if m == nil {
