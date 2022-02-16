@@ -551,49 +551,6 @@ func checkTransactionsTypeValidity(mbr *MiniBlockReserved, numTxs int) error {
 	return nil
 }
 
-// GetMiniBlockHeaderReserved returns the MiniBlockHeader Reserved field as a MiniBlockHeaderReserved
-func (mbh *MiniBlockHeader) GetMiniBlockHeaderReserved() (*MiniBlockHeaderReserved, error) {
-	if len(mbh.Reserved) > 0 {
-		mbhr := &MiniBlockHeaderReserved{}
-		err := mbhr.Unmarshal(mbh.Reserved)
-		if err != nil {
-			return nil, err
-		}
-
-		return mbhr, nil
-	}
-	return nil, nil
-}
-
-// SetMiniBlockHeaderReserved sets the reserved field for the miniBlock header with the given parameter
-func (mbh *MiniBlockHeader) SetMiniBlockHeaderReserved(mbhr *MiniBlockHeaderReserved) error {
-	if mbhr == nil {
-		mbh.Reserved = nil
-		return nil
-	}
-
-	reserved, err := mbhr.Marshal()
-	if err != nil {
-		return err
-	}
-	mbh.Reserved = reserved
-
-	return nil
-}
-
-// IsFinal returns true if the miniBlock is final
-func (mbh *MiniBlockHeader) IsFinal() bool {
-	miniBlockHeaderReserved, err := mbh.GetMiniBlockHeaderReserved()
-	if err != nil {
-		return false
-	}
-	if miniBlockHeaderReserved == nil {
-		return true
-	}
-
-	return miniBlockHeaderReserved.State == Final
-}
-
 // SetAdditionalData sets the additional data for the header
 func (h *Header) SetAdditionalData(_ headerVersionData.HeaderAdditionalData) error {
 	// first header version does not have any additional data
