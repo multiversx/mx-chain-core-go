@@ -427,11 +427,16 @@ func (mb *MiniBlock) Clone() *MiniBlock {
 		SenderShardID:   mb.SenderShardID,
 		Type:            mb.Type,
 	}
-	newMb.TxHashes = make([][]byte, len(mb.TxHashes))
-	copy(newMb.TxHashes, mb.TxHashes)
 
-	newMb.Reserved = make([]byte, len(mb.Reserved))
-	copy(newMb.Reserved, mb.Reserved)
+	if mb.TxHashes != nil {
+		newMb.TxHashes = make([][]byte, len(mb.TxHashes))
+		copy(newMb.TxHashes, mb.TxHashes)
+	}
+
+	if mb.Reserved != nil {
+		newMb.Reserved = make([]byte, len(mb.Reserved))
+		copy(newMb.Reserved, mb.Reserved)
+	}
 
 	return newMb
 }

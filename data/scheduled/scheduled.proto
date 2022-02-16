@@ -1,4 +1,3 @@
-
 syntax = "proto3";
 
 package proto;
@@ -8,21 +7,21 @@ option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/smartContractResult/smartContractResult.proto";
-
-message SmartContractResults {
-    repeated SmartContractResult  TxHandlers = 1;
-}
+import "github.com/ElrondNetwork/elrond-go-core/data/block/block.proto";
+import "github.com/ElrondNetwork/elrond-go-core/data/transaction/transaction.proto";
 
 message GasAndFees {
-    bytes AccumulatedFees = 1 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
-    bytes DeveloperFees = 2 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
-    uint64 GasProvided = 3;
-    uint64 GasPenalized = 4;
-    uint64 GasRefunded = 5;
+  bytes AccumulatedFees = 1 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
+  bytes DeveloperFees = 2 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
+  uint64 GasProvided = 3;
+  uint64 GasPenalized = 4;
+  uint64 GasRefunded = 5;
 }
 
 message ScheduledSCRs {
-    bytes rootHash = 1;
-    map<int32, SmartContractResults> scrs = 2 [(gogoproto.nullable) = false];
-    GasAndFees gasAndFees = 3;
+  bytes rootHash = 1;
+  repeated SmartContractResult  scrs = 2;
+  repeated Transaction invalidTransactions = 3;
+  repeated MiniBlock scheduledMiniBlocks = 4;
+  GasAndFees gasAndFees = 5;
 }
