@@ -765,7 +765,7 @@ func TestMiniBlockHeader_IsFinal(t *testing.T) {
 	mbh := &block.MiniBlockHeader{}
 	mbh.Reserved = []byte("non marshall")
 	isFinal := mbh.IsFinal()
-	assert.False(t, isFinal)
+	assert.True(t, isFinal)
 
 	mbh = &block.MiniBlockHeader{}
 	mbh.Reserved = nil
