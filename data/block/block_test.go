@@ -391,7 +391,7 @@ func TestHeader_SetMiniBlockHeaderHandlersNilMiniBlockHeaderHandlers(t *testing.
 
 func TestHeader_SetMiniBlockHeaderHandlersWithError(t *testing.T) {
 	t.Parallel()
-	//TODO: check h.MiniBlockHeaders = make([]MiniBlockHeader, len(mbHeaderHandlers)) in SetMiniBlockHeaderHandlers method
+
 	t.Run("invalid type assertion", func(t *testing.T) {
 		t.Parallel()
 
@@ -405,7 +405,7 @@ func TestHeader_SetMiniBlockHeaderHandlersWithError(t *testing.T) {
 		hdr := block.Header{}
 		err := hdr.SetMiniBlockHeaderHandlers(mbHeaderHandlers)
 		assert.Equal(t, data.ErrInvalidTypeAssertion, err)
-		assert.Equal(t, 2, len(hdr.MiniBlockHeaders)) // not ok
+		assert.Equal(t, 0, len(hdr.MiniBlockHeaders))
 	})
 	t.Run("nil pointer dereference", func(t *testing.T) {
 		t.Parallel()
@@ -421,7 +421,7 @@ func TestHeader_SetMiniBlockHeaderHandlersWithError(t *testing.T) {
 		hdr := block.Header{}
 		err := hdr.SetMiniBlockHeaderHandlers(mbHeaderHandlers)
 		assert.Equal(t, data.ErrNilPointerDereference, err)
-		assert.Equal(t, 2, len(hdr.MiniBlockHeaders)) // not ok
+		assert.Equal(t, 0, len(hdr.MiniBlockHeaders))
 	})
 	t.Run("set error overwrites the previous value", func(t *testing.T) {
 		t.Parallel()
@@ -435,7 +435,8 @@ func TestHeader_SetMiniBlockHeaderHandlersWithError(t *testing.T) {
 
 		err := hdr.SetMiniBlockHeaderHandlers(mbHeaderHandlers)
 		assert.Nil(t, err)
-		assert.Equal(t, 1, len(hdr.GetMiniBlockHeaderHandlers()))
+		expectedLen := len(mbHeaderHandlers)
+		assert.Equal(t, expectedLen, len(hdr.GetMiniBlockHeaderHandlers()))
 
 		mbHeaderHandlers = []data.MiniBlockHeaderHandler{
 			nil,
@@ -444,7 +445,7 @@ func TestHeader_SetMiniBlockHeaderHandlersWithError(t *testing.T) {
 
 		err = hdr.SetMiniBlockHeaderHandlers(mbHeaderHandlers)
 		assert.NotNil(t, err)
-		assert.Equal(t, 2, len(hdr.GetMiniBlockHeaderHandlers())) // not ok
+		assert.Equal(t, expectedLen, len(hdr.GetMiniBlockHeaderHandlers()))
 	})
 }
 
