@@ -966,7 +966,7 @@ func TestHeaderV2_GetBlockBodyTypeInt32(t *testing.T) {
 	}
 
 	bodyTypeInt32 := hv2.GetBlockBodyTypeInt32()
-	require.Equal(t, int32(90), bodyTypeInt32)
+	require.Equal(t, bodyType, bodyTypeInt32)
 }
 
 func TestHeaderV2_GetMiniBlockHeaderHandlers(t *testing.T) {

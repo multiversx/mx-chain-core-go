@@ -390,6 +390,7 @@ func TestHeader_SetMiniBlockHeaderHandlersNilMiniBlockHeaderHandlers(t *testing.
 }
 
 func TestHeader_SetMiniBlockHeaderHandlersWithError(t *testing.T) {
+	t.Parallel()
 	//TODO: check h.MiniBlockHeaders = make([]MiniBlockHeader, len(mbHeaderHandlers)) in SetMiniBlockHeaderHandlers method
 	t.Run("invalid type assertion", func(t *testing.T) {
 		t.Parallel()
