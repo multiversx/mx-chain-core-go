@@ -37,6 +37,21 @@ func TestScheduledSCRs_GetTransactionHandlersMapNilSCRsMap(t *testing.T) {
 	require.Nil(t, txHandlersMap)
 }
 
+func TestScheduledSCRs_GetTransactionHandlersMapNilInvalidTransactions(t *testing.T) {
+	nb := 20
+	scheduledSCRs := &scheduled.ScheduledSCRs{
+		RootHash:            []byte("root hash"),
+		Scrs:                createInitializedSCRPointerArray(nb),
+		InvalidTransactions: nil,
+	}
+
+	expectedTxHandlersMap := createInitializedTransactionHandlerMap(nb)
+	expectedTxHandlersMap[block.InvalidBlock] = nil
+	txHandlersMap := scheduledSCRs.GetTransactionHandlersMap()
+	require.NotNil(t, txHandlersMap)
+	require.Equal(t, expectedTxHandlersMap, txHandlersMap)
+}
+
 func TestScheduledSCRs_GetTransactionHandlersMapOK(t *testing.T) {
 	nb := 20
 	scheduledSCRs := &scheduled.ScheduledSCRs{
@@ -100,6 +115,48 @@ func TestScheduledSCRs_SetTransactionHandlersMapOK(t *testing.T) {
 
 	require.NotNil(t, actualTxHandlersMap)
 	require.Equal(t, actualTxHandlersMap, expectedTxHandlersMap)
+}
+
+func TestScheduledSCRs_SetTransactionHandlersMapInvalidTypeAssertionInvalidTxsShouldNotSetScrs(t *testing.T) {
+	nbInitial := 20
+	initialScrs := createInitializedSCRPointerArray(nbInitial)
+	initialInvalid := createInitializedInvalidTxsPointerArray(nbInitial)
+
+	scheduledSCRs := &scheduled.ScheduledSCRs{
+		RootHash:            []byte("root hash"),
+		Scrs:                initialScrs,
+		InvalidTransactions: initialInvalid,
+	}
+
+	nbFinal := 2
+	expectedTxHandlersMap := createInitializedTransactionHandlerMap(nbFinal)
+	expectedTxHandlersMap[block.InvalidBlock] = append(expectedTxHandlersMap[block.InvalidBlock], nil)
+
+	err := scheduledSCRs.SetTransactionHandlersMap(expectedTxHandlersMap)
+	require.NotNil(t, err)
+	require.Equal(t, initialScrs, scheduledSCRs.Scrs)
+	require.Equal(t, initialInvalid, scheduledSCRs.InvalidTransactions)
+}
+
+func TestScheduledSCRs_SetTransactionHandlersMapInvalidTypeAssertionScrsShouldNotSetInvalid(t *testing.T) {
+	nbInitial := 20
+	initialScrs := createInitializedSCRPointerArray(nbInitial)
+	initialInvalid := createInitializedInvalidTxsPointerArray(nbInitial)
+
+	scheduledSCRs := &scheduled.ScheduledSCRs{
+		RootHash:            []byte("root hash"),
+		Scrs:                initialScrs,
+		InvalidTransactions: initialInvalid,
+	}
+
+	nbFinal := 2
+	expectedTxHandlersMap := createInitializedTransactionHandlerMap(nbFinal)
+	expectedTxHandlersMap[block.SmartContractResultBlock] = append(expectedTxHandlersMap[block.SmartContractResultBlock], nil)
+
+	err := scheduledSCRs.SetTransactionHandlersMap(expectedTxHandlersMap)
+	require.NotNil(t, err)
+	require.Equal(t, initialScrs, scheduledSCRs.Scrs)
+	require.Equal(t, initialInvalid, scheduledSCRs.InvalidTransactions)
 }
 
 func createInitializedTransactionHandlerMap(nbTxsPerIndex int) map[block.Type][]data.TransactionHandler {

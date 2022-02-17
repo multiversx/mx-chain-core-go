@@ -327,7 +327,6 @@ func (h *Header) SetMiniBlockHeaderHandlers(mbHeaderHandlers []data.MiniBlockHea
 	}
 
 	miniBlockHeaders := make([]MiniBlockHeader, len(mbHeaderHandlers))
-	h.MiniBlockHeaders = make([]MiniBlockHeader, len(mbHeaderHandlers))
 	for i, mbHeaderHandler := range mbHeaderHandlers {
 		mbHeader, ok := mbHeaderHandler.(*MiniBlockHeader)
 		if !ok {

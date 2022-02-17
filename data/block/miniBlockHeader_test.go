@@ -41,7 +41,7 @@ func TestMiniBlockHeader_GetConstructionState(t *testing.T) {
 	require.Equal(t, int32(block.Final), mbh.GetConstructionState())
 }
 
-func TestMiniBlockHeader_IsFinal(t *testing.T) {
+func TestMiniBlockHeader_IsFinalFromConstructionState(t *testing.T) {
 	mbh := &block.MiniBlockHeader{}
 	require.True(t, mbh.IsFinal())
 
