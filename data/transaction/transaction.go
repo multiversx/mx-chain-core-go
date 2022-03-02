@@ -83,6 +83,16 @@ func (tx *Transaction) GetDataForSigning(encoder Encoder, marshalizer Marshalize
 	return marshalizer.Marshal(ftx)
 }
 
+// HasOptionGuardianSet returns true if the guarded transaction option is set
+func (tx *Transaction) HasOptionGuardianSet() bool {
+	return tx.Options&MaskGuardedTransaction > 0
+}
+
+// HasOptionHashSignSet returns true if the signed with hash option is set
+func (tx *Transaction) HasOptionHashSignSet() bool {
+	return tx.Options&MaskSignedWithHash > 0
+}
+
 // CheckIntegrity checks for not nil fields and negative value
 func (tx *Transaction) CheckIntegrity() error {
 	if tx.Signature == nil {

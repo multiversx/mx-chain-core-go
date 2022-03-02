@@ -27,7 +27,7 @@ func TestTxVersionChecker_IsSignedWithHash(t *testing.T) {
 
 	minTxVersion := uint32(1)
 	tx := &transaction.Transaction{
-		Options: MaskSignedWithHash,
+		Options: transaction.MaskSignedWithHash,
 		Version: minTxVersion + 1,
 	}
 	tvc := NewTxVersionChecker(minTxVersion)
@@ -41,7 +41,7 @@ func TestTxVersionChecker_IsGuardedTransaction(t *testing.T) {
 
 	minTxVersion := uint32(1)
 	tx := &transaction.Transaction{
-		Options: MaskGuardedTransaction,
+		Options: transaction.MaskGuardedTransaction,
 		Version: minTxVersion+1,
 	}
 
@@ -57,7 +57,7 @@ func TestTxVersionChecker_IsGuardedTransaction(t *testing.T) {
 func TestTxVersionChecker_CheckTxVersionShouldReturnErrorOptionsNotZero(t *testing.T) {
 	minTxVersion := uint32(1)
 	tx := &transaction.Transaction{
-		Options: MaskSignedWithHash,
+		Options: transaction.MaskSignedWithHash,
 		Version: minTxVersion,
 	}
 

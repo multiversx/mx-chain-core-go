@@ -28,5 +28,5 @@ message Transaction {
 	uint32   Version           = 11 [(gogoproto.jsontag) = "version"];
 	bytes    Signature         = 12 [(gogoproto.jsontag) = "signature,omitempty"];
 	uint32   Options           = 13 [(gogoproto.jsontag) = "options,omitempty"];
-	bytes    GuardianSignature = 14 [(gogoproto.jsontag) = "options,omitempty"];
+	bytes    GuardianSignature = 14 [(gogoproto.jsontag) = "guardianSignature,omitempty"];
 }

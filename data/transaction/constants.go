@@ -16,3 +16,7 @@ const (
 	// TxTypeInvalid represents the identifier for an invalid transaction
 	TxTypeInvalid TxType = "invalid"
 )
+
+// MaskSignedWithHash this mask used to verify if LSB from last byte from field options from transaction is set
+const MaskSignedWithHash     = uint32(1)
+const MaskGuardedTransaction = uint32(1) << 1
