@@ -7,7 +7,8 @@ import (
 
 const (
 	// MaskSignedWithHash this mask used to verify if LSB from last byte from field options from transaction is set
-	MaskSignedWithHash = uint32(1)
+	MaskSignedWithHash     = uint32(1)
+	MaskGuardedTransaction = uint32(1) << 1
 
 	initialVersionOfTransaction = uint32(1)
 )
@@ -29,6 +30,15 @@ func (tvc *txVersionChecker) IsSignedWithHash(tx *transaction.Transaction) bool 
 	if tx.Version > initialVersionOfTransaction {
 		// transaction is signed with hash if LSB from last byte from options is set with 1
 		return tx.Options&MaskSignedWithHash > 0
+	}
+
+	return false
+}
+
+// IsGuardedTransaction will return true if transaction also holds a guardian signature
+func (tvc *txVersionChecker) IsGuardedTransaction(tx *transaction.Transaction) bool {
+	if tx.Version > initialVersionOfTransaction {
+		return tx.Options&MaskGuardedTransaction > 0
 	}
 
 	return false
