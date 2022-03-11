@@ -164,6 +164,31 @@ func (m *MiniBlockHeader) setMiniBlockHeaderReserved(mbhr *MiniBlockHeaderReserv
 	return nil
 }
 
+// GetIndexOfLastTxProcessed returns index of the last transaction processed in the miniBlock
+func (m *MiniBlockHeader) GetIndexOfLastTxProcessed() int32 {
+	miniBlockHeaderReserved, err := m.getMiniBlockHeaderReserved()
+	if err != nil || miniBlockHeaderReserved == nil {
+		return int32(m.TxCount) - 1
+	}
+
+	return miniBlockHeaderReserved.IndexOfLastTxProcessed
+}
+
+// SetIndexOfLastTxProcessed sets index of the last transaction processed in the miniBlock
+func (m *MiniBlockHeader) SetIndexOfLastTxProcessed(indexOfLastTxProcessed int32) error {
+	var err error
+	mbhr := &MiniBlockHeaderReserved{}
+	if len(m.Reserved) > 0 {
+		mbhr, err = m.getMiniBlockHeaderReserved()
+		if err != nil {
+			return err
+		}
+	}
+	mbhr.IndexOfLastTxProcessed = indexOfLastTxProcessed
+
+	return m.setMiniBlockHeaderReserved(mbhr)
+}
+
 // ShallowClone returns the miniBlockHeader swallow clone
 func (m *MiniBlockHeader) ShallowClone() data.MiniBlockHeaderHandler {
 	if m == nil {

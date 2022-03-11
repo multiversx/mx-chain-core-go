@@ -52,14 +52,34 @@ func TestMiniBlockHeader_IsFinalFromConstructionState(t *testing.T) {
 	require.True(t, mbh.IsFinal())
 }
 
+func TestMiniBlockHeader_GetIndexOfLastTxProcessed(t *testing.T) {
+	mbh := &block.MiniBlockHeader{
+		TxCount: 70,
+	}
+
+	index := mbh.GetIndexOfLastTxProcessed()
+	require.Equal(t, int32(69), index)
+
+	mbhReserved := block.MiniBlockHeaderReserved{IndexOfLastTxProcessed: 78}
+	reserved, err := mbhReserved.Marshal()
+	mbh.Reserved = reserved
+	require.Nil(t, err)
+	index = mbh.GetIndexOfLastTxProcessed()
+	require.Equal(t, int32(78), index)
+
+	mbhReserved.IndexOfLastTxProcessed = 21
+	mbh.Reserved, _ = mbhReserved.Marshal()
+	require.Equal(t, int32(21), mbh.GetIndexOfLastTxProcessed())
+}
+
 func TestMiniBlockHeader_SetProcessingType(t *testing.T) {
 	mbh := &block.MiniBlockHeader{}
 
 	_ = mbh.SetProcessingType(int32(block.Scheduled))
 	require.Equal(t, int32(block.Scheduled), mbh.GetProcessingType())
 
-	_ = mbh.SetProcessingType(int32(block.Normal))
-	require.Equal(t, int32(block.Normal), mbh.GetProcessingType())
+	_ = mbh.SetProcessingType(int32(block.Processed))
+	require.Equal(t, int32(block.Processed), mbh.GetProcessingType())
 }
 
 func TestMiniBlockHeader_SetConstructionState(t *testing.T) {
@@ -68,48 +88,103 @@ func TestMiniBlockHeader_SetConstructionState(t *testing.T) {
 	_ = mbh.SetConstructionState(int32(block.Proposed))
 	require.Equal(t, int32(block.Proposed), mbh.GetConstructionState())
 
-	_ = mbh.SetConstructionState(int32(block.Final))
-	require.Equal(t, int32(block.Final), mbh.GetConstructionState())
+	_ = mbh.SetConstructionState(int32(block.PartialExecuted))
+	require.Equal(t, int32(block.PartialExecuted), mbh.GetConstructionState())
 }
 
-func TestMiniBlockHeader_SetProcessingTypeDoesNotChangeConstructionState(t *testing.T) {
+func TestMiniBlockHeader_SetIndexOfLastTxProcessed(t *testing.T) {
+	mbh := &block.MiniBlockHeader{}
+
+	_ = mbh.SetIndexOfLastTxProcessed(3)
+	require.Equal(t, int32(3), mbh.GetIndexOfLastTxProcessed())
+
+	_ = mbh.SetIndexOfLastTxProcessed(5)
+	require.Equal(t, int32(5), mbh.GetIndexOfLastTxProcessed())
+}
+
+func TestMiniBlockHeader_SetProcessingTypeDoesNotChangeConstructionStateOrIndexOfLastTxProcessed(t *testing.T) {
 	mbh := &block.MiniBlockHeader{}
 	state := int32(block.Proposed)
 	_ = mbh.SetConstructionState(state)
+	index := int32(21)
+	_ = mbh.SetIndexOfLastTxProcessed(index)
 
 	_ = mbh.SetProcessingType(int32(block.Scheduled))
 	require.Equal(t, state, mbh.GetConstructionState())
+	require.Equal(t, index, mbh.GetIndexOfLastTxProcessed())
 
-	_ = mbh.SetProcessingType(int32(block.Normal))
+	_ = mbh.SetProcessingType(int32(block.Processed))
 	require.Equal(t, state, mbh.GetConstructionState())
+	require.Equal(t, index, mbh.GetIndexOfLastTxProcessed())
 
-	state = int32(block.Final)
+	state = int32(block.PartialExecuted)
 	_ = mbh.SetConstructionState(state)
+	index = int32(78)
+	_ = mbh.SetIndexOfLastTxProcessed(index)
 
 	_ = mbh.SetProcessingType(int32(block.Scheduled))
 	require.Equal(t, state, mbh.GetConstructionState())
+	require.Equal(t, index, mbh.GetIndexOfLastTxProcessed())
 
-	_ = mbh.SetProcessingType(int32(block.Normal))
+	_ = mbh.SetProcessingType(int32(block.Processed))
 	require.Equal(t, state, mbh.GetConstructionState())
+	require.Equal(t, index, mbh.GetIndexOfLastTxProcessed())
 }
 
-func TestMiniBlockHeader_SetConstructionStateDoesNotChangeProcessingType(t *testing.T) {
+func TestMiniBlockHeader_SetConstructionStateDoesNotChangeProcessingTypeOrIndexOfLastTxProcessed(t *testing.T) {
 	mbh := &block.MiniBlockHeader{}
 	processingType := int32(block.Scheduled)
 	_ = mbh.SetProcessingType(processingType)
+	index := int32(21)
+	_ = mbh.SetIndexOfLastTxProcessed(index)
 
 	_ = mbh.SetConstructionState(int32(block.Proposed))
-	require.Equal(t, processingType, mbh.GetConstructionState())
-
-	_ = mbh.SetConstructionState(int32(block.Final))
 	require.Equal(t, processingType, mbh.GetProcessingType())
+	require.Equal(t, index, mbh.GetIndexOfLastTxProcessed())
 
-	processingType = int32(block.Normal)
+	_ = mbh.SetConstructionState(int32(block.PartialExecuted))
+	require.Equal(t, processingType, mbh.GetProcessingType())
+	require.Equal(t, index, mbh.GetIndexOfLastTxProcessed())
+
+	processingType = int32(block.Processed)
 	_ = mbh.SetProcessingType(processingType)
+	index = int32(78)
+	_ = mbh.SetIndexOfLastTxProcessed(index)
 
 	_ = mbh.SetConstructionState(int32(block.Proposed))
 	require.Equal(t, processingType, mbh.GetProcessingType())
+	require.Equal(t, index, mbh.GetIndexOfLastTxProcessed())
 
-	_ = mbh.SetConstructionState(int32(block.Final))
+	_ = mbh.SetConstructionState(int32(block.PartialExecuted))
 	require.Equal(t, processingType, mbh.GetProcessingType())
+	require.Equal(t, index, mbh.GetIndexOfLastTxProcessed())
+}
+
+func TestMiniBlockHeader_SetIndexOfLastTxProcessedDoesNotChangeConstructionStateOrProcessingType(t *testing.T) {
+	mbh := &block.MiniBlockHeader{}
+	processingType := int32(block.Scheduled)
+	_ = mbh.SetProcessingType(processingType)
+	state := int32(block.Proposed)
+	_ = mbh.SetConstructionState(state)
+
+	_ = mbh.SetIndexOfLastTxProcessed(21)
+	require.Equal(t, processingType, mbh.GetProcessingType())
+	require.Equal(t, state, mbh.GetConstructionState())
+
+	_ = mbh.SetIndexOfLastTxProcessed(78)
+	require.Equal(t, processingType, mbh.GetProcessingType())
+	require.Equal(t, state, mbh.GetConstructionState())
+
+	processingType = int32(block.Processed)
+	_ = mbh.SetProcessingType(processingType)
+	state = int32(block.PartialExecuted)
+	_ = mbh.SetConstructionState(state)
+
+	_ = mbh.SetIndexOfLastTxProcessed(21)
+	require.Equal(t, processingType, mbh.GetProcessingType())
+	require.Equal(t, state, mbh.GetConstructionState())
+
+	_ = mbh.SetIndexOfLastTxProcessed(78)
+	require.Equal(t, processingType, mbh.GetProcessingType())
+	require.Equal(t, state, mbh.GetConstructionState())
 }

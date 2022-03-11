@@ -119,6 +119,7 @@ type MiniBlockHeaderHandler interface {
 	GetProcessingType() int32
 	GetConstructionState() int32
 	IsFinal() bool
+	GetIndexOfLastTxProcessed() int32
 
 	SetHash(hash []byte) error
 	SetSenderShardID(shardID uint32) error
@@ -128,6 +129,7 @@ type MiniBlockHeaderHandler interface {
 	SetReserved(reserved []byte) error
 	SetProcessingType(procType int32) error
 	SetConstructionState(state int32) error
+	SetIndexOfLastTxProcessed(indexOfLastTxProcessed int32) error
 	ShallowClone() MiniBlockHeaderHandler
 }
 
