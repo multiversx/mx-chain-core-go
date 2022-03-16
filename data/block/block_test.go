@@ -818,7 +818,7 @@ func TestHeader_HasScheduledMiniBlocks(t *testing.T) {
 	h.MiniBlockHeaders = []block.MiniBlockHeader{*mbHeader}
 	require.False(t, h.HasScheduledMiniBlocks())
 
-	// not suppoerted for v1 header, so it should return false
+	// scheduled miniBlocks not supported for v1 header, so it should return false
 	_ = mbHeader.SetProcessingType(int32(block.Scheduled))
 	h.MiniBlockHeaders = []block.MiniBlockHeader{*mbHeader}
 	require.False(t, h.HasScheduledMiniBlocks())
