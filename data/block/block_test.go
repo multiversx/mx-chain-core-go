@@ -806,3 +806,20 @@ func TestHeader_GetAdditionalData(t *testing.T) {
 	additionalData := h.GetAdditionalData()
 	assert.Nil(t, additionalData)
 }
+
+func TestHeader_HasScheduledMiniBlocks(t *testing.T) {
+	t.Parallel()
+
+	h := &block.Header{}
+	require.False(t, h.HasScheduledMiniBlocks())
+
+	mbHeader := &block.MiniBlockHeader{}
+	_ = mbHeader.SetProcessingType(int32(block.Normal))
+	h.MiniBlockHeaders = []block.MiniBlockHeader{*mbHeader}
+	require.False(t, h.HasScheduledMiniBlocks())
+
+	// not suppoerted for v1 header, so it should return false
+	_ = mbHeader.SetProcessingType(int32(block.Scheduled))
+	h.MiniBlockHeaders = []block.MiniBlockHeader{*mbHeader}
+	require.False(t, h.HasScheduledMiniBlocks())
+}
