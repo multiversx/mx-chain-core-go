@@ -2,6 +2,8 @@ package core
 
 import (
 	"time"
+
+	"github.com/ElrondNetwork/elrond-go-core/data"
 )
 
 // AppStatusHandler interface will handle different implementations of monitoring tools, such as term-ui or status metrics
@@ -113,6 +115,12 @@ type Queue interface {
 type SafeCloser interface {
 	Close()
 	ChanClose() <-chan struct{}
+	IsInterfaceNil() bool
+}
+
+// GuardianChecker can check an account guardian
+type GuardianChecker interface {
+	GetActiveGuardian(handler data.UserAccountHandler) ([]byte, error)
 	IsInterfaceNil() bool
 }
 
