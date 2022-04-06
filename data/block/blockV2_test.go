@@ -1194,3 +1194,26 @@ func TestHeaderV2_SetAdditionalDataShouldWork(t *testing.T) {
 	require.Equal(t, gasRefunded, shardBlock.GetScheduledGasRefunded())
 	require.Equal(t, gasProvided, shardBlock.GetScheduledGasProvided())
 }
+
+func TestHeaderV2_HasScheduledMiniBlocks(t *testing.T) {
+	t.Parallel()
+
+	mbh := &block.MiniBlockHeader{}
+	_ = mbh.SetProcessingType(int32(block.Scheduled))
+
+	shardBlock := &block.HeaderV2{
+		Header: &block.Header{
+			MiniBlockHeaders: []block.MiniBlockHeader{*mbh},
+		},
+	}
+	require.True(t, shardBlock.HasScheduledMiniBlocks())
+
+	_ = mbh.SetProcessingType(int32(block.Normal))
+	shardBlock = &block.HeaderV2{
+		Header: &block.Header{
+			MiniBlockHeaders: []block.MiniBlockHeader{*mbh},
+		},
+	}
+
+	require.False(t, shardBlock.HasScheduledMiniBlocks())
+}

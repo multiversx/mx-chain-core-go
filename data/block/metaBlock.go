@@ -397,6 +397,23 @@ func (m *MetaBlock) HasScheduledSupport() bool {
 	return false
 }
 
+// HasScheduledMiniBlocks returns true if the metaBlock holds scheduled miniBlocks
+func (m *MetaBlock) HasScheduledMiniBlocks() bool {
+	if m == nil {
+		return false
+	}
+
+	mbHeaderHandlers := m.GetMiniBlockHeaderHandlers()
+	for _, mbHeader := range mbHeaderHandlers {
+		processingType := ProcessingType(mbHeader.GetProcessingType())
+		if processingType == Scheduled {
+			return true
+		}
+	}
+
+	return false
+}
+
 // SetMiniBlockHeaderHandlers sets the miniBlock headers from the given miniBlock header handlers
 func (m *MetaBlock) SetMiniBlockHeaderHandlers(mbHeaderHandlers []data.MiniBlockHeaderHandler) error {
 	if m == nil {

@@ -385,3 +385,20 @@ func TestMetaBlock_SetAdditionalDataShouldDoNothing(t *testing.T) {
 	err := metaBlock.SetAdditionalData(&headerVersionData.AdditionalData{})
 	require.Nil(t, err)
 }
+
+func TestMetaBlock_HasScheduledMiniBlocks(t *testing.T) {
+	t.Parallel()
+
+	metaBlock := &block.MetaBlock{}
+	require.False(t, metaBlock.HasScheduledMiniBlocks())
+
+	mbHeader := &block.MiniBlockHeader{}
+	_ = mbHeader.SetProcessingType(int32(block.Normal))
+	metaBlock.MiniBlockHeaders = []block.MiniBlockHeader{*mbHeader}
+	require.False(t, metaBlock.HasScheduledMiniBlocks())
+
+	_ = mbHeader.SetProcessingType(int32(block.Scheduled))
+	metaBlock.MiniBlockHeaders = []block.MiniBlockHeader{*mbHeader}
+
+	require.True(t, metaBlock.HasScheduledMiniBlocks())
+}
