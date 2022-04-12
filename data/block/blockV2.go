@@ -473,6 +473,23 @@ func (hv2 *HeaderV2) HasScheduledSupport() bool {
 	return true
 }
 
+// HasScheduledMiniBlocks returns true if the header has scheduled miniBlock headers
+func (hv2 *HeaderV2) HasScheduledMiniBlocks() bool {
+	if hv2 == nil {
+		return false
+	}
+
+	mbHeaderHandlers := hv2.GetMiniBlockHeaderHandlers()
+	for _, mbHeader := range mbHeaderHandlers {
+		processingType := ProcessingType(mbHeader.GetProcessingType())
+		if processingType == Scheduled {
+			return true
+		}
+	}
+
+	return false
+}
+
 // SetScheduledRootHash sets the scheduled root hash
 func (hv2 *HeaderV2) SetScheduledRootHash(rootHash []byte) error {
 	if hv2 == nil {
