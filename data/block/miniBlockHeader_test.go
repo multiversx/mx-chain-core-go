@@ -57,19 +57,20 @@ func TestMiniBlockHeader_GetIndexOfLastTxProcessed(t *testing.T) {
 		TxCount: 70,
 	}
 
-	index := mbh.GetIndexOfLastTxProcessed()
-	require.Equal(t, int32(69), index)
+	require.Equal(t, mbh.TxCount-1, uint32(mbh.GetIndexOfLastTxProcessed()))
 
-	mbhReserved := block.MiniBlockHeaderReserved{IndexOfLastTxProcessed: 78}
+	mbhReserved := block.MiniBlockHeaderReserved{}
+
+	mbhReserved.IndexOfLastTxProcessed = 78
 	reserved, err := mbhReserved.Marshal()
-	mbh.Reserved = reserved
 	require.Nil(t, err)
-	index = mbh.GetIndexOfLastTxProcessed()
-	require.Equal(t, int32(78), index)
+
+	mbh.Reserved = reserved
+	require.Equal(t, mbhReserved.IndexOfLastTxProcessed, mbh.GetIndexOfLastTxProcessed())
 
 	mbhReserved.IndexOfLastTxProcessed = 21
 	mbh.Reserved, _ = mbhReserved.Marshal()
-	require.Equal(t, int32(21), mbh.GetIndexOfLastTxProcessed())
+	require.Equal(t, mbhReserved.IndexOfLastTxProcessed, mbh.GetIndexOfLastTxProcessed())
 }
 
 func TestMiniBlockHeader_SetProcessingType(t *testing.T) {
@@ -95,21 +96,25 @@ func TestMiniBlockHeader_SetConstructionState(t *testing.T) {
 func TestMiniBlockHeader_SetIndexOfLastTxProcessed(t *testing.T) {
 	mbh := &block.MiniBlockHeader{}
 
-	_ = mbh.SetIndexOfLastTxProcessed(3)
-	require.Equal(t, int32(3), mbh.GetIndexOfLastTxProcessed())
+	providedIndexOfLastTxProcessed := int32(3)
+	_ = mbh.SetIndexOfLastTxProcessed(providedIndexOfLastTxProcessed)
+	require.Equal(t, providedIndexOfLastTxProcessed, mbh.GetIndexOfLastTxProcessed())
 
-	_ = mbh.SetIndexOfLastTxProcessed(5)
-	require.Equal(t, int32(5), mbh.GetIndexOfLastTxProcessed())
+	providedIndexOfLastTxProcessed = int32(5)
+	_ = mbh.SetIndexOfLastTxProcessed(providedIndexOfLastTxProcessed)
+	require.Equal(t, providedIndexOfLastTxProcessed, mbh.GetIndexOfLastTxProcessed())
 }
 
 func TestMiniBlockHeader_SetIndexOfFirstTxProcessed(t *testing.T) {
 	mbh := &block.MiniBlockHeader{}
 
-	_ = mbh.SetIndexOfFirstTxProcessed(3)
-	require.Equal(t, int32(3), mbh.GetIndexOfFirstTxProcessed())
+	providedIndexOfLastTxProcessed := int32(3)
+	_ = mbh.SetIndexOfFirstTxProcessed(providedIndexOfLastTxProcessed)
+	require.Equal(t, providedIndexOfLastTxProcessed, mbh.GetIndexOfFirstTxProcessed())
 
-	_ = mbh.SetIndexOfFirstTxProcessed(5)
-	require.Equal(t, int32(5), mbh.GetIndexOfFirstTxProcessed())
+	providedIndexOfLastTxProcessed = int32(5)
+	_ = mbh.SetIndexOfFirstTxProcessed(providedIndexOfLastTxProcessed)
+	require.Equal(t, providedIndexOfLastTxProcessed, mbh.GetIndexOfFirstTxProcessed())
 }
 
 func TestMiniBlockHeader_SetProcessingTypeDoesNotChangeConstructionStateOrIndexOfTxProcessed(t *testing.T) {
