@@ -181,6 +181,13 @@ func (m *MiniBlockHeader) GetIndexOfLastTxProcessed() int32 {
 		return int32(m.TxCount) - 1
 	}
 
+	isIndexNotSetByPreviousVersion := miniBlockHeaderReserved.IndexOfLastTxProcessed == 0 &&
+		miniBlockHeaderReserved.IndexOfLastTxProcessed < int32(m.TxCount-1) &&
+		m.GetConstructionState() != int32(PartialExecuted)
+	if isIndexNotSetByPreviousVersion {
+		return int32(m.TxCount) - 1
+	}
+
 	return miniBlockHeaderReserved.IndexOfLastTxProcessed
 }
 

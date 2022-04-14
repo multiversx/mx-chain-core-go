@@ -361,3 +361,29 @@ func TestMiniBlockHeader_SetIndexOfTxProcessedDoesNotChangeConstructionStateOrPr
 	require.Equal(t, processingType, mbh.GetProcessingType())
 	require.Equal(t, state, mbh.GetConstructionState())
 }
+
+func TestMiniBlockHeader_GetIndexOfLastTxProcessedShouldWorkWhenPreviousVersionDoesNotSet(t *testing.T) {
+	mbh := &block.MiniBlockHeader{
+		TxCount: 70,
+	}
+
+	mbhReserved := block.MiniBlockHeaderReserved{}
+
+	mbhReserved.IndexOfLastTxProcessed = 0
+	mbhReserved.State = block.PartialExecuted
+	reserved, _ := mbhReserved.Marshal()
+	mbh.Reserved = reserved
+	require.Equal(t, int32(0), mbh.GetIndexOfLastTxProcessed())
+
+	mbhReserved.IndexOfLastTxProcessed = 0
+	mbhReserved.State = block.Proposed
+	reserved, _ = mbhReserved.Marshal()
+	mbh.Reserved = reserved
+	require.Equal(t, int32(mbh.TxCount-1), mbh.GetIndexOfLastTxProcessed())
+
+	mbhReserved.IndexOfLastTxProcessed = -1
+	mbhReserved.State = block.Proposed
+	reserved, _ = mbhReserved.Marshal()
+	mbh.Reserved = reserved
+	require.Equal(t, int32(-1), mbh.GetIndexOfLastTxProcessed())
+}
