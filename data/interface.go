@@ -287,6 +287,7 @@ type Marshaller interface {
 
 // GuardedTransactionHandler defines functionality for the guarded transactions
 type GuardedTransactionHandler interface {
+	GetGuardianAddr() []byte
 	GetGuardianSignature() []byte
 	GetSignature() []byte
 	GetDataForSigning(encoder Encoder, marshaller Marshaller) ([]byte, error)

@@ -80,6 +80,10 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshalizer data.
 		Options:          tx.Options,
 	}
 
+	if len(tx.GuardianAddr) > 0 {
+		ftx.GuardianAddr = encoder.Encode(tx.GuardianAddr)
+	}
+
 	return marshalizer.Marshal(ftx)
 }
 

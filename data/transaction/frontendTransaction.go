@@ -15,5 +15,6 @@ type FrontendTransaction struct {
 	ChainID           string `json:"chainID"`
 	Version           uint32 `json:"version"`
 	Options           uint32 `json:"options,omitempty"`
+	GuardianAddr      string `json:"guardian,omitempty"`
 	GuardianSignature string `json:"guardianSignature,omitempty"`
 }
