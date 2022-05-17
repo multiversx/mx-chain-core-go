@@ -57,11 +57,11 @@ func TrimSliceHandler(in []data.TransactionHandler) []data.TransactionHandler {
 }
 
 // GetDataForSigning returns the serialized transaction having an empty signature field
-func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshalizer data.Marshaller) ([]byte, error) {
+func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.Marshaller) ([]byte, error) {
 	if check.IfNil(encoder) {
 		return nil, ErrNilEncoder
 	}
-	if check.IfNil(marshalizer) {
+	if check.IfNil(marshaller) {
 		return nil, ErrNilMarshalizer
 	}
 
@@ -84,7 +84,7 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshalizer data.
 		ftx.GuardianAddr = encoder.Encode(tx.GuardianAddr)
 	}
 
-	return marshalizer.Marshal(ftx)
+	return marshaller.Marshal(ftx)
 }
 
 // HasOptionGuardianSet returns true if the guarded transaction option is set
