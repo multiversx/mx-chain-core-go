@@ -13,5 +13,5 @@ message Guardian {
 }
 
 message Guardians {
-  repeated Guardian Data = 1;
+  repeated Guardian Slice = 1;
 }
