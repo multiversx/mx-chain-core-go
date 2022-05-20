@@ -11,8 +11,8 @@ import (
 type ApiTransactionResult struct {
 	Tx                                data.TransactionHandler   `json:"-"`
 	Type                              string                    `json:"type"`
-	TypeOnSource                      string                    `json:"typeOnSource"`
-	TypeOnDestination                 string                    `json:"typeOnDestination"`
+	TypeOnSource                      string                    `json:"typeOnSource,omitempty"`
+	TypeOnDestination                 string                    `json:"typeOnDestination,omitempty"`
 	Hash                              string                    `json:"hash,omitempty"`
 	Nonce                             uint64                    `json:"nonce,omitempty"`
 	Round                             uint64                    `json:"round,omitempty"`
