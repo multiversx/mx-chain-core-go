@@ -179,6 +179,26 @@ func TestTransaction_GetDataForSigningMarshalizerErrShouldErr(t *testing.T) {
 	assert.Equal(t, 2, numEncodeCalled)
 }
 
+func TestTransaction_HasOptionHashSignSet(t *testing.T) {
+	t.Parallel()
+
+	tx := &transaction.Transaction{Options: 0}
+	assert.False(t, tx.HasOptionHashSignSet())
+
+	tx.Options ^= transaction.MaskSignedWithHash
+	assert.True(t, tx.HasOptionHashSignSet())
+}
+
+func TestTransaction_HasOptionGuardianSet(t *testing.T) {
+	t.Parallel()
+
+	tx := &transaction.Transaction{Options: 0}
+	assert.False(t, tx.HasOptionGuardianSet())
+
+	tx.Options ^= transaction.MaskGuardedTransaction
+	assert.True(t, tx.HasOptionGuardianSet())
+}
+
 func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 	t.Parallel()
 
