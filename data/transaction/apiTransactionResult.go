@@ -54,6 +54,7 @@ type ApiTransactionResult struct {
 	Operation                         string                    `json:"operation,omitempty"`
 	Function                          string                    `json:"function,omitempty"`
 	IsRelayed                         bool                      `json:"isRelayed,omitempty"`
+	IsRefund                          bool                      `json:"isRefund,omitempty"`
 	InitiallyPaidFee                  string                    `json:"initiallyPaidFee,omitempty"`
 }
 
