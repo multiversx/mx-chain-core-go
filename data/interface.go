@@ -250,7 +250,7 @@ type ChainHandler interface {
 	SetCurrentBlockHeaderHash(hash []byte)
 	GetCurrentBlockRootHash() []byte
 	SetHighestFinalBlockNonce(nonce uint64)
-	GetHighestFinalCoordinates() (blockHash []byte, rootHash []byte, err error)
+	GetHighestFinalCoordinates() (nonce uint64, blockHash []byte, rootHash []byte)
 	IsInterfaceNil() bool
 }
 
