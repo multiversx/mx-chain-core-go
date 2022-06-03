@@ -245,12 +245,12 @@ type ChainHandler interface {
 	GetGenesisHeaderHash() []byte
 	SetGenesisHeaderHash(hash []byte)
 	GetCurrentBlockHeader() HeaderHandler
-	SetCurrentBlockHeaderAndRootHash(bh HeaderHandler, rootHash []byte) error
+	SetCurrentBlockHeaderInfo(header HeaderHandler, hash []byte, rootHash []byte) error
 	GetCurrentBlockHeaderHash() []byte
 	SetCurrentBlockHeaderHash(hash []byte)
 	GetCurrentBlockRootHash() []byte
-	SetHighestFinalBlockCoordinates(nonce uint64, blockHash []byte, rootHash []byte)
-	GetHighestFinalBlockCoordinates() (nonce uint64, blockHash []byte, rootHash []byte)
+	SetPreviousToFinalBlockInfo(nonce uint64, blockHash []byte, rootHash []byte)
+	GetPreviousToFinalBlockInfo() (header HeaderHandler, blockHash []byte, rootHash []byte)
 	IsInterfaceNil() bool
 }
 
