@@ -245,7 +245,7 @@ type ChainHandler interface {
 	GetGenesisHeaderHash() []byte
 	SetGenesisHeaderHash(hash []byte)
 	GetCurrentBlockHeader() HeaderHandler
-	SetCurrentBlockHeaderInfo(header HeaderHandler, hash []byte, rootHash []byte) error
+	SetCurrentBlockHeaderAndRootHash(bh HeaderHandler, rootHash []byte) error
 	GetCurrentBlockHeaderHash() []byte
 	SetCurrentBlockHeaderHash(hash []byte)
 	GetCurrentBlockRootHash() []byte
