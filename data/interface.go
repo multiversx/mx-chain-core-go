@@ -249,7 +249,7 @@ type ChainHandler interface {
 	GetCurrentBlockHeaderHash() []byte
 	SetCurrentBlockHeaderHash(hash []byte)
 	GetCurrentBlockRootHash() []byte
-	SetHighestFinalBlockAndRootHash(header HeaderHandler, headerHash []byte, rootHash []byte)
+	SetHighestFinalBlockAndRootHash(nonce uint64, blockHash []byte, rootHash []byte)
 	GetHighestFinalCoordinates() (nonce uint64, blockHash []byte, rootHash []byte)
 	IsInterfaceNil() bool
 }
