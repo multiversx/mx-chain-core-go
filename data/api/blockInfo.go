@@ -4,5 +4,5 @@ package api
 type BlockInfo struct {
 	Nonce    uint64 `json:"nonce,omitempty"`
 	Hash     string `json:"hash,omitempty"`
-	RootHash string `json:"RootHash,omitempty"`
+	RootHash string `json:"rootHash,omitempty"`
 }
