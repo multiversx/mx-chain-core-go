@@ -34,6 +34,7 @@ type ArgsSaveBlockData struct {
 	HeaderGasConsumption   HeaderGasConsumption
 	TransactionsPool       *Pool
 	AlteredAccounts        map[string]*AlteredAccount
+	NumberOfShards         uint32
 }
 
 // HeaderGasConsumption holds the data needed to save the gas consumption of a header
@@ -46,11 +47,11 @@ type HeaderGasConsumption struct {
 
 // Pool will holds all types of transaction
 type Pool struct {
-	Txs      map[string]data.TransactionHandler
-	Scrs     map[string]data.TransactionHandler
-	Rewards  map[string]data.TransactionHandler
-	Invalid  map[string]data.TransactionHandler
-	Receipts map[string]data.TransactionHandler
+	Txs      map[string]data.TransactionHandlerWithGasUsedAndFee
+	Scrs     map[string]data.TransactionHandlerWithGasUsedAndFee
+	Rewards  map[string]data.TransactionHandlerWithGasUsedAndFee
+	Invalid  map[string]data.TransactionHandlerWithGasUsedAndFee
+	Receipts map[string]data.TransactionHandlerWithGasUsedAndFee
 	Logs     []*data.LogData
 }
 
