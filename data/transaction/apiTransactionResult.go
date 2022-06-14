@@ -57,6 +57,7 @@ type ApiTransactionResult struct {
 	IsRelayed                         bool                      `json:"isRelayed,omitempty"`
 	IsRefund                          bool                      `json:"isRefund,omitempty"`
 	InitiallyPaidFee                  string                    `json:"initiallyPaidFee,omitempty"`
+	InitiallyPaidFeeForMoveBalance    string                    `json:"initiallyPaidFeeForMoveBalance,omitempty"`
 }
 
 // ApiSmartContractResult represents a smart contract result with changed fields' types in order to make it friendly for API's json
