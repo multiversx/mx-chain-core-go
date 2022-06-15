@@ -55,6 +55,7 @@ type MiniBlock struct {
 	DestinationShard uint32                              `json:"destinationShard"`
 	Transactions     []*transaction.ApiTransactionResult `json:"transactions,omitempty"`
 	Receipts         []*transaction.ApiReceipt           `json:"receipts,omitempty"`
+	IsScheduled      bool                                `json:"isScheduled,omitempty"`
 }
 
 // StakeValues is the structure that contains the total staked value and the total top up value
