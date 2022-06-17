@@ -676,6 +676,18 @@ func TestMiniBlock_IsScheduledMiniBlock(t *testing.T) {
 	assert.True(t, isScheduledMB)
 }
 
+func TestMiniBlock_GetProcessingType(t *testing.T) {
+	t.Parallel()
+
+	miniBlock := &block.MiniBlock{}
+
+	_ = miniBlock.SetMiniBlockReserved(&block.MiniBlockReserved{ExecutionType: block.Scheduled})
+	assert.Equal(t, int32(block.Scheduled), miniBlock.GetProcessingType())
+
+	_ = miniBlock.SetMiniBlockReserved(&block.MiniBlockReserved{ExecutionType: block.Processed})
+	assert.Equal(t, int32(block.Processed), miniBlock.GetProcessingType())
+}
+
 func TestMiniBlock_GetTxsTypeFromMiniBlock(t *testing.T) {
 	t.Parallel()
 
