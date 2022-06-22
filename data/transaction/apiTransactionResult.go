@@ -91,7 +91,6 @@ type ApiSmartContractResult struct {
 
 // ApiReceipt represents a receipt with changed fields' types in order to make it friendly for API's json
 type ApiReceipt struct {
-	Hash    string   `json:"hash,omitempty"`
 	Value   *big.Int `json:"value"`
 	SndAddr string   `json:"sender"`
 	Data    string   `json:"data,omitempty"`
