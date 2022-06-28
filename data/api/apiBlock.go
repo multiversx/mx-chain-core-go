@@ -49,14 +49,15 @@ type NotarizedBlock struct {
 
 // MiniBlock represents the structure for a miniblock
 type MiniBlock struct {
-	Hash              string                              `json:"hash"`
-	Type              string                              `json:"type"`
-	ProcessingType    string                              `json:"processingType,omitempty"`
-	ConstructionState string                              `json:"constructionState,omitempty"`
-	SourceShard       uint32                              `json:"sourceShard"`
-	DestinationShard  uint32                              `json:"destinationShard"`
-	Transactions      []*transaction.ApiTransactionResult `json:"transactions,omitempty"`
-	Receipts          []*transaction.ApiReceipt           `json:"receipts,omitempty"`
+	Hash                  string                              `json:"hash"`
+	Type                  string                              `json:"type"`
+	ProcessingType        string                              `json:"processingType,omitempty"`
+	ConstructionState     string                              `json:"constructionState,omitempty"`
+	IsFromReceiptsStorage bool                                `json:"isFromReceiptsStorage,omitempty"`
+	SourceShard           uint32                              `json:"sourceShard"`
+	DestinationShard      uint32                              `json:"destinationShard"`
+	Transactions          []*transaction.ApiTransactionResult `json:"transactions,omitempty"`
+	Receipts              []*transaction.ApiReceipt           `json:"receipts,omitempty"`
 }
 
 // StakeValues is the structure that contains the total staked value and the total top up value
