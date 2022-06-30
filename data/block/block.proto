@@ -33,6 +33,7 @@ enum ProcessingType {
 enum MiniBlockState{
   Final = 0;
   Proposed = 1;
+  PartialExecuted = 2;
 }
 
 message MiniBlock {
