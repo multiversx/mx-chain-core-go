@@ -484,6 +484,16 @@ func (mb *MiniBlock) IsScheduledMiniBlock() bool {
 	return mbr.ExecutionType == Scheduled
 }
 
+// GetProcessingType returns the miniBlock processing type as a int32
+func (mb *MiniBlock) GetProcessingType() int32 {
+	miniBlockReserved, err := mb.GetMiniBlockReserved()
+	if err != nil || miniBlockReserved == nil {
+		return int32(Normal)
+	}
+
+	return int32(miniBlockReserved.ExecutionType)
+}
+
 // GetTxsTypeFromMiniBlock returns all the txs type from mini block
 func (mb *MiniBlock) GetTxsTypeFromMiniBlock() ([]Type, error) {
 	if mb == nil {
