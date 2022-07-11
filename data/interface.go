@@ -56,6 +56,7 @@ type HeaderHandler interface {
 	GetMiniBlockHeaderHandlers() []MiniBlockHeaderHandler
 	HasScheduledSupport() bool
 	GetAdditionalData() headerVersionData.HeaderAdditionalData
+	HasScheduledMiniBlocks() bool
 
 	SetAccumulatedFees(value *big.Int) error
 	SetDeveloperFees(value *big.Int) error
