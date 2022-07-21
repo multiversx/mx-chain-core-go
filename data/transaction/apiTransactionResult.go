@@ -11,7 +11,10 @@ import (
 type ApiTransactionResult struct {
 	Tx                                data.TransactionHandler   `json:"-"`
 	Type                              string                    `json:"type"`
+	ProcessingTypeOnSource            string                    `json:"processingTypeOnSource,omitempty"`
+	ProcessingTypeOnDestination       string                    `json:"processingTypeOnDestination,omitempty"`
 	Hash                              string                    `json:"hash,omitempty"`
+	HashBytes                         []byte                    `json:"-"`
 	Nonce                             uint64                    `json:"nonce,omitempty"`
 	Round                             uint64                    `json:"round,omitempty"`
 	Epoch                             uint32                    `json:"epoch,omitempty"`
@@ -51,7 +54,9 @@ type ApiTransactionResult struct {
 	ReceiversShardIDs                 []uint32                  `json:"receiversShardIDs,omitempty"`
 	Operation                         string                    `json:"operation,omitempty"`
 	Function                          string                    `json:"function,omitempty"`
+	InitiallyPaidFee                  string                    `json:"initiallyPaidFee,omitempty"`
 	IsRelayed                         bool                      `json:"isRelayed,omitempty"`
+	IsRefund                          bool                      `json:"isRefund,omitempty"`
 }
 
 // ApiSmartContractResult represents a smart contract result with changed fields' types in order to make it friendly for API's json
@@ -81,6 +86,7 @@ type ApiSmartContractResult struct {
 	Operation         string      `json:"operation,omitempty"`
 	Function          string      `json:"function,omitempty"`
 	IsRelayed         bool        `json:"isRelayed,omitempty"`
+	IsRefund          bool        `json:"isRefund,omitempty"`
 }
 
 // ApiReceipt represents a receipt with changed fields' types in order to make it friendly for API's json
