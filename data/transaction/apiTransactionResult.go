@@ -16,8 +16,8 @@ type ApiTransactionResult struct {
 	Hash                              string                    `json:"hash,omitempty"`
 	HashBytes                         []byte                    `json:"-"`
 	Nonce                             uint64                    `json:"nonce"`
-	Round                             uint64                    `json:"round,omitempty"`
-	Epoch                             uint32                    `json:"epoch,omitempty"`
+	Round                             uint64                    `json:"round"`
+	Epoch                             uint32                    `json:"epoch"`
 	Value                             string                    `json:"value,omitempty"`
 	Receiver                          string                    `json:"receiver,omitempty"`
 	Sender                            string                    `json:"sender,omitempty"`
