@@ -62,7 +62,7 @@ type NotarizedBlock struct {
 
 // EpochStartShardData is a structure that holds data about the epoch start shard data
 type EpochStartShardData struct {
-	ShardID                 uint32       `json:"shardID"`
+	ShardID                 uint32       `json:"shard"`
 	Epoch                   uint32       `json:"epoch"`
 	Round                   uint64       `json:"round,omitempty"`
 	Nonce                   uint64       `json:"nonce,omitempty"`
