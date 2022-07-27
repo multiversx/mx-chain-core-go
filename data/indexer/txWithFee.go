@@ -41,3 +41,8 @@ func (t *transactionHandlerWithGasAndFee) SetFee(fee *big.Int) {
 func (t *transactionHandlerWithGasAndFee) GetFee() *big.Int {
 	return t.fee
 }
+
+// GetTxHandler will return the TransactionHandler
+func (t *transactionHandlerWithGasAndFee) GetTxHandler() data.TransactionHandler {
+	return t.TransactionHandler
+}

@@ -288,6 +288,7 @@ type TransactionHandlerWithGasUsedAndFee interface {
 	GetGasUsed() uint64
 	SetFee(fee *big.Int)
 	GetFee() *big.Int
+	GetTxHandler() TransactionHandler
 }
 
 // LogHandler defines the type for a log resulted from executing a transaction or smart contract call
