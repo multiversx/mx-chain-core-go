@@ -49,9 +49,9 @@ type HeaderGasConsumption struct {
 type Pool struct {
 	Txs      map[string]data.TransactionHandlerWithGasUsedAndFee
 	Scrs     map[string]data.TransactionHandlerWithGasUsedAndFee
-	Rewards  map[string]data.TransactionHandlerWithGasUsedAndFee
+	Rewards  map[string]data.TransactionHandler
 	Invalid  map[string]data.TransactionHandlerWithGasUsedAndFee
-	Receipts map[string]data.TransactionHandlerWithGasUsedAndFee
+	Receipts map[string]data.TransactionHandler
 	Logs     []*data.LogData
 }
 
