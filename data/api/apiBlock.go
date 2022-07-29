@@ -9,22 +9,35 @@ import (
 
 // Block represents the structure for block that is returned by api routes
 type Block struct {
-	Nonce                  uint64            `json:"nonce"`
-	Round                  uint64            `json:"round"`
-	Hash                   string            `json:"hash"`
-	PrevBlockHash          string            `json:"prevBlockHash"`
-	Epoch                  uint32            `json:"epoch"`
-	Shard                  uint32            `json:"shard"`
-	NumTxs                 uint32            `json:"numTxs"`
-	NotarizedBlocks        []*NotarizedBlock `json:"notarizedBlocks,omitempty"`
-	MiniBlocks             []*MiniBlock      `json:"miniBlocks,omitempty"`
-	Timestamp              time.Duration     `json:"timestamp,omitempty"`
-	AccumulatedFees        string            `json:"accumulatedFees,omitempty"`
-	DeveloperFees          string            `json:"developerFees,omitempty"`
-	AccumulatedFeesInEpoch string            `json:"accumulatedFeesInEpoch,omitempty"`
-	DeveloperFeesInEpoch   string            `json:"developerFeesInEpoch,omitempty"`
-	Status                 string            `json:"status,omitempty"`
-	EpochStartInfo         *EpochStartInfo   `json:"epochStartInfo,omitempty"`
+	Nonce                  uint64                 `json:"nonce"`
+	Round                  uint64                 `json:"round"`
+	Epoch                  uint32                 `json:"epoch"`
+	Shard                  uint32                 `json:"shard"`
+	NumTxs                 uint32                 `json:"numTxs"`
+	Hash                   string                 `json:"hash"`
+	PrevBlockHash          string                 `json:"prevBlockHash"`
+	StateRootHash          string                 `json:"stateRootHash"`
+	AccumulatedFees        string                 `json:"accumulatedFees,omitempty"`
+	DeveloperFees          string                 `json:"developerFees,omitempty"`
+	AccumulatedFeesInEpoch string                 `json:"accumulatedFeesInEpoch,omitempty"`
+	DeveloperFeesInEpoch   string                 `json:"developerFeesInEpoch,omitempty"`
+	Status                 string                 `json:"status,omitempty"`
+	Timestamp              time.Duration          `json:"timestamp,omitempty"`
+	NotarizedBlocks        []*NotarizedBlock      `json:"notarizedBlocks,omitempty"`
+	MiniBlocks             []*MiniBlock           `json:"miniBlocks,omitempty"`
+	EpochStartInfo         *EpochStartInfo        `json:"epochStartInfo,omitempty"`
+	EpochStartShardsData   []*EpochStartShardData `json:"epochStartShardsData,omitempty"`
+	ScheduledData          *ScheduledData         `json:"scheduledData,omitempty"`
+}
+
+// ScheduledData is a structure that hold information about scheduled events
+type ScheduledData struct {
+	ScheduledRootHash        string `json:"rootHash,omitempty"`
+	ScheduledAccumulatedFees string `json:"accumulatedFees,omitempty"`
+	ScheduledDeveloperFees   string `json:"developerFees,omitempty"`
+	ScheduledGasProvided     uint64 `json:"gasProvided,omitempty"`
+	ScheduledGasPenalized    uint64 `json:"penalized,omitempty"`
+	ScheduledGasRefunded     uint64 `json:"gasRefunded,omitempty"`
 }
 
 // EpochStartInfo is a structure that holds information about epoch start meta block
@@ -45,6 +58,20 @@ type NotarizedBlock struct {
 	Nonce uint64 `json:"nonce"`
 	Round uint64 `json:"round"`
 	Shard uint32 `json:"shard"`
+}
+
+// EpochStartShardData is a structure that holds data about the epoch start shard data
+type EpochStartShardData struct {
+	ShardID                 uint32       `json:"shard"`
+	Epoch                   uint32       `json:"epoch"`
+	Round                   uint64       `json:"round,omitempty"`
+	Nonce                   uint64       `json:"nonce,omitempty"`
+	HeaderHash              string       `json:"headerHash,omitempty"`
+	RootHash                string       `json:"rootHash,omitempty"`
+	ScheduledRootHash       string       `json:"scheduledRootHash,omitempty"`
+	FirstPendingMetaBlock   string       `json:"firstPendingMetaBlock,omitempty"`
+	LastFinishedMetaBlock   string       `json:"lastFinishedMetaBlock,omitempty"`
+	PendingMiniBlockHeaders []*MiniBlock `json:"pendingMiniBlockHeaders,omitempty"`
 }
 
 // MiniBlock represents the structure for a miniblock
