@@ -4,7 +4,6 @@ import (
 	"time"
 
 	"github.com/ElrondNetwork/elrond-go-core/data"
-	core "github.com/libp2p/go-libp2p-core"
 )
 
 // AppStatusHandler interface will handle different implementations of monitoring tools, such as term-ui or status metrics
@@ -139,7 +138,7 @@ type MessageP2P interface {
 	Topic() string
 	Signature() []byte
 	Key() []byte
-	Peer() core.PeerID
+	Peer() PeerID
 	Timestamp() int64
 	IsInterfaceNil() bool
 }
@@ -154,7 +153,7 @@ type InterceptedDebugger interface {
 // Interceptor defines what a data interceptor should do
 // It should also adhere to the p2p.MessageProcessor interface so it can wire to a p2p.Messenger
 type Interceptor interface {
-	ProcessReceivedMessage(message MessageP2P, fromConnectedPeer core.PeerID) error
+	ProcessReceivedMessage(message MessageP2P, fromConnectedPeer PeerID) error
 	SetInterceptedDebugHandler(handler InterceptedDebugger) error
 	RegisterHandler(handler func(topic string, hash []byte, data interface{}))
 	Close() error
