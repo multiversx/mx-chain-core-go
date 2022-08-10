@@ -2,6 +2,7 @@ package alarm
 
 import (
 	"context"
+	"fmt"
 	"sync"
 	"time"
 )
@@ -15,6 +16,8 @@ const (
 
 const timeoutNoAlarm = time.Second * 100000
 const toleranceExpiry = time.Millisecond * 10
+
+const chronologyAlarmID = "chronology"
 
 type alarmEvent struct {
 	alarmID string
@@ -64,6 +67,7 @@ func (as *alarmScheduler) Add(callback func(alarmID string), duration time.Durat
 		event:   add,
 	}
 
+	logIfChronologyAlarm(alarmID, "add called")
 	as.event <- evt
 }
 
@@ -125,6 +129,7 @@ func (as *alarmScheduler) handleAdd(
 	alarm *alarmItem,
 	alarmID string,
 ) time.Duration {
+	logIfChronologyAlarm(alarmID, "handleAdd")
 	waitTime := as.updateAlarms(elapsedSinceLastUpdate)
 
 	as.mutScheduledAlarms.Lock()
@@ -143,6 +148,7 @@ func (as *alarmScheduler) handleCancel(elapsedSinceLastUpdate time.Duration, ala
 	delete(as.scheduledAlarms, alarmID)
 	as.mutScheduledAlarms.Unlock()
 
+	logIfChronologyAlarm(alarmID, "handleCancel: deleted alarm")
 	return as.updateAlarms(elapsedSinceLastUpdate)
 }
 
@@ -152,16 +158,18 @@ func (as *alarmScheduler) updateAlarms(elapsed time.Duration) time.Duration {
 
 	as.mutScheduledAlarms.Lock()
 	defer as.mutScheduledAlarms.Unlock()
-
 	for alarmID, alarm := range as.scheduledAlarms {
 		if alarm.remainingDuration <= elapsed+toleranceExpiry {
 			go alarm.callback(alarmID)
 			delete(as.scheduledAlarms, alarmID)
+			logIfChronologyAlarm(alarmID, "update Alarms: alarm expired. Deleted the alarm and event triggered")
 		} else {
 			alarm.remainingDuration -= elapsed
 			if minDuration > alarm.remainingDuration {
 				minDuration = alarm.remainingDuration
 			}
+			event := fmt.Sprintf("update Alarms: remaining time: %s", alarm.remainingDuration.String())
+			logIfChronologyAlarm(alarmID, event)
 		}
 	}
 
@@ -191,10 +199,16 @@ func (as *alarmScheduler) Reset(alarmID string) {
 		alarm:   nil,
 		event:   cancel,
 	}
-
+	logIfChronologyAlarm(alarmID, "reset called")
 	as.event <- evt
 
 	as.Add(callback, duration, alarmID)
+}
+
+func logIfChronologyAlarm(alarmID string, event string) {
+	if alarmID == chronologyAlarmID {
+		fmt.Printf("[%s] alarm: %s, event: %s\n", time.Now().String(), alarmID, event)
+	}
 }
 
 // IsInterfaceNil returns true if interface is nil
