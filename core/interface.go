@@ -2,6 +2,9 @@ package core
 
 import (
 	"time"
+
+	"github.com/ElrondNetwork/elrond-go-core/data"
+	core "github.com/libp2p/go-libp2p-core"
 )
 
 // AppStatusHandler interface will handle different implementations of monitoring tools, such as term-ui or status metrics
@@ -125,4 +128,51 @@ type Logger interface {
 	Error(message string, args ...interface{})
 	LogIfError(err error, args ...interface{})
 	IsInterfaceNil() bool
+}
+
+// MessageP2P defines what a p2p message can do (should return)
+type MessageP2P interface {
+	From() []byte
+	Data() []byte
+	Payload() []byte
+	SeqNo() []byte
+	Topic() string
+	Signature() []byte
+	Key() []byte
+	Peer() core.PeerID
+	Timestamp() int64
+	IsInterfaceNil() bool
+}
+
+// InterceptedDebugger defines an interface for debugging the intercepted data
+type InterceptedDebugger interface {
+	LogReceivedHashes(topic string, hashes [][]byte)
+	LogProcessedHashes(topic string, hashes [][]byte, err error)
+	IsInterfaceNil() bool
+}
+
+// Interceptor defines what a data interceptor should do
+// It should also adhere to the p2p.MessageProcessor interface so it can wire to a p2p.Messenger
+type Interceptor interface {
+	ProcessReceivedMessage(message MessageP2P, fromConnectedPeer core.PeerID) error
+	SetInterceptedDebugHandler(handler InterceptedDebugger) error
+	RegisterHandler(handler func(topic string, hash []byte, data interface{}))
+	Close() error
+	IsInterfaceNil() bool
+}
+
+// Validator defines a node that can be allocated to a shard for participation in a consensus group as validator
+// or block proposer
+type Validator interface {
+	PubKey() []byte
+	Chances() uint32
+	Index() uint32
+	Size() int
+}
+
+// EpochStartActionHandler defines the action taken on epoch start event
+type EpochStartActionHandler interface {
+	EpochStartAction(hdr data.HeaderHandler)
+	EpochStartPrepare(metaHdr data.HeaderHandler, body data.BodyHandler)
+	NotifyOrder() uint32
 }
