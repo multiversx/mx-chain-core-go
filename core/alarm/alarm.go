@@ -5,7 +5,11 @@ import (
 	"fmt"
 	"sync"
 	"time"
+
+	"github.com/ElrondNetwork/elrond-go-logger"
 )
+
+var log = logger.GetOrCreate("alarm")
 
 type eventType int
 
@@ -207,7 +211,7 @@ func (as *alarmScheduler) Reset(alarmID string) {
 
 func logIfChronologyAlarm(alarmID string, event string) {
 	if alarmID == chronologyAlarmID {
-		fmt.Printf("[%s] alarm: %s, event: %s\n", time.Now().String(), alarmID, event)
+		log.Debug("logIfChronologyAlarm", "alarm", alarmID, "event", event)
 	}
 }
 

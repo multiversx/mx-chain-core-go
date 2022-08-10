@@ -3,6 +3,7 @@ module github.com/ElrondNetwork/elrond-go-core
 go 1.13
 
 require (
+	github.com/ElrondNetwork/elrond-go-logger v1.0.7
 	github.com/btcsuite/btcutil v1.0.2
 	github.com/denisbrodbeck/machineid v1.0.1
 	github.com/gogo/protobuf v1.3.2
