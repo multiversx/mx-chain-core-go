@@ -7,8 +7,8 @@ type AccountQueryOptions struct {
 	OnFinalBlock   bool
 	OnStartOfEpoch core.OptionalUint32
 	BlockNonce     core.OptionalUint64
-	BlockHash      string
-	BlockRootHash  string
+	BlockHash      []byte
+	BlockRootHash  []byte
 }
 
 // BlockQueryOptions holds options for block queries
