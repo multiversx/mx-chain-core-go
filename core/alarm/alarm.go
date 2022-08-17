@@ -3,6 +3,7 @@ package alarm
 import (
 	"context"
 	"fmt"
+	"runtime/debug"
 	"sync"
 	"time"
 
@@ -209,9 +210,10 @@ func (as *alarmScheduler) Reset(alarmID string) {
 	as.Add(callback, duration, alarmID)
 }
 
+// TODO: remove after watchdog expiry bug found
 func logIfChronologyAlarm(alarmID string, event string) {
 	if alarmID == chronologyAlarmID {
-		log.Debug("logIfChronologyAlarm", "alarm", alarmID, "event", event)
+		log.Debug("logIfChronologyAlarm", "alarm", alarmID, "event", event, "stack", string(debug.Stack()))
 	}
 }
 
