@@ -9,6 +9,7 @@ type AccountQueryOptions struct {
 	BlockNonce     core.OptionalUint64
 	BlockHash      []byte
 	BlockRootHash  []byte
+	HintEpoch      core.OptionalUint32
 }
 
 // BlockQueryOptions holds options for block queries
