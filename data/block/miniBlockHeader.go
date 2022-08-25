@@ -164,6 +164,63 @@ func (m *MiniBlockHeader) setMiniBlockHeaderReserved(mbhr *MiniBlockHeaderReserv
 	return nil
 }
 
+// GetIndexOfFirstTxProcessed returns index of the first transaction processed in the miniBlock
+func (m *MiniBlockHeader) GetIndexOfFirstTxProcessed() int32 {
+	miniBlockHeaderReserved, err := m.getMiniBlockHeaderReserved()
+	if err != nil || miniBlockHeaderReserved == nil {
+		return 0
+	}
+
+	return miniBlockHeaderReserved.IndexOfFirstTxProcessed
+}
+
+// GetIndexOfLastTxProcessed returns index of the last transaction processed in the miniBlock
+func (m *MiniBlockHeader) GetIndexOfLastTxProcessed() int32 {
+	miniBlockHeaderReserved, err := m.getMiniBlockHeaderReserved()
+	if err != nil || miniBlockHeaderReserved == nil {
+		return int32(m.TxCount) - 1
+	}
+
+	isIndexNotSetByPreviousVersion := miniBlockHeaderReserved.IndexOfLastTxProcessed == 0 &&
+		miniBlockHeaderReserved.IndexOfLastTxProcessed < int32(m.TxCount-1) &&
+		m.GetConstructionState() != int32(PartialExecuted)
+	if isIndexNotSetByPreviousVersion {
+		return int32(m.TxCount) - 1
+	}
+
+	return miniBlockHeaderReserved.IndexOfLastTxProcessed
+}
+
+// SetIndexOfLastTxProcessed sets index of the last transaction processed in the miniBlock
+func (m *MiniBlockHeader) SetIndexOfLastTxProcessed(indexOfLastTxProcessed int32) error {
+	var err error
+	mbhr := &MiniBlockHeaderReserved{}
+	if len(m.Reserved) > 0 {
+		mbhr, err = m.getMiniBlockHeaderReserved()
+		if err != nil {
+			return err
+		}
+	}
+	mbhr.IndexOfLastTxProcessed = indexOfLastTxProcessed
+
+	return m.setMiniBlockHeaderReserved(mbhr)
+}
+
+// SetIndexOfFirstTxProcessed sets index of the first transaction processed in the miniBlock
+func (m *MiniBlockHeader) SetIndexOfFirstTxProcessed(indexOfFirstTxProcessed int32) error {
+	var err error
+	mbhr := &MiniBlockHeaderReserved{}
+	if len(m.Reserved) > 0 {
+		mbhr, err = m.getMiniBlockHeaderReserved()
+		if err != nil {
+			return err
+		}
+	}
+	mbhr.IndexOfFirstTxProcessed = indexOfFirstTxProcessed
+
+	return m.setMiniBlockHeaderReserved(mbhr)
+}
+
 // ShallowClone returns the miniBlockHeader swallow clone
 func (m *MiniBlockHeader) ShallowClone() data.MiniBlockHeaderHandler {
 	if m == nil {
