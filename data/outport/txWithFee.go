@@ -10,8 +10,9 @@ import (
 type TransactionHandlerWithGasAndFee struct {
 	data.TransactionHandler
 
-	GasUsed uint64
-	Fee     *big.Int
+	GasUsed        uint64
+	Fee            *big.Int
+	InitialPaidFee *big.Int
 }
 
 // NewTransactionHandlerWithGasAndFee returns a new instance of transactionHandlerWithGasAndFee which matches the interface
@@ -21,6 +22,16 @@ func NewTransactionHandlerWithGasAndFee(txHandler data.TransactionHandler, gasUs
 		GasUsed:            gasUsed,
 		Fee:                fee,
 	}
+}
+
+// SetInitialPaidFee will set the initial paid fee
+func (t *TransactionHandlerWithGasAndFee) SetInitialPaidFee(fee *big.Int) {
+	t.InitialPaidFee = fee
+}
+
+// GetInitialPaidFee returns the initial paid fee of the transactions
+func (t *TransactionHandlerWithGasAndFee) GetInitialPaidFee() *big.Int {
+	return t.InitialPaidFee
 }
 
 // SetGasUsed sets the used gas internally

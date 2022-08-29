@@ -284,9 +284,11 @@ type TransactionHandler interface {
 type TransactionHandlerWithGasUsedAndFee interface {
 	TransactionHandler
 
+	SetInitialPaidFee(fee *big.Int)
 	SetGasUsed(gasUsed uint64)
-	GetGasUsed() uint64
 	SetFee(fee *big.Int)
+	GetInitialPaidFee() *big.Int
+	GetGasUsed() uint64
 	GetFee() *big.Int
 	GetTxHandler() TransactionHandler
 }
