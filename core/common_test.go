@@ -39,7 +39,7 @@ func TestEmptyChannelShouldWorkOnNotBufferedChannel(t *testing.T) {
 	wgChanWasWritten := sync.WaitGroup{}
 	numConcurrentWrites := 50
 	wg.Add(numConcurrentWrites)
-	wgChanWasWritten.Add(numConcurrentWrites)
+	wgChanWasWritten.Add(numConcurrentWrites + 1)
 	for i := 0; i < numConcurrentWrites; i++ {
 		go func() {
 			wg.Done()
@@ -56,6 +56,9 @@ func TestEmptyChannelShouldWorkOnNotBufferedChannel(t *testing.T) {
 		for readsCnt < int32(numConcurrentWrites) {
 			atomic.AddInt32(&readsCnt, int32(EmptyChannel(ch)))
 		}
+
+		// wait also for this go routine to finish
+		wgChanWasWritten.Done()
 	}()
 
 	// wait for go routines to finish
