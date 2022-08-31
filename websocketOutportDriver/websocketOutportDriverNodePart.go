@@ -46,7 +46,7 @@ func NewWebsocketOutportDriverNodePart(args WebsocketOutportDriverNodePartArgs) 
 	}
 
 	isClosedFlag := atomic.Flag{}
-	isClosedFlag.Toggle(false)
+	isClosedFlag.SetValue(false)
 
 	return &websocketOutportDriverNodePart{
 		marshalizer:              args.Marshaller,
@@ -122,7 +122,7 @@ func (o *websocketOutportDriverNodePart) FinalizedBlock(headerHash []byte) error
 
 // Close will handle the closing of the outport driver web socket sender
 func (o *websocketOutportDriverNodePart) Close() error {
-	o.isClosed.Toggle(true)
+	o.isClosed.SetValue(true)
 	return o.webSocketSender.Close()
 }
 

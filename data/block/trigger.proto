@@ -1,0 +1,45 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "block";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "block.proto";
+import "blockV2.proto";
+import "metaBlock.proto";
+
+message ShardTriggerRegistry {
+    bool IsEpochStart                   = 1;
+    bool NewEpochHeaderReceived         = 2;
+    uint32 Epoch                        = 3;
+    uint32 MetaEpoch                    = 4;
+    int64 CurrentRoundIndex             = 5;
+    uint64 EpochStartRound              = 6;
+    uint64 EpochFinalityAttestingRound  = 7;
+    bytes EpochMetaBlockHash            = 8;
+    Header EpochStartShardHeader        = 9;
+}
+
+message ShardTriggerRegistryV2 {
+    HeaderV2 EpochStartShardHeader      = 1;
+    bool IsEpochStart                   = 2;
+    bool NewEpochHeaderReceived         = 3;
+    uint32 Epoch                        = 4;
+    uint32 MetaEpoch                    = 5;
+    int64 CurrentRoundIndex             = 6;
+    uint64 EpochStartRound              = 7;
+    uint64 EpochFinalityAttestingRound  = 8;
+    bytes EpochMetaBlockHash            = 9;
+}
+
+message MetaTriggerRegistry {
+	uint32 Epoch                        = 1;
+	uint64 CurrentRound                 = 2;
+	uint64 EpochFinalityAttestingRound  = 3;
+	uint64 CurrEpochStartRound          = 4;
+	uint64 PrevEpochStartRound          = 5;
+	bytes EpochStartMetaHash            = 6;
+	MetaBlock EpochStartMeta            = 7;
+}

@@ -1,0 +1,33 @@
+// This file holds the data structures related with the functionality of a shard block V2
+syntax = "proto3";
+
+package proto;
+
+option go_package = "block";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "block.proto";
+
+// HeaderV2 extends the Header structure with extra fields for version 2
+message HeaderV2 {
+  Header  Header = 1;
+  bytes   ScheduledRootHash = 2;
+  bytes   ScheduledAccumulatedFees = 3 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
+  bytes   ScheduledDeveloperFees = 4 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
+  uint64  ScheduledGasProvided = 5;
+  uint64  ScheduledGasPenalized = 6;
+  uint64  ScheduledGasRefunded = 7;
+}
+
+message MiniBlockReserved {
+  ProcessingType ExecutionType = 1;
+  bytes TransactionsType = 2;
+}
+
+message MiniBlockHeaderReserved {
+  ProcessingType ExecutionType = 1;
+  MiniBlockState State = 2;
+  int32 IndexOfFirstTxProcessed = 3;
+  int32 IndexOfLastTxProcessed = 4;
+}
