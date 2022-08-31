@@ -14,7 +14,7 @@ type Driver interface {
 	SaveRoundsInfo(roundsInfos []*outport.RoundInfo) error
 	SaveValidatorsPubKeys(validatorsPubKeys map[uint32][][]byte, epoch uint32) error
 	SaveValidatorsRating(indexID string, infoRating []*outport.ValidatorRatingInfo) error
-	SaveAccounts(blockTimestamp uint64, acc []data.UserAccountHandler) error
+	SaveAccounts(blockTimestamp uint64, acc map[string]*outport.AlteredAccount) error
 	FinalizedBlock(headerHash []byte) error
 	Close() error
 	IsInterfaceNil() bool

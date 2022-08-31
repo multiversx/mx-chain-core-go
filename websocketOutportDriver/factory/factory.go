@@ -19,7 +19,6 @@ const operationsPath = "/operations"
 type OutportDriverWebSocketSenderFactoryArgs struct {
 	WebSocketConfig          outportData.WebSocketConfig
 	Marshaller               marshal.Marshalizer
-	Actions                  map[string]struct{}
 	Uint64ByteSliceConverter websocketOutportDriver.Uint64ByteSliceConverter
 	Log                      core.Logger
 	WithAcknowledge          bool

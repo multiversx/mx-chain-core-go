@@ -142,7 +142,7 @@ func (tc *tempClient) verifyPayloadAndSendAckIfNeeded(payload []byte, ackHandler
 
 	if payloadData.WithAcknowledge {
 		counterBytes := uint64ByteSliceConverter.ToByteSlice(payloadData.Counter)
-		err := ackHandler.WriteMessage(websocket.BinaryMessage, counterBytes)
+		err = ackHandler.WriteMessage(websocket.BinaryMessage, counterBytes)
 		if err != nil {
 			log.Error(tc.name + " -> " + err.Error())
 		}

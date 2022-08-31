@@ -36,7 +36,7 @@ type ArgsSaveValidatorsRating struct {
 // ArgsSaveAccounts holds the driver's arguments needed for indexing accounts
 type ArgsSaveAccounts struct {
 	BlockTimestamp uint64
-	Acc            []data.UserAccountHandler
+	Acc            map[string]*outport.AlteredAccount
 }
 
 // ArgsFinalizedBlock holds the driver's arguments needed for handling a finalized block
