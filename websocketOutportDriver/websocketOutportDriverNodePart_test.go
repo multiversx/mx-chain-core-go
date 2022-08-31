@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	coreMock "github.com/ElrondNetwork/elrond-go-core/core/mock"
-	"github.com/ElrondNetwork/elrond-go-core/data/indexer"
+	"github.com/ElrondNetwork/elrond-go-core/data/outport"
 	"github.com/ElrondNetwork/elrond-go-core/data/typeConverters/uint64ByteSlice"
 	"github.com/ElrondNetwork/elrond-go-core/marshal"
 	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
@@ -89,7 +89,7 @@ func TestWebsocketOutportDriverNodePart_SaveBlock(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.SaveBlock(&indexer.ArgsSaveBlockData{})
+		err = o.SaveBlock(&outport.ArgsSaveBlockData{})
 		require.True(t, errors.Is(err, cannotSendOnRouteErr))
 	})
 
@@ -104,7 +104,7 @@ func TestWebsocketOutportDriverNodePart_SaveBlock(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.SaveBlock(&indexer.ArgsSaveBlockData{})
+		err = o.SaveBlock(&outport.ArgsSaveBlockData{})
 		require.NoError(t, err)
 	})
 }
@@ -306,12 +306,13 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 
 	args := getMockArgs()
 
-	marshaledData, _ := args.Marshaller.Marshal(&indexer.ArgsSaveBlockData{})
+	marshaledData, err := args.Marshaller.Marshal(&outport.ArgsSaveBlockData{})
+	require.Nil(t, err)
 
 	args.WebsocketSender = &mock.WebSocketSenderStub{
 		SendOnRouteCalled: func(args data.WsSendArgs) error {
 			expectedOpBytes := []byte{0, 0, 0, 0}
-			expectedLengthBytes := []byte{0, 0, 0, 237} // json serialized empty ArgsSaveBlockData has 214 bytes
+			expectedLengthBytes := []byte{0, 0, 1, 0} // json serialized empty ArgsSaveBlockData has 214 bytes
 			expectedPayload := append(expectedOpBytes, expectedLengthBytes...)
 			expectedPayload = append(expectedPayload, marshaledData...)
 
@@ -323,7 +324,7 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 	o, err := NewWebsocketOutportDriverNodePart(args)
 	require.NoError(t, err)
 
-	err = o.SaveBlock(&indexer.ArgsSaveBlockData{})
+	err = o.SaveBlock(&outport.ArgsSaveBlockData{})
 	require.NoError(t, err)
 }
 

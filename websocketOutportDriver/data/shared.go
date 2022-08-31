@@ -2,7 +2,7 @@ package data
 
 import (
 	"github.com/ElrondNetwork/elrond-go-core/data"
-	"github.com/ElrondNetwork/elrond-go-core/data/indexer"
+	"github.com/ElrondNetwork/elrond-go-core/data/outport"
 )
 
 // WsSendArgs holds the arguments needed for performing a web socket request
@@ -18,7 +18,7 @@ type ArgsRevertIndexedBlock struct {
 
 // ArgsSaveRoundsInfo holds the driver's arguments needed for indexing rounds info
 type ArgsSaveRoundsInfo struct {
-	RoundsInfos []*indexer.RoundInfo
+	RoundsInfos []*outport.RoundInfo
 }
 
 // ArgsSaveValidatorsPubKeys holds the driver's arguments needed for indexing validator public keys
@@ -30,7 +30,7 @@ type ArgsSaveValidatorsPubKeys struct {
 // ArgsSaveValidatorsRating holds the driver's arguments needed for indexing validators' rating
 type ArgsSaveValidatorsRating struct {
 	IndexID    string
-	InfoRating []*indexer.ValidatorRatingInfo
+	InfoRating []*outport.ValidatorRatingInfo
 }
 
 // ArgsSaveAccounts holds the driver's arguments needed for indexing accounts

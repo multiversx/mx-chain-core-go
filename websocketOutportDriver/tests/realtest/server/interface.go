@@ -2,17 +2,17 @@ package main
 
 import (
 	"github.com/ElrondNetwork/elrond-go-core/data"
-	"github.com/ElrondNetwork/elrond-go-core/data/indexer"
+	"github.com/ElrondNetwork/elrond-go-core/data/outport"
 )
 
 // Driver is an interface for saving node specific data to other storage.
 // This could be an elastic search index, a MySql database or any other external services.
 type Driver interface {
-	SaveBlock(args *indexer.ArgsSaveBlockData) error
+	SaveBlock(args *outport.ArgsSaveBlockData) error
 	RevertIndexedBlock(header data.HeaderHandler, body data.BodyHandler) error
-	SaveRoundsInfo(roundsInfos []*indexer.RoundInfo) error
+	SaveRoundsInfo(roundsInfos []*outport.RoundInfo) error
 	SaveValidatorsPubKeys(validatorsPubKeys map[uint32][][]byte, epoch uint32) error
-	SaveValidatorsRating(indexID string, infoRating []*indexer.ValidatorRatingInfo) error
+	SaveValidatorsRating(indexID string, infoRating []*outport.ValidatorRatingInfo) error
 	SaveAccounts(blockTimestamp uint64, acc []data.UserAccountHandler) error
 	FinalizedBlock(headerHash []byte) error
 	Close() error

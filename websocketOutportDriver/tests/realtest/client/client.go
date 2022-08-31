@@ -11,7 +11,7 @@ import (
 
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
 	"github.com/ElrondNetwork/elrond-go-core/core/mock"
-	"github.com/ElrondNetwork/elrond-go-core/data/indexer"
+	"github.com/ElrondNetwork/elrond-go-core/data/outport"
 	"github.com/ElrondNetwork/elrond-go-core/data/typeConverters/uint64ByteSlice"
 	"github.com/ElrondNetwork/elrond-go-core/marshal"
 	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver"
@@ -131,8 +131,8 @@ func (tc *tempClient) verifyPayloadAndSendAckIfNeeded(payload []byte, ackHandler
 
 	if payloadData.OperationType.Uint32() == data.OperationSaveBlock.Uint32() {
 		log.Debug(tc.name + " -> save block operation")
-		var argsBlock indexer.ArgsSaveBlockData
-		err := tc.marshaller.Unmarshal(&argsBlock, payload)
+		var argsBlock outport.ArgsSaveBlockData
+		err = tc.marshaller.Unmarshal(&argsBlock, payload)
 		if err != nil {
 			log.Error(tc.name+" -> cannot unmarshal block", "error", err)
 		} else {
