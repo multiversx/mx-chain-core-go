@@ -136,7 +136,7 @@ func TestTransaction_GetDataForSigningNilPubkeyConverterShouldErr(t *testing.T) 
 
 	tx := &transaction.Transaction{}
 
-	buff, err := tx.GetDataForSigning(nil, &mock.MarshalizerStub{})
+	buff, err := tx.GetDataForSigning(nil, &mock.MarshalizerStub{}, &mock.HasherMock{})
 
 	assert.Nil(t, buff)
 	assert.Equal(t, transaction.ErrNilEncoder, err)
@@ -147,7 +147,7 @@ func TestTransaction_GetDataForSigningNilMarshalizerShouldErr(t *testing.T) {
 
 	tx := &transaction.Transaction{}
 
-	buff, err := tx.GetDataForSigning(&mock.PubkeyConverterStub{}, nil)
+	buff, err := tx.GetDataForSigning(&mock.PubkeyConverterStub{}, nil, &mock.HasherMock{})
 
 	assert.Nil(t, buff)
 	assert.Equal(t, transaction.ErrNilMarshalizer, err)
@@ -172,6 +172,7 @@ func TestTransaction_GetDataForSigningMarshalizerErrShouldErr(t *testing.T) {
 				return nil, expectedErr
 			},
 		},
+		&mock.HasherMock{},
 	)
 
 	assert.Nil(t, buff)
@@ -220,6 +221,7 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 				return make([]byte, 0), nil
 			},
 		},
+		&mock.HasherMock{},
 	)
 
 	assert.Equal(t, 0, len(buff))

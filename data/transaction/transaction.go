@@ -7,6 +7,7 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/core"
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
 	"github.com/ElrondNetwork/elrond-go-core/data"
+	"github.com/ElrondNetwork/elrond-go-core/hashing"
 )
 
 var _ = data.TransactionHandler(&Transaction{})
@@ -57,12 +58,15 @@ func TrimSliceHandler(in []data.TransactionHandler) []data.TransactionHandler {
 }
 
 // GetDataForSigning returns the serialized transaction having an empty signature field
-func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.Marshaller) ([]byte, error) {
+func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.Marshaller, hasher hashing.Hasher) ([]byte, error) {
 	if check.IfNil(encoder) {
 		return nil, ErrNilEncoder
 	}
 	if check.IfNil(marshaller) {
 		return nil, ErrNilMarshalizer
+	}
+	if check.IfNil(hasher) {
+		return nil, ErrNilHasher
 	}
 
 	ftx := &FrontendTransaction{
@@ -84,7 +88,18 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.M
 		ftx.GuardianAddr = encoder.Encode(tx.GuardianAddr)
 	}
 
-	return marshaller.Marshal(ftx)
+	ftxBytes, err := marshaller.Marshal(ftx)
+	if err != nil {
+		return nil, err
+	}
+
+	if !tx.HasOptionHashSignSet() {
+		return ftxBytes, nil
+	}
+
+	ftxHash := hasher.Compute(string(ftxBytes))
+
+	return ftxHash, nil
 }
 
 // HasOptionGuardianSet returns true if the guarded transaction option is set
