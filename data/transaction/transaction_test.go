@@ -248,6 +248,7 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 		t.Parallel()
 
 		tx := &transaction.Transaction{}
+		tx.Version = uint32(2)
 		tx.Options ^= transaction.MaskSignedWithHash
 
 		numEncodeCalled := 0

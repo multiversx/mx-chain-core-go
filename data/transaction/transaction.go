@@ -92,7 +92,8 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.M
 		return nil, err
 	}
 
-	if !tx.HasOptionHashSignSet() {
+	shouldSignOnTxHash := tx.Version > core.InitialVersionOfTransaction && tx.HasOptionHashSignSet()
+	if !shouldSignOnTxHash {
 		return ftxBytes, nil
 	}
 

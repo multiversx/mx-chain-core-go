@@ -5,10 +5,6 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data/transaction"
 )
 
-const (
-	initialVersionOfTransaction = uint32(1)
-)
-
 // TxVersionChecker represents transaction option decoder
 type txVersionChecker struct {
 	minTxVersion uint32
@@ -23,7 +19,7 @@ func NewTxVersionChecker(minTxVersion uint32) *txVersionChecker {
 
 // IsSignedWithHash will return true if transaction is signed with hash
 func (tvc *txVersionChecker) IsSignedWithHash(tx *transaction.Transaction) bool {
-	if tx.Version > initialVersionOfTransaction {
+	if tx.Version > core.InitialVersionOfTransaction {
 		// transaction is signed with hash if LSB from last byte from options is set with 1
 		return tx.HasOptionHashSignSet()
 	}
@@ -33,7 +29,7 @@ func (tvc *txVersionChecker) IsSignedWithHash(tx *transaction.Transaction) bool 
 
 // IsGuardedTransaction will return true if transaction also holds a guardian signature
 func (tvc *txVersionChecker) IsGuardedTransaction(tx *transaction.Transaction) bool {
-	if tx.Version > initialVersionOfTransaction {
+	if tx.Version > core.InitialVersionOfTransaction {
 		return tx.HasOptionGuardianSet()
 	}
 
@@ -42,7 +38,7 @@ func (tvc *txVersionChecker) IsGuardedTransaction(tx *transaction.Transaction) b
 
 // CheckTxVersion will check transaction version
 func (tvc *txVersionChecker) CheckTxVersion(tx *transaction.Transaction) error {
-	if (tx.Version == initialVersionOfTransaction && tx.Options != 0) || tx.Version < tvc.minTxVersion {
+	if (tx.Version == core.InitialVersionOfTransaction && tx.Options != 0) || tx.Version < tvc.minTxVersion {
 		return core.ErrInvalidTransactionVersion
 	}
 
