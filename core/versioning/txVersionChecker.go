@@ -5,6 +5,12 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data/transaction"
 )
 
+// There are different options based on the tx version:
+// version = 1; options = null => regular signing (over JSON serialization)
+// version = >1; options = {signUsingHash=true;guardianSet=false} => signing over the hash of the transaction, not guardian type
+// version = >1; options = {signUsingHash=false;guardianSet=true} => regular signing over JSON serialization, guardian type
+// version = >1; options = {signUsingHash=true;guardianSet=true} => signing over the hash of the transaction, guardian type
+
 // TxVersionChecker represents transaction option decoder
 type txVersionChecker struct {
 	minTxVersion uint32
