@@ -221,6 +221,7 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 
 		numEncodeCalled := 0
 		marshalizerWasCalled := false
+		hasherWasCalled := false
 		buff, err := tx.GetDataForSigning(
 			&mock.PubkeyConverterStub{
 				EncodeCalled: func(pkBytes []byte) string {
@@ -235,12 +236,19 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 					return make([]byte, 0), nil
 				},
 			},
-			&mock.HasherMock{},
+			&mock.HasherStub{
+				ComputeCalled: func(s string) []byte {
+					hasherWasCalled = true
+
+					return make([]byte, 0)
+				},
+			},
 		)
 
 		assert.Equal(t, 0, len(buff))
 		assert.Nil(t, err)
 		assert.True(t, marshalizerWasCalled)
+		assert.False(t, hasherWasCalled)
 		assert.Equal(t, 2, numEncodeCalled)
 	})
 
