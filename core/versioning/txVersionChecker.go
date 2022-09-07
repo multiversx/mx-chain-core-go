@@ -8,7 +8,7 @@ import (
 // There are different options based on the tx version. If version is the initial version of transaction no options can be used.
 // Otherwise, if version is higher than the initial version, several options can be used:
 // bit 0: signed over hash - if set, the transaction signature was applied over the hash of the marshalled tx, otherwise it was applied directly on the marshalled tx
-// bit 1: guarded Tx - if set, the transaction is guarded (co signed) by the sender's configured guardian which should be the same as the one configured in the Tx GuardianAddr field. The guardian signature is represented by field GuardianSig (check the exact name of the field)
+// bit 1: guarded Tx - if set, the transaction is guarded (co signed) by the sender's configured guardian which should be the same as the one configured in the Tx GuardianAddr field. The guardian signature is represented by field GuardianSignature
 
 // TxVersionChecker represents transaction option decoder
 type txVersionChecker struct {
