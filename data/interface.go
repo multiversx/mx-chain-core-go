@@ -292,12 +292,18 @@ type Marshaller interface {
 	IsInterfaceNil() bool
 }
 
+// Hasher provides hashing services
+type Hasher interface {
+	Compute(string) []byte
+	IsInterfaceNil() bool
+}
+
 // GuardedTransactionHandler defines functionality for the guarded transactions
 type GuardedTransactionHandler interface {
 	GetGuardianAddr() []byte
 	GetGuardianSignature() []byte
 	GetSignature() []byte
-	GetDataForSigning(encoder Encoder, marshaller Marshaller) ([]byte, error)
+	GetDataForSigning(encoder Encoder, marshaller Marshaller, hasher Hasher) ([]byte, error)
 }
 
 // LogHandler defines the type for a log resulted from executing a transaction or smart contract call

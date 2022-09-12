@@ -230,3 +230,6 @@ const SCDeployIdentifier = "SCDeploy"
 
 // SCUpgradeIdentifier is the identifier for a smart contract upgrade
 const SCUpgradeIdentifier = "SCUpgrade"
+
+// InitialVersionOfTransaction defines the initial version for a transaction
+const InitialVersionOfTransaction = uint32(1)
