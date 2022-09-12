@@ -28,4 +28,6 @@ message MiniBlockReserved {
 message MiniBlockHeaderReserved {
   ProcessingType ExecutionType = 1;
   MiniBlockState State = 2;
+  int32 IndexOfFirstTxProcessed = 3;
+  int32 IndexOfLastTxProcessed = 4;
 }
