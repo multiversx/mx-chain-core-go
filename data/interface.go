@@ -29,9 +29,8 @@ type TriggerRegistryHandler interface {
 	SetEpochStartHeaderHandler(epochStartHeaderHandler HeaderHandler) error
 }
 
-// HeaderHandler defines getters and setters for header data holder
-type HeaderHandler interface {
-	GetShardID() uint32
+// CommonHeaderHandler defines getters and setters for header data holder
+type CommonHeaderHandler interface {
 	GetNonce() uint64
 	GetEpoch() uint32
 	GetRound() uint64
@@ -47,20 +46,12 @@ type HeaderHandler interface {
 	GetTimeStamp() uint64
 	GetTxCount() uint32
 	GetReceiptsHash() []byte
+	GetReserved() []byte
 	GetAccumulatedFees() *big.Int
 	GetDeveloperFees() *big.Int
-	GetReserved() []byte
-	GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32
-	GetOrderedCrossMiniblocksWithDst(destId uint32) []*MiniBlockInfo
 	GetMiniBlockHeadersHashes() [][]byte
 	GetMiniBlockHeaderHandlers() []MiniBlockHeaderHandler
-	HasScheduledSupport() bool
-	GetAdditionalData() headerVersionData.HeaderAdditionalData
-	HasScheduledMiniBlocks() bool
 
-	SetAccumulatedFees(value *big.Int) error
-	SetDeveloperFees(value *big.Int) error
-	SetShardID(shId uint32) error
 	SetNonce(n uint64) error
 	SetEpoch(e uint32) error
 	SetRound(r uint64) error
@@ -75,14 +66,36 @@ type HeaderHandler interface {
 	SetChainID(chainID []byte) error
 	SetSoftwareVersion(version []byte) error
 	SetTxCount(txCount uint32) error
+	SetDeveloperFees(value *big.Int) error
+	SetAccumulatedFees(value *big.Int) error
 	SetMiniBlockHeaderHandlers(mbHeaderHandlers []MiniBlockHeaderHandler) error
 	SetReceiptsHash(hash []byte) error
-	SetScheduledRootHash(rootHash []byte) error
 	ValidateHeaderVersion() error
+	IsInterfaceNil() bool
+}
+
+// ValidatorStatisticsInfoHandler simple handler needed for validator info
+type ValidatorStatisticsInfoHandler interface {
+	SetValidatorStatsRootHash(rHash []byte) error
+	GetValidatorStatsRootHash() []byte
+	IsInterfaceNil() bool
+}
+
+// HeaderHandler defines getters and setters for header data holder
+type HeaderHandler interface {
+	CommonHeaderHandler
+	GetShardID() uint32
+	GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32
+	GetOrderedCrossMiniblocksWithDst(destId uint32) []*MiniBlockInfo
+	HasScheduledSupport() bool
+	GetAdditionalData() headerVersionData.HeaderAdditionalData
+	HasScheduledMiniBlocks() bool
+
+	SetShardID(shId uint32) error
+	SetScheduledRootHash(rootHash []byte) error
 	SetAdditionalData(headerVersionData headerVersionData.HeaderAdditionalData) error
 	IsStartOfEpochBlock() bool
 	ShallowClone() HeaderHandler
-	IsInterfaceNil() bool
 }
 
 // ShardHeaderHandler defines getters and setters for the shard block header
