@@ -31,6 +31,7 @@ type TriggerRegistryHandler interface {
 
 // CommonHeaderHandler defines getters and setters for header data holder
 type CommonHeaderHandler interface {
+	GetShardID() uint32
 	GetNonce() uint64
 	GetEpoch() uint32
 	GetRound() uint64
@@ -84,7 +85,6 @@ type ValidatorStatisticsInfoHandler interface {
 // HeaderHandler defines getters and setters for header data holder
 type HeaderHandler interface {
 	CommonHeaderHandler
-	GetShardID() uint32
 	GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32
 	GetOrderedCrossMiniblocksWithDst(destId uint32) []*MiniBlockInfo
 	HasScheduledSupport() bool

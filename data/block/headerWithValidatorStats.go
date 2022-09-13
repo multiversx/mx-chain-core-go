@@ -340,6 +340,17 @@ func (hv *HeaderWithValidatorStats) SetShardID(_ uint32) error {
 	return nil
 }
 
+// SetValidatorStatsRootHash sets the root hash for the validator statistics trie
+func (hv *HeaderWithValidatorStats) SetValidatorStatsRootHash(rHash []byte) error {
+	if hv == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	hv.ValidatorStatsRootHash = rHash
+
+	return nil
+}
+
 // GetMiniBlockHeadersWithDst as a map of hashes and sender IDs
 func (hv *HeaderWithValidatorStats) GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32 {
 	if hv == nil {
