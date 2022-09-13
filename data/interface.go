@@ -72,6 +72,7 @@ type CommonHeaderHandler interface {
 	SetMiniBlockHeaderHandlers(mbHeaderHandlers []MiniBlockHeaderHandler) error
 	SetReceiptsHash(hash []byte) error
 	ValidateHeaderVersion() error
+	IsStartOfEpochBlock() bool
 	IsInterfaceNil() bool
 }
 
@@ -94,7 +95,6 @@ type HeaderHandler interface {
 	SetShardID(shId uint32) error
 	SetScheduledRootHash(rootHash []byte) error
 	SetAdditionalData(headerVersionData headerVersionData.HeaderAdditionalData) error
-	IsStartOfEpochBlock() bool
 	ShallowClone() HeaderHandler
 }
 
