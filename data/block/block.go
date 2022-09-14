@@ -384,6 +384,39 @@ func (h *Header) ValidateHeaderVersion() error {
 	return nil
 }
 
+// Clone creates a clones the miniblock
+func (m *MiniBlock) Clone() data.MiniBlockHandler {
+	if m == nil {
+		return nil
+	}
+
+	return m.DeepClone()
+}
+
+// IsInterfaceNil returns true if underlying object is nil
+func (m *MiniBlock) IsInterfaceNil() bool {
+	return m == nil
+}
+
+// SetMiniBlocks will set a new set of miniblocks
+func (b *Body) SetMiniBlocks(miniBlocks []data.MiniBlockHandler) error {
+	if b == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	b.MiniBlocks = make([]*MiniBlock, len(miniBlocks))
+	for i, mb := range miniBlocks {
+		mbHandlerClone := mb.Clone()
+		mbClone, ok := mbHandlerClone.(*MiniBlock)
+		if !ok {
+			return data.ErrWrongTypeAssertion
+		}
+		b.MiniBlocks[i] = mbClone
+	}
+
+	return nil
+}
+
 // IntegrityAndValidity checks if data is valid
 func (b *Body) IntegrityAndValidity() error {
 	if b == nil {
@@ -415,8 +448,8 @@ func (b *Body) IsInterfaceNil() bool {
 	return b == nil
 }
 
-// Clone the underlying data
-func (mb *MiniBlock) Clone() *MiniBlock {
+// DeepClone the underlying data
+func (mb *MiniBlock) DeepClone() *MiniBlock {
 	if mb == nil {
 		return nil
 	}

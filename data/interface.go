@@ -246,8 +246,16 @@ type EpochStartHandler interface {
 	SetEconomics(economicsHandler EconomicsHandler) error
 }
 
+// MiniBlockHandler interface for miniblock
+type MiniBlockHandler interface {
+	Clone() MiniBlockHandler
+	// IsInterfaceNil returns true if there is no value under the interface
+	IsInterfaceNil() bool
+}
+
 // BodyHandler interface for a block body
 type BodyHandler interface {
+	SetMiniBlocks(miniBlocks []MiniBlockHandler) error
 	Clone() BodyHandler
 	// IntegrityAndValidity checks the integrity and validity of the block
 	IntegrityAndValidity() error
