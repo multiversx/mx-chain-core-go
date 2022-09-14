@@ -5,7 +5,41 @@ import (
 	"math/big"
 
 	"github.com/ElrondNetwork/elrond-go-core/data"
+	"github.com/ElrondNetwork/elrond-go-core/data/headerVersionData"
 )
+
+// GetAdditionalData returns nil
+func (hv *HeaderWithValidatorStats) GetAdditionalData() headerVersionData.HeaderAdditionalData {
+	return nil
+}
+
+// HasScheduledMiniBlocks returns false
+func (hv *HeaderWithValidatorStats) HasScheduledMiniBlocks() bool {
+	return false
+}
+
+// SetScheduledRootHash returns nil
+func (hv *HeaderWithValidatorStats) SetScheduledRootHash(_ []byte) error {
+	return nil
+}
+
+// SetAdditionalData will not do anything
+func (hv *HeaderWithValidatorStats) SetAdditionalData(_ headerVersionData.HeaderAdditionalData) error {
+	return nil
+}
+
+// ShallowClone  will return a clone of the object
+func (hv *HeaderWithValidatorStats) ShallowClone() data.HeaderHandler {
+	if hv == nil || hv.Header == nil {
+		return nil
+	}
+
+	internalHeaderCopy := *hv.Header
+	headerCopy := *hv
+	headerCopy.Header = &internalHeaderCopy
+
+	return &headerCopy
+}
 
 // GetShardID returns the header shardID
 func (hv *HeaderWithValidatorStats) GetShardID() uint32 {
@@ -386,19 +420,6 @@ func (hv *HeaderWithValidatorStats) MapMiniBlockHashesToShards() map[string]uint
 	}
 
 	return hv.Header.MapMiniBlockHashesToShards()
-}
-
-// ShallowClone returns a clone of the object
-func (hv *HeaderWithValidatorStats) ShallowClone() data.CommonHeaderHandler {
-	if hv == nil || hv.Header == nil {
-		return nil
-	}
-
-	internalHeaderCopy := *hv.Header
-	headerCopy := *hv
-	headerCopy.Header = &internalHeaderCopy
-
-	return &headerCopy
 }
 
 // IsInterfaceNil returns true if there is no value under the interface
