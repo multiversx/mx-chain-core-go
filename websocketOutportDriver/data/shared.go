@@ -35,6 +35,7 @@ type ArgsSaveValidatorsRating struct {
 
 // ArgsSaveAccounts holds the driver's arguments needed for indexing accounts
 type ArgsSaveAccounts struct {
+	ShardID        uint32
 	BlockTimestamp uint64
 	Acc            map[string]*outport.AlteredAccount
 }
