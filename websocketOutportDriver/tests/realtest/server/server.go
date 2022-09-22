@@ -51,7 +51,7 @@ func doAction(server Driver) {
 		fmt.Println(err.Error())
 	}
 
-	err = server.SaveAccounts(1155, nil)
+	err = server.SaveAccounts(1155, nil, 0)
 	if err != nil {
 		fmt.Println(err.Error())
 	}

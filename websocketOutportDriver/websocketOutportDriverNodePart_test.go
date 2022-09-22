@@ -186,7 +186,7 @@ func TestWebsocketOutportDriverNodePart_SaveAccounts(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.SaveAccounts(0, nil)
+		err = o.SaveAccounts(0, nil, 0)
 		require.True(t, errors.Is(err, cannotSendOnRouteErr))
 	})
 
@@ -200,7 +200,7 @@ func TestWebsocketOutportDriverNodePart_SaveAccounts(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.SaveAccounts(0, nil)
+		err = o.SaveAccounts(0, nil, 0)
 		require.NoError(t, err)
 	})
 }
