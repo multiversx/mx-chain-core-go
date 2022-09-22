@@ -145,7 +145,7 @@ func (m *MiniBlockHeader) getMiniBlockHeaderReserved() (*MiniBlockHeaderReserved
 
 		return mbhr, nil
 	}
-	return nil, nil
+	return nil, data.ErrNilReservedField
 }
 
 // SetMiniBlockHeaderReserved sets the Reserved field for the miniBlock header with the given parameter
