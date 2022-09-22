@@ -106,3 +106,9 @@ var ErrNilLogger = errors.New("nil logger")
 
 // ErrNilGoRoutineProcessor signals that a nil go routine processor has been provided
 var ErrNilGoRoutineProcessor = errors.New("nil go routine processor")
+
+// ErrAddressLengthNotCorrect signals that an account does not have the correct address
+var ErrAddressLengthNotCorrect = errors.New("address length is not correct")
+
+// ErrVMTypeLengthIsNotCorrect signals that the vm type length is not correct
+var ErrVMTypeLengthIsNotCorrect = errors.New("vm type length is not correct")
