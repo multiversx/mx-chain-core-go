@@ -102,10 +102,11 @@ func (o *websocketOutportDriverNodePart) SaveValidatorsRating(indexID string, in
 }
 
 // SaveAccounts will handle the accounts' saving
-func (o *websocketOutportDriverNodePart) SaveAccounts(blockTimestamp uint64, acc map[string]*outport.AlteredAccount) error {
+func (o *websocketOutportDriverNodePart) SaveAccounts(blockTimestamp uint64, acc map[string]*outport.AlteredAccount, shardID uint32) error {
 	args := outportSenderData.ArgsSaveAccounts{
 		BlockTimestamp: blockTimestamp,
 		Acc:            acc,
+		ShardID:        shardID,
 	}
 
 	return o.handleAction(args, outportSenderData.OperationSaveAccounts)
