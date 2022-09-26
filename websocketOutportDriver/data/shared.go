@@ -5,6 +5,14 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data/outport"
 )
 
+type HeaderType string
+
+const (
+	MetaHeader    HeaderType = "*block.MetaBlock"
+	ShardHeaderV1 HeaderType = "*block.Header"
+	ShardHeaderV2 HeaderType = "*block.HeaderV2"
+)
+
 // WsSendArgs holds the arguments needed for performing a web socket request
 type WsSendArgs struct {
 	Payload []byte
@@ -12,8 +20,9 @@ type WsSendArgs struct {
 
 // ArgsRevertIndexedBlock holds the driver's arguments needed for reverting an indexed block
 type ArgsRevertIndexedBlock struct {
-	Header data.HeaderHandler
-	Body   data.BodyHandler
+	HeaderType HeaderType
+	Header     data.HeaderHandler
+	Body       data.BodyHandler
 }
 
 // ArgsSaveRoundsInfo holds the driver's arguments needed for indexing rounds info
@@ -43,4 +52,10 @@ type ArgsSaveAccounts struct {
 // ArgsFinalizedBlock holds the driver's arguments needed for handling a finalized block
 type ArgsFinalizedBlock struct {
 	HeaderHash []byte
+}
+
+// ArgsSaveBlock holds the driver's arguments needed for handling a save block
+type ArgsSaveBlock struct {
+	HeaderType HeaderType
+	outport.ArgsSaveBlockData
 }
