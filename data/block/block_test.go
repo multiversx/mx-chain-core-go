@@ -835,3 +835,13 @@ func TestHeader_HasScheduledMiniBlocks(t *testing.T) {
 	h.MiniBlockHeaders = []block.MiniBlockHeader{*mbHeader}
 	require.False(t, h.HasScheduledMiniBlocks())
 }
+
+func TestMiniBlockHeader_GetMiniBlockHeaderReservedShouldErrWhenReservedFieldIsNil(t *testing.T) {
+	t.Parallel()
+
+	mbh := &block.MiniBlockHeader{}
+
+	mbhr, err := mbh.GetMiniBlockHeaderReserved()
+	assert.Nil(t, mbhr)
+	assert.Equal(t, data.ErrNilReservedField, err)
+}
