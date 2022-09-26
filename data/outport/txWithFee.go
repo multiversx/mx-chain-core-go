@@ -6,21 +6,27 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data"
 )
 
-// TransactionHandlerWithGasAndFee hold a data.TransactionHandler and information about fee and gas used0
-type TransactionHandlerWithGasAndFee struct {
-	data.TransactionHandler
-
+// FeeInfo hold information about the fee and gas used
+type FeeInfo struct {
 	GasUsed        uint64
 	Fee            *big.Int
 	InitialPaidFee *big.Int
+}
+
+// TransactionHandlerWithGasAndFee hold a data.TransactionHandler and information about fee and gas used
+type TransactionHandlerWithGasAndFee struct {
+	data.TransactionHandler
+	FeeInfo
 }
 
 // NewTransactionHandlerWithGasAndFee returns a new instance of transactionHandlerWithGasAndFee which matches the interface
 func NewTransactionHandlerWithGasAndFee(txHandler data.TransactionHandler, gasUsed uint64, fee *big.Int) data.TransactionHandlerWithGasUsedAndFee {
 	return &TransactionHandlerWithGasAndFee{
 		TransactionHandler: txHandler,
-		GasUsed:            gasUsed,
-		Fee:                fee,
+		FeeInfo: FeeInfo{
+			GasUsed: gasUsed,
+			Fee:     fee,
+		},
 	}
 }
 
