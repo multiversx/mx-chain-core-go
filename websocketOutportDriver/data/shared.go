@@ -57,5 +57,5 @@ type ArgsFinalizedBlock struct {
 // ArgsSaveBlock holds the driver's arguments needed for handling a save block
 type ArgsSaveBlock struct {
 	HeaderType HeaderType
-	outport.ArgsSaveBlockData
+	*outport.ArgsSaveBlockData
 }
