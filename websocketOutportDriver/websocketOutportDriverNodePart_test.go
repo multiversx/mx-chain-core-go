@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	coreMock "github.com/ElrondNetwork/elrond-go-core/core/mock"
+	"github.com/ElrondNetwork/elrond-go-core/data/block"
 	"github.com/ElrondNetwork/elrond-go-core/data/outport"
 	"github.com/ElrondNetwork/elrond-go-core/data/typeConverters/uint64ByteSlice"
 	"github.com/ElrondNetwork/elrond-go-core/marshal"
@@ -306,13 +307,18 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 
 	args := getMockArgs()
 
-	marshaledData, err := args.Marshaller.Marshal(&outport.ArgsSaveBlockData{})
+	marshaledData, err := args.Marshaller.Marshal(&data.ArgsSaveBlock{
+		HeaderType: data.MetaHeader,
+		ArgsSaveBlockData: &outport.ArgsSaveBlockData{
+			Header: &block.MetaBlock{},
+		},
+	})
 	require.Nil(t, err)
 
 	args.WebsocketSender = &mock.WebSocketSenderStub{
 		SendOnRouteCalled: func(args data.WsSendArgs) error {
 			expectedOpBytes := []byte{0, 0, 0, 0}
-			expectedLengthBytes := []byte{0, 0, 1, 0} // json serialized empty ArgsSaveBlockData has 214 bytes
+			expectedLengthBytes := []byte{0, 0, 1, 163} // json serialized empty ArgsSaveBlockData has 214 byte
 			expectedPayload := append(expectedOpBytes, expectedLengthBytes...)
 			expectedPayload = append(expectedPayload, marshaledData...)
 
@@ -324,7 +330,7 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 	o, err := NewWebsocketOutportDriverNodePart(args)
 	require.NoError(t, err)
 
-	err = o.SaveBlock(&outport.ArgsSaveBlockData{})
+	err = o.SaveBlock(&outport.ArgsSaveBlockData{Header: &block.MetaBlock{}})
 	require.NoError(t, err)
 }
 
