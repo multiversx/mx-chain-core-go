@@ -60,7 +60,11 @@ func NewWebsocketOutportDriverNodePart(args WebsocketOutportDriverNodePartArgs) 
 
 // SaveBlock will send the provided block saving arguments within the websocket
 func (o *websocketOutportDriverNodePart) SaveBlock(args *outport.ArgsSaveBlockData) error {
-	headerType := reflect.TypeOf(args.Header).String()
+	var headerType string
+	if !check.IfNil(args.Header) {
+		headerType = reflect.TypeOf(args.Header).String()
+	}
+
 	argsSaveBlock := outportSenderData.ArgsSaveBlock{
 		HeaderType:        outportSenderData.HeaderType(headerType),
 		ArgsSaveBlockData: args,
@@ -71,7 +75,11 @@ func (o *websocketOutportDriverNodePart) SaveBlock(args *outport.ArgsSaveBlockDa
 
 // RevertIndexedBlock will handle the action of reverting the indexed block
 func (o *websocketOutportDriverNodePart) RevertIndexedBlock(header data.HeaderHandler, body data.BodyHandler) error {
-	headerType := reflect.TypeOf(header).String()
+	var headerType string
+	if !check.IfNil(header) {
+		headerType = reflect.TypeOf(header).String()
+	}
+
 	args := outportSenderData.ArgsRevertIndexedBlock{
 		Header:     header,
 		Body:       body,
