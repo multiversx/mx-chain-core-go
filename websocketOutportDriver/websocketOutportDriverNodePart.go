@@ -67,7 +67,7 @@ func (o *websocketOutportDriverNodePart) SaveBlock(args *outport.ArgsSaveBlockDa
 
 	argsSaveBlock := outportSenderData.ArgsSaveBlock{
 		HeaderType:        outportSenderData.HeaderType(headerType),
-		ArgsSaveBlockData: args,
+		ArgsSaveBlockData: prepareArgsSaveBlock(args),
 	}
 
 	return o.handleAction(argsSaveBlock, outportSenderData.OperationSaveBlock)

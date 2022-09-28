@@ -2,9 +2,12 @@ package websocketOutportDriver
 
 import (
 	"bytes"
+	"encoding/hex"
 	"fmt"
 
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
+	dataCore "github.com/ElrondNetwork/elrond-go-core/data"
+	"github.com/ElrondNetwork/elrond-go-core/data/outport"
 	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
 )
 
@@ -101,4 +104,49 @@ func (wpp *websocketPayloadParser) ExtractPayloadData(payload []byte) (*PayloadD
 func padUint32ByteSlice(initial []byte) []byte {
 	padding := bytes.Repeat([]byte{0}, 4)
 	return append(padding, initial...)
+}
+
+func prepareArgsSaveBlock(args *outport.ArgsSaveBlockData) *outport.ArgsSaveBlockData {
+	prepareTxs := func(initial map[string]dataCore.TransactionHandlerWithGasUsedAndFee) map[string]dataCore.TransactionHandlerWithGasUsedAndFee {
+		res := make(map[string]dataCore.TransactionHandlerWithGasUsedAndFee, len(initial))
+		for txHash, tx := range initial {
+			res[hex.EncodeToString([]byte(txHash))] = tx
+		}
+		return res
+	}
+	prepareLogs := func(initial []*dataCore.LogData) []*dataCore.LogData {
+		res := make([]*dataCore.LogData, 0, len(initial))
+		for _, logHandler := range initial {
+			res = append(res, &dataCore.LogData{
+				LogHandler: logHandler.LogHandler,
+				TxHash:     hex.EncodeToString([]byte(logHandler.TxHash)),
+			})
+		}
+		return res
+	}
+
+	var pool *outport.Pool
+	if args.TransactionsPool != nil {
+		pool = &outport.Pool{
+			Txs:      prepareTxs(args.TransactionsPool.Txs),
+			Scrs:     prepareTxs(args.TransactionsPool.Scrs),
+			Rewards:  prepareTxs(args.TransactionsPool.Rewards),
+			Invalid:  prepareTxs(args.TransactionsPool.Invalid),
+			Receipts: prepareTxs(args.TransactionsPool.Receipts),
+			Logs:     prepareLogs(args.TransactionsPool.Logs),
+		}
+	}
+
+	return &outport.ArgsSaveBlockData{
+		HeaderHash:             args.HeaderHash,
+		Body:                   args.Body,
+		Header:                 args.Header,
+		SignersIndexes:         args.SignersIndexes,
+		NotarizedHeadersHashes: args.NotarizedHeadersHashes,
+		HeaderGasConsumption:   args.HeaderGasConsumption,
+		TransactionsPool:       pool,
+		AlteredAccounts:        args.AlteredAccounts,
+		NumberOfShards:         args.NumberOfShards,
+		IsImportDB:             args.IsImportDB,
+	}
 }
