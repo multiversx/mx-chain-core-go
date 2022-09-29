@@ -116,3 +116,34 @@ type Delegator struct {
 	Total            string            `json:"total"`
 	TotalAsBigInt    *big.Int          `json:"-"`
 }
+
+// BlockFetchType is the type that specifies how a block should be queried from API
+type BlockFetchType string
+
+func (aft BlockFetchType) String() string {
+	return string(aft)
+}
+
+const (
+	// BlockFetchTypeByHash is to be used when a block should be fetched from API based on its hash
+	BlockFetchTypeByHash BlockFetchType = "by-hash"
+
+	// BlockFetchTypeByNonce is to be used when a block should be fetched from API based on its nonce
+	BlockFetchTypeByNonce BlockFetchType = "by-nonce"
+)
+
+// TODO: GetBlockParameters can be used for other endpoints as well
+
+// GetBlockParameters holds the parameters for requesting a block on API
+type GetBlockParameters struct {
+	RequestType BlockFetchType
+	Hash        string
+	Nonce       uint64
+}
+
+// GetAlteredAccountsForBlockOptions specifies the options for returning altered accounts for a given block
+type GetAlteredAccountsForBlockOptions struct {
+	GetBlockParameters
+	TokensFilter string
+	WithMetadata bool
+}
