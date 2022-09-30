@@ -13,8 +13,6 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-const operationsPath = "/operations"
-
 // OutportDriverWebSocketSenderFactoryArgs holds the arguments needed for creating a outportDriverWebSocketSenderFactory
 type OutportDriverWebSocketSenderFactoryArgs struct {
 	WebSocketConfig          outportData.WebSocketConfig
@@ -90,7 +88,7 @@ func (o *outportDriverWebSocketSenderFactory) createWebSocketSender() (websocket
 		return nil, err
 	}
 
-	err = o.registerRoute(router, webSocketSender, operationsPath)
+	err = o.registerRoute(router, webSocketSender, outportData.WSRoute)
 	if err != nil {
 		return nil, err
 	}

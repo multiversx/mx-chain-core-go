@@ -1,5 +1,9 @@
 package data
 
+const (
+	WSRoute = "/save"
+)
+
 // WebSocketConfig holds the configuration needed for instantiating a new web socket server
 type WebSocketConfig struct {
 	URL             string
