@@ -79,5 +79,8 @@ var ErrScheduledRootHashNotSupported = errors.New("scheduled root hash is not su
 // ErrWrongTransactionsTypeSize signals that size of transactions type buffer from mini block reserved field is wrong
 var ErrWrongTransactionsTypeSize = errors.New("wrong transactions type size")
 
+// ErrNilReservedField signals that a nil reserved field was provided
+var ErrNilReservedField = errors.New("reserved field is nil")
+
 // ErrWrongTypeAssertion signals that there was a wrong type assertion
 var ErrWrongTypeAssertion = errors.New("wrong type assertion")
