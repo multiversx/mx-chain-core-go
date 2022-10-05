@@ -9,11 +9,11 @@ import (
 type HeaderType string
 
 const (
-	// MetaHeader dines the type of *block.MetaBlock
+	// MetaHeader defines the type of *block.MetaBlock
 	MetaHeader HeaderType = "*block.MetaBlock"
-	// ShardHeaderV1 dines the type of *block.Header
+	// ShardHeaderV1 defines the type of *block.Header
 	ShardHeaderV1 HeaderType = "*block.Header"
-	// ShardHeaderV2 dines the type of *block.HeaderV2
+	// ShardHeaderV2 defines the type of *block.HeaderV2
 	ShardHeaderV2 HeaderType = "*block.HeaderV2"
 )
 
