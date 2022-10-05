@@ -106,7 +106,11 @@ func padUint32ByteSlice(initial []byte) []byte {
 	return append(padding, initial...)
 }
 
-func prepareArgsSaveBlock(args *outport.ArgsSaveBlockData) *outport.ArgsSaveBlockData {
+func prepareArgsSaveBlock(args *outport.ArgsSaveBlockData) outport.ArgsSaveBlockData {
+	if args == nil {
+		return outport.ArgsSaveBlockData{}
+	}
+
 	var pool *outport.Pool
 	if args.TransactionsPool != nil {
 		pool = &outport.Pool{
@@ -119,7 +123,7 @@ func prepareArgsSaveBlock(args *outport.ArgsSaveBlockData) *outport.ArgsSaveBloc
 		}
 	}
 
-	return &outport.ArgsSaveBlockData{
+	return outport.ArgsSaveBlockData{
 		HeaderHash:             args.HeaderHash,
 		Body:                   args.Body,
 		Header:                 args.Header,

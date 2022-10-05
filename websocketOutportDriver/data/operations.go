@@ -1,6 +1,7 @@
 package data
 
 const (
+	// WSRoute is the route which data will be sent over websocket
 	WSRoute = "/save"
 )
 

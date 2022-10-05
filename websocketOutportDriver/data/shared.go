@@ -5,11 +5,15 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data/outport"
 )
 
+// HeaderType defines the type to be used for the header that is sent
 type HeaderType string
 
 const (
-	MetaHeader    HeaderType = "*block.MetaBlock"
+	// MetaHeader dines the type of *block.MetaBlock
+	MetaHeader HeaderType = "*block.MetaBlock"
+	// ShardHeaderV1 dines the type of *block.Header
 	ShardHeaderV1 HeaderType = "*block.Header"
+	// ShardHeaderV2 dines the type of *block.HeaderV2
 	ShardHeaderV2 HeaderType = "*block.HeaderV2"
 )
 
@@ -57,5 +61,5 @@ type ArgsFinalizedBlock struct {
 // ArgsSaveBlock holds the driver's arguments needed for handling a save block
 type ArgsSaveBlock struct {
 	HeaderType HeaderType
-	*outport.ArgsSaveBlockData
+	outport.ArgsSaveBlockData
 }
