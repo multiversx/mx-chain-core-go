@@ -5,7 +5,7 @@ import (
 	"time"
 
 	"github.com/ElrondNetwork/elrond-go-core/core/mock"
-	"github.com/ElrondNetwork/elrond-go-core/data/indexer"
+	"github.com/ElrondNetwork/elrond-go-core/data/outport"
 	"github.com/ElrondNetwork/elrond-go-core/data/typeConverters/uint64ByteSlice"
 	"github.com/ElrondNetwork/elrond-go-core/marshal"
 	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
@@ -46,12 +46,12 @@ func main() {
 }
 
 func doAction(server Driver) {
-	err := server.SaveBlock(&indexer.ArgsSaveBlockData{HeaderHash: []byte("header hash")})
+	err := server.SaveBlock(&outport.ArgsSaveBlockData{HeaderHash: []byte("header hash")})
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	err = server.SaveAccounts(1155, nil)
+	err = server.SaveAccounts(1155, nil, 0)
 	if err != nil {
 		fmt.Println(err.Error())
 	}

@@ -7,7 +7,7 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/core/atomic"
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
 	"github.com/ElrondNetwork/elrond-go-core/data"
-	"github.com/ElrondNetwork/elrond-go-core/data/indexer"
+	"github.com/ElrondNetwork/elrond-go-core/data/outport"
 	"github.com/ElrondNetwork/elrond-go-core/marshal"
 	outportSenderData "github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
 )
@@ -58,22 +58,28 @@ func NewWebsocketOutportDriverNodePart(args WebsocketOutportDriverNodePartArgs) 
 }
 
 // SaveBlock will send the provided block saving arguments within the websocket
-func (o *websocketOutportDriverNodePart) SaveBlock(args *indexer.ArgsSaveBlockData) error {
-	return o.handleAction(args, outportSenderData.OperationSaveBlock)
+func (o *websocketOutportDriverNodePart) SaveBlock(args *outport.ArgsSaveBlockData) error {
+	argsSaveBlock := outportSenderData.ArgsSaveBlock{
+		HeaderType:        core.GetHeaderType(args.Header),
+		ArgsSaveBlockData: prepareArgsSaveBlock(*args),
+	}
+
+	return o.handleAction(argsSaveBlock, outportSenderData.OperationSaveBlock)
 }
 
 // RevertIndexedBlock will handle the action of reverting the indexed block
 func (o *websocketOutportDriverNodePart) RevertIndexedBlock(header data.HeaderHandler, body data.BodyHandler) error {
 	args := outportSenderData.ArgsRevertIndexedBlock{
-		Header: header,
-		Body:   body,
+		Header:     header,
+		Body:       body,
+		HeaderType: core.GetHeaderType(header),
 	}
 
 	return o.handleAction(args, outportSenderData.OperationRevertIndexedBlock)
 }
 
 // SaveRoundsInfo will handle the saving of rounds
-func (o *websocketOutportDriverNodePart) SaveRoundsInfo(roundsInfos []*indexer.RoundInfo) error {
+func (o *websocketOutportDriverNodePart) SaveRoundsInfo(roundsInfos []*outport.RoundInfo) error {
 	args := outportSenderData.ArgsSaveRoundsInfo{
 		RoundsInfos: roundsInfos,
 	}
@@ -92,7 +98,7 @@ func (o *websocketOutportDriverNodePart) SaveValidatorsPubKeys(validatorsPubKeys
 }
 
 // SaveValidatorsRating will handle the saving of the validators' rating
-func (o *websocketOutportDriverNodePart) SaveValidatorsRating(indexID string, infoRating []*indexer.ValidatorRatingInfo) error {
+func (o *websocketOutportDriverNodePart) SaveValidatorsRating(indexID string, infoRating []*outport.ValidatorRatingInfo) error {
 	args := outportSenderData.ArgsSaveValidatorsRating{
 		IndexID:    indexID,
 		InfoRating: infoRating,
@@ -102,10 +108,11 @@ func (o *websocketOutportDriverNodePart) SaveValidatorsRating(indexID string, in
 }
 
 // SaveAccounts will handle the accounts' saving
-func (o *websocketOutportDriverNodePart) SaveAccounts(blockTimestamp uint64, acc []data.UserAccountHandler) error {
+func (o *websocketOutportDriverNodePart) SaveAccounts(blockTimestamp uint64, acc map[string]*outport.AlteredAccount, shardID uint32) error {
 	args := outportSenderData.ArgsSaveAccounts{
 		BlockTimestamp: blockTimestamp,
 		Acc:            acc,
+		ShardID:        shardID,
 	}
 
 	return o.handleAction(args, outportSenderData.OperationSaveAccounts)

@@ -21,7 +21,7 @@ func (wah *websocketClientAcknowledgesHolder) Add(counter uint64) {
 	wah.mutAcks.Unlock()
 }
 
-// ProcessAcknowledged will process the acknowledge for the given counter. If found, the element will also be
+// ProcessAcknowledged will process the acknowledgment for the given counter. If found, the element will also be
 // removed from the inner map
 func (wah *websocketClientAcknowledgesHolder) ProcessAcknowledged(counter uint64) bool {
 	wah.mutAcks.Lock()

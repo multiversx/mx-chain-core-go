@@ -11,7 +11,7 @@ import (
 
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
 	"github.com/ElrondNetwork/elrond-go-core/core/mock"
-	"github.com/ElrondNetwork/elrond-go-core/data/indexer"
+	"github.com/ElrondNetwork/elrond-go-core/data/outport"
 	"github.com/ElrondNetwork/elrond-go-core/data/typeConverters/uint64ByteSlice"
 	"github.com/ElrondNetwork/elrond-go-core/marshal"
 	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver"
@@ -95,7 +95,7 @@ func (tc *tempClient) Run(port int) {
 
 			// Cleanly close the connection by sending a close message and then
 			// waiting (with timeout) for the server to close the connection.
-			err := wsConnection.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+			err = wsConnection.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 			if err != nil {
 				log.Error(tc.name+" -> write close", "error", err)
 				return
@@ -131,8 +131,8 @@ func (tc *tempClient) verifyPayloadAndSendAckIfNeeded(payload []byte, ackHandler
 
 	if payloadData.OperationType.Uint32() == data.OperationSaveBlock.Uint32() {
 		log.Debug(tc.name + " -> save block operation")
-		var argsBlock indexer.ArgsSaveBlockData
-		err := tc.marshaller.Unmarshal(&argsBlock, payload)
+		var argsBlock outport.ArgsSaveBlockData
+		err = tc.marshaller.Unmarshal(&argsBlock, payload)
 		if err != nil {
 			log.Error(tc.name+" -> cannot unmarshal block", "error", err)
 		} else {
@@ -142,7 +142,7 @@ func (tc *tempClient) verifyPayloadAndSendAckIfNeeded(payload []byte, ackHandler
 
 	if payloadData.WithAcknowledge {
 		counterBytes := uint64ByteSliceConverter.ToByteSlice(payloadData.Counter)
-		err := ackHandler.WriteMessage(websocket.BinaryMessage, counterBytes)
+		err = ackHandler.WriteMessage(websocket.BinaryMessage, counterBytes)
 		if err != nil {
 			log.Error(tc.name + " -> " + err.Error())
 		}

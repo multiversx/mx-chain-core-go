@@ -1,4 +1,4 @@
-package indexer
+package outport
 
 import (
 	"time"
@@ -24,7 +24,7 @@ type AlteredAccount struct {
 	Tokens  []*AccountTokenData `json:"tokens"`
 }
 
-// ArgsSaveBlockData will contains all information that are needed to save block data
+// ArgsSaveBlockData will contain all information that are needed to save block data
 type ArgsSaveBlockData struct {
 	HeaderHash             []byte
 	Body                   data.BodyHandler
@@ -34,6 +34,8 @@ type ArgsSaveBlockData struct {
 	HeaderGasConsumption   HeaderGasConsumption
 	TransactionsPool       *Pool
 	AlteredAccounts        map[string]*AlteredAccount
+	NumberOfShards         uint32
+	IsImportDB             bool
 }
 
 // HeaderGasConsumption holds the data needed to save the gas consumption of a header
@@ -44,13 +46,13 @@ type HeaderGasConsumption struct {
 	MaxGasPerBlock uint64
 }
 
-// Pool will holds all types of transaction
+// Pool will hold all types of transaction
 type Pool struct {
-	Txs      map[string]data.TransactionHandler
-	Scrs     map[string]data.TransactionHandler
-	Rewards  map[string]data.TransactionHandler
-	Invalid  map[string]data.TransactionHandler
-	Receipts map[string]data.TransactionHandler
+	Txs      map[string]data.TransactionHandlerWithGasUsedAndFee
+	Scrs     map[string]data.TransactionHandlerWithGasUsedAndFee
+	Rewards  map[string]data.TransactionHandlerWithGasUsedAndFee
+	Invalid  map[string]data.TransactionHandlerWithGasUsedAndFee
+	Receipts map[string]data.TransactionHandlerWithGasUsedAndFee
 	Logs     []*data.LogData
 }
 
