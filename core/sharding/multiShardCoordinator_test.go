@@ -34,7 +34,7 @@ func TestMultiShardCoordinator_NewMultiShardCoordinatorInvalidNumberOfShards(t *
 	assert.Equal(t, ErrInvalidNumberOfShards, err)
 }
 
-func TestMultiShardCoordinator_NewMultiShardCoordinatorSelfIdGraterThannumOfShardsShouldError(t *testing.T) {
+func TestMultiShardCoordinator_NewMultiShardCoordinatorSelfIdGraterThanNumOfShardsShouldError(t *testing.T) {
 	_, err := NewMultiShardCoordinator(1, 2)
 	assert.Equal(t, ErrInvalidShardId, err)
 }

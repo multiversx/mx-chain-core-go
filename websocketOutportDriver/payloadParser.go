@@ -106,11 +106,7 @@ func padUint32ByteSlice(initial []byte) []byte {
 	return append(padding, initial...)
 }
 
-func prepareArgsSaveBlock(args *outport.ArgsSaveBlockData) outport.ArgsSaveBlockData {
-	if args == nil {
-		return outport.ArgsSaveBlockData{}
-	}
-
+func prepareArgsSaveBlock(args outport.ArgsSaveBlockData) outport.ArgsSaveBlockData {
 	var pool *outport.Pool
 	if args.TransactionsPool != nil {
 		pool = &outport.Pool{
@@ -149,7 +145,7 @@ func prepareLogs(initial []*dataCore.LogData) []*dataCore.LogData {
 }
 
 func prepareTxs(initial map[string]dataCore.TransactionHandlerWithGasUsedAndFee) map[string]dataCore.TransactionHandlerWithGasUsedAndFee {
-	res := make(map[string]dataCore.TransactionHandlerWithGasUsedAndFee, len(initial))
+	res := make(map[string]dataCore.TransactionHandlerWithGasUsedAndFee)
 	for txHash, tx := range initial {
 		res[hex.EncodeToString([]byte(txHash))] = tx
 	}

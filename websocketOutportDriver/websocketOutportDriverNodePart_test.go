@@ -4,8 +4,8 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/ElrondNetwork/elrond-go-core/core"
 	coreMock "github.com/ElrondNetwork/elrond-go-core/core/mock"
-	dataCore "github.com/ElrondNetwork/elrond-go-core/data"
 	"github.com/ElrondNetwork/elrond-go-core/data/block"
 	"github.com/ElrondNetwork/elrond-go-core/data/outport"
 	"github.com/ElrondNetwork/elrond-go-core/data/typeConverters/uint64ByteSlice"
@@ -322,7 +322,7 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 	args := getMockArgs()
 
 	marshaledData, err := args.Marshaller.Marshal(&data.ArgsSaveBlock{
-		HeaderType: data.MetaHeader,
+		HeaderType: core.MetaHeader,
 		ArgsSaveBlockData: outport.ArgsSaveBlockData{
 			Header: &block.MetaBlock{},
 		},
@@ -332,7 +332,7 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 	args.WebsocketSender = &mock.WebSocketSenderStub{
 		SendOnRouteCalled: func(args data.WsSendArgs) error {
 			expectedOpBytes := []byte{0, 0, 0, 0}
-			expectedLengthBytes := []byte{0, 0, 1, 163} // json serialized empty ArgsSaveBlockData has 214 bytes
+			expectedLengthBytes := []byte{0, 0, 1, 156} // json serialized empty ArgsSaveBlockData has 214 bytes
 			expectedPayload := append(expectedOpBytes, expectedLengthBytes...)
 			expectedPayload = append(expectedPayload, marshaledData...)
 
@@ -366,17 +366,4 @@ func TestWebsocketOutportDriverNodePart_Close(t *testing.T) {
 	err = o.Close()
 	require.NoError(t, err)
 	require.True(t, closedWasCalled)
-}
-
-func TestGetHeaderType(t *testing.T) {
-	t.Parallel()
-
-	require.Equal(t, data.HeaderType(""), getHeaderType(nil))
-
-	var nilHeader dataCore.HeaderHandler
-	require.Equal(t, data.HeaderType(""), getHeaderType(nilHeader))
-
-	require.Equal(t, data.MetaHeader, getHeaderType(&block.MetaBlock{}))
-	require.Equal(t, data.ShardHeaderV1, getHeaderType(&block.Header{}))
-	require.Equal(t, data.ShardHeaderV2, getHeaderType(&block.HeaderV2{}))
 }

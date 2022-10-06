@@ -60,8 +60,8 @@ func NewWebsocketOutportDriverNodePart(args WebsocketOutportDriverNodePartArgs) 
 // SaveBlock will send the provided block saving arguments within the websocket
 func (o *websocketOutportDriverNodePart) SaveBlock(args *outport.ArgsSaveBlockData) error {
 	argsSaveBlock := outportSenderData.ArgsSaveBlock{
-		HeaderType:        getHeaderType(args.Header),
-		ArgsSaveBlockData: prepareArgsSaveBlock(args),
+		HeaderType:        core.GetHeaderType(args.Header),
+		ArgsSaveBlockData: prepareArgsSaveBlock(*args),
 	}
 
 	return o.handleAction(argsSaveBlock, outportSenderData.OperationSaveBlock)
@@ -72,7 +72,7 @@ func (o *websocketOutportDriverNodePart) RevertIndexedBlock(header data.HeaderHa
 	args := outportSenderData.ArgsRevertIndexedBlock{
 		Header:     header,
 		Body:       body,
-		HeaderType: getHeaderType(header),
+		HeaderType: core.GetHeaderType(header),
 	}
 
 	return o.handleAction(args, outportSenderData.OperationRevertIndexedBlock)
@@ -174,17 +174,4 @@ func (o *websocketOutportDriverNodePart) preparePayload(operation outportSenderD
 	payload = append(payload, data...)
 
 	return payload
-}
-
-func getHeaderType(header data.HeaderHandler) outportSenderData.HeaderType {
-	switch {
-	case check.IfNil(header):
-		return ""
-	case header.GetShardID() == core.MetachainShardId:
-		return outportSenderData.MetaHeader
-	case check.IfNil(header.GetAdditionalData()):
-		return outportSenderData.ShardHeaderV1
-	default:
-		return outportSenderData.ShardHeaderV2
-	}
 }
