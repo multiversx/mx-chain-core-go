@@ -4,6 +4,7 @@ import (
 	"errors"
 	"testing"
 
+	"github.com/ElrondNetwork/elrond-go-core/core"
 	coreMock "github.com/ElrondNetwork/elrond-go-core/core/mock"
 	"github.com/ElrondNetwork/elrond-go-core/data/block"
 	"github.com/ElrondNetwork/elrond-go-core/data/outport"
@@ -15,6 +16,19 @@ import (
 )
 
 var cannotSendOnRouteErr = errors.New("cannot send on route")
+
+func getMockArgs() WebsocketOutportDriverNodePartArgs {
+	return WebsocketOutportDriverNodePartArgs{
+		Enabled:    true,
+		Marshaller: &marshal.JsonMarshalizer{},
+		WebSocketConfig: data.WebSocketConfig{
+			URL: "localhost:5555",
+		},
+		WebsocketSender:          &mock.WebSocketSenderStub{},
+		Log:                      &coreMock.LoggerMock{},
+		Uint64ByteSliceConverter: uint64ByteSlice.NewBigEndianConverter(),
+	}
+}
 
 func TestNewWebsocketOutportDriverNodePart(t *testing.T) {
 	t.Parallel()
@@ -308,8 +322,8 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 	args := getMockArgs()
 
 	marshaledData, err := args.Marshaller.Marshal(&data.ArgsSaveBlock{
-		HeaderType: data.MetaHeader,
-		ArgsSaveBlockData: &outport.ArgsSaveBlockData{
+		HeaderType: core.MetaHeader,
+		ArgsSaveBlockData: outport.ArgsSaveBlockData{
 			Header: &block.MetaBlock{},
 		},
 	})
@@ -318,7 +332,7 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 	args.WebsocketSender = &mock.WebSocketSenderStub{
 		SendOnRouteCalled: func(args data.WsSendArgs) error {
 			expectedOpBytes := []byte{0, 0, 0, 0}
-			expectedLengthBytes := []byte{0, 0, 1, 163} // json serialized empty ArgsSaveBlockData has 214 byte
+			expectedLengthBytes := []byte{0, 0, 1, 156}
 			expectedPayload := append(expectedOpBytes, expectedLengthBytes...)
 			expectedPayload = append(expectedPayload, marshaledData...)
 
@@ -352,17 +366,4 @@ func TestWebsocketOutportDriverNodePart_Close(t *testing.T) {
 	err = o.Close()
 	require.NoError(t, err)
 	require.True(t, closedWasCalled)
-}
-
-func getMockArgs() WebsocketOutportDriverNodePartArgs {
-	return WebsocketOutportDriverNodePartArgs{
-		Enabled:    true,
-		Marshaller: &marshal.JsonMarshalizer{},
-		WebSocketConfig: data.WebSocketConfig{
-			URL: "localhost:5555",
-		},
-		WebsocketSender:          &mock.WebSocketSenderStub{},
-		Log:                      &coreMock.LoggerMock{},
-		Uint64ByteSliceConverter: uint64ByteSlice.NewBigEndianConverter(),
-	}
 }

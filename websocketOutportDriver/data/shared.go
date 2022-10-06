@@ -1,16 +1,9 @@
 package data
 
 import (
+	"github.com/ElrondNetwork/elrond-go-core/core"
 	"github.com/ElrondNetwork/elrond-go-core/data"
 	"github.com/ElrondNetwork/elrond-go-core/data/outport"
-)
-
-type HeaderType string
-
-const (
-	MetaHeader    HeaderType = "*block.MetaBlock"
-	ShardHeaderV1 HeaderType = "*block.Header"
-	ShardHeaderV2 HeaderType = "*block.HeaderV2"
 )
 
 // WsSendArgs holds the arguments needed for performing a web socket request
@@ -20,7 +13,7 @@ type WsSendArgs struct {
 
 // ArgsRevertIndexedBlock holds the driver's arguments needed for reverting an indexed block
 type ArgsRevertIndexedBlock struct {
-	HeaderType HeaderType
+	HeaderType core.HeaderType
 	Header     data.HeaderHandler
 	Body       data.BodyHandler
 }
@@ -56,6 +49,6 @@ type ArgsFinalizedBlock struct {
 
 // ArgsSaveBlock holds the driver's arguments needed for handling a save block
 type ArgsSaveBlock struct {
-	HeaderType HeaderType
-	*outport.ArgsSaveBlockData
+	HeaderType core.HeaderType
+	outport.ArgsSaveBlockData
 }

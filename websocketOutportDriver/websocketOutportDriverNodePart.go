@@ -2,7 +2,6 @@ package websocketOutportDriver
 
 import (
 	"fmt"
-	"reflect"
 
 	"github.com/ElrondNetwork/elrond-go-core/core"
 	"github.com/ElrondNetwork/elrond-go-core/core/atomic"
@@ -60,14 +59,9 @@ func NewWebsocketOutportDriverNodePart(args WebsocketOutportDriverNodePartArgs) 
 
 // SaveBlock will send the provided block saving arguments within the websocket
 func (o *websocketOutportDriverNodePart) SaveBlock(args *outport.ArgsSaveBlockData) error {
-	var headerType string
-	if !check.IfNil(args.Header) {
-		headerType = reflect.TypeOf(args.Header).String()
-	}
-
 	argsSaveBlock := outportSenderData.ArgsSaveBlock{
-		HeaderType:        outportSenderData.HeaderType(headerType),
-		ArgsSaveBlockData: prepareArgsSaveBlock(args),
+		HeaderType:        core.GetHeaderType(args.Header),
+		ArgsSaveBlockData: prepareArgsSaveBlock(*args),
 	}
 
 	return o.handleAction(argsSaveBlock, outportSenderData.OperationSaveBlock)
@@ -75,15 +69,10 @@ func (o *websocketOutportDriverNodePart) SaveBlock(args *outport.ArgsSaveBlockDa
 
 // RevertIndexedBlock will handle the action of reverting the indexed block
 func (o *websocketOutportDriverNodePart) RevertIndexedBlock(header data.HeaderHandler, body data.BodyHandler) error {
-	var headerType string
-	if !check.IfNil(header) {
-		headerType = reflect.TypeOf(header).String()
-	}
-
 	args := outportSenderData.ArgsRevertIndexedBlock{
 		Header:     header,
 		Body:       body,
-		HeaderType: outportSenderData.HeaderType(headerType),
+		HeaderType: core.GetHeaderType(header),
 	}
 
 	return o.handleAction(args, outportSenderData.OperationRevertIndexedBlock)

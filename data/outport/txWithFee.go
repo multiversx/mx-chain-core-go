@@ -6,14 +6,14 @@ import (
 	"github.com/ElrondNetwork/elrond-go-core/data"
 )
 
-// FeeInfo hold information about the fee and gas used
+// FeeInfo holds information about the fee and gas used
 type FeeInfo struct {
 	GasUsed        uint64
 	Fee            *big.Int
 	InitialPaidFee *big.Int
 }
 
-// TransactionHandlerWithGasAndFee hold a data.TransactionHandler and information about fee and gas used
+// TransactionHandlerWithGasAndFee holds a data.TransactionHandler and information about fee and gas used
 type TransactionHandlerWithGasAndFee struct {
 	data.TransactionHandler
 	FeeInfo

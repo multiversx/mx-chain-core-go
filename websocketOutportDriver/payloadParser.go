@@ -106,25 +106,7 @@ func padUint32ByteSlice(initial []byte) []byte {
 	return append(padding, initial...)
 }
 
-func prepareArgsSaveBlock(args *outport.ArgsSaveBlockData) *outport.ArgsSaveBlockData {
-	prepareTxs := func(initial map[string]dataCore.TransactionHandlerWithGasUsedAndFee) map[string]dataCore.TransactionHandlerWithGasUsedAndFee {
-		res := make(map[string]dataCore.TransactionHandlerWithGasUsedAndFee, len(initial))
-		for txHash, tx := range initial {
-			res[hex.EncodeToString([]byte(txHash))] = tx
-		}
-		return res
-	}
-	prepareLogs := func(initial []*dataCore.LogData) []*dataCore.LogData {
-		res := make([]*dataCore.LogData, 0, len(initial))
-		for _, logHandler := range initial {
-			res = append(res, &dataCore.LogData{
-				LogHandler: logHandler.LogHandler,
-				TxHash:     hex.EncodeToString([]byte(logHandler.TxHash)),
-			})
-		}
-		return res
-	}
-
+func prepareArgsSaveBlock(args outport.ArgsSaveBlockData) outport.ArgsSaveBlockData {
 	var pool *outport.Pool
 	if args.TransactionsPool != nil {
 		pool = &outport.Pool{
@@ -137,7 +119,7 @@ func prepareArgsSaveBlock(args *outport.ArgsSaveBlockData) *outport.ArgsSaveBloc
 		}
 	}
 
-	return &outport.ArgsSaveBlockData{
+	return outport.ArgsSaveBlockData{
 		HeaderHash:             args.HeaderHash,
 		Body:                   args.Body,
 		Header:                 args.Header,
@@ -149,4 +131,23 @@ func prepareArgsSaveBlock(args *outport.ArgsSaveBlockData) *outport.ArgsSaveBloc
 		NumberOfShards:         args.NumberOfShards,
 		IsImportDB:             args.IsImportDB,
 	}
+}
+
+func prepareLogs(initial []*dataCore.LogData) []*dataCore.LogData {
+	res := make([]*dataCore.LogData, 0, len(initial))
+	for _, logHandler := range initial {
+		res = append(res, &dataCore.LogData{
+			LogHandler: logHandler.LogHandler,
+			TxHash:     hex.EncodeToString([]byte(logHandler.TxHash)),
+		})
+	}
+	return res
+}
+
+func prepareTxs(initial map[string]dataCore.TransactionHandlerWithGasUsedAndFee) map[string]dataCore.TransactionHandlerWithGasUsedAndFee {
+	res := make(map[string]dataCore.TransactionHandlerWithGasUsedAndFee)
+	for txHash, tx := range initial {
+		res[hex.EncodeToString([]byte(txHash))] = tx
+	}
+	return res
 }

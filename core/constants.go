@@ -1,5 +1,17 @@
 package core
 
+// HeaderType defines the type to be used for the header that is sent
+type HeaderType string
+
+const (
+	// MetaHeader defines the type of *block.MetaBlock
+	MetaHeader HeaderType = "MetaBlock"
+	// ShardHeaderV1 defines the type of *block.Header
+	ShardHeaderV1 HeaderType = "Header"
+	// ShardHeaderV2 defines the type of *block.HeaderV2
+	ShardHeaderV2 HeaderType = "HeaderV2"
+)
+
 // NodeType represents the node's role in the network
 type NodeType string
 
