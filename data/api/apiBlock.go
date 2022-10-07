@@ -137,7 +137,7 @@ const (
 // GetBlockParameters holds the parameters for requesting a block on API
 type GetBlockParameters struct {
 	RequestType BlockFetchType
-	Hash        string
+	Hash        []byte
 	Nonce       uint64
 }
 
