@@ -13,7 +13,7 @@ type AccountTokenData struct {
 	Balance    string         `json:"balance"`
 	Nonce      uint64         `json:"nonce"`
 	Properties string         `json:"properties"`
-	Metadata   *esdt.MetaData `json:"metadata"`
+	MetaData   *esdt.MetaData `json:"metadata"`
 }
 
 // AlteredAccount holds the data needed of an altered account in a block
