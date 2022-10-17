@@ -59,6 +59,10 @@ type ApiTransactionResult struct {
 	InitiallyPaidFee                  string                    `json:"initiallyPaidFee,omitempty"`
 	IsRelayed                         bool                      `json:"isRelayed,omitempty"`
 	IsRefund                          bool                      `json:"isRefund,omitempty"`
+	CallType                          int                       `json:"callType"`
+	RelayerAddress                    string                    `json:"relayerAddress"`
+	RelayedValue                      string                    `json:"relayedValue"`
+	ChainID                           string                    `json:"chainID"`
 	Version                           uint32                    `json:"version"`
 	Options                           uint32                    `json:"options"`
 }
