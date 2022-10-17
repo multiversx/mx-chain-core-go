@@ -45,6 +45,8 @@ type ApiTransactionResult struct {
 	SmartContractResults              []*ApiSmartContractResult `json:"smartContractResults,omitempty"`
 	Logs                              *ApiLogs                  `json:"logs,omitempty"`
 	Status                            TxStatus                  `json:"status,omitempty"`
+	Version                           uint32                    `json:"version"`
+	Options                           uint32                    `json:"options"`
 }
 
 // ApiSmartContractResult represents a smart contract result with changed fields' types in order to make it friendly for API's json
