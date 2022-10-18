@@ -20,9 +20,9 @@ type Hyperblock struct {
 	AccumulatedFeesInEpoch string                              `json:"accumulatedFeesInEpoch,omitempty"`
 	DeveloperFeesInEpoch   string                              `json:"developerFeesInEpoch,omitempty"`
 	Timestamp              time.Duration                       `json:"timestamp,omitempty"`
-	EpochStartInfo         EpochStartInfo                      `json:"epochStartInfo,omitempty"`
-	EpochStartShardsData   []EpochStartShardData               `json:"epochStartShardsData,omitempty"`
-	ShardBlocks            []NotarizedBlock                    `json:"shardBlocks"`
+	EpochStartInfo         *EpochStartInfo                     `json:"epochStartInfo,omitempty"`
+	EpochStartShardsData   []*EpochStartShardData              `json:"epochStartShardsData,omitempty"`
+	ShardBlocks            []*NotarizedBlock                   `json:"shardBlocks"`
 	Transactions           []*transaction.ApiTransactionResult `json:"transactions"`
 	Status                 string                              `json:"status,omitempty"`
 }
