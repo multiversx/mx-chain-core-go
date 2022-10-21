@@ -64,3 +64,13 @@ func (t *TransactionHandlerWithGasAndFee) GetFee() *big.Int {
 func (t *TransactionHandlerWithGasAndFee) GetTxHandler() data.TransactionHandler {
 	return t.TransactionHandler
 }
+
+// WrapTxsMap will wrap the provided transactions map in a map fo transactions with fee and gas used
+func WrapTxsMap(txs map[string]data.TransactionHandler) map[string]data.TransactionHandlerWithGasUsedAndFee {
+	newMap := make(map[string]data.TransactionHandlerWithGasUsedAndFee, len(txs))
+	for txHash, tx := range txs {
+		newMap[txHash] = NewTransactionHandlerWithGasAndFee(tx, 0, big.NewInt(0))
+	}
+
+	return newMap
+}
