@@ -19,11 +19,12 @@ type AccountTokenData struct {
 
 // AlteredAccount holds the data needed of an altered account in a block
 type AlteredAccount struct {
-	IsSender bool                `json:"isSender"`
-	Nonce    uint64              `json:"nonce"`
-	Address  string              `json:"address"`
-	Balance  string              `json:"balance,omitempty"`
-	Tokens   []*AccountTokenData `json:"tokens"`
+	IsSender      bool                `json:"isSender"`
+	BalanceChange bool                `json:"balanceChange"`
+	Nonce         uint64              `json:"nonce"`
+	Address       string              `json:"address"`
+	Balance       string              `json:"balance,omitempty"`
+	Tokens        []*AccountTokenData `json:"tokens"`
 }
 
 // ArgsSaveBlockData will contain all information that are needed to save block data
