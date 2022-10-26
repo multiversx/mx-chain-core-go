@@ -117,7 +117,7 @@ func (w *webSocketSender) handleReceiveAck(client *webSocketClient) {
 			continue
 		}
 
-		w.log.Debug("received ack", "remote addr", client.remoteAddr, "message", message)
+		w.log.Trace("received ack", "remote addr", client.remoteAddr, "message", message)
 		counter, err := w.uint64ByteSliceConverter.ToUint64(message)
 		if err != nil {
 			w.log.Warn("cannot decode counter: bytes to uint64",
@@ -214,9 +214,6 @@ func (w *webSocketSender) waitForAck(remoteAddr string, counter uint64) {
 // Send will make the request accordingly to the received arguments
 func (w *webSocketSender) Send(args outportData.WsSendArgs) error {
 	assignedCounter := atomic.AddUint64(&w.counter, 1)
-
-	w.log.Debug("counter", "value", assignedCounter)
-
 	ackData := prefixWithoutAck
 	if w.withAcknowledge {
 		ackData = prefixWithAck
