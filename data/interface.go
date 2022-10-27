@@ -381,7 +381,7 @@ type TransactionWithFeeHandler interface {
 
 // UserAccountHandler models a user account
 type UserAccountHandler interface {
-	RetrieveValue(key []byte) ([]byte, error)
+	RetrieveValue(key []byte) ([]byte, uint32, error)
 	GetBalance() *big.Int
 	GetNonce() uint64
 	AddressBytes() []byte
