@@ -4,6 +4,7 @@ import (
 	"math/big"
 	"time"
 
+	"github.com/ElrondNetwork/elrond-go-core/data/outport"
 	"github.com/ElrondNetwork/elrond-go-core/data/transaction"
 )
 
@@ -54,10 +55,11 @@ type EpochStartInfo struct {
 
 // NotarizedBlock represents a notarized block
 type NotarizedBlock struct {
-	Hash  string `json:"hash"`
-	Nonce uint64 `json:"nonce"`
-	Round uint64 `json:"round"`
-	Shard uint32 `json:"shard"`
+	Hash            string                    `json:"hash"`
+	Nonce           uint64                    `json:"nonce"`
+	Round           uint64                    `json:"round"`
+	Shard           uint32                    `json:"shard"`
+	AlteredAccounts []*outport.AlteredAccount `json:"alteredAccounts,omitempty"`
 }
 
 // EpochStartShardData is a structure that holds data about the epoch start shard data
