@@ -9,19 +9,22 @@ import (
 
 // AccountTokenData holds the data needed for indexing a token of an altered account
 type AccountTokenData struct {
-	Identifier string         `json:"identifier"`
-	Balance    string         `json:"balance"`
-	Nonce      uint64         `json:"nonce"`
-	Properties string         `json:"properties"`
-	MetaData   *esdt.MetaData `json:"metadata"`
+	IsNFTCreate bool           `json:"isNFTCreate"`
+	Nonce       uint64         `json:"nonce"`
+	Identifier  string         `json:"identifier"`
+	Balance     string         `json:"balance"`
+	Properties  string         `json:"properties"`
+	MetaData    *esdt.MetaData `json:"metadata"`
 }
 
 // AlteredAccount holds the data needed of an altered account in a block
 type AlteredAccount struct {
-	Address string              `json:"address"`
-	Balance string              `json:"balance,omitempty"`
-	Nonce   uint64              `json:"nonce"`
-	Tokens  []*AccountTokenData `json:"tokens"`
+	IsSender       bool                `json:"isSender"`
+	BalanceChanged bool                `json:"balanceChanged"`
+	Nonce          uint64              `json:"nonce"`
+	Address        string              `json:"address"`
+	Balance        string              `json:"balance,omitempty"`
+	Tokens         []*AccountTokenData `json:"tokens"`
 }
 
 // ArgsSaveBlockData will contain all information that are needed to save block data
