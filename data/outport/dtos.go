@@ -32,7 +32,7 @@ type AdditionalAccountData struct {
 	BalanceChanged bool `json:"balanceChanged,omitempty"`
 }
 
-// AdditionalAccountTokenData holds the additional for indexing a token of an altered account
+// AdditionalAccountTokenData holds the additional data for indexing a token of an altered account
 type AdditionalAccountTokenData struct {
 	IsNFTCreate bool `json:"isNFTCreate,omitempty"`
 }
