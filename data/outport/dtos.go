@@ -9,22 +9,32 @@ import (
 
 // AccountTokenData holds the data needed for indexing a token of an altered account
 type AccountTokenData struct {
-	IsNFTCreate bool           `json:"isNFTCreate"`
-	Nonce       uint64         `json:"nonce"`
-	Identifier  string         `json:"identifier"`
-	Balance     string         `json:"balance"`
-	Properties  string         `json:"properties"`
-	MetaData    *esdt.MetaData `json:"metadata"`
+	Nonce          uint64                      `json:"nonce"`
+	Identifier     string                      `json:"identifier"`
+	Balance        string                      `json:"balance"`
+	Properties     string                      `json:"properties"`
+	MetaData       *esdt.MetaData              `json:"metadata"`
+	AdditionalData *AdditionalAccountTokenData `json:"additionalData,omitempty"`
 }
 
 // AlteredAccount holds the data needed of an altered account in a block
 type AlteredAccount struct {
-	IsSender       bool                `json:"isSender"`
-	BalanceChanged bool                `json:"balanceChanged"`
-	Nonce          uint64              `json:"nonce"`
-	Address        string              `json:"address"`
-	Balance        string              `json:"balance,omitempty"`
-	Tokens         []*AccountTokenData `json:"tokens"`
+	Nonce          uint64                 `json:"nonce"`
+	Address        string                 `json:"address"`
+	Balance        string                 `json:"balance,omitempty"`
+	Tokens         []*AccountTokenData    `json:"tokens"`
+	AdditionalData *AdditionalAccountData `json:"additionalData,omitempty"`
+}
+
+// AdditionalAccountData holds the additional data for an altered account
+type AdditionalAccountData struct {
+	IsSender       bool `json:"isSender,omitempty"`
+	BalanceChanged bool `json:"balanceChanged,omitempty"`
+}
+
+// AdditionalAccountTokenData holds the additional data for indexing a token of an altered account
+type AdditionalAccountTokenData struct {
+	IsNFTCreate bool `json:"isNFTCreate,omitempty"`
 }
 
 // ArgsSaveBlockData will contain all information that are needed to save block data
