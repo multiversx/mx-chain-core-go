@@ -62,7 +62,7 @@ type ApiTransactionResult struct {
 	CallType                          string                    `json:"callType,omitempty"`
 	RelayerAddress                    string                    `json:"relayerAddress,omitempty"`
 	RelayedValue                      string                    `json:"relayedValue,omitempty"`
-	ChainID                           string                    `json:"chainID"`
+	ChainID                           string                    `json:"chainID,omitempty"`
 	Version                           uint32                    `json:"version,omitempty"`
 	Options                           uint32                    `json:"options"`
 }
