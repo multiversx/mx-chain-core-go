@@ -26,7 +26,7 @@ type AlteredAccount struct {
 	AdditionalData *AdditionalAccountData `json:"additionalData,omitempty"`
 }
 
-// AdditionalAccountData holds the additional data for and altered account
+// AdditionalAccountData holds the additional data for an altered account
 type AdditionalAccountData struct {
 	IsSender       bool `json:"isSender,omitempty"`
 	BalanceChanged bool `json:"balanceChanged,omitempty"`
