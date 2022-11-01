@@ -348,10 +348,10 @@ type MiniBlockInfo struct {
 // SyncStatisticsHandler defines the methods for a component able to store the sync statistics for a trie
 type SyncStatisticsHandler interface {
 	Reset()
-	AddNumReceived(value int)
+	AddNumProcessed(value int)
 	AddNumLarge(value int)
 	SetNumMissing(rootHash []byte, value int)
-	NumReceived() int
+	NumProcessed() int
 	NumLarge() int
 	NumMissing() int
 	IsInterfaceNil() bool
@@ -368,7 +368,7 @@ type TransactionWithFeeHandler interface {
 
 // UserAccountHandler models a user account
 type UserAccountHandler interface {
-	RetrieveValue(key []byte) ([]byte, error)
+	RetrieveValue(key []byte) ([]byte, uint32, error)
 	GetBalance() *big.Int
 	GetNonce() uint64
 	AddressBytes() []byte
