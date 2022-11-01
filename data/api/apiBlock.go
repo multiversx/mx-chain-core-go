@@ -59,6 +59,8 @@ type NotarizedBlock struct {
 	Nonce           uint64                    `json:"nonce"`
 	Round           uint64                    `json:"round"`
 	Shard           uint32                    `json:"shard"`
+	RootHash        string                    `json:"rootHash"`
+	MiniBlockHashes []string                  `json:"miniBlockHashes,omitempty"`
 	AlteredAccounts []*outport.AlteredAccount `json:"alteredAccounts,omitempty"`
 }
 
