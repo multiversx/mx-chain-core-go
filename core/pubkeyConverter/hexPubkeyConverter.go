@@ -42,8 +42,8 @@ func (ppc *hexPubkeyConverter) Decode(humanReadable string) ([]byte, error) {
 }
 
 // Encode converts the provided bytes in a form that this converter can decode. In this case it will encode to hex
-func (ppc *hexPubkeyConverter) Encode(pkBytes []byte) string {
-	return hex.EncodeToString(pkBytes)
+func (ppc *hexPubkeyConverter) Encode(pkBytes []byte) (string, error) {
+	return hex.EncodeToString(pkBytes), nil
 }
 
 // Len returns the decoded address length
