@@ -1,5 +1,6 @@
 package api
 
+// TokenMetaData is the api metaData struct for tokens
 type TokenMetaData struct {
 	Nonce      uint64   `json:"nonce"`
 	Name       string   `json:"name"`
