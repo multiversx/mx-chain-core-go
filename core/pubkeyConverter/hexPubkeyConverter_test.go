@@ -69,7 +69,7 @@ func TestHexPubkeyConverter_EncodeShouldWork(t *testing.T) {
 	addressLen := 4
 	hpc, _ := pubkeyConverter.NewHexPubkeyConverter(addressLen)
 
-	str := hpc.Encode([]byte{170, 255})
+	str, _ := hpc.Encode([]byte{170, 255})
 	assert.Equal(t, "aaff", str)
 }
 
@@ -83,7 +83,7 @@ func TestHexPubkeyConverter_EncodeDecodeShouldWork(t *testing.T) {
 	buff, err := hpc.Decode(value)
 	assert.Nil(t, err)
 
-	revoveredValue := hpc.Encode(buff)
+	revoveredValue, _ := hpc.Encode(buff)
 
 	assert.Equal(t, value, revoveredValue)
 }
