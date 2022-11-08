@@ -4,7 +4,7 @@ import "github.com/ElrondNetwork/elrond-go-core/data/block"
 
 // Encoder represents a byte slice to string encoder
 type Encoder interface {
-	Encode(buff []byte) string
+	Encode(buff []byte) (string, error)
 	IsInterfaceNil() bool
 }
 
