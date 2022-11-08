@@ -4,8 +4,18 @@ import (
 	"time"
 
 	"github.com/ElrondNetwork/elrond-go-core/data"
-	"github.com/ElrondNetwork/elrond-go-core/data/esdt"
 )
+
+// TokenMetaData is the api metaData struct for tokens
+type TokenMetaData struct {
+	Nonce      uint64   `json:"nonce"`
+	Name       string   `json:"name"`
+	Creator    string   `json:"creator"`
+	Royalties  uint32   `json:"royalties"`
+	Hash       []byte   `json:"hash"`
+	URIs       [][]byte `json:"uris"`
+	Attributes []byte   `json:"attributes"`
+}
 
 // AccountTokenData holds the data needed for indexing a token of an altered account
 type AccountTokenData struct {
@@ -13,7 +23,7 @@ type AccountTokenData struct {
 	Identifier     string                      `json:"identifier"`
 	Balance        string                      `json:"balance"`
 	Properties     string                      `json:"properties"`
-	MetaData       *esdt.MetaData              `json:"metadata"`
+	MetaData       *TokenMetaData              `json:"metadata"`
 	AdditionalData *AdditionalAccountTokenData `json:"additionalData,omitempty"`
 }
 
