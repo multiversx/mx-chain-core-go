@@ -65,11 +65,21 @@ func (tx *Transaction) GetDataForSigning(encoder Encoder, marshalizer Marshalize
 		return nil, ErrNilMarshalizer
 	}
 
+	encodedReceiverAddr, err := encoder.Encode(tx.RcvAddr)
+	if err != nil {
+		return nil, err
+	}
+
+	encodedSenderAddr, _ := encoder.Encode(tx.SndAddr)
+	if err != nil {
+		return nil, err
+	}
+
 	ftx := &FrontendTransaction{
 		Nonce:            tx.Nonce,
 		Value:            tx.Value.String(),
-		Receiver:         encoder.Encode(tx.RcvAddr),
-		Sender:           encoder.Encode(tx.SndAddr),
+		Receiver:         encodedReceiverAddr,
+		Sender:           encodedSenderAddr,
 		GasPrice:         tx.GasPrice,
 		GasLimit:         tx.GasLimit,
 		SenderUsername:   tx.SndUserName,

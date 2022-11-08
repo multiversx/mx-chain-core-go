@@ -26,12 +26,12 @@ func (pcs *PubkeyConverterStub) Decode(humanReadable string) ([]byte, error) {
 }
 
 // Encode -
-func (pcs *PubkeyConverterStub) Encode(pkBytes []byte) string {
+func (pcs *PubkeyConverterStub) Encode(pkBytes []byte) (string, error) {
 	if pcs.EncodeCalled != nil {
-		return pcs.EncodeCalled(pkBytes)
+		return pcs.EncodeCalled(pkBytes), nil
 	}
 
-	return ""
+	return "", nil
 }
 
 // IsInterfaceNil -
