@@ -116,3 +116,26 @@ func TestBech32PubkeyConverter_EncodeWrongLengthShouldReturnEmpty(t *testing.T) 
 	assert.True(t, errors.Is(err, pubkeyConverter.ErrWrongSize))
 	assert.Equal(t, "", str)
 }
+
+func TestBech32PubkeyConverter_EncodeSliceShouldWork(t *testing.T) {
+	addressLen := 32
+	sliceLn := 5
+	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, "erd")
+
+	decodedSlice := make([][]byte, 0)
+
+	buff := []byte("12345678901234567890123456789012")
+
+	for i := 0; i < sliceLn; i++ {
+		decodedSlice = append(decodedSlice, buff)
+	}
+
+	str, err := bpc.EncodeSlice(decodedSlice)
+	assert.Nil(t, err)
+	assert.Equal(t, sliceLn, len(str))
+	assert.Equal(t, []string{"erd1xyerxdp4xcmnswfsxyerxdp4xcmnswfsxyerxdp4xcmnswfsxyeqlrqt99",
+		"erd1xyerxdp4xcmnswfsxyerxdp4xcmnswfsxyerxdp4xcmnswfsxyeqlrqt99",
+		"erd1xyerxdp4xcmnswfsxyerxdp4xcmnswfsxyerxdp4xcmnswfsxyeqlrqt99",
+		"erd1xyerxdp4xcmnswfsxyerxdp4xcmnswfsxyerxdp4xcmnswfsxyeqlrqt99",
+		"erd1xyerxdp4xcmnswfsxyerxdp4xcmnswfsxyerxdp4xcmnswfsxyeqlrqt99"}, str)
+}

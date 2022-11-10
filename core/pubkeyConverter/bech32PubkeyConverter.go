@@ -97,6 +97,21 @@ func (bpc *bech32PubkeyConverter) Encode(pkBytes []byte) (string, error) {
 	return converted, nil
 }
 
+// EncodeSlice will encode the provided bytes slice
+func (bpc *bech32PubkeyConverter) EncodeSlice(pkBytesSlice [][]byte) ([]string, error) {
+	encodedSlice := make([]string, 0, len(pkBytesSlice))
+
+	for _, pkBytes := range pkBytesSlice {
+		encodedRcvSlice, err := bpc.Encode(pkBytes)
+		if err != nil {
+			return nil, err
+		}
+		encodedSlice = append(encodedSlice, encodedRcvSlice)
+	}
+
+	return encodedSlice, nil
+}
+
 // IsInterfaceNil returns true if there is no value under the interface
 func (bpc *bech32PubkeyConverter) IsInterfaceNil() bool {
 	return bpc == nil
