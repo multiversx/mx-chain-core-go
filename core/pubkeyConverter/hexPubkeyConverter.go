@@ -46,6 +46,17 @@ func (ppc *hexPubkeyConverter) Encode(pkBytes []byte) (string, error) {
 	return hex.EncodeToString(pkBytes), nil
 }
 
+// EncodeSlice converts the provided bytes in a form that this converter can decode
+func (ppc *hexPubkeyConverter) EncodeSlice(pkBytesSlice [][]byte) ([]string, error) {
+	encodedSlice := make([]string, 0, len(pkBytesSlice))
+
+	for _, pkBytes := range pkBytesSlice {
+		encodedSlice = append(encodedSlice, hex.EncodeToString(pkBytes))
+	}
+
+	return encodedSlice, nil
+}
+
 // Len returns the decoded address length
 func (ppc *hexPubkeyConverter) Len() int {
 	return ppc.len
