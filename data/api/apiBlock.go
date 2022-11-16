@@ -149,5 +149,4 @@ type GetBlockParameters struct {
 type GetAlteredAccountsForBlockOptions struct {
 	GetBlockParameters
 	TokensFilter string
-	WithMetadata bool
 }
