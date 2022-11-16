@@ -1,6 +1,7 @@
 package pubkeyConverter_test
 
 import (
+	"encoding/hex"
 	"errors"
 	"fmt"
 	"strings"
@@ -119,23 +120,21 @@ func TestBech32PubkeyConverter_EncodeWrongLengthShouldReturnEmpty(t *testing.T) 
 
 func TestBech32PubkeyConverter_EncodeSliceShouldWork(t *testing.T) {
 	addressLen := 32
-	sliceLn := 5
+	sliceLen := 2
+
 	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, "erd")
 
 	decodedSlice := make([][]byte, 0)
 
-	buff := []byte("12345678901234567890123456789012")
+	alice, _ := hex.DecodeString("0139472eff6886771a982f3083da5d421f24c29181e63888228dc81ca60d69e1")
+	decodedSlice = append(decodedSlice, alice)
 
-	for i := 0; i < sliceLn; i++ {
-		decodedSlice = append(decodedSlice, buff)
-	}
+	bob, _ := hex.DecodeString("8049d639e5a6980d1cd2392abcce41029cda74a1563523a202f09641cc2618f8")
+	decodedSlice = append(decodedSlice, bob)
 
 	str, err := bpc.EncodeSlice(decodedSlice)
 	assert.Nil(t, err)
-	assert.Equal(t, sliceLn, len(str))
-	assert.Equal(t, []string{"erd1xyerxdp4xcmnswfsxyerxdp4xcmnswfsxyerxdp4xcmnswfsxyeqlrqt99",
-		"erd1xyerxdp4xcmnswfsxyerxdp4xcmnswfsxyerxdp4xcmnswfsxyeqlrqt99",
-		"erd1xyerxdp4xcmnswfsxyerxdp4xcmnswfsxyerxdp4xcmnswfsxyeqlrqt99",
-		"erd1xyerxdp4xcmnswfsxyerxdp4xcmnswfsxyerxdp4xcmnswfsxyeqlrqt99",
-		"erd1xyerxdp4xcmnswfsxyerxdp4xcmnswfsxyerxdp4xcmnswfsxyeqlrqt99"}, str)
+	assert.Equal(t, sliceLen, len(str))
+	assert.Equal(t, []string{"erd1qyu5wthldzr8wx5c9ucg8kjagg0jfs53s8nr3zpz3hypefsdd8ssycr6th",
+		"erd1spyavw0956vq68xj8y4tenjpq2wd5a9p2c6j8gsz7ztyrnpxrruqzu66jx"}, str)
 }

@@ -29,15 +29,15 @@ type bech32PubkeyConverter struct {
 // NewBech32PubkeyConverter returns a bech32PubkeyConverter instance
 func NewBech32PubkeyConverter(addressLen int, prefix string) (*bech32PubkeyConverter, error) {
 	if addressLen < 1 {
-		return nil, fmt.Errorf("%w when creating hex address converter, addressLen should have been greater than 0",
+		return nil, fmt.Errorf("%w when creating address converter, addressLen should have been greater than 0",
 			ErrInvalidAddressLength)
 	}
 	if addressLen%2 == 1 {
-		return nil, fmt.Errorf("%w when creating hex address converter, addressLen should have been an even number",
+		return nil, fmt.Errorf("%w when creating address converter, addressLen should have been an even number",
 			ErrInvalidAddressLength)
 	}
 	if check.IfEmpty(prefix) {
-		return nil, fmt.Errorf("%w when creating hex address converter, prefix should have not been empty",
+		return nil, fmt.Errorf("%w when creating address converter, prefix should have not been empty",
 			ErrEmptyPrefix)
 	}
 
@@ -101,12 +101,12 @@ func (bpc *bech32PubkeyConverter) Encode(pkBytes []byte) (string, error) {
 func (bpc *bech32PubkeyConverter) EncodeSlice(pkBytesSlice [][]byte) ([]string, error) {
 	encodedSlice := make([]string, 0, len(pkBytesSlice))
 
-	for _, pkBytes := range pkBytesSlice {
-		encodedRcvSlice, err := bpc.Encode(pkBytes)
+	for _, item := range pkBytesSlice {
+		encoded, err := bpc.Encode(item)
 		if err != nil {
 			return nil, err
 		}
-		encodedSlice = append(encodedSlice, encodedRcvSlice)
+		encodedSlice = append(encodedSlice, encoded)
 	}
 
 	return encodedSlice, nil

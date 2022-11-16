@@ -87,3 +87,24 @@ func TestHexPubkeyConverter_EncodeDecodeShouldWork(t *testing.T) {
 
 	assert.Equal(t, value, recoveredValue)
 }
+
+func TestHexPubkeyConverter_EncodeSliceShouldWork(t *testing.T) {
+	addressLen := 16
+	sliceLen := 2
+
+	hpc, _ := pubkeyConverter.NewHexPubkeyConverter(addressLen)
+
+	decodedSlice := make([][]byte, 0)
+
+	hexPubkey1, _ := hpc.Decode("123456789012345678901234567890af")
+	decodedSlice = append(decodedSlice, hexPubkey1)
+
+	hexPubkey2, _ := hpc.Decode("123456789012345678901234567890af")
+	decodedSlice = append(decodedSlice, hexPubkey2)
+
+	str, err := hpc.EncodeSlice(decodedSlice)
+	assert.Nil(t, err)
+	assert.Equal(t, sliceLen, len(str))
+	assert.Equal(t, []string{"123456789012345678901234567890af",
+		"123456789012345678901234567890af"}, str)
+}
