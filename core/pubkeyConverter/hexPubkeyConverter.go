@@ -50,8 +50,8 @@ func (ppc *hexPubkeyConverter) Encode(pkBytes []byte) (string, error) {
 func (ppc *hexPubkeyConverter) EncodeSlice(pkBytesSlice [][]byte) ([]string, error) {
 	encodedSlice := make([]string, 0, len(pkBytesSlice))
 
-	for _, pkBytes := range pkBytesSlice {
-		encodedSlice = append(encodedSlice, hex.EncodeToString(pkBytes))
+	for _, item := range pkBytesSlice {
+		encodedSlice = append(encodedSlice, hex.EncodeToString(item))
 	}
 
 	return encodedSlice, nil
