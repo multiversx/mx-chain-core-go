@@ -83,7 +83,7 @@ func TestHexPubkeyConverter_EncodeDecodeShouldWork(t *testing.T) {
 	buff, err := hpc.Decode(value)
 	assert.Nil(t, err)
 
-	revoveredValue, _ := hpc.Encode(buff)
+	recoveredValue, _ := hpc.Encode(buff)
 
-	assert.Equal(t, value, revoveredValue)
+	assert.Equal(t, value, recoveredValue)
 }

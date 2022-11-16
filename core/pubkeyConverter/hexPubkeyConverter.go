@@ -46,7 +46,7 @@ func (ppc *hexPubkeyConverter) Encode(pkBytes []byte) (string, error) {
 	return hex.EncodeToString(pkBytes), nil
 }
 
-// EncodeSlice converts the provided bytes in a form that this converter can decode
+// EncodeSlice converts the provided bytes slice in a form that this converter can decode. In this case it will encode to hex
 func (ppc *hexPubkeyConverter) EncodeSlice(pkBytesSlice [][]byte) ([]string, error) {
 	encodedSlice := make([]string, 0, len(pkBytesSlice))
 
