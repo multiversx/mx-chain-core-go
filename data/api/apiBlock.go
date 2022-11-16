@@ -23,6 +23,8 @@ type Block struct {
 	AccumulatedFeesInEpoch string                 `json:"accumulatedFeesInEpoch,omitempty"`
 	DeveloperFeesInEpoch   string                 `json:"developerFeesInEpoch,omitempty"`
 	Status                 string                 `json:"status,omitempty"`
+	RandSeed               string                 `json:"randSeed,omitempty"`
+	PrevRandSeed           string                 `json:"prevRandSeed,omitempty"`
 	Timestamp              time.Duration          `json:"timestamp,omitempty"`
 	NotarizedBlocks        []*NotarizedBlock      `json:"notarizedBlocks,omitempty"`
 	MiniBlocks             []*MiniBlock           `json:"miniBlocks,omitempty"`
