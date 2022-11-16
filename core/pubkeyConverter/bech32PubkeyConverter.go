@@ -86,18 +86,18 @@ func (bpc *bech32PubkeyConverter) Encode(pkBytes []byte) (string, error) {
 	//since the errors generated here are usually because of a bad config, they will be treated here
 	conv, err := bech32.ConvertBits(pkBytes, bech32Config.fromBits, bech32Config.toBits, bech32Config.pad)
 	if err != nil {
-		return "", fmt.Errorf("%w when converting bits", ErrConvertBits)
+		return "", ErrConvertBits
 	}
 
 	converted, err := bech32.Encode(bpc.prefix, conv)
 	if err != nil {
-		return "", fmt.Errorf("%w when encoding address", ErrConvertBits)
+		return "", ErrBech32ConvertError
 	}
 
 	return converted, nil
 }
 
-// EncodeSlice will encode the provided bytes slice
+// EncodeSlice converts the provided bytes slice into a slice of bech32 addresses
 func (bpc *bech32PubkeyConverter) EncodeSlice(pkBytesSlice [][]byte) ([]string, error) {
 	encodedSlice := make([]string, 0, len(pkBytesSlice))
 

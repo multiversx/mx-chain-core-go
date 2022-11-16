@@ -70,7 +70,7 @@ func (tx *Transaction) GetDataForSigning(encoder Encoder, marshalizer Marshalize
 		return nil, err
 	}
 
-	senderAddr, _ := encoder.Encode(tx.SndAddr)
+	senderAddr, err := encoder.Encode(tx.SndAddr)
 	if err != nil {
 		return nil, err
 	}

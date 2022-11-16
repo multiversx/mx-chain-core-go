@@ -11,10 +11,10 @@ var ErrWrongSize = errors.New("wrong size")
 // ErrInvalidErdAddress signals that the provided address is not an ERD address
 var ErrInvalidErdAddress = errors.New("invalid ERD address")
 
-//ErrBech32ConvertError signals that conversion the 5bit alphabet to 8bit failed
+// ErrBech32ConvertError signals that conversion the 5bit alphabet to 8bit failed
 var ErrBech32ConvertError = errors.New("can't convert bech32 string")
 
-//ErrEmptyPrefix signals that an empty prefix has been used
+// ErrEmptyPrefix signals that an empty prefix has been used
 var ErrEmptyPrefix = errors.New("introduced prefix is empty")
 
 // ErrConvertBits signals that a configuration mistake has been introduced
