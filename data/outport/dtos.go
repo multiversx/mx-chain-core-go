@@ -23,7 +23,7 @@ type AccountTokenData struct {
 	Identifier     string                      `json:"identifier"`
 	Balance        string                      `json:"balance"`
 	Properties     string                      `json:"properties"`
-	MetaData       *TokenMetaData              `json:"metadata"`
+	MetaData       *TokenMetaData              `json:"metadata,omitempty"`
 	AdditionalData *AdditionalAccountTokenData `json:"additionalData,omitempty"`
 }
 
