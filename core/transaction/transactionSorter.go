@@ -2,11 +2,13 @@ package transaction
 
 import (
 	"bytes"
+	"sort"
+
 	"github.com/ElrondNetwork/elrond-go-core/data"
 	"github.com/ElrondNetwork/elrond-go-core/hashing"
-	"sort"
 )
 
+// SortTransactionsBySenderAndNonceWithFrontRunningProtection - sorts the transactions by address and randomness source to protect from front running
 func SortTransactionsBySenderAndNonceWithFrontRunningProtection(transactions []data.TransactionHandler, hasher hashing.Hasher, randomness []byte) {
 	// make sure randomness is 32bytes and uniform
 	randSeed := hasher.Compute(string(randomness))

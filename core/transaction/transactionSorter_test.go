@@ -3,12 +3,15 @@ package transaction
 import (
 	"encoding/hex"
 	"fmt"
+	"testing"
+
 	"github.com/ElrondNetwork/elrond-go-core/core/mock"
 	"github.com/ElrondNetwork/elrond-go-core/data"
 	"github.com/ElrondNetwork/elrond-go-core/data/transaction"
+	"github.com/stretchr/testify/assert"
 )
 
-func Example_sortTransactionsBySenderAndNonceWithFrontRunningProtection() {
+func Test_sortTransactionsBySenderAndNonceWithFrontRunningProtection(t *testing.T) {
 	randomness := "randomness"
 	nbSenders := 5
 
@@ -45,18 +48,19 @@ func Example_sortTransactionsBySenderAndNonceWithFrontRunningProtection() {
 
 	SortTransactionsBySenderAndNonceWithFrontRunningProtection(txs, hasher, []byte(randomness))
 
-	for _, item := range txs {
-		fmt.Println(item.GetNonce(), hex.EncodeToString(item.GetSndAddr()))
+	expectedOutput := []string{
+		"1 ffffffffffffffffffffffffffffff00",
+		"2 ffffffffffffffffffffffffffffff00",
+		"6 ffffffffffffffffffffffffffff00ff",
+		"7 ffffffffffffffffffffffffffff00ff",
+		"1 ffffffffffffffffffffffffff00ffff",
+		"2 ffffffffffffffffffffffffff00ffff",
+		"3 ffffffffffffffffffffffffff00ffff",
+		"3 ffffffffffffffffffffffff00ffffff",
+		"1 ffffffffffffffffffffff00ffffffff",
 	}
 
-	// Output:
-	// 1 ffffffffffffffffffffffffffffff00
-	// 2 ffffffffffffffffffffffffffffff00
-	// 6 ffffffffffffffffffffffffffff00ff
-	// 7 ffffffffffffffffffffffffffff00ff
-	// 1 ffffffffffffffffffffffffff00ffff
-	// 2 ffffffffffffffffffffffffff00ffff
-	// 3 ffffffffffffffffffffffffff00ffff
-	// 3 ffffffffffffffffffffffff00ffffff
-	// 1 ffffffffffffffffffffff00ffffffff
+	for i, item := range txs {
+		assert.Equal(t, expectedOutput[i], fmt.Sprintf("%d %s", item.GetNonce(), hex.EncodeToString(item.GetSndAddr())))
+	}
 }
