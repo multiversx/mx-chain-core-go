@@ -2,12 +2,12 @@ package transaction
 
 import (
 	"bytes"
-	"github.com/ElrondNetwork/elrond-go-core/data/transaction"
+	"github.com/ElrondNetwork/elrond-go-core/data"
 	"github.com/ElrondNetwork/elrond-go-core/hashing"
 	"sort"
 )
 
-func SortTransactionsBySenderAndNonceWithFrontRunningProtection(transactions []*transaction.Transaction, hasher hashing.Hasher, randomness []byte) {
+func SortTransactionsBySenderAndNonceWithFrontRunningProtection(transactions []data.TransactionHandler, hasher hashing.Hasher, randomness []byte) {
 	// make sure randomness is 32bytes and uniform
 	randSeed := hasher.Compute(string(randomness))
 	xoredAddresses := make(map[string][]byte)

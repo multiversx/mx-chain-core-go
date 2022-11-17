@@ -4,6 +4,7 @@ import (
 	"encoding/hex"
 	"fmt"
 	"github.com/ElrondNetwork/elrond-go-core/core/mock"
+	"github.com/ElrondNetwork/elrond-go-core/data"
 	"github.com/ElrondNetwork/elrond-go-core/data/transaction"
 )
 
@@ -30,16 +31,16 @@ func Example_sortTransactionsBySenderAndNonceWithFrontRunningProtection() {
 		senders = append(senders, sender)
 	}
 
-	txs := []*transaction.Transaction{
-		{Nonce: 1, SndAddr: senders[0]},
-		{Nonce: 2, SndAddr: senders[2]},
-		{Nonce: 1, SndAddr: senders[2]},
-		{Nonce: 2, SndAddr: senders[0]},
-		{Nonce: 7, SndAddr: senders[1]},
-		{Nonce: 6, SndAddr: senders[1]},
-		{Nonce: 1, SndAddr: senders[4]},
-		{Nonce: 3, SndAddr: senders[3]},
-		{Nonce: 3, SndAddr: senders[2]},
+	txs := []data.TransactionHandler{
+		&transaction.Transaction{Nonce: 1, SndAddr: senders[0]},
+		&transaction.Transaction{Nonce: 2, SndAddr: senders[2]},
+		&transaction.Transaction{Nonce: 1, SndAddr: senders[2]},
+		&transaction.Transaction{Nonce: 2, SndAddr: senders[0]},
+		&transaction.Transaction{Nonce: 7, SndAddr: senders[1]},
+		&transaction.Transaction{Nonce: 6, SndAddr: senders[1]},
+		&transaction.Transaction{Nonce: 1, SndAddr: senders[4]},
+		&transaction.Transaction{Nonce: 3, SndAddr: senders[3]},
+		&transaction.Transaction{Nonce: 3, SndAddr: senders[2]},
 	}
 
 	SortTransactionsBySenderAndNonceWithFrontRunningProtection(txs, hasher, []byte(randomness))
