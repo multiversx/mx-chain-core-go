@@ -1,8 +1,11 @@
 package pubkeyConverter
 
 import (
+	"encoding/hex"
 	"fmt"
+	"runtime/debug"
 
+	"github.com/ElrondNetwork/elrond-go-core/core"
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
 	"github.com/btcsuite/btcutil/bech32"
 )
@@ -36,9 +39,9 @@ func NewBech32PubkeyConverter(addressLen int, prefix string) (*bech32PubkeyConve
 		return nil, fmt.Errorf("%w when creating address converter, addressLen should have been an even number",
 			ErrInvalidAddressLength)
 	}
-	if check.IfEmpty(prefix) {
-		return nil, fmt.Errorf("%w when creating address converter, prefix should have not been empty",
-			ErrEmptyPrefix)
+	if !check.IfHrp(prefix) {
+		return nil, fmt.Errorf("%w when creating address converter, prefix should have been human readable",
+			ErrHrpPrefix)
 	}
 
 	return &bech32PubkeyConverter{
@@ -83,18 +86,49 @@ func (bpc *bech32PubkeyConverter) Encode(pkBytes []byte) (string, error) {
 			ErrWrongSize, bpc.len, len(pkBytes))
 	}
 
-	//since the errors generated here are usually because of a bad config, they will be treated here
 	conv, err := bech32.ConvertBits(pkBytes, bech32Config.fromBits, bech32Config.toBits, bech32Config.pad)
 	if err != nil {
-		return "", ErrConvertBits
+		return "", fmt.Errorf("%w: %s", ErrConvertBits, err.Error())
 	}
 
 	converted, err := bech32.Encode(bpc.prefix, conv)
 	if err != nil {
-		return "", ErrBech32ConvertError
+		return "", fmt.Errorf("%w: %s", ErrBech32ConvertError, err.Error())
 	}
 
 	return converted, nil
+}
+
+// QuietEncode converts the provided bytes in a bech32 form without returning any error
+func (bpc *bech32PubkeyConverter) QuietEncode(pkBytes []byte, log core.Logger) string {
+	if len(pkBytes) != bpc.len {
+		log.Debug("bech32PubkeyConverter.Encode PubKeyBytesLength",
+			"hex buff", hex.EncodeToString(pkBytes),
+			"error", ErrWrongSize,
+			"stack trace", string(debug.Stack()))
+		return ""
+	}
+
+	//since the errors generated here are usually because of a bad config, they will be treated here
+	conv, err := bech32.ConvertBits(pkBytes, bech32Config.fromBits, bech32Config.toBits, bech32Config.pad)
+	if err != nil {
+		log.Warn("bech32PubkeyConverter.Encode ConvertBits",
+			"hex buff", hex.EncodeToString(pkBytes),
+			"error", ErrWrongSize,
+			"stack trace", string(debug.Stack()))
+		return ""
+	}
+
+	converted, err := bech32.Encode(bpc.prefix, conv)
+	if err != nil {
+		log.Warn("bech32PubkeyConverter.Encode Encode",
+			"hex buff", hex.EncodeToString(conv),
+			"error", ErrWrongSize,
+			"stack trace", string(debug.Stack()))
+		return ""
+	}
+
+	return converted
 }
 
 // EncodeSlice converts the provided bytes slice into a slice of bech32 addresses
