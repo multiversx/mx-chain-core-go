@@ -11,7 +11,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func Test_sortTransactionsBySenderAndNonceWithFrontRunningProtection(t *testing.T) {
+func Test_SortTransactionsBySenderAndNonceWithFrontRunningProtection(t *testing.T) {
 	randomness := "randomness"
 	nbSenders := 5
 
@@ -63,4 +63,35 @@ func Test_sortTransactionsBySenderAndNonceWithFrontRunningProtection(t *testing.
 	for i, item := range txs {
 		assert.Equal(t, expectedOutput[i], fmt.Sprintf("%d %s", item.GetNonce(), hex.EncodeToString(item.GetSndAddr())))
 	}
+}
+
+func Test_SortTransactionsBySenderAndNonceLegacy(t *testing.T) {
+	txs := []data.TransactionHandler{
+		&transaction.Transaction{Nonce: 3, SndAddr: []byte("bbbb")},
+		&transaction.Transaction{Nonce: 1, SndAddr: []byte("aaaa")},
+		&transaction.Transaction{Nonce: 5, SndAddr: []byte("bbbb")},
+		&transaction.Transaction{Nonce: 2, SndAddr: []byte("aaaa")},
+		&transaction.Transaction{Nonce: 7, SndAddr: []byte("aabb")},
+		&transaction.Transaction{Nonce: 6, SndAddr: []byte("aabb")},
+		&transaction.Transaction{Nonce: 3, SndAddr: []byte("ffff")},
+		&transaction.Transaction{Nonce: 3, SndAddr: []byte("eeee")},
+	}
+
+	SortTransactionsBySenderAndNonce(txs)
+
+	expectedOutput := []string{
+		"1 aaaa",
+		"2 aaaa",
+		"6 aabb",
+		"7 aabb",
+		"3 bbbb",
+		"5 bbbb",
+		"3 eeee",
+		"3 ffff",
+	}
+
+	for i, item := range txs {
+		assert.Equal(t, expectedOutput[i], fmt.Sprintf("%d %s", item.GetNonce(), string(item.GetSndAddr())))
+	}
+
 }
