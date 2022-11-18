@@ -14,8 +14,8 @@ var ErrInvalidErdAddress = errors.New("invalid ERD address")
 // ErrBech32ConvertError signals that conversion the 5bit alphabet to 8bit failed
 var ErrBech32ConvertError = errors.New("can't convert bech32 string")
 
-// ErrEmptyPrefix signals that an empty prefix has been used
-var ErrEmptyPrefix = errors.New("introduced prefix is empty")
+// ErrHrpPrefix signals that the prefix is not human readable or empty
+var ErrHrpPrefix = errors.New("introduced prefix which is not human readable")
 
 // ErrConvertBits signals that a configuration mistake has been introduced
 var ErrConvertBits = errors.New("invalid fromBits or toBits when converting bits")

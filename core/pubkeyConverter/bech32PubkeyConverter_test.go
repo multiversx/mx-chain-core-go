@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/ElrondNetwork/elrond-go-core/core"
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
 	"github.com/ElrondNetwork/elrond-go-core/core/pubkeyConverter"
 	"github.com/stretchr/testify/assert"
@@ -15,15 +16,15 @@ import (
 func TestNewBech32PubkeyConverter_InvalidSizeShouldErr(t *testing.T) {
 	t.Parallel()
 
-	bpc, err := pubkeyConverter.NewBech32PubkeyConverter(-1, "erd")
+	bpc, err := pubkeyConverter.NewBech32PubkeyConverter(-1, core.DefaultAddressPrefix)
 	assert.True(t, errors.Is(err, pubkeyConverter.ErrInvalidAddressLength))
 	assert.True(t, check.IfNil(bpc))
 
-	bpc, err = pubkeyConverter.NewBech32PubkeyConverter(0, "erd")
+	bpc, err = pubkeyConverter.NewBech32PubkeyConverter(0, core.DefaultAddressPrefix)
 	assert.True(t, errors.Is(err, pubkeyConverter.ErrInvalidAddressLength))
 	assert.True(t, check.IfNil(bpc))
 
-	bpc, err = pubkeyConverter.NewBech32PubkeyConverter(3, "erd")
+	bpc, err = pubkeyConverter.NewBech32PubkeyConverter(3, core.DefaultAddressPrefix)
 	assert.True(t, errors.Is(err, pubkeyConverter.ErrInvalidAddressLength))
 	assert.True(t, check.IfNil(bpc))
 }
@@ -32,7 +33,7 @@ func TestNewBech32PubkeyConverter_ShouldWork(t *testing.T) {
 	t.Parallel()
 
 	addressLen := 28
-	bpc, err := pubkeyConverter.NewBech32PubkeyConverter(addressLen, "erd")
+	bpc, err := pubkeyConverter.NewBech32PubkeyConverter(addressLen, core.DefaultAddressPrefix)
 
 	assert.Nil(t, err)
 	assert.False(t, check.IfNil(bpc))
@@ -43,7 +44,7 @@ func TestBech32PubkeyConverter_DecodeInvalidStringShouldErr(t *testing.T) {
 	t.Parallel()
 
 	addressLen := 32
-	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, "erd")
+	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, core.DefaultAddressPrefix)
 
 	str, err := bpc.Decode("not a bech32 string")
 
@@ -55,7 +56,7 @@ func TestBech32PubkeyConverter_DecodePrefixMismatchShouldErr(t *testing.T) {
 	t.Parallel()
 
 	addressLen := 32
-	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, "erd")
+	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, core.DefaultAddressPrefix)
 
 	str, err := bpc.Decode("err1xyerxdp4xcmnswfsxyerxdp4xcmnswfsxyerxdp4xcmnswfsxyeqnyphvl")
 
@@ -67,7 +68,7 @@ func TestBech32PubkeyConverter_DecodeWrongSizeShouldErr(t *testing.T) {
 	t.Parallel()
 
 	addressLen := 32
-	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, "erd")
+	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, core.DefaultAddressPrefix)
 
 	str, err := bpc.Decode("erd1xyerxdp4xcmnswfsxyeqqzq40r")
 
@@ -79,7 +80,7 @@ func TestBech32PubkeyConverter_EncodeDecodeShouldWork(t *testing.T) {
 	t.Parallel()
 
 	addressLen := 32
-	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, "erd")
+	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, core.DefaultAddressPrefix)
 
 	buff := []byte("12345678901234567890123456789012")
 	str, err := bpc.Encode(buff)
@@ -96,8 +97,10 @@ func TestBech32PubkeyConverter_EncodeDecodeShouldWork(t *testing.T) {
 }
 
 func TestBech32PubkeyConverter_EncodeWrongLengthShouldReturnEmpty(t *testing.T) {
+	t.Parallel()
+
 	addressLen := 32
-	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, "erd")
+	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, core.DefaultAddressPrefix)
 
 	buff := []byte("12345678901234567890")
 	str, err := bpc.Encode(buff)
@@ -119,6 +122,8 @@ func TestBech32PubkeyConverter_EncodeWrongLengthShouldReturnEmpty(t *testing.T) 
 }
 
 func TestBech32PubkeyConverter_EncodeSliceShouldWork(t *testing.T) {
+	t.Parallel()
+
 	addressLen := 32
 	sliceLen := 2
 

@@ -83,12 +83,14 @@ func TestHexPubkeyConverter_EncodeDecodeShouldWork(t *testing.T) {
 	buff, err := hpc.Decode(value)
 	assert.Nil(t, err)
 
-	recoveredValue, _ := hpc.Encode(buff)
-
+	recoveredValue, err := hpc.Encode(buff)
+	assert.Nil(t, err)
 	assert.Equal(t, value, recoveredValue)
 }
 
 func TestHexPubkeyConverter_EncodeSliceShouldWork(t *testing.T) {
+	t.Parallel()
+
 	addressLen := 16
 	sliceLen := 2
 
