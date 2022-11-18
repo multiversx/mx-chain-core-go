@@ -57,6 +57,11 @@ func (ppc *hexPubkeyConverter) EncodeSlice(pkBytesSlice [][]byte) ([]string, err
 	return encodedSlice, nil
 }
 
+// QuietEncode converts the provided bytes in a form that this converter can decode. In this case it will encode to hex
+func (ppc *hexPubkeyConverter) QuietEncode(pkBytes []byte) string {
+	return hex.EncodeToString(pkBytes)
+}
+
 // Len returns the decoded address length
 func (ppc *hexPubkeyConverter) Len() int {
 	return ppc.len
