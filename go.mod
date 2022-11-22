@@ -3,7 +3,7 @@ module github.com/ElrondNetwork/elrond-go-core
 go 1.13
 
 require (
-	github.com/btcsuite/btcutil v1.0.2
+	github.com/btcsuite/btcd/btcutil v1.1.3
 	github.com/denisbrodbeck/machineid v1.0.1
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang/protobuf v1.5.2
