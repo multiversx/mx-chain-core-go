@@ -4,11 +4,11 @@ import "github.com/ElrondNetwork/elrond-go-core/core"
 
 // PubkeyConverterStub -
 type PubkeyConverterStub struct {
-	LenCalled         func() int
-	DecodeCalled      func(humanReadable string) ([]byte, error)
-	EncodeCalled      func(pkBytes []byte) (string, error)
-	EncodeSliceCalled func(pkBytesSlice [][]byte) ([]string, error)
-	QuietEncodeCalled func(pkBytes []byte, log core.Logger) string
+	LenCalled          func() int
+	DecodeCalled       func(humanReadable string) ([]byte, error)
+	EncodeCalled       func(pkBytes []byte) (string, error)
+	EncodeSliceCalled  func(pkBytesSlice [][]byte) ([]string, error)
+	SilentEncodeCalled func(pkBytes []byte, log core.Logger) string
 }
 
 // Len -
@@ -47,10 +47,10 @@ func (pcs *PubkeyConverterStub) EncodeSlice(pkBytesSlice [][]byte) ([]string, er
 	return make([]string, 0), nil
 }
 
-// QuietEncode -
-func (pcs *PubkeyConverterStub) QuietEncode(pkBytes []byte, log core.Logger) string {
+// SilentEncode -
+func (pcs *PubkeyConverterStub) SilentEncode(pkBytes []byte, log core.Logger) string {
 	if pcs.EncodeCalled != nil {
-		return pcs.QuietEncodeCalled(pkBytes, log)
+		return pcs.SilentEncodeCalled(pkBytes, log)
 	}
 
 	return ""

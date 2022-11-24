@@ -59,8 +59,8 @@ func (ppc *hexPubkeyConverter) EncodeSlice(pkBytesSlice [][]byte) ([]string, err
 	return encodedSlice, nil
 }
 
-// QuietEncode converts the provided bytes in a form that this converter can decode. In this case it will encode to hex
-func (ppc *hexPubkeyConverter) QuietEncode(pkBytes []byte, log core.Logger) string {
+// SilentEncode converts the provided bytes in a form that this converter can decode. In this case it will encode to hex
+func (ppc *hexPubkeyConverter) SilentEncode(pkBytes []byte, log core.Logger) string {
 	return hex.EncodeToString(pkBytes)
 }
 

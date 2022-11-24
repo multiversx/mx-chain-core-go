@@ -127,7 +127,7 @@ func TestBech32PubkeyConverter_EncodeSliceShouldWork(t *testing.T) {
 	addressLen := 32
 	sliceLen := 2
 
-	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, "erd")
+	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, core.DefaultAddressPrefix)
 
 	decodedSlice := make([][]byte, 0)
 

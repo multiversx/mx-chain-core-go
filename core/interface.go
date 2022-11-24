@@ -26,7 +26,7 @@ type PubkeyConverter interface {
 	Len() int
 	Decode(humanReadable string) ([]byte, error)
 	Encode(pkBytes []byte) (string, error)
-	QuietEncode(pkBytes []byte, log Logger) string
+	SilentEncode(pkBytes []byte, log Logger) string
 	EncodeSlice(pkBytesSlice [][]byte) ([]string, error)
 	IsInterfaceNil() bool
 }
