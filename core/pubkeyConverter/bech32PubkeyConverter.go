@@ -99,10 +99,10 @@ func (bpc *bech32PubkeyConverter) Encode(pkBytes []byte) (string, error) {
 	return converted, nil
 }
 
-// QuietEncode converts the provided bytes in a bech32 form without returning any error
-func (bpc *bech32PubkeyConverter) QuietEncode(pkBytes []byte, log core.Logger) string {
+// SilentEncode converts the provided bytes in a bech32 form without returning any error
+func (bpc *bech32PubkeyConverter) SilentEncode(pkBytes []byte, log core.Logger) string {
 	if len(pkBytes) != bpc.len {
-		log.Debug("bech32PubkeyConverter.Encode PubKeyBytesLength",
+		log.Warn("bech32PubkeyConverter.SilentEncode PubKeyBytesLength",
 			"hex buff", hex.EncodeToString(pkBytes),
 			"error", ErrWrongSize,
 			"stack trace", string(debug.Stack()))
@@ -112,7 +112,7 @@ func (bpc *bech32PubkeyConverter) QuietEncode(pkBytes []byte, log core.Logger) s
 	//since the errors generated here are usually because of a bad config, they will be treated here
 	conv, err := bech32.ConvertBits(pkBytes, bech32Config.fromBits, bech32Config.toBits, bech32Config.pad)
 	if err != nil {
-		log.Warn("bech32PubkeyConverter.Encode ConvertBits",
+		log.Warn("bech32PubkeyConverter.SilentEncode ConvertBits",
 			"hex buff", hex.EncodeToString(pkBytes),
 			"error", ErrWrongSize,
 			"stack trace", string(debug.Stack()))
@@ -121,7 +121,7 @@ func (bpc *bech32PubkeyConverter) QuietEncode(pkBytes []byte, log core.Logger) s
 
 	converted, err := bech32.Encode(bpc.prefix, conv)
 	if err != nil {
-		log.Warn("bech32PubkeyConverter.Encode Encode",
+		log.Warn("bech32PubkeyConverter.SilentEncode Encode",
 			"hex buff", hex.EncodeToString(conv),
 			"error", ErrWrongSize,
 			"stack trace", string(debug.Stack()))
