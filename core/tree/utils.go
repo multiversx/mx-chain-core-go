@@ -68,7 +68,6 @@ func extractNodesOnLevelsWithOffsetsUpdated(root *node) ([][]*node, int) {
 
 	// extract nodes through level order traversal
 	for len(queue) > 0 {
-		levelOffsetsMap := make(map[int]struct{}) // used to handle offsets collisions on the same level
 		queueSize := len(queue)
 		currentLevel := make([]*node, 0)
 
@@ -84,14 +83,17 @@ func extractNodesOnLevelsWithOffsetsUpdated(root *node) ([][]*node, int) {
 			}
 
 			if currentNode.left != nil {
-				// if next left offset already exists, this left subtree of parent must be left-shifted
-				// this is done only on left due to level order traversal iterating from left to right
-				_, exists := levelOffsetsMap[currentNode.left.offset]
-				if exists {
-					rightShiftSubTree(currentNode.parent.left)
+				// if next left offset already exists, the offsets must be updated
+				// if the current node is in the left subtree of the tree, shift the subtree to left
+				// otherwise, shift it to right
+				if isOffsetDuplicateInLevel(currentLevel, currentNode.left.offset) {
+					if currentNode.low() < root.low() {
+						shiftSubTreeOffsets(currentNode.parent.left, -1)
+					} else {
+						shiftSubTreeOffsets(currentNode.node, 1)
+					}
 				}
 
-				levelOffsetsMap[currentNode.left.offset] = struct{}{}
 				queue = append(queue, &currentNodeDetails{
 					node:   currentNode.left,
 					parent: currentNode.node,
@@ -99,7 +101,6 @@ func extractNodesOnLevelsWithOffsetsUpdated(root *node) ([][]*node, int) {
 				currentLevel = append(currentLevel, currentNode.left)
 			}
 			if currentNode.right != nil {
-				levelOffsetsMap[currentNode.right.offset] = struct{}{}
 				queue = append(queue, &currentNodeDetails{
 					node:   currentNode.right,
 					parent: currentNode.node,
@@ -116,19 +117,28 @@ func extractNodesOnLevelsWithOffsetsUpdated(root *node) ([][]*node, int) {
 	return nodesOnLevels, minOffset
 }
 
-func rightShiftSubTree(root *node) {
+func isOffsetDuplicateInLevel(nodesOnLevel []*node, currentOffset int) bool {
+	for _, levelNode := range nodesOnLevel {
+		if levelNode.offset == currentOffset {
+			return true
+		}
+	}
+	return false
+}
+
+func shiftSubTreeOffsets(root *node, direction int) {
 	if root == nil {
 		return
 	}
 
-	root.offset--
+	root.offset += direction
 	if root.left != nil {
 		root.left.parentOffset = root.offset
-		rightShiftSubTree(root.left)
+		shiftSubTreeOffsets(root.left, direction)
 	}
 	if root.right != nil {
 		root.right.parentOffset = root.offset
-		rightShiftSubTree(root.right)
+		shiftSubTreeOffsets(root.right, direction)
 	}
 }
 
