@@ -31,7 +31,7 @@ func createTree(intervals []BlocksExceptionInterval) *intervalTree {
 		return tree
 	}
 
-	intervals = sortIntervals(intervals)
+	intervals = sortAndOptimizeIntervals(intervals)
 
 	for _, blockExceptionInterval := range intervals {
 		i := newInterval(blockExceptionInterval.Low, blockExceptionInterval.High)
@@ -49,8 +49,10 @@ func (tree *intervalTree) addNode(currentNode *node, nextNode *node) {
 		return
 	}
 
+	nextNode.parentOffset = currentNode.offset
 	if nextNode.low() <= currentNode.low() {
 		if currentNode.left == nil {
+			nextNode.offset = currentNode.offset - 1
 			currentNode.left = nextNode
 			return
 		}
@@ -60,6 +62,7 @@ func (tree *intervalTree) addNode(currentNode *node, nextNode *node) {
 	}
 
 	if currentNode.right == nil {
+		nextNode.offset = currentNode.offset + 1
 		currentNode.right = nextNode
 		return
 	}

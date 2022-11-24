@@ -1,10 +1,12 @@
 package tree
 
 type node struct {
-	interval *interval
-	left     *node
-	right    *node
-	max      uint64
+	interval     *interval
+	left         *node
+	right        *node
+	max          uint64
+	offset       int
+	parentOffset int
 }
 
 func newNode(interval *interval) *node {

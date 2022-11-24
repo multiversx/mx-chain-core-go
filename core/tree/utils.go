@@ -13,10 +13,9 @@ const (
 	rightArrow = "\\"
 )
 
-type nodeDisplayInfo struct {
+type currentNodeDetails struct {
 	*node
-	nodeOffset   int
-	parentOffset int
+	parent *node
 }
 
 func treeToString(root *node) string {
@@ -25,17 +24,17 @@ func treeToString(root *node) string {
 	}
 
 	elementSize := len(root.toString())
-	nodesOnLevels, minOffset := extractNodesOnLevels(root)
+	nodesOnLevels, minOffset := extractNodesOnLevelsWithOffsetsUpdated(root)
 	arrowsLines := make([]string, len(nodesOnLevels))
 	nodesLines := make([]string, len(nodesOnLevels))
 	for level := 0; level < len(nodesOnLevels); level++ {
 		lastEmptyOffset := 0
-		for _, currentNodeInfo := range nodesOnLevels[level] {
-			newOffset := currentNodeInfo.nodeOffset - minOffset
+		for _, currentNode := range nodesOnLevels[level] {
+			newOffset := currentNode.offset - minOffset
 			distanceFromPrevious := newOffset - lastEmptyOffset
 			emptySpace := strings.Repeat(space, distanceFromPrevious*elementSize)
 			nodesLines[level] += emptySpace
-			nodesLines[level] += currentNodeInfo.toString()
+			nodesLines[level] += currentNode.toString()
 			lastEmptyOffset = newOffset + 1
 
 			// skip arrow for root
@@ -43,7 +42,7 @@ func treeToString(root *node) string {
 				continue
 			}
 
-			arrowsLines[level] += computeArrowWithSpacing(currentNodeInfo, len(arrowsLines[level]), minOffset, elementSize)
+			arrowsLines[level] += computeArrowWithSpacing(currentNode, len(arrowsLines[level]), minOffset, elementSize)
 		}
 	}
 
@@ -56,62 +55,56 @@ func treeToString(root *node) string {
 	return printableTreeStr
 }
 
-func extractNodesOnLevels(root *node) ([][]*nodeDisplayInfo, int) {
+func extractNodesOnLevelsWithOffsetsUpdated(root *node) ([][]*node, int) {
 	maxOffset := 0
 	minOffset := 0
-	queue := make([]*nodeDisplayInfo, 0)
-	rootInfo := &nodeDisplayInfo{
-		node:         root,
-		nodeOffset:   0,
-		parentOffset: 0,
-	}
-	queue = append(queue, rootInfo)
-	nodesOnLevels := make([][]*nodeDisplayInfo, 0)
-	nodesOnLevels = append(nodesOnLevels, []*nodeDisplayInfo{rootInfo})
-	offsetsMap := make(map[int]struct{}) // used to handle offsets collisions
+	queue := make([]*currentNodeDetails, 0)
+	queue = append(queue, &currentNodeDetails{
+		node:   root,
+		parent: nil,
+	})
+	nodesOnLevels := make([][]*node, 0)
+	nodesOnLevels = append(nodesOnLevels, []*node{root})
 
 	// extract nodes through level order traversal
 	for len(queue) > 0 {
+		levelOffsetsMap := make(map[int]struct{}) // used to handle offsets collisions on the same level
 		queueSize := len(queue)
-		currentLevel := make([]*nodeDisplayInfo, 0)
+		currentLevel := make([]*node, 0)
 
 		for i := 0; i < queueSize; i++ {
-			currentNodeInfo := queue[0]
+			currentNode := queue[0]
 			queue = queue[1:]
 
-			if maxOffset < currentNodeInfo.nodeOffset {
-				maxOffset = currentNodeInfo.nodeOffset
+			if maxOffset < currentNode.offset {
+				maxOffset = currentNode.offset
 			}
-			if minOffset > currentNodeInfo.nodeOffset {
-				minOffset = currentNodeInfo.nodeOffset
+			if minOffset > currentNode.offset {
+				minOffset = currentNode.offset
 			}
 
-			if currentNodeInfo.left != nil {
-				nextLeftOffset := currentNodeInfo.nodeOffset - 1
-				// if next left offset already exists, this node must be shifted to right
+			if currentNode.left != nil {
+				// if next left offset already exists, this left subtree of parent must be left-shifted
 				// this is done only on left due to level order traversal iterating from left to right
-				_, exists := offsetsMap[nextLeftOffset]
+				_, exists := levelOffsetsMap[currentNode.left.offset]
 				if exists {
-					currentNodeInfo.nodeOffset++
+					rightShiftSubTree(currentNode.parent.left)
 				}
-				nextNodeInfo := &nodeDisplayInfo{
-					node:         currentNodeInfo.left,
-					nodeOffset:   currentNodeInfo.nodeOffset - 1,
-					parentOffset: currentNodeInfo.nodeOffset,
-				}
-				offsetsMap[nextNodeInfo.nodeOffset] = struct{}{}
-				queue = append(queue, nextNodeInfo)
-				currentLevel = append(currentLevel, nextNodeInfo)
+
+				levelOffsetsMap[currentNode.left.offset] = struct{}{}
+				queue = append(queue, &currentNodeDetails{
+					node:   currentNode.left,
+					parent: currentNode.node,
+				})
+				currentLevel = append(currentLevel, currentNode.left)
 			}
-			if currentNodeInfo.right != nil {
-				nextNodeInfo := &nodeDisplayInfo{
-					node:         currentNodeInfo.right,
-					nodeOffset:   currentNodeInfo.nodeOffset + 1,
-					parentOffset: currentNodeInfo.nodeOffset,
-				}
-				offsetsMap[nextNodeInfo.nodeOffset] = struct{}{}
-				queue = append(queue, nextNodeInfo)
-				currentLevel = append(currentLevel, nextNodeInfo)
+			if currentNode.right != nil {
+				levelOffsetsMap[currentNode.right.offset] = struct{}{}
+				queue = append(queue, &currentNodeDetails{
+					node:   currentNode.right,
+					parent: currentNode.node,
+				})
+				currentLevel = append(currentLevel, currentNode.right)
 			}
 		}
 
@@ -123,16 +116,32 @@ func extractNodesOnLevels(root *node) ([][]*nodeDisplayInfo, int) {
 	return nodesOnLevels, minOffset
 }
 
-func computeArrowWithSpacing(currentNodeInfo *nodeDisplayInfo, currentLineLen int, minOffset int, elementSize int) string {
+func rightShiftSubTree(root *node) {
+	if root == nil {
+		return
+	}
+
+	root.offset--
+	if root.left != nil {
+		root.left.parentOffset = root.offset
+		rightShiftSubTree(root.left)
+	}
+	if root.right != nil {
+		root.right.parentOffset = root.offset
+		rightShiftSubTree(root.right)
+	}
+}
+
+func computeArrowWithSpacing(currentNode *node, currentLineLen int, minOffset int, elementSize int) string {
 	arrowForNodeWithSpacing := ""
-	arrowsOffset := currentNodeInfo.parentOffset - minOffset
-	if currentNodeInfo.nodeOffset > currentNodeInfo.parentOffset {
-		numUnderscores := (currentNodeInfo.nodeOffset-currentNodeInfo.parentOffset)*elementSize - elementSize/2
+	arrowsOffset := currentNode.parentOffset - minOffset
+	if currentNode.offset > currentNode.parentOffset {
+		numUnderscores := (currentNode.offset-currentNode.parentOffset)*elementSize - elementSize/2 + 1
 		underscores := strings.Repeat(underscore, numUnderscores)
 		emptyArrowSpace := strings.Repeat(space, arrowsOffset*elementSize-currentLineLen+elementSize/2)
 		arrowForNodeWithSpacing = emptyArrowSpace + rightArrow + underscores
 	} else {
-		numUnderscores := (currentNodeInfo.parentOffset-currentNodeInfo.nodeOffset)*elementSize - elementSize/2 + 1
+		numUnderscores := (currentNode.parentOffset-currentNode.offset)*elementSize - elementSize/2 + 1
 		underscores := strings.Repeat(underscore, numUnderscores)
 		emptyArrowSpace := strings.Repeat(space, arrowsOffset*elementSize-currentLineLen-numUnderscores-1+elementSize/2)
 		arrowForNodeWithSpacing = emptyArrowSpace + underscores + leftArrow
@@ -140,17 +149,28 @@ func computeArrowWithSpacing(currentNodeInfo *nodeDisplayInfo, currentLineLen in
 	return arrowForNodeWithSpacing
 }
 
-func sortIntervals(intervals []BlocksExceptionInterval) []BlocksExceptionInterval {
+func sortAndOptimizeIntervals(intervals []BlocksExceptionInterval) []BlocksExceptionInterval {
 	sort.Slice(intervals, func(i, j int) bool {
 		return intervals[i].Low <= intervals[j].Low
 	})
 
-	midIdx := len(intervals) / 2
-	tmp := intervals[0]
-	intervals[0] = intervals[midIdx]
-	intervals[midIdx] = tmp
+	optimizedIntervals := make([]BlocksExceptionInterval, 0, len(intervals))
+	optimizeIntervalsSlice(intervals, &optimizedIntervals)
 
-	return intervals
+	return optimizedIntervals
+}
+
+func optimizeIntervalsSlice(intervals []BlocksExceptionInterval, finalIntervals *[]BlocksExceptionInterval) {
+	midIdx := len(intervals) / 2
+	*finalIntervals = append(*finalIntervals, intervals[midIdx])
+	nextLeftInterval := intervals[:midIdx]
+	if len(nextLeftInterval) > 0 {
+		optimizeIntervalsSlice(nextLeftInterval, finalIntervals)
+	}
+	nextRightInterval := intervals[midIdx+1:]
+	if len(nextRightInterval) > 0 {
+		optimizeIntervalsSlice(nextRightInterval, finalIntervals)
+	}
 }
 
 func contains(currentNode *node, value uint64) bool {
