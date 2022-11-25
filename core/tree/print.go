@@ -1,6 +1,8 @@
 package tree
 
-import "strings"
+import (
+	"strings"
+)
 
 const (
 	newLine    = "\n"
@@ -10,9 +12,9 @@ const (
 	rightArrow = "\\"
 )
 
-type currentNodeDetails struct {
+type nodeDetails struct {
 	*node
-	parent *node
+	lastEdgeParent *node
 }
 
 func treeToString(root *node) string {
@@ -34,7 +36,7 @@ func treeToString(root *node) string {
 			nodesLines[level] += currentNode.toString()
 			lastEmptyOffset = newOffset + 1
 
-			// skip arrow for root
+			// skip arrow line for root
 			if level == 0 {
 				continue
 			}
@@ -55,54 +57,35 @@ func treeToString(root *node) string {
 func extractNodesOnLevelsWithOffsetsUpdated(root *node) ([][]*node, int) {
 	maxOffset := 0
 	minOffset := 0
-	queue := make([]*currentNodeDetails, 0)
-	queue = append(queue, &currentNodeDetails{
-		node:   root,
-		parent: nil,
-	})
-	nodesOnLevels := make([][]*node, 0)
-	nodesOnLevels = append(nodesOnLevels, []*node{root})
+	queue := make([]*nodeDetails, 0)
+	rootDetails := &nodeDetails{
+		node:           root,
+		lastEdgeParent: root,
+	}
+	queue = append(queue, rootDetails)
+	nodesOnLevels := make([][]*nodeDetails, 0)
+	nodesOnLevels = append(nodesOnLevels, []*nodeDetails{rootDetails})
 
 	// extract nodes through level order traversal
 	for len(queue) > 0 {
 		queueSize := len(queue)
-		currentLevel := make([]*node, 0)
+		currentLevel := make([]*nodeDetails, 0)
 
 		for i := 0; i < queueSize; i++ {
 			currentNode := queue[0]
 			queue = queue[1:]
 
-			if maxOffset < currentNode.offset {
-				maxOffset = currentNode.offset
-			}
-			if minOffset > currentNode.offset {
-				minOffset = currentNode.offset
-			}
+			minOffset, maxOffset = updateOffsetsIfNeeded(currentNode.offset, minOffset, maxOffset)
 
 			if currentNode.left != nil {
-				// if next left offset already exists, the offsets must be updated
-				// if the current node is in the left subtree of the tree, shift the subtree to left
-				// otherwise, shift it to right
-				if isOffsetDuplicateInLevel(currentLevel, currentNode.left.offset) {
-					if currentNode.low() < root.low() {
-						shiftSubTreeOffsets(currentNode.parent.left, -1)
-					} else {
-						shiftSubTreeOffsets(currentNode.node, 1)
-					}
-				}
-
-				queue = append(queue, &currentNodeDetails{
-					node:   currentNode.left,
-					parent: currentNode.node,
-				})
-				currentLevel = append(currentLevel, currentNode.left)
+				nextNodeDetails := getNextLeftNodeUpdatingOffsets(currentNode, root, currentLevel)
+				queue = append(queue, nextNodeDetails)
+				currentLevel = append(currentLevel, nextNodeDetails)
 			}
 			if currentNode.right != nil {
-				queue = append(queue, &currentNodeDetails{
-					node:   currentNode.right,
-					parent: currentNode.node,
-				})
-				currentLevel = append(currentLevel, currentNode.right)
+				nextNodeDetails := getNextRightNode(currentNode, root)
+				queue = append(queue, nextNodeDetails)
+				currentLevel = append(currentLevel, nextNodeDetails)
 			}
 		}
 
@@ -111,16 +94,134 @@ func extractNodesOnLevelsWithOffsetsUpdated(root *node) ([][]*node, int) {
 		}
 	}
 
-	return nodesOnLevels, minOffset
-}
-
-func isOffsetDuplicateInLevel(nodesOnLevel []*node, currentOffset int) bool {
-	for _, levelNode := range nodesOnLevel {
-		if levelNode.offset == currentOffset {
-			return true
+	nodesSlices := make([][]*node, len(nodesOnLevels))
+	for level, nodesDetailsOnLevel := range nodesOnLevels {
+		nodesSlices[level] = make([]*node, 0, len(nodesDetailsOnLevel))
+		for _, nodeDetailsOnLevel := range nodesDetailsOnLevel {
+			nodesSlices[level] = append(nodesSlices[level], nodeDetailsOnLevel.node)
 		}
 	}
-	return false
+
+	return nodesSlices, minOffset
+}
+
+func getNextLeftNodeUpdatingOffsets(currentNode *nodeDetails, root *node, currentLevel []*nodeDetails) *nodeDetails {
+	// if next left offset already exists, the offsets must be updated, thus all possible collisions must be checked
+	isLeftSubtree := currentNode.left.low() <= root.low()
+	collidedNode := getFirstCollidedNode(currentLevel, currentNode.left)
+	if collidedNode != nil {
+		shiftingDistance := collidedNode.offset - currentNode.left.offset + 1
+		if isLeftSubtree {
+			shiftLeftSubtree(currentNode, collidedNode, shiftingDistance)
+		} else {
+			shiftRightSubtree(currentNode, collidedNode, shiftingDistance, root)
+		}
+	}
+
+	isMovingLeft := currentNode.left.low() <= currentNode.lastEdgeParent.low()
+	lastEdgeParent := currentNode.lastEdgeParent
+	// if new edge detected, update it
+	if isLeftSubtree && isMovingLeft {
+		lastEdgeParent = currentNode.left
+	}
+
+	return &nodeDetails{
+		node:           currentNode.left,
+		lastEdgeParent: lastEdgeParent,
+	}
+}
+
+func shiftLeftSubtree(currentNode *nodeDetails, collidedNode *nodeDetails, shiftingDistance int) {
+	// if the collided nodes are in the same subtree from the last known edge, find the last common node,
+	// first shift the left subtree of the last known edge to left,
+	// then shift the current node's subtree from last common to right
+	if isSameSubtree(currentNode.left, collidedNode.node, currentNode.lastEdgeParent.low()) {
+		lastCommonNode := getLastCommonNode(currentNode.left, collidedNode.node, currentNode.lastEdgeParent)
+		shiftSubTreeOffsets(currentNode.lastEdgeParent, -shiftingDistance)
+		shiftSubTreeOffsets(lastCommonNode.right, shiftingDistance)
+		return
+	}
+
+	// if the nodes are in the same subtree, simply shift the left subtree of the last known edge to left
+	shiftSubTreeOffsets(currentNode.lastEdgeParent.left, -shiftingDistance)
+}
+
+func shiftRightSubtree(currentNode *nodeDetails, collidedNode *nodeDetails, shiftingDistance int, root *node) {
+	// if the collided nodes are in different subtrees from the root, simply shift the right subtree to right
+	if !isSameSubtree(currentNode.left, collidedNode.node, root.low()) {
+		shiftSubTreeOffsets(currentNode.lastEdgeParent, shiftingDistance)
+		return
+	}
+
+	// if they are on the same subtree from root but different subtrees from last edge, find the last common node,
+	// shift the right subtree of the last known edge to right,
+	// then shift the current node's subtree from last common to right
+	if isSameSubtree(currentNode.left, collidedNode.node, collidedNode.lastEdgeParent.low()) {
+		lastCommonNode := getLastCommonNode(currentNode.left, collidedNode.node, collidedNode.lastEdgeParent)
+		shiftSubTreeOffsets(currentNode.lastEdgeParent.right, shiftingDistance)
+		shiftSubTreeOffsets(lastCommonNode.right, shiftingDistance)
+		return
+	}
+
+	// if they are in different subtrees from last known edge, simply shift the last known edge to right
+	shiftSubTreeOffsets(currentNode.lastEdgeParent, shiftingDistance)
+}
+
+func getLastCommonNode(currentNode *node, collidedNode *node, lastCommonNode *node) *node {
+	if bothOnRight(currentNode, collidedNode, lastCommonNode.low()) {
+		return getLastCommonNode(currentNode, collidedNode, lastCommonNode.right)
+	}
+	if bothOnLeft(currentNode, collidedNode, lastCommonNode.low()) {
+		return getLastCommonNode(currentNode, collidedNode, lastCommonNode.left)
+	}
+	return lastCommonNode
+}
+
+func getNextRightNode(currentNode *nodeDetails, root *node) *nodeDetails {
+	isRightSubtree := currentNode.right.low() > root.low()
+	isMovingRight := currentNode.right.high() >= currentNode.lastEdgeParent.high()
+	lastEdgeParent := currentNode.lastEdgeParent
+	// if new edge detected, update it
+	if isRightSubtree && isMovingRight {
+		lastEdgeParent = currentNode.node.right
+	}
+
+	return &nodeDetails{
+		node:           currentNode.right,
+		lastEdgeParent: lastEdgeParent,
+	}
+}
+
+func updateOffsetsIfNeeded(currentOffset int, minOffset int, maxOffset int) (int, int) {
+	if maxOffset < currentOffset {
+		maxOffset = currentOffset
+	}
+	if minOffset > currentOffset {
+		minOffset = currentOffset
+	}
+	return minOffset, maxOffset
+}
+
+func getFirstCollidedNode(nodesOnLevel []*nodeDetails, nextNode *node) *nodeDetails {
+	for i := len(nodesOnLevel) - 1; i >= 0; i-- {
+		levelNode := nodesOnLevel[i]
+		if levelNode.offset >= nextNode.offset {
+			return levelNode
+		}
+	}
+	return nil
+}
+
+func bothOnLeft(l1 *node, l2 *node, rootLow uint64) bool {
+	return l1.low() <= rootLow && l2.low() <= rootLow
+}
+
+func bothOnRight(l1 *node, l2 *node, rootLow uint64) bool {
+	return l1.low() >= rootLow && l2.low() >= rootLow
+}
+
+func isSameSubtree(l1 *node, l2 *node, rootLow uint64) bool {
+	return bothOnLeft(l1, l2, rootLow) || bothOnRight(l1, l2, rootLow)
 }
 
 func shiftSubTreeOffsets(root *node, direction int) {
@@ -140,18 +241,16 @@ func shiftSubTreeOffsets(root *node, direction int) {
 }
 
 func computeArrowWithSpacing(currentNode *node, currentLineLen int, minOffset int, elementSize int) string {
-	arrowForNodeWithSpacing := ""
 	arrowsOffset := currentNode.parentOffset - minOffset
 	if currentNode.offset > currentNode.parentOffset {
 		numUnderscores := (currentNode.offset-currentNode.parentOffset)*elementSize - elementSize/2 + 1
 		underscores := strings.Repeat(underscore, numUnderscores)
 		emptyArrowSpace := strings.Repeat(space, arrowsOffset*elementSize-currentLineLen+elementSize/2)
-		arrowForNodeWithSpacing = emptyArrowSpace + rightArrow + underscores
-	} else {
-		numUnderscores := (currentNode.parentOffset-currentNode.offset)*elementSize - elementSize/2 + 1
-		underscores := strings.Repeat(underscore, numUnderscores)
-		emptyArrowSpace := strings.Repeat(space, arrowsOffset*elementSize-currentLineLen-numUnderscores-1+elementSize/2)
-		arrowForNodeWithSpacing = emptyArrowSpace + underscores + leftArrow
+		return emptyArrowSpace + rightArrow + underscores
 	}
-	return arrowForNodeWithSpacing
+
+	numUnderscores := (currentNode.parentOffset-currentNode.offset)*elementSize - elementSize/2 + 1
+	underscores := strings.Repeat(underscore, numUnderscores)
+	emptyArrowSpace := strings.Repeat(space, arrowsOffset*elementSize-currentLineLen-numUnderscores-1+elementSize/2)
+	return emptyArrowSpace + underscores + leftArrow
 }
