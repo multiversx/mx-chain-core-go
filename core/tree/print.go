@@ -1,8 +1,6 @@
 package tree
 
-import (
-	"strings"
-)
+import "strings"
 
 const (
 	newLine    = "\n"
