@@ -301,6 +301,19 @@ type TransactionHandler interface {
 	CheckIntegrity() error
 }
 
+// TransactionHandlerWithGasUsedAndFee extends TransactionHandler by also including used gas and fee
+type TransactionHandlerWithGasUsedAndFee interface {
+	TransactionHandler
+
+	SetInitialPaidFee(fee *big.Int)
+	SetGasUsed(gasUsed uint64)
+	SetFee(fee *big.Int)
+	GetInitialPaidFee() *big.Int
+	GetGasUsed() uint64
+	GetFee() *big.Int
+	GetTxHandler() TransactionHandler
+}
+
 // LogHandler defines the type for a log resulted from executing a transaction or smart contract call
 type LogHandler interface {
 	// GetAddress returns the address of the sc that was originally called by the user
@@ -369,10 +382,10 @@ type MiniBlockInfo struct {
 // SyncStatisticsHandler defines the methods for a component able to store the sync statistics for a trie
 type SyncStatisticsHandler interface {
 	Reset()
-	AddNumReceived(value int)
+	AddNumProcessed(value int)
 	AddNumLarge(value int)
 	SetNumMissing(rootHash []byte, value int)
-	NumReceived() int
+	NumProcessed() int
 	NumLarge() int
 	NumMissing() int
 	IsInterfaceNil() bool
@@ -389,7 +402,7 @@ type TransactionWithFeeHandler interface {
 
 // UserAccountHandler models a user account
 type UserAccountHandler interface {
-	RetrieveValue(key []byte) ([]byte, error)
+	RetrieveValue(key []byte) ([]byte, uint32, error)
 	GetBalance() *big.Int
 	GetNonce() uint64
 	AddressBytes() []byte
