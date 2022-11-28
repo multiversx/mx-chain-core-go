@@ -20,6 +20,11 @@ func (tree *intervalTree) Contains(value uint64) bool {
 	return contains(tree.root, value)
 }
 
+// IsLeftMargin returns true if the provided value is left margin of any node
+func (tree *intervalTree) IsLeftMargin(value uint64) bool {
+	return isLeftMargin(tree.root, value)
+}
+
 // String returns a printable string form for the tree
 func (tree *intervalTree) String() string {
 	return treeToString(tree.root)
@@ -86,6 +91,22 @@ func contains(currentNode *node, value uint64) bool {
 	}
 
 	return contains(currentNode.right, value)
+}
+
+func isLeftMargin(currentNode *node, value uint64) bool {
+	if currentNode == nil {
+		return false
+	}
+
+	if currentNode.low() == value {
+		return true
+	}
+
+	if currentNode.low() > value {
+		return isLeftMargin(currentNode.left, value)
+	}
+
+	return isLeftMargin(currentNode.right, value)
 }
 
 func computeMaxFields(currentNode *node) {
