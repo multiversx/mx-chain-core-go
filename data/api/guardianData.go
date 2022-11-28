@@ -11,4 +11,5 @@ type GuardianData struct {
 	ActiveGuardian  *Guardian `json:"activeGuardian,omitempty"`
 	PendingGuardian *Guardian `json:"pendingGuardian,omitempty"`
 	Frozen          bool      `json:"frozen,omitempty"`
+	UID             []byte    `json:"uid"`
 }
