@@ -53,6 +53,11 @@ func TestNewIntervalTree(t *testing.T) {
 		assert.True(t, tree.Contains(6))
 		assert.False(t, tree.Contains(4))
 		assert.False(t, tree.Contains(41))
+		assert.True(t, tree.IsLeftMargin(15))
+		assert.True(t, tree.IsLeftMargin(10))
+		assert.True(t, tree.IsLeftMargin(17))
+		assert.False(t, tree.IsLeftMargin(20))
+		assert.False(t, tree.IsLeftMargin(40))
 	})
 	t.Run("non-overlapping intervals should work", func(t *testing.T) {
 		t.Parallel()
@@ -83,6 +88,11 @@ func TestNewIntervalTree(t *testing.T) {
 		assert.True(t, tree.Contains(19))
 		assert.False(t, tree.Contains(0))
 		assert.False(t, tree.Contains(21))
+		assert.True(t, tree.IsLeftMargin(12))
+		assert.True(t, tree.IsLeftMargin(7))
+		assert.True(t, tree.IsLeftMargin(18))
+		assert.False(t, tree.IsLeftMargin(8))
+		assert.False(t, tree.IsLeftMargin(13))
 	})
 	t.Run("multiple offset conflicts should work", func(t *testing.T) {
 		t.Parallel()
