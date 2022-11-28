@@ -102,7 +102,7 @@ func isLeftMargin(currentNode *node, value uint64) bool {
 		return true
 	}
 
-	if currentNode.low() >= value {
+	if currentNode.low() > value {
 		return isLeftMargin(currentNode.left, value)
 	}
 
