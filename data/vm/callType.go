@@ -23,3 +23,29 @@ const (
 	// another smart contract but the caller is from the previous caller
 	ExecOnDestByCaller
 )
+
+const (
+	DirectCallStr             = "directCall"
+	AsynchronousCallStr       = "asynchronousCall"
+	AsynchronousCallBackStr   = "asynchronousCallBack"
+	ESDTTransferAndExecuteStr = "esdtTransferAndExecute"
+	ExecOnDestByCallerStr     = "execOnDestByCaller"
+	UnknownStr                = "unknown"
+)
+
+func (ct CallType) ToString() string {
+	switch ct {
+	case DirectCall:
+		return DirectCallStr
+	case AsynchronousCall:
+		return AsynchronousCallStr
+	case AsynchronousCallBack:
+		return AsynchronousCallBackStr
+	case ESDTTransferAndExecute:
+		return ESDTTransferAndExecuteStr
+	case ExecOnDestByCaller:
+		return ExecOnDestByCallerStr
+	default:
+		return UnknownStr
+	}
+}
