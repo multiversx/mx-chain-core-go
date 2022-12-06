@@ -15,7 +15,7 @@ var ErrInvalidErdAddress = errors.New("invalid ERD address")
 var ErrBech32ConvertError = errors.New("can't convert bech32 string")
 
 // ErrHrpPrefix signals that the prefix is not human readable or empty
-var ErrHrpPrefix = errors.New("introduced prefix which is not human readable")
+var ErrInvalidHrpPrefix = errors.New("invalid hrp prefix")
 
 // ErrConvertBits signals that a configuration mistake has been introduced
 var ErrConvertBits = errors.New("invalid fromBits or toBits when converting bits")

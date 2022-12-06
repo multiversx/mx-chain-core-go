@@ -41,7 +41,7 @@ func NewBech32PubkeyConverter(addressLen int, prefix string) (*bech32PubkeyConve
 	}
 	if !check.IfHrp(prefix) {
 		return nil, fmt.Errorf("%w when creating address converter, prefix should have been human readable",
-			ErrHrpPrefix)
+			ErrInvalidHrpPrefix)
 	}
 
 	return &bech32PubkeyConverter{
@@ -91,44 +91,26 @@ func (bpc *bech32PubkeyConverter) Encode(pkBytes []byte) (string, error) {
 		return "", fmt.Errorf("%w: %s", ErrConvertBits, err.Error())
 	}
 
-	converted, err := bech32.Encode(bpc.prefix, conv)
+	encodedBytes, err := bech32.Encode(bpc.prefix, conv)
 	if err != nil {
 		return "", fmt.Errorf("%w: %s", ErrBech32ConvertError, err.Error())
 	}
 
-	return converted, nil
+	return encodedBytes, nil
 }
 
 // SilentEncode converts the provided bytes in a bech32 form without returning any error
 func (bpc *bech32PubkeyConverter) SilentEncode(pkBytes []byte, log core.Logger) string {
-	if len(pkBytes) != bpc.len {
-		log.Warn("bech32PubkeyConverter.SilentEncode PubKeyBytesLength",
-			"hex buff", hex.EncodeToString(pkBytes),
-			"error", ErrWrongSize,
-			"stack trace", string(debug.Stack()))
-		return ""
-	}
-
-	//since the errors generated here are usually because of a bad config, they will be treated here
-	conv, err := bech32.ConvertBits(pkBytes, bech32Config.fromBits, bech32Config.toBits, bech32Config.pad)
+	encodedBytes, err := bpc.Encode(pkBytes)
 	if err != nil {
-		log.Warn("bech32PubkeyConverter.SilentEncode ConvertBits",
+		log.Warn("bech32PubkeyConverter.SilentEncode",
 			"hex buff", hex.EncodeToString(pkBytes),
-			"error", ErrWrongSize,
+			"error", err,
 			"stack trace", string(debug.Stack()))
 		return ""
 	}
 
-	converted, err := bech32.Encode(bpc.prefix, conv)
-	if err != nil {
-		log.Warn("bech32PubkeyConverter.SilentEncode Encode",
-			"hex buff", hex.EncodeToString(conv),
-			"error", ErrWrongSize,
-			"stack trace", string(debug.Stack()))
-		return ""
-	}
-
-	return converted
+	return encodedBytes
 }
 
 // EncodeSlice converts the provided bytes slice into a slice of bech32 addresses
