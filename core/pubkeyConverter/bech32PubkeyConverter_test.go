@@ -9,6 +9,7 @@ import (
 
 	"github.com/ElrondNetwork/elrond-go-core/core"
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
+	"github.com/ElrondNetwork/elrond-go-core/core/mock"
 	"github.com/ElrondNetwork/elrond-go-core/core/pubkeyConverter"
 	"github.com/stretchr/testify/assert"
 )
@@ -74,6 +75,30 @@ func TestBech32PubkeyConverter_DecodeWrongSizeShouldErr(t *testing.T) {
 
 	assert.Equal(t, 0, len(str))
 	assert.True(t, errors.Is(err, pubkeyConverter.ErrWrongSize))
+}
+
+func TestBech32PubkeyConverter_SilentEncodeShouldWork(t *testing.T) {
+	t.Parallel()
+
+	addressLen := 32
+	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, core.DefaultAddressPrefix)
+
+	buff := []byte("12345678901234567890123456789012")
+	str := bpc.SilentEncode(buff, &mock.LoggerMock{})
+
+	assert.Equal(t, 0, strings.Index(str, pubkeyConverter.Prefix))
+}
+
+func TestBech32PubkeyConverter_SilentEncodeShouldNotWork(t *testing.T) {
+	t.Parallel()
+
+	addressLen := 32
+	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, core.DefaultAddressPrefix)
+
+	buff := []byte("1234")
+	str := bpc.SilentEncode(buff, &mock.LoggerMock{})
+
+	assert.Equal(t, "", str)
 }
 
 func TestBech32PubkeyConverter_EncodeDecodeShouldWork(t *testing.T) {

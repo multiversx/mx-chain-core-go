@@ -5,6 +5,7 @@ import (
 	"testing"
 
 	"github.com/ElrondNetwork/elrond-go-core/core/check"
+	"github.com/ElrondNetwork/elrond-go-core/core/mock"
 	"github.com/ElrondNetwork/elrond-go-core/core/pubkeyConverter"
 	"github.com/stretchr/testify/assert"
 )
@@ -69,7 +70,18 @@ func TestHexPubkeyConverter_EncodeShouldWork(t *testing.T) {
 	addressLen := 4
 	hpc, _ := pubkeyConverter.NewHexPubkeyConverter(addressLen)
 
-	str, _ := hpc.Encode([]byte{170, 255})
+	str, err := hpc.Encode([]byte{170, 255})
+	assert.Nil(t, err)
+	assert.Equal(t, "aaff", str)
+}
+
+func TestHexPubkeyConverter_SilentEncodeShouldWork(t *testing.T) {
+	t.Parallel()
+
+	addressLen := 4
+	hpc, _ := pubkeyConverter.NewHexPubkeyConverter(addressLen)
+
+	str := hpc.SilentEncode([]byte{170, 255}, &mock.LoggerMock{})
 	assert.Equal(t, "aaff", str)
 }
 
