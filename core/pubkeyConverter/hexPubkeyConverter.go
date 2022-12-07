@@ -3,8 +3,6 @@ package pubkeyConverter
 import (
 	"encoding/hex"
 	"fmt"
-
-	"github.com/ElrondNetwork/elrond-go-core/core"
 )
 
 // hexPubkeyConverter encodes or decodes provided public key as/from hex
@@ -44,23 +42,7 @@ func (ppc *hexPubkeyConverter) Decode(humanReadable string) ([]byte, error) {
 }
 
 // Encode converts the provided bytes in a form that this converter can decode. In this case it will encode to hex
-func (ppc *hexPubkeyConverter) Encode(pkBytes []byte) (string, error) {
-	return hex.EncodeToString(pkBytes), nil
-}
-
-// EncodeSlice converts the provided bytes slice in a form that this converter can decode. In this case it will encode to hex
-func (ppc *hexPubkeyConverter) EncodeSlice(pkBytesSlice [][]byte) ([]string, error) {
-	encodedSlice := make([]string, 0, len(pkBytesSlice))
-
-	for _, item := range pkBytesSlice {
-		encodedSlice = append(encodedSlice, hex.EncodeToString(item))
-	}
-
-	return encodedSlice, nil
-}
-
-// SilentEncode converts the provided bytes in a form that this converter can decode. In this case it will encode to hex
-func (ppc *hexPubkeyConverter) SilentEncode(pkBytes []byte, log core.Logger) string {
+func (ppc *hexPubkeyConverter) Encode(pkBytes []byte) string {
 	return hex.EncodeToString(pkBytes)
 }
 
