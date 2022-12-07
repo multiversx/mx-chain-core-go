@@ -254,3 +254,6 @@ const CompletedTxEventIdentifier = "completedTxEvent"
 
 // GasRefundForRelayerMessage is the return message for to the smart contract result with refund for the relayer
 const GasRefundForRelayerMessage = "gas refund for relayer"
+
+// DefaultAddressPrefix is the default hrp of MultiversX/Elrond
+const DefaultAddressPrefix = "erd"

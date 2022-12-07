@@ -57,7 +57,7 @@ func TrimSliceHandler(in []data.TransactionHandler) []data.TransactionHandler {
 }
 
 // GetDataForSigning returns the serialized transaction having an empty signature field
-func (tx *Transaction) GetDataForSigning(encoder Encoder, marshalizer Marshalizer) ([]byte, error) {
+func (tx *Transaction) GetDataForSigning(encoder core.PubkeyConverter, marshalizer Marshalizer) ([]byte, error) {
 	if check.IfNil(encoder) {
 		return nil, ErrNilEncoder
 	}
@@ -65,11 +65,21 @@ func (tx *Transaction) GetDataForSigning(encoder Encoder, marshalizer Marshalize
 		return nil, ErrNilMarshalizer
 	}
 
+	receiverAddr, err := encoder.Encode(tx.RcvAddr)
+	if err != nil {
+		return nil, err
+	}
+
+	senderAddr, err := encoder.Encode(tx.SndAddr)
+	if err != nil {
+		return nil, err
+	}
+
 	ftx := &FrontendTransaction{
 		Nonce:            tx.Nonce,
 		Value:            tx.Value.String(),
-		Receiver:         encoder.Encode(tx.RcvAddr),
-		Sender:           encoder.Encode(tx.SndAddr),
+		Receiver:         receiverAddr,
+		Sender:           senderAddr,
 		GasPrice:         tx.GasPrice,
 		GasLimit:         tx.GasLimit,
 		SenderUsername:   tx.SndUserName,
