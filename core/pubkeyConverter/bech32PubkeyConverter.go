@@ -114,6 +114,7 @@ func (bpc *bech32PubkeyConverter) SilentEncode(pkBytes []byte, log core.Logger) 
 }
 
 // EncodeSlice converts the provided bytes slice into a slice of bech32 addresses
+// dummy
 func (bpc *bech32PubkeyConverter) EncodeSlice(pkBytesSlice [][]byte) ([]string, error) {
 	encodedSlice := make([]string, 0, len(pkBytesSlice))
 
