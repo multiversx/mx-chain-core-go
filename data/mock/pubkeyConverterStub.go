@@ -1,14 +1,10 @@
 package mock
 
-import "github.com/ElrondNetwork/elrond-go-core/core"
-
 // PubkeyConverterStub -
 type PubkeyConverterStub struct {
-	LenCalled          func() int
-	DecodeCalled       func(humanReadable string) ([]byte, error)
-	EncodeCalled       func(pkBytes []byte) (string, error)
-	EncodeSliceCalled  func(pkBytesSlice [][]byte) ([]string, error)
-	SilentEncodeCalled func(pkBytes []byte, log core.Logger) string
+	LenCalled    func() int
+	DecodeCalled func(humanReadable string) ([]byte, error)
+	EncodeCalled func(pkBytes []byte) string
 }
 
 // Len -
@@ -30,27 +26,9 @@ func (pcs *PubkeyConverterStub) Decode(humanReadable string) ([]byte, error) {
 }
 
 // Encode -
-func (pcs *PubkeyConverterStub) Encode(pkBytes []byte) (string, error) {
+func (pcs *PubkeyConverterStub) Encode(pkBytes []byte) string {
 	if pcs.EncodeCalled != nil {
 		return pcs.EncodeCalled(pkBytes)
-	}
-
-	return "", nil
-}
-
-// EncodeSlice -
-func (pcs *PubkeyConverterStub) EncodeSlice(pkBytesSlice [][]byte) ([]string, error) {
-	if pcs.EncodeSliceCalled != nil {
-		return pcs.EncodeSliceCalled(pkBytesSlice)
-	}
-
-	return make([]string, 0), nil
-}
-
-// SilentEncode -
-func (pcs *PubkeyConverterStub) SilentEncode(pkBytes []byte, log core.Logger) string {
-	if pcs.SilentEncodeCalled != nil {
-		return pcs.SilentEncodeCalled(pkBytes, log)
 	}
 
 	return ""
