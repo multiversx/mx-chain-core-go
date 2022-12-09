@@ -7,23 +7,26 @@ option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/block/block.proto";
+import "github.com/ElrondNetwork/elrond-go-core/data/transaction/log.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/transaction/transaction.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/smartContractResult/smartContractResult.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/receipt/receipt.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/rewardTx/rewardTx.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/alteredAccount/alteredAccount.proto";
 
-message FirehoseShardBlock {
+message FirehoseBlock {
   bytes                         HeaderBytes = 1;
   string                        HeaderType = 2;
   bytes                         HeaderHash = 3;
   Body                          Body = 4;
-  map<string, AlteredAccount>   AlteredAccounts = 5;
+  repeated AlteredAccount       AlteredAccounts = 5;
   map<string, TxWithFee>        Transactions = 6;
   map<string, SCRWithFee>       SmartContractResult = 7;
   map<string, RewardTxWithFee>  Rewards = 8;
   map<string, ReceiptTxWithFee> Receipts = 9;
   map<string, TxWithFee>        InvalidTxs = 10;
+  repeated Log                  Logs = 11;
+  bytes                         SignersIndexes = 12;
 }
 
 message FeeInfo {
