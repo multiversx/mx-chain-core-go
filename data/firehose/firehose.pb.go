@@ -7,6 +7,7 @@ import (
 	bytes "bytes"
 	fmt "fmt"
 	github_com_ElrondNetwork_elrond_go_core_data "github.com/ElrondNetwork/elrond-go-core/data"
+	alteredAccount "github.com/ElrondNetwork/elrond-go-core/data/alteredAccount"
 	block "github.com/ElrondNetwork/elrond-go-core/data/block"
 	receipt "github.com/ElrondNetwork/elrond-go-core/data/receipt"
 	rewardTx "github.com/ElrondNetwork/elrond-go-core/data/rewardTx"
@@ -39,7 +40,7 @@ type FirehoseShardBlock struct {
 	HeaderType          string                                              `protobuf:"bytes,2,opt,name=HeaderType,proto3" json:"HeaderType,omitempty"`
 	HeaderHash          []byte                                              `protobuf:"bytes,3,opt,name=HeaderHash,proto3" json:"HeaderHash,omitempty"`
 	Body                *block.Body                                         `protobuf:"bytes,4,opt,name=Body,proto3" json:"Body,omitempty"`
-	AlteredAccounts     map[string]*AlteredAccount                          `protobuf:"bytes,5,rep,name=AlteredAccounts,proto3" json:"AlteredAccounts,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	AlteredAccounts     map[string]*alteredAccount.AlteredAccount           `protobuf:"bytes,5,rep,name=AlteredAccounts,proto3" json:"AlteredAccounts,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	Transactions        map[string]*TxWithFee                               `protobuf:"bytes,6,rep,name=Transactions,proto3" json:"Transactions,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	SmartContractResult map[string]*smartContractResult.SmartContractResult `protobuf:"bytes,7,rep,name=SmartContractResult,proto3" json:"SmartContractResult,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 	Rewards             map[string]*rewardTx.RewardTx                       `protobuf:"bytes,8,rep,name=Rewards,proto3" json:"Rewards,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
@@ -103,7 +104,7 @@ func (m *FirehoseShardBlock) GetBody() *block.Body {
 	return nil
 }
 
-func (m *FirehoseShardBlock) GetAlteredAccounts() map[string]*AlteredAccount {
+func (m *FirehoseShardBlock) GetAlteredAccounts() map[string]*alteredAccount.AlteredAccount {
 	if m != nil {
 		return m.AlteredAccounts
 	}
@@ -145,124 +146,6 @@ func (m *FirehoseShardBlock) GetInvalidTxs() map[string]*TxWithFee {
 	return nil
 }
 
-type AlteredAccount struct {
-	Nonce   uint64              `protobuf:"varint,1,opt,name=Nonce,proto3" json:"Nonce,omitempty"`
-	Balance string              `protobuf:"bytes,2,opt,name=Balance,proto3" json:"Balance,omitempty"`
-	Tokens  []*AccountTokenData `protobuf:"bytes,3,rep,name=Tokens,proto3" json:"Tokens,omitempty"`
-}
-
-func (m *AlteredAccount) Reset()      { *m = AlteredAccount{} }
-func (*AlteredAccount) ProtoMessage() {}
-func (*AlteredAccount) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4efa697a0edbc17a, []int{1}
-}
-func (m *AlteredAccount) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *AlteredAccount) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	b = b[:cap(b)]
-	n, err := m.MarshalToSizedBuffer(b)
-	if err != nil {
-		return nil, err
-	}
-	return b[:n], nil
-}
-func (m *AlteredAccount) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AlteredAccount.Merge(m, src)
-}
-func (m *AlteredAccount) XXX_Size() int {
-	return m.Size()
-}
-func (m *AlteredAccount) XXX_DiscardUnknown() {
-	xxx_messageInfo_AlteredAccount.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_AlteredAccount proto.InternalMessageInfo
-
-func (m *AlteredAccount) GetNonce() uint64 {
-	if m != nil {
-		return m.Nonce
-	}
-	return 0
-}
-
-func (m *AlteredAccount) GetBalance() string {
-	if m != nil {
-		return m.Balance
-	}
-	return ""
-}
-
-func (m *AlteredAccount) GetTokens() []*AccountTokenData {
-	if m != nil {
-		return m.Tokens
-	}
-	return nil
-}
-
-type AccountTokenData struct {
-	Nonce      uint64 `protobuf:"varint,1,opt,name=Nonce,proto3" json:"Nonce,omitempty"`
-	Identifier string `protobuf:"bytes,2,opt,name=Identifier,proto3" json:"Identifier,omitempty"`
-	Balance    string `protobuf:"bytes,3,opt,name=Balance,proto3" json:"Balance,omitempty"`
-	Properties string `protobuf:"bytes,4,opt,name=Properties,proto3" json:"Properties,omitempty"`
-}
-
-func (m *AccountTokenData) Reset()      { *m = AccountTokenData{} }
-func (*AccountTokenData) ProtoMessage() {}
-func (*AccountTokenData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4efa697a0edbc17a, []int{2}
-}
-func (m *AccountTokenData) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *AccountTokenData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	b = b[:cap(b)]
-	n, err := m.MarshalToSizedBuffer(b)
-	if err != nil {
-		return nil, err
-	}
-	return b[:n], nil
-}
-func (m *AccountTokenData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_AccountTokenData.Merge(m, src)
-}
-func (m *AccountTokenData) XXX_Size() int {
-	return m.Size()
-}
-func (m *AccountTokenData) XXX_DiscardUnknown() {
-	xxx_messageInfo_AccountTokenData.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_AccountTokenData proto.InternalMessageInfo
-
-func (m *AccountTokenData) GetNonce() uint64 {
-	if m != nil {
-		return m.Nonce
-	}
-	return 0
-}
-
-func (m *AccountTokenData) GetIdentifier() string {
-	if m != nil {
-		return m.Identifier
-	}
-	return ""
-}
-
-func (m *AccountTokenData) GetBalance() string {
-	if m != nil {
-		return m.Balance
-	}
-	return ""
-}
-
-func (m *AccountTokenData) GetProperties() string {
-	if m != nil {
-		return m.Properties
-	}
-	return ""
-}
-
 type TxWithFee struct {
 	Transaction *transaction.Transaction `protobuf:"bytes,1,opt,name=Transaction,proto3" json:"Transaction,omitempty"`
 	FeeInfo     *FeeInfo                 `protobuf:"bytes,2,opt,name=FeeInfo,proto3" json:"FeeInfo,omitempty"`
@@ -271,7 +154,7 @@ type TxWithFee struct {
 func (m *TxWithFee) Reset()      { *m = TxWithFee{} }
 func (*TxWithFee) ProtoMessage() {}
 func (*TxWithFee) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4efa697a0edbc17a, []int{3}
+	return fileDescriptor_4efa697a0edbc17a, []int{1}
 }
 func (m *TxWithFee) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -319,7 +202,7 @@ type FeeInfo struct {
 func (m *FeeInfo) Reset()      { *m = FeeInfo{} }
 func (*FeeInfo) ProtoMessage() {}
 func (*FeeInfo) Descriptor() ([]byte, []int) {
-	return fileDescriptor_4efa697a0edbc17a, []int{4}
+	return fileDescriptor_4efa697a0edbc17a, []int{2}
 }
 func (m *FeeInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -367,14 +250,12 @@ func (m *FeeInfo) GetInitialPaidFee() *math_big.Int {
 
 func init() {
 	proto.RegisterType((*FirehoseShardBlock)(nil), "proto.FirehoseShardBlock")
-	proto.RegisterMapType((map[string]*AlteredAccount)(nil), "proto.FirehoseShardBlock.AlteredAccountsEntry")
+	proto.RegisterMapType((map[string]*alteredAccount.AlteredAccount)(nil), "proto.FirehoseShardBlock.AlteredAccountsEntry")
 	proto.RegisterMapType((map[string]*TxWithFee)(nil), "proto.FirehoseShardBlock.InvalidTxsEntry")
 	proto.RegisterMapType((map[string]*receipt.Receipt)(nil), "proto.FirehoseShardBlock.ReceiptsEntry")
 	proto.RegisterMapType((map[string]*rewardTx.RewardTx)(nil), "proto.FirehoseShardBlock.RewardsEntry")
 	proto.RegisterMapType((map[string]*smartContractResult.SmartContractResult)(nil), "proto.FirehoseShardBlock.SmartContractResultEntry")
 	proto.RegisterMapType((map[string]*TxWithFee)(nil), "proto.FirehoseShardBlock.TransactionsEntry")
-	proto.RegisterType((*AlteredAccount)(nil), "proto.AlteredAccount")
-	proto.RegisterType((*AccountTokenData)(nil), "proto.AccountTokenData")
 	proto.RegisterType((*TxWithFee)(nil), "proto.TxWithFee")
 	proto.RegisterType((*FeeInfo)(nil), "proto.FeeInfo")
 }
@@ -382,59 +263,54 @@ func init() {
 func init() { proto.RegisterFile("firehose.proto", fileDescriptor_4efa697a0edbc17a) }
 
 var fileDescriptor_4efa697a0edbc17a = []byte{
-	// 832 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x96, 0xcf, 0x8f, 0xdb, 0x44,
-	0x14, 0xc7, 0xe3, 0x66, 0x7f, 0xe5, 0x25, 0x64, 0x97, 0xa1, 0x08, 0x2b, 0x87, 0x69, 0x14, 0x41,
-	0x09, 0xaa, 0x36, 0x41, 0x81, 0x03, 0x02, 0x09, 0x51, 0x6f, 0x1b, 0x9a, 0x22, 0xb5, 0x65, 0x1a,
-	0x04, 0x54, 0x5c, 0x26, 0xf6, 0x24, 0xb1, 0xe2, 0xf5, 0x84, 0x99, 0x49, 0xbb, 0xb9, 0x21, 0xfe,
-	0x02, 0xfe, 0x0c, 0xc4, 0x5f, 0xc2, 0x71, 0x8f, 0x7b, 0x83, 0xf5, 0x5e, 0x38, 0xee, 0x05, 0x71,
-	0x45, 0x99, 0xb1, 0x13, 0x3b, 0xeb, 0x20, 0x45, 0xf4, 0xb2, 0x9e, 0xf7, 0xe6, 0xbd, 0xcf, 0x7b,
-	0xfb, 0xbe, 0x2f, 0x4e, 0xa0, 0x3a, 0xf4, 0x05, 0x1b, 0x73, 0xc9, 0x5a, 0x53, 0xc1, 0x15, 0x47,
-	0xbb, 0xfa, 0x51, 0x3b, 0x1e, 0xf9, 0x6a, 0x3c, 0x1b, 0xb4, 0x5c, 0x7e, 0xda, 0x1e, 0xf1, 0x11,
-	0x6f, 0x6b, 0xf7, 0x60, 0x36, 0xd4, 0x96, 0x36, 0xf4, 0xc9, 0x64, 0xd5, 0x3e, 0x4f, 0x85, 0x3f,
-	0x0c, 0x04, 0x0f, 0xbd, 0x27, 0x4c, 0xbd, 0xe2, 0x62, 0xd2, 0x66, 0xda, 0x3a, 0x1e, 0xf1, 0x63,
-	0x97, 0x0b, 0xd6, 0xf6, 0xa8, 0xa2, 0xed, 0x41, 0xc0, 0xdd, 0x89, 0xf9, 0x1b, 0xe7, 0x3f, 0xde,
-	0x2a, 0x5f, 0x09, 0x1a, 0x4a, 0xea, 0x2a, 0x9f, 0x87, 0xe9, 0x73, 0xcc, 0x7a, 0xb1, 0x15, 0x4b,
-	0x9e, 0x52, 0xa1, 0x4e, 0x78, 0xa8, 0x04, 0x75, 0x15, 0x61, 0x72, 0x16, 0xa8, 0x3c, 0x5f, 0xcc,
-	0x76, 0xb6, 0x62, 0x0b, 0xe6, 0x32, 0x7f, 0xaa, 0x92, 0x67, 0xcc, 0x78, 0xb0, 0x25, 0xe3, 0x15,
-	0x15, 0x5e, 0xff, 0x6c, 0x79, 0x30, 0x94, 0xc6, 0x3f, 0x07, 0x80, 0xba, 0xb1, 0x74, 0xcf, 0xc7,
-	0x54, 0x78, 0xce, 0x62, 0x9c, 0xa8, 0x0e, 0xe5, 0x47, 0x8c, 0x7a, 0x4c, 0x38, 0x73, 0xc5, 0xa4,
-	0x6d, 0xd5, 0xad, 0x66, 0x85, 0xa4, 0x5d, 0x08, 0x03, 0x18, 0xb3, 0x3f, 0x9f, 0x32, 0xfb, 0x56,
-	0xdd, 0x6a, 0x96, 0x48, 0xca, 0xb3, 0xba, 0x7f, 0x44, 0xe5, 0xd8, 0x2e, 0x6a, 0x40, 0xca, 0x83,
-	0xee, 0xc0, 0x8e, 0xc3, 0xbd, 0xb9, 0xbd, 0x53, 0xb7, 0x9a, 0xe5, 0x4e, 0xd9, 0xb4, 0xd3, 0x5a,
-	0xb8, 0x88, 0xbe, 0x40, 0xdf, 0xc1, 0xe1, 0xfd, 0x40, 0x31, 0xc1, 0xbc, 0xfb, 0xae, 0xcb, 0x67,
-	0xa1, 0x92, 0xf6, 0x6e, 0xbd, 0xd8, 0x2c, 0x77, 0x5a, 0x71, 0xec, 0xcd, 0xb6, 0x5b, 0x6b, 0x09,
-	0x0f, 0x43, 0x25, 0xe6, 0x64, 0x1d, 0x83, 0x9e, 0x42, 0xa5, 0xbf, 0x92, 0x5b, 0xda, 0x7b, 0x1a,
-	0x7b, 0x6f, 0x33, 0x36, 0x1d, 0x6d, 0x98, 0x19, 0x00, 0xf2, 0xe0, 0xad, 0xe7, 0x37, 0xb5, 0xb6,
-	0xf7, 0x35, 0xb7, 0xb3, 0x99, 0x9b, 0x93, 0x64, 0xf0, 0x79, 0x38, 0xf4, 0x05, 0xec, 0x13, 0x2d,
-	0x9e, 0xb4, 0x0f, 0x34, 0xf9, 0xee, 0x66, 0x72, 0x1c, 0x68, 0x68, 0x49, 0x1a, 0x3a, 0x81, 0x03,
-	0x62, 0x76, 0x48, 0xda, 0x25, 0x8d, 0x78, 0xff, 0xbf, 0x10, 0x26, 0xd2, 0x30, 0x96, 0x89, 0xa8,
-	0x07, 0xd0, 0x0b, 0x5f, 0xd2, 0xc0, 0xf7, 0xfa, 0x67, 0xd2, 0x06, 0x8d, 0xf9, 0x60, 0x33, 0x66,
-	0x15, 0x6b, 0x40, 0xa9, 0xe4, 0xda, 0xf7, 0x70, 0x3b, 0x4f, 0x31, 0x74, 0x04, 0xc5, 0x09, 0x9b,
-	0xeb, 0xad, 0x2b, 0x91, 0xc5, 0x11, 0xdd, 0x83, 0xdd, 0x97, 0x34, 0x98, 0x99, 0x45, 0x2b, 0x77,
-	0xde, 0x8e, 0xeb, 0x65, 0xb3, 0x89, 0x89, 0xf9, 0xf4, 0xd6, 0x27, 0x56, 0xed, 0x6b, 0x78, 0xf3,
-	0x86, 0x6a, 0x39, 0xdc, 0xbb, 0x59, 0xee, 0x51, 0xcc, 0xed, 0x9f, 0x7d, 0xeb, 0xab, 0x71, 0x97,
-	0xb1, 0x34, 0x72, 0x00, 0xf6, 0x26, 0xc1, 0x72, 0xc8, 0x1f, 0x66, 0xc9, 0xb5, 0x98, 0x9c, 0x43,
-	0x48, 0xd7, 0xf8, 0x0a, 0x2a, 0x69, 0xe9, 0x72, 0xb8, 0xef, 0x65, 0xb9, 0x87, 0x31, 0x97, 0xc4,
-	0x1f, 0xeb, 0x2c, 0xec, 0x8d, 0x8c, 0x88, 0x39, 0xb4, 0x77, 0xb3, 0xb4, 0xea, 0x92, 0xa6, 0xd3,
-	0xd2, 0xb0, 0xa7, 0x70, 0xb8, 0x26, 0xe5, 0xff, 0x1b, 0x67, 0xe3, 0x47, 0xa8, 0x66, 0xe5, 0x43,
-	0xb7, 0x61, 0xf7, 0x09, 0x0f, 0x5d, 0xa6, 0x89, 0x3b, 0xc4, 0x18, 0xc8, 0x86, 0x7d, 0x87, 0x06,
-	0x74, 0xe1, 0x37, 0x6f, 0x99, 0xc4, 0x44, 0x6d, 0xd8, 0xeb, 0xf3, 0x09, 0x0b, 0xa5, 0x5d, 0xd4,
-	0x5b, 0xf8, 0x4e, 0xb2, 0x15, 0x86, 0xa7, 0xef, 0x1e, 0x50, 0x45, 0x49, 0x1c, 0xd6, 0xf8, 0xd9,
-	0x82, 0xa3, 0xf5, 0xcb, 0x0d, 0x55, 0x31, 0x40, 0xcf, 0x63, 0xa1, 0xf2, 0x87, 0x3e, 0x13, 0xc9,
-	0xeb, 0x6d, 0xe5, 0x49, 0x77, 0x55, 0xcc, 0x76, 0x85, 0x01, 0x9e, 0x09, 0x3e, 0x65, 0x42, 0xf9,
-	0x4c, 0xea, 0xd7, 0x5b, 0x89, 0xa4, 0x3c, 0x8d, 0x09, 0x94, 0x96, 0xf3, 0x40, 0x1f, 0x43, 0x39,
-	0xb5, 0xa6, 0xba, 0x85, 0x72, 0x07, 0x25, 0x63, 0x5b, 0xdd, 0x90, 0x74, 0x18, 0x6a, 0xc2, 0x7e,
-	0x97, 0xb1, 0x5e, 0x38, 0xe4, 0x6b, 0xba, 0xc5, 0x5e, 0x92, 0x5c, 0x37, 0xfe, 0xb6, 0x96, 0xa1,
-	0x8b, 0x96, 0xbf, 0xa4, 0xf2, 0x1b, 0xc9, 0xbc, 0xf8, 0x5f, 0x4d, 0x4c, 0xf4, 0x03, 0x14, 0xbb,
-	0xcc, 0x8c, 0xb7, 0xe2, 0x3c, 0xfe, 0xed, 0x8f, 0x3b, 0xdd, 0x53, 0xaa, 0xc6, 0xed, 0x81, 0x3f,
-	0x6a, 0xf5, 0x42, 0xf5, 0xd9, 0x36, 0x5f, 0x34, 0x2d, 0xc7, 0x1f, 0xf5, 0x42, 0x75, 0x42, 0xa5,
-	0x62, 0x82, 0x2c, 0xb0, 0x48, 0x40, 0xb5, 0x17, 0xfa, 0xca, 0xa7, 0xc1, 0x33, 0xea, 0x7b, 0x8b,
-	0x42, 0xc5, 0xd7, 0x5e, 0x68, 0xad, 0x82, 0xe3, 0x9c, 0x5f, 0xe2, 0xc2, 0xc5, 0x25, 0x2e, 0x5c,
-	0x5f, 0x62, 0xeb, 0xa7, 0x08, 0x5b, 0xbf, 0x46, 0xd8, 0xfa, 0x3d, 0xc2, 0xd6, 0x79, 0x84, 0xad,
-	0x8b, 0x08, 0x5b, 0x7f, 0x46, 0xd8, 0xfa, 0x2b, 0xc2, 0x85, 0xeb, 0x08, 0x5b, 0xbf, 0x5c, 0xe1,
-	0xc2, 0xf9, 0x15, 0x2e, 0x5c, 0x5c, 0xe1, 0xc2, 0x8b, 0x83, 0xe4, 0x87, 0xcc, 0x60, 0x4f, 0xcf,
-	0xf4, 0xa3, 0x7f, 0x03, 0x00, 0x00, 0xff, 0xff, 0x23, 0x7d, 0x4a, 0xcb, 0xdb, 0x08, 0x00, 0x00,
+	// 743 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0xd6, 0xc1, 0x4f, 0x13, 0x4b,
+	0x18, 0x00, 0xf0, 0x2e, 0x05, 0xda, 0x4e, 0xfb, 0x80, 0x37, 0xef, 0xbd, 0x64, 0xd3, 0xc3, 0xd0,
+	0x90, 0x27, 0xd6, 0x10, 0x5a, 0x53, 0x3d, 0x18, 0x4d, 0x8c, 0x2c, 0x52, 0x29, 0x26, 0x82, 0x4b,
+	0x8d, 0x4a, 0xbc, 0x4c, 0x77, 0x87, 0x76, 0xd3, 0xb2, 0x43, 0x66, 0xa6, 0x40, 0x6f, 0xfe, 0x09,
+	0xfe, 0x19, 0xc6, 0xbf, 0xc4, 0x23, 0x47, 0x6e, 0xca, 0x72, 0xf1, 0xc8, 0xc5, 0x78, 0x35, 0x9d,
+	0x99, 0xb6, 0xbb, 0x65, 0x6b, 0xd2, 0xe8, 0xa5, 0x3b, 0xf3, 0xcd, 0xf7, 0xfd, 0x66, 0xb2, 0xdf,
+	0x64, 0x53, 0xb0, 0x70, 0xe8, 0x31, 0xd2, 0xa2, 0x9c, 0x94, 0x8e, 0x19, 0x15, 0x14, 0xce, 0xc9,
+	0x47, 0x7e, 0xbd, 0xe9, 0x89, 0x56, 0xb7, 0x51, 0x72, 0xe8, 0x51, 0xb9, 0x49, 0x9b, 0xb4, 0x2c,
+	0xc3, 0x8d, 0xee, 0xa1, 0x9c, 0xc9, 0x89, 0x1c, 0xa9, 0xaa, 0xfc, 0xe3, 0x50, 0xfa, 0x56, 0x87,
+	0x51, 0xdf, 0x7d, 0x41, 0xc4, 0x29, 0x65, 0xed, 0x32, 0x91, 0xb3, 0xf5, 0x26, 0x5d, 0x77, 0x28,
+	0x23, 0x65, 0x17, 0x0b, 0x5c, 0x6e, 0x74, 0xa8, 0xd3, 0x56, 0xbf, 0xba, 0x7e, 0x67, 0xaa, 0x7a,
+	0xc1, 0xb0, 0xcf, 0xb1, 0x23, 0x3c, 0xea, 0x87, 0xc7, 0xda, 0x3a, 0x98, 0xca, 0xe2, 0x47, 0x98,
+	0x89, 0x4d, 0xea, 0x0b, 0x86, 0x1d, 0x61, 0x13, 0xde, 0xed, 0x88, 0xb8, 0x98, 0xb6, 0xad, 0xa9,
+	0x6c, 0x46, 0x1c, 0xe2, 0x1d, 0x8b, 0xc1, 0x53, 0x1b, 0x4f, 0xa7, 0x34, 0x4e, 0x31, 0x73, 0xeb,
+	0x67, 0xc3, 0x81, 0x56, 0xf6, 0xa6, 0x52, 0x70, 0x47, 0x10, 0x46, 0xdc, 0x0d, 0xc7, 0xa1, 0x5d,
+	0x5f, 0x8c, 0x4d, 0x95, 0xb8, 0xf2, 0x23, 0x0d, 0x60, 0x55, 0x5f, 0x86, 0xfd, 0x16, 0x66, 0xae,
+	0xd5, 0x6f, 0x10, 0x2c, 0x80, 0xec, 0x36, 0xc1, 0x2e, 0x61, 0x56, 0x4f, 0x10, 0x6e, 0x1a, 0x05,
+	0xa3, 0x98, 0xb3, 0xc3, 0x21, 0x88, 0x00, 0x50, 0xd3, 0x7a, 0xef, 0x98, 0x98, 0x33, 0x05, 0xa3,
+	0x98, 0xb1, 0x43, 0x91, 0xd1, 0xfa, 0x36, 0xe6, 0x2d, 0x33, 0x29, 0x81, 0x50, 0x04, 0x2e, 0x83,
+	0x59, 0x8b, 0xba, 0x3d, 0x73, 0xb6, 0x60, 0x14, 0xb3, 0x95, 0xac, 0x3a, 0x4e, 0xa9, 0x1f, 0xb2,
+	0xe5, 0x02, 0x7c, 0x03, 0x16, 0x37, 0x22, 0x27, 0xe6, 0xe6, 0x5c, 0x21, 0x59, 0xcc, 0x56, 0x4a,
+	0x3a, 0xf7, 0xe6, 0xb1, 0x4b, 0x63, 0x05, 0x5b, 0xbe, 0x60, 0x3d, 0x7b, 0x9c, 0x81, 0xbb, 0x20,
+	0x57, 0x1f, 0x5d, 0x20, 0x6e, 0xce, 0x4b, 0x76, 0x6d, 0x32, 0x1b, 0xce, 0x56, 0x66, 0x04, 0x80,
+	0x2e, 0xf8, 0x67, 0xff, 0xe6, 0xed, 0x31, 0x53, 0xd2, 0xad, 0x4c, 0x76, 0x63, 0x8a, 0x14, 0x1f,
+	0xc7, 0xc1, 0x27, 0x20, 0x65, 0xcb, 0xeb, 0xc0, 0xcd, 0xb4, 0x94, 0x57, 0x27, 0xcb, 0x3a, 0x51,
+	0x69, 0x83, 0x32, 0xb8, 0x09, 0xd2, 0xb6, 0xba, 0x95, 0xdc, 0xcc, 0x48, 0xe2, 0xf6, 0xaf, 0x08,
+	0x95, 0xa9, 0x8c, 0x61, 0x21, 0xac, 0x01, 0x50, 0xf3, 0x4f, 0x70, 0xc7, 0x73, 0xeb, 0x67, 0xdc,
+	0x04, 0x92, 0xb9, 0x33, 0x99, 0x19, 0xe5, 0x2a, 0x28, 0x54, 0x9c, 0x7f, 0x0b, 0xfe, 0x8d, 0xeb,
+	0x18, 0x5c, 0x02, 0xc9, 0x36, 0xe9, 0xc9, 0x5b, 0x97, 0xb1, 0xfb, 0x43, 0xb8, 0x06, 0xe6, 0x4e,
+	0x70, 0xa7, 0xab, 0x2e, 0x5a, 0xb6, 0xf2, 0x9f, 0xde, 0x2f, 0x5a, 0x6d, 0xab, 0x9c, 0x87, 0x33,
+	0x0f, 0x8c, 0xfc, 0x4b, 0xf0, 0xf7, 0x8d, 0xae, 0xc5, 0xb8, 0xab, 0x51, 0x77, 0x49, 0xbb, 0xf5,
+	0xb3, 0xd7, 0x9e, 0x68, 0x55, 0x09, 0x09, 0x93, 0x0d, 0x60, 0x4e, 0x6a, 0x58, 0x8c, 0x7c, 0x37,
+	0x2a, 0xe7, 0xb5, 0x1c, 0x23, 0x84, 0xf7, 0x78, 0x0e, 0x72, 0xe1, 0xd6, 0xc5, 0xb8, 0xb7, 0xa2,
+	0xee, 0xa2, 0x76, 0x6d, 0xfd, 0xa1, 0x88, 0x62, 0x7f, 0x45, 0x9a, 0x18, 0xa3, 0xfd, 0x1f, 0xd5,
+	0x16, 0x86, 0x9a, 0x2c, 0x0b, 0x63, 0xbb, 0x60, 0x71, 0xac, 0x95, 0xbf, 0xf7, 0x3a, 0x57, 0xda,
+	0x20, 0x33, 0x8c, 0xc3, 0xfb, 0x20, 0x1b, 0x6a, 0x97, 0x24, 0xb3, 0x15, 0x38, 0x28, 0x1f, 0xad,
+	0xd8, 0xe1, 0x34, 0x58, 0x04, 0xa9, 0x2a, 0x21, 0x35, 0xff, 0x90, 0x8e, 0x9d, 0x5f, 0x47, 0xed,
+	0xc1, 0xf2, 0xca, 0x77, 0x63, 0x98, 0x0a, 0x4d, 0x90, 0x7a, 0x86, 0xf9, 0x2b, 0x4e, 0x5c, 0xb9,
+	0xcf, 0xac, 0x3d, 0x98, 0xc2, 0x77, 0x20, 0x59, 0x25, 0xea, 0xf0, 0x39, 0x6b, 0xe7, 0xd3, 0x97,
+	0xe5, 0xea, 0x11, 0x16, 0xad, 0x72, 0xc3, 0x6b, 0x96, 0x6a, 0xbe, 0x78, 0x34, 0xcd, 0xc7, 0xb7,
+	0x64, 0x79, 0xcd, 0x9a, 0x2f, 0x36, 0x31, 0x17, 0x84, 0xd9, 0x7d, 0x16, 0x32, 0xb0, 0x50, 0xf3,
+	0x3d, 0xe1, 0xe1, 0xce, 0x1e, 0xf6, 0xdc, 0xfe, 0x46, 0xc9, 0x3f, 0xbe, 0xd1, 0xd8, 0x0e, 0x96,
+	0x75, 0x7e, 0x89, 0x12, 0x17, 0x97, 0x28, 0x71, 0x7d, 0x89, 0x8c, 0xf7, 0x01, 0x32, 0x3e, 0x06,
+	0xc8, 0xf8, 0x1c, 0x20, 0xe3, 0x3c, 0x40, 0xc6, 0x45, 0x80, 0x8c, 0xaf, 0x01, 0x32, 0xbe, 0x05,
+	0x28, 0x71, 0x1d, 0x20, 0xe3, 0xc3, 0x15, 0x4a, 0x9c, 0x5f, 0xa1, 0xc4, 0xc5, 0x15, 0x4a, 0x1c,
+	0xa4, 0x07, 0x7f, 0x11, 0x1a, 0xf3, 0xf2, 0x9d, 0xde, 0xfb, 0x19, 0x00, 0x00, 0xff, 0xff, 0xfb,
+	0xa5, 0x74, 0x59, 0x35, 0x08, 0x00, 0x00,
 }
 
 func (this *FirehoseShardBlock) Equal(that interface{}) bool {
@@ -518,74 +394,6 @@ func (this *FirehoseShardBlock) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *AlteredAccount) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*AlteredAccount)
-	if !ok {
-		that2, ok := that.(AlteredAccount)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Nonce != that1.Nonce {
-		return false
-	}
-	if this.Balance != that1.Balance {
-		return false
-	}
-	if len(this.Tokens) != len(that1.Tokens) {
-		return false
-	}
-	for i := range this.Tokens {
-		if !this.Tokens[i].Equal(that1.Tokens[i]) {
-			return false
-		}
-	}
-	return true
-}
-func (this *AccountTokenData) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*AccountTokenData)
-	if !ok {
-		that2, ok := that.(AccountTokenData)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if this.Nonce != that1.Nonce {
-		return false
-	}
-	if this.Identifier != that1.Identifier {
-		return false
-	}
-	if this.Balance != that1.Balance {
-		return false
-	}
-	if this.Properties != that1.Properties {
-		return false
-	}
-	return true
-}
 func (this *TxWithFee) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
@@ -666,7 +474,7 @@ func (this *FirehoseShardBlock) GoString() string {
 		keysForAlteredAccounts = append(keysForAlteredAccounts, k)
 	}
 	github_com_gogo_protobuf_sortkeys.Strings(keysForAlteredAccounts)
-	mapStringForAlteredAccounts := "map[string]*AlteredAccount{"
+	mapStringForAlteredAccounts := "map[string]*alteredAccount.AlteredAccount{"
 	for _, k := range keysForAlteredAccounts {
 		mapStringForAlteredAccounts += fmt.Sprintf("%#v: %#v,", k, this.AlteredAccounts[k])
 	}
@@ -739,33 +547,6 @@ func (this *FirehoseShardBlock) GoString() string {
 	if this.InvalidTxs != nil {
 		s = append(s, "InvalidTxs: "+mapStringForInvalidTxs+",\n")
 	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *AlteredAccount) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 7)
-	s = append(s, "&firehose.AlteredAccount{")
-	s = append(s, "Nonce: "+fmt.Sprintf("%#v", this.Nonce)+",\n")
-	s = append(s, "Balance: "+fmt.Sprintf("%#v", this.Balance)+",\n")
-	if this.Tokens != nil {
-		s = append(s, "Tokens: "+fmt.Sprintf("%#v", this.Tokens)+",\n")
-	}
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *AccountTokenData) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 8)
-	s = append(s, "&firehose.AccountTokenData{")
-	s = append(s, "Nonce: "+fmt.Sprintf("%#v", this.Nonce)+",\n")
-	s = append(s, "Identifier: "+fmt.Sprintf("%#v", this.Identifier)+",\n")
-	s = append(s, "Balance: "+fmt.Sprintf("%#v", this.Balance)+",\n")
-	s = append(s, "Properties: "+fmt.Sprintf("%#v", this.Properties)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -1046,104 +827,6 @@ func (m *FirehoseShardBlock) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *AlteredAccount) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *AlteredAccount) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *AlteredAccount) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Tokens) > 0 {
-		for iNdEx := len(m.Tokens) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.Tokens[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintFirehose(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x1a
-		}
-	}
-	if len(m.Balance) > 0 {
-		i -= len(m.Balance)
-		copy(dAtA[i:], m.Balance)
-		i = encodeVarintFirehose(dAtA, i, uint64(len(m.Balance)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if m.Nonce != 0 {
-		i = encodeVarintFirehose(dAtA, i, uint64(m.Nonce))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *AccountTokenData) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *AccountTokenData) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *AccountTokenData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.Properties) > 0 {
-		i -= len(m.Properties)
-		copy(dAtA[i:], m.Properties)
-		i = encodeVarintFirehose(dAtA, i, uint64(len(m.Properties)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if len(m.Balance) > 0 {
-		i -= len(m.Balance)
-		copy(dAtA[i:], m.Balance)
-		i = encodeVarintFirehose(dAtA, i, uint64(len(m.Balance)))
-		i--
-		dAtA[i] = 0x1a
-	}
-	if len(m.Identifier) > 0 {
-		i -= len(m.Identifier)
-		copy(dAtA[i:], m.Identifier)
-		i = encodeVarintFirehose(dAtA, i, uint64(len(m.Identifier)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if m.Nonce != 0 {
-		i = encodeVarintFirehose(dAtA, i, uint64(m.Nonce))
-		i--
-		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
 func (m *TxWithFee) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -1355,52 +1038,6 @@ func (m *FirehoseShardBlock) Size() (n int) {
 	return n
 }
 
-func (m *AlteredAccount) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Nonce != 0 {
-		n += 1 + sovFirehose(uint64(m.Nonce))
-	}
-	l = len(m.Balance)
-	if l > 0 {
-		n += 1 + l + sovFirehose(uint64(l))
-	}
-	if len(m.Tokens) > 0 {
-		for _, e := range m.Tokens {
-			l = e.Size()
-			n += 1 + l + sovFirehose(uint64(l))
-		}
-	}
-	return n
-}
-
-func (m *AccountTokenData) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.Nonce != 0 {
-		n += 1 + sovFirehose(uint64(m.Nonce))
-	}
-	l = len(m.Identifier)
-	if l > 0 {
-		n += 1 + l + sovFirehose(uint64(l))
-	}
-	l = len(m.Balance)
-	if l > 0 {
-		n += 1 + l + sovFirehose(uint64(l))
-	}
-	l = len(m.Properties)
-	if l > 0 {
-		n += 1 + l + sovFirehose(uint64(l))
-	}
-	return n
-}
-
 func (m *TxWithFee) Size() (n int) {
 	if m == nil {
 		return 0
@@ -1455,7 +1092,7 @@ func (this *FirehoseShardBlock) String() string {
 		keysForAlteredAccounts = append(keysForAlteredAccounts, k)
 	}
 	github_com_gogo_protobuf_sortkeys.Strings(keysForAlteredAccounts)
-	mapStringForAlteredAccounts := "map[string]*AlteredAccount{"
+	mapStringForAlteredAccounts := "map[string]*alteredAccount.AlteredAccount{"
 	for _, k := range keysForAlteredAccounts {
 		mapStringForAlteredAccounts += fmt.Sprintf("%v: %v,", k, this.AlteredAccounts[k])
 	}
@@ -1521,36 +1158,6 @@ func (this *FirehoseShardBlock) String() string {
 		`Rewards:` + mapStringForRewards + `,`,
 		`Receipts:` + mapStringForReceipts + `,`,
 		`InvalidTxs:` + mapStringForInvalidTxs + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *AlteredAccount) String() string {
-	if this == nil {
-		return "nil"
-	}
-	repeatedStringForTokens := "[]*AccountTokenData{"
-	for _, f := range this.Tokens {
-		repeatedStringForTokens += strings.Replace(f.String(), "AccountTokenData", "AccountTokenData", 1) + ","
-	}
-	repeatedStringForTokens += "}"
-	s := strings.Join([]string{`&AlteredAccount{`,
-		`Nonce:` + fmt.Sprintf("%v", this.Nonce) + `,`,
-		`Balance:` + fmt.Sprintf("%v", this.Balance) + `,`,
-		`Tokens:` + repeatedStringForTokens + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *AccountTokenData) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&AccountTokenData{`,
-		`Nonce:` + fmt.Sprintf("%v", this.Nonce) + `,`,
-		`Identifier:` + fmt.Sprintf("%v", this.Identifier) + `,`,
-		`Balance:` + fmt.Sprintf("%v", this.Balance) + `,`,
-		`Properties:` + fmt.Sprintf("%v", this.Properties) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -1781,10 +1388,10 @@ func (m *FirehoseShardBlock) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.AlteredAccounts == nil {
-				m.AlteredAccounts = make(map[string]*AlteredAccount)
+				m.AlteredAccounts = make(map[string]*alteredAccount.AlteredAccount)
 			}
 			var mapkey string
-			var mapvalue *AlteredAccount
+			var mapvalue *alteredAccount.AlteredAccount
 			for iNdEx < postIndex {
 				entryPreIndex := iNdEx
 				var wire uint64
@@ -1858,7 +1465,7 @@ func (m *FirehoseShardBlock) Unmarshal(dAtA []byte) error {
 					if postmsgIndex > l {
 						return io.ErrUnexpectedEOF
 					}
-					mapvalue = &AlteredAccount{}
+					mapvalue = &alteredAccount.AlteredAccount{}
 					if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
 						return err
 					}
@@ -2524,312 +2131,6 @@ func (m *FirehoseShardBlock) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.InvalidTxs[mapkey] = mapvalue
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipFirehose(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthFirehose
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthFirehose
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *AlteredAccount) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowFirehose
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: AlteredAccount: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: AlteredAccount: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Nonce", wireType)
-			}
-			m.Nonce = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowFirehose
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Nonce |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Balance", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowFirehose
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthFirehose
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthFirehose
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Balance = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Tokens", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowFirehose
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthFirehose
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthFirehose
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Tokens = append(m.Tokens, &AccountTokenData{})
-			if err := m.Tokens[len(m.Tokens)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipFirehose(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthFirehose
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthFirehose
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *AccountTokenData) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowFirehose
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: AccountTokenData: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: AccountTokenData: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Nonce", wireType)
-			}
-			m.Nonce = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowFirehose
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Nonce |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Identifier", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowFirehose
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthFirehose
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthFirehose
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Identifier = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Balance", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowFirehose
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthFirehose
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthFirehose
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Balance = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Properties", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowFirehose
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthFirehose
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthFirehose
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.Properties = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

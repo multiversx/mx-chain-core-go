@@ -13,7 +13,7 @@ import "github.com/ElrondNetwork/elrond-go-core/data/transaction/transaction.pro
 import "github.com/ElrondNetwork/elrond-go-core/data/smartContractResult/smartContractResult.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/receipt/receipt.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/rewardTx/rewardTx.proto";
-
+import "github.com/ElrondNetwork/elrond-go-core/data/alteredAccount/alteredAccount.proto";
 
 message FirehoseShardBlock {
   bytes HeaderBytes = 1;
@@ -28,25 +28,10 @@ message FirehoseShardBlock {
   map<string, TxWithFee> InvalidTxs = 10;
 }
 
-message AlteredAccount {
-  uint64 Nonce = 1;
-  string Balance = 2;
-  repeated AccountTokenData  Tokens = 3;
-}
-
-message AccountTokenData {
-  uint64  Nonce = 1;
-  string Identifier = 2;
-  string Balance = 3;
-  string Properties = 4;
-}
-
 message TxWithFee {
   Transaction Transaction = 1;
   FeeInfo FeeInfo = 2;
 }
-
-
 
 message FeeInfo {
   uint64 GasUsed = 1;
