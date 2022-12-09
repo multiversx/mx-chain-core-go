@@ -6,9 +6,9 @@ type Guardian struct {
 	ActivationEpoch uint32 `json:"activationEpoch"`
 }
 
-// GuardianData holds data relating to the configured guardian(s) and frozen state of an account
+// GuardianData holds data relating to the configured guardian(s) and guarded state of an account
 type GuardianData struct {
 	ActiveGuardian  *Guardian `json:"activeGuardian,omitempty"`
 	PendingGuardian *Guardian `json:"pendingGuardian,omitempty"`
-	Frozen          bool      `json:"frozen,omitempty"`
+	Guarded         bool      `json:"guarded,omitempty"`
 }
