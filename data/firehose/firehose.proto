@@ -7,7 +7,8 @@ option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
-import "github.com/ElrondNetwork/elrond-go-core/data/block/headerAndBody.proto";
+//import "github.com/ElrondNetwork/elrond-go-core/data/block/headerAndBody.proto";
+import "github.com/ElrondNetwork/elrond-go-core/data/block/block.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/transaction/transaction.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/smartContractResult/smartContractResult.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/receipt/receipt.proto";
@@ -15,15 +16,16 @@ import "github.com/ElrondNetwork/elrond-go-core/data/rewardTx/rewardTx.proto";
 
 
 message FirehoseShardBlock {
-  ShardBlock ShardBlock = 1;
-  bytes HeaderHash = 2;
-  map<string, AlteredAccount> AlteredAccounts = 3;
-  map<string, TxWithFee> Transactions = 4;
-  map<string, SmartContractResult> SmartContractResult = 5;
-  //map<string, RewardTx> Rewards = 6;
-  RewardTx s = 6;
-  map<string, Receipt> Receipts = 7;
-  map<string, TxWithFee> InvalidTxs = 8;
+  bytes HeaderBytes = 1;
+  string HeaderType = 2;
+  bytes HeaderHash = 3;
+  Body Body = 4;
+  map<string, AlteredAccount> AlteredAccounts = 5;
+  map<string, TxWithFee> Transactions = 6;
+  map<string, SmartContractResult> SmartContractResult = 7;
+  map<string, RewardTx> Rewards = 8;
+  map<string, Receipt> Receipts = 9;
+  map<string, TxWithFee> InvalidTxs = 10;
 }
 
 message AlteredAccount {
