@@ -8,9 +8,10 @@ option (gogoproto.stable_marshaler_all) = true;
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 message AlteredAccount {
-  uint64                    Nonce = 1;
-  bytes                     Balance = 2 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
-  repeated AccountTokenData Tokens = 3;
+  string                    Address = 1;
+  uint64                    Nonce = 2;
+  bytes                     Balance = 3 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
+  repeated AccountTokenData Tokens = 4;
 }
 
 message AccountTokenData {
