@@ -34,17 +34,17 @@ message FeeInfo {
 
 message TxWithFee {
   Transaction Transaction = 1;
-  FeeInfo FeeInfo = 2;
+  FeeInfo     FeeInfo = 2;
 }
 
 message SCRWithFee {
   SmartContractResult SmartContractResult = 1;
-  FeeInfo FeeInfo = 2;
+  FeeInfo             FeeInfo = 2;
 }
 
 message RewardTxWithFee {
   RewardTx RewardTx = 1;
-  FeeInfo FeeInfo = 2;
+  FeeInfo  FeeInfo = 2;
 }
 
 message ReceiptTxWithFee {
