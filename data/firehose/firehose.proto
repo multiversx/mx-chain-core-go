@@ -6,8 +6,6 @@ option go_package = "firehose";
 option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
-
-//import "github.com/ElrondNetwork/elrond-go-core/data/block/headerAndBody.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/block/block.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/transaction/transaction.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/smartContractResult/smartContractResult.proto";
@@ -16,16 +14,22 @@ import "github.com/ElrondNetwork/elrond-go-core/data/rewardTx/rewardTx.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/alteredAccount/alteredAccount.proto";
 
 message FirehoseShardBlock {
-  bytes HeaderBytes = 1;
-  string HeaderType = 2;
-  bytes HeaderHash = 3;
-  Body Body = 4;
-  map<string, AlteredAccount> AlteredAccounts = 5;
-  map<string, TxWithFee> Transactions = 6;
-  map<string, SmartContractResult> SmartContractResult = 7;
-  map<string, RewardTx> Rewards = 8;
-  map<string, Receipt> Receipts = 9;
-  map<string, TxWithFee> InvalidTxs = 10;
+  bytes                         HeaderBytes = 1;
+  string                        HeaderType = 2;
+  bytes                         HeaderHash = 3;
+  Body                          Body = 4;
+  map<string, AlteredAccount>   AlteredAccounts = 5;
+  map<string, TxWithFee>        Transactions = 6;
+  map<string, SCRWithFee>       SmartContractResult = 7;
+  map<string, RewardTxWithFee>  Rewards = 8;
+  map<string, ReceiptTxWithFee> Receipts = 9;
+  map<string, TxWithFee>        InvalidTxs = 10;
+}
+
+message FeeInfo {
+  uint64 GasUsed = 1;
+  bytes  Fee = 2 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
+  bytes  InitialPaidFee = 3 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
 }
 
 message TxWithFee {
@@ -33,8 +37,17 @@ message TxWithFee {
   FeeInfo FeeInfo = 2;
 }
 
-message FeeInfo {
-  uint64 GasUsed = 1;
-  bytes Fee = 2  [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
-  bytes InitialPaidFee = 3 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
+message SCRWithFee {
+  SmartContractResult SmartContractResult = 1;
+  FeeInfo FeeInfo = 2;
+}
+
+message RewardTxWithFee {
+  RewardTx RewardTx = 1;
+  FeeInfo FeeInfo = 2;
+}
+
+message ReceiptTxWithFee {
+  Receipt RewardTx = 1;
+  FeeInfo FeeInfo = 2;
 }
