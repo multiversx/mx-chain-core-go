@@ -5,6 +5,7 @@ import (
 	"sort"
 
 	"github.com/ElrondNetwork/elrond-go-core/data"
+	"github.com/ElrondNetwork/elrond-go-core/data/transaction"
 	"github.com/ElrondNetwork/elrond-go-core/hashing"
 )
 
@@ -54,6 +55,31 @@ func SortTransactionsBySenderAndNonceWithFrontRunningProtectionExtendedTransacti
 		delta := bytes.Compare(xoredAddresses[string(txI.GetSndAddr())], xoredAddresses[string(txJ.GetSndAddr())])
 		if delta == 0 {
 			delta = int(txI.GetNonce()) - int(txJ.GetNonce())
+		}
+
+		return delta < 0
+	}
+
+	sort.Slice(transactions, sorter)
+}
+
+func SortTransactionsBySenderAndNonceWithFrontRunningProtectionAPITransactions(transactions []*transaction.ApiTransactionResult, hasher hashing.Hasher, randomness []byte) {
+	// make sure randomness is 32bytes and uniform
+	randSeed := hasher.Compute(string(randomness))
+	xoredAddresses := make(map[string][]byte)
+
+	for _, tx := range transactions {
+		xoredBytes := xorBytes(tx.Tx.GetSndAddr(), randSeed)
+		xoredAddresses[string(tx.Tx.GetSndAddr())] = hasher.Compute(string(xoredBytes))
+	}
+
+	sorter := func(i, j int) bool {
+		txI := transactions[i]
+		txJ := transactions[j]
+
+		delta := bytes.Compare(xoredAddresses[string(txI.Tx.GetSndAddr())], xoredAddresses[string(txJ.Tx.GetSndAddr())])
+		if delta == 0 {
+			delta = int(txI.Tx.GetNonce()) - int(txJ.Tx.GetNonce())
 		}
 
 		return delta < 0

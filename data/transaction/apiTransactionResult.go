@@ -65,6 +65,7 @@ type ApiTransactionResult struct {
 	ChainID                           string                    `json:"chainID,omitempty"`
 	Version                           uint32                    `json:"version,omitempty"`
 	Options                           uint32                    `json:"options"`
+	ExecutionOrder                    uint32                    `json:"executionOrder"`
 }
 
 // ApiSmartContractResult represents a smart contract result with changed fields' types in order to make it friendly for API's json
