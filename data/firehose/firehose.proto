@@ -1,0 +1,53 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "firehose";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+import "github.com/ElrondNetwork/elrond-go-core/data/block/headerAndBody.proto";
+import "github.com/ElrondNetwork/elrond-go-core/data/transaction/transaction.proto";
+import "github.com/ElrondNetwork/elrond-go-core/data/smartContractResult/smartContractResult.proto";
+import "github.com/ElrondNetwork/elrond-go-core/data/receipt/receipt.proto";
+import "github.com/ElrondNetwork/elrond-go-core/data/rewardTx/rewardTx.proto";
+
+
+message FirehoseShardBlock {
+  ShardBlock ShardBlock = 1;
+  bytes HeaderHash = 2;
+  map<string, AlteredAccount> AlteredAccounts = 3;
+  map<string, TxWithFee> Transactions = 4;
+  map<string, SmartContractResult> SmartContractResult = 5;
+  //map<string, RewardTx> Rewards = 6;
+  RewardTx s = 6;
+  map<string, Receipt> Receipts = 7;
+  map<string, TxWithFee> InvalidTxs = 8;
+}
+
+message AlteredAccount {
+  uint64 Nonce = 1;
+  string Balance = 2;
+  repeated AccountTokenData  Tokens = 3;
+}
+
+message AccountTokenData {
+  uint64  Nonce = 1;
+  string Identifier = 2;
+  string Balance = 3;
+  string Properties = 4;
+}
+
+message TxWithFee {
+  Transaction Transaction = 1;
+  FeeInfo FeeInfo = 2;
+}
+
+
+
+message FeeInfo {
+  uint64 GasUsed = 1;
+  bytes Fee = 2  [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
+  bytes InitialPaidFee = 3 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
+}
