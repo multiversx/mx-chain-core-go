@@ -3,10 +3,12 @@ package transaction
 import (
 	"encoding/hex"
 	"fmt"
+	"math/big"
 	"testing"
 
 	"github.com/ElrondNetwork/elrond-go-core/core/mock"
 	"github.com/ElrondNetwork/elrond-go-core/data"
+	"github.com/ElrondNetwork/elrond-go-core/data/outport"
 	"github.com/ElrondNetwork/elrond-go-core/data/transaction"
 	"github.com/stretchr/testify/assert"
 )
@@ -45,8 +47,13 @@ func Test_SortTransactionsBySenderAndNonceWithFrontRunningProtection(t *testing.
 		&transaction.Transaction{Nonce: 3, SndAddr: senders[3]},
 		&transaction.Transaction{Nonce: 3, SndAddr: senders[2]},
 	}
+	wrappedTxs := make([]data.TransactionHandlerWithGasUsedAndFee, 0, len(txs))
+	for _, tx := range txs {
+		wrappedTxs = append(wrappedTxs, outport.NewTransactionHandlerWithGasAndFee(tx, 0, big.NewInt(0)))
+	}
 
 	SortTransactionsBySenderAndNonceWithFrontRunningProtection(txs, hasher, []byte(randomness))
+	SortTransactionsBySenderAndNonceWithFrontRunningProtectionExtendedTransactions(wrappedTxs, hasher, []byte(randomness))
 
 	expectedOutput := []string{
 		"1 ffffffffffffffffffffffffffffff00",
@@ -62,6 +69,7 @@ func Test_SortTransactionsBySenderAndNonceWithFrontRunningProtection(t *testing.
 
 	for i, item := range txs {
 		assert.Equal(t, expectedOutput[i], fmt.Sprintf("%d %s", item.GetNonce(), hex.EncodeToString(item.GetSndAddr())))
+		assert.Equal(t, expectedOutput[i], fmt.Sprintf("%d %s", wrappedTxs[i].GetNonce(), hex.EncodeToString(wrappedTxs[i].GetSndAddr())))
 	}
 }
 
