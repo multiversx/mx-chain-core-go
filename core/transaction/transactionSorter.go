@@ -79,6 +79,23 @@ func SortTransactionsBySenderAndNonce(transactions []data.TransactionHandler) {
 	sort.Slice(transactions, sorter)
 }
 
+// SortTransactionsBySenderAndNonceExtendedTransactions - sorts the transactions by address without the front running protection
+func SortTransactionsBySenderAndNonceExtendedTransactions(transactions []data.TransactionHandlerWithGasUsedAndFee) {
+	sorter := func(i, j int) bool {
+		txI := transactions[i]
+		txJ := transactions[j]
+
+		delta := bytes.Compare(txI.GetSndAddr(), txJ.GetSndAddr())
+		if delta == 0 {
+			delta = int(txI.GetNonce()) - int(txJ.GetNonce())
+		}
+
+		return delta < 0
+	}
+
+	sort.Slice(transactions, sorter)
+}
+
 // parameters need to be of the same len, otherwise it will panic (if second slice shorter)
 func xorBytes(a, b []byte) []byte {
 	res := make([]byte, len(a))

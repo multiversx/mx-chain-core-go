@@ -84,8 +84,13 @@ func Test_SortTransactionsBySenderAndNonceLegacy(t *testing.T) {
 		&transaction.Transaction{Nonce: 3, SndAddr: []byte("ffff")},
 		&transaction.Transaction{Nonce: 3, SndAddr: []byte("eeee")},
 	}
+	wrappedTxs := make([]data.TransactionHandlerWithGasUsedAndFee, 0, len(txs))
+	for _, tx := range txs {
+		wrappedTxs = append(wrappedTxs, outport.NewTransactionHandlerWithGasAndFee(tx, 0, big.NewInt(0)))
+	}
 
 	SortTransactionsBySenderAndNonce(txs)
+	SortTransactionsBySenderAndNonceExtendedTransactions(wrappedTxs)
 
 	expectedOutput := []string{
 		"1 aaaa",
@@ -100,6 +105,6 @@ func Test_SortTransactionsBySenderAndNonceLegacy(t *testing.T) {
 
 	for i, item := range txs {
 		assert.Equal(t, expectedOutput[i], fmt.Sprintf("%d %s", item.GetNonce(), string(item.GetSndAddr())))
+		assert.Equal(t, expectedOutput[i], fmt.Sprintf("%d %s", wrappedTxs[i].GetNonce(), string(wrappedTxs[i].GetSndAddr())))
 	}
-
 }
