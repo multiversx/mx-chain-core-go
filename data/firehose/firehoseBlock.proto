@@ -15,18 +15,18 @@ import "github.com/ElrondNetwork/elrond-go-core/data/rewardTx/rewardTx.proto";
 import "github.com/ElrondNetwork/elrond-go-core/data/alteredAccount/alteredAccount.proto";
 
 message FirehoseBlock {
-  bytes                         HeaderBytes = 1;
-  string                        HeaderType = 2;
-  bytes                         HeaderHash = 3;
-  Body                          Body = 4;
-  repeated AlteredAccount       AlteredAccounts = 5;
-  map<string, TxWithFee>        Transactions = 6;
-  map<string, SCRWithFee>       SmartContractResult = 7;
-  map<string, RewardTxWithFee>  Rewards = 8;
-  map<string, ReceiptTxWithFee> Receipts = 9;
-  map<string, TxWithFee>        InvalidTxs = 10;
-  repeated Log                  Logs = 11;
-  bytes                         SignersIndexes = 12;
+  bytes                   HeaderBytes = 1;
+  string                  HeaderType = 2;
+  bytes                   HeaderHash = 3;
+  Body                    Body = 4;
+  repeated AlteredAccount AlteredAccounts = 5;
+  map<string, TxWithFee>  Transactions = 6;
+  map<string, SCRWithFee> SmartContractResult = 7;
+  map<string, RewardTx>   Rewards = 8;
+  map<string, Receipt>    Receipts = 9;
+  map<string, TxWithFee>  InvalidTxs = 10;
+  repeated Log            Logs = 11;
+  bytes                   SignersIndexes = 12;
 }
 
 message FeeInfo {
@@ -43,14 +43,4 @@ message TxWithFee {
 message SCRWithFee {
   SmartContractResult SmartContractResult = 1;
   FeeInfo             FeeInfo = 2;
-}
-
-message RewardTxWithFee {
-  RewardTx RewardTx = 1;
-  FeeInfo  FeeInfo = 2;
-}
-
-message ReceiptTxWithFee {
-  Receipt RewardTx = 1;
-  FeeInfo FeeInfo = 2;
 }
