@@ -26,7 +26,7 @@ message FirehoseBlock {
   map<string, Receipt>    Receipts = 9;
   map<string, TxWithFee>  InvalidTxs = 10;
   repeated Log            Logs = 11;
-  bytes                   SignersIndexes = 12;
+  bytes                   SignersIndicesBitmap = 12;
 }
 
 message FeeInfo {
