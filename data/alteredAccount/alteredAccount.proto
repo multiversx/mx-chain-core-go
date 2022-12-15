@@ -15,8 +15,8 @@ message AlteredAccount {
 }
 
 message AccountTokenData {
-  uint64 Nonce = 1;
+  uint64 Nonce      = 1;
   string Identifier = 2;
-  bytes  Balance = 3 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
+  bytes  Balance    = 3 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
   string Properties = 4;
 }
