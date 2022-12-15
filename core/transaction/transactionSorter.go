@@ -34,7 +34,7 @@ func SortTransactionsBySenderAndNonceWithFrontRunningProtection(transactions []d
 	sort.Slice(transactions, sorter)
 }
 
-// TODO remove duplicated function when will use the new version of go
+// TODO remove duplicated function when will use the version of elrond-go which exports transaction order during processing
 
 // SortTransactionsBySenderAndNonceWithFrontRunningProtectionExtendedTransactions - sorts the transactions by address and randomness source to protect from front running
 func SortTransactionsBySenderAndNonceWithFrontRunningProtectionExtendedTransactions(transactions []data.TransactionHandlerWithGasUsedAndFee, hasher hashing.Hasher, randomness []byte) {
