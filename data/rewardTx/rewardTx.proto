@@ -3,7 +3,7 @@ syntax = "proto3";
 
 package proto;
 
-option go_package = "rewardTx";
+option go_package = "github.com/ElrondNetwork/elrond-go-core/data/rewardTx;rewardTx";
 option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
