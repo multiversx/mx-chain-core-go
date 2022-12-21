@@ -32,6 +32,7 @@ type AlteredAccount struct {
 	Nonce          uint64                 `json:"nonce"`
 	Address        string                 `json:"address"`
 	Balance        string                 `json:"balance,omitempty"`
+	CurrentOwner   string                 `json:"currentOwner,omitempty"`
 	Tokens         []*AccountTokenData    `json:"tokens"`
 	AdditionalData *AdditionalAccountData `json:"additionalData,omitempty"`
 }
