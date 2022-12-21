@@ -29,12 +29,14 @@ type AccountTokenData struct {
 
 // AlteredAccount holds the data needed of an altered account in a block
 type AlteredAccount struct {
-	Nonce          uint64                 `json:"nonce"`
-	Address        string                 `json:"address"`
-	Balance        string                 `json:"balance,omitempty"`
-	CurrentOwner   string                 `json:"currentOwner,omitempty"`
-	Tokens         []*AccountTokenData    `json:"tokens"`
-	AdditionalData *AdditionalAccountData `json:"additionalData,omitempty"`
+	Nonce            uint64                 `json:"nonce"`
+	Address          string                 `json:"address"`
+	Balance          string                 `json:"balance,omitempty"`
+	CurrentOwner     string                 `json:"currentOwner,omitempty"`
+	UserName         string                 `json:"userName,omitempty"`
+	DeveloperRewards string                 `json:"developerRewards,omitempty"`
+	Tokens           []*AccountTokenData    `json:"tokens"`
+	AdditionalData   *AdditionalAccountData `json:"additionalData,omitempty"`
 }
 
 // AdditionalAccountData holds the additional data for an altered account
