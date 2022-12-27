@@ -17,6 +17,7 @@ type FeeInfo struct {
 type TransactionHandlerWithGasAndFee struct {
 	data.TransactionHandler
 	FeeInfo
+	ExecutionOrder int
 }
 
 // NewTransactionHandlerWithGasAndFee returns a new instance of transactionHandlerWithGasAndFee which matches the interface
@@ -63,6 +64,16 @@ func (t *TransactionHandlerWithGasAndFee) GetFee() *big.Int {
 // GetTxHandler will return the TransactionHandler
 func (t *TransactionHandlerWithGasAndFee) GetTxHandler() data.TransactionHandler {
 	return t.TransactionHandler
+}
+
+// SetExecutionOrder will set the execution order of the TransactionHandler
+func (t *TransactionHandlerWithGasAndFee) SetExecutionOrder(order int) {
+	t.ExecutionOrder = order
+}
+
+// GetExecutionOrder will return the execution order of the TransactionHandler
+func (t *TransactionHandlerWithGasAndFee) GetExecutionOrder() int {
+	return t.ExecutionOrder
 }
 
 // WrapTxsMap will wrap the provided transactions map in a map fo transactions with fee and gas used

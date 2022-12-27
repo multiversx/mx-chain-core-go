@@ -291,6 +291,8 @@ type TransactionHandlerWithGasUsedAndFee interface {
 	GetGasUsed() uint64
 	GetFee() *big.Int
 	GetTxHandler() TransactionHandler
+	SetExecutionOrder(order int)
+	GetExecutionOrder() int
 }
 
 // Encoder represents a byte slice to string encoder
