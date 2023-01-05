@@ -10,13 +10,13 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 message AlteredAccount {
   string                    Address = 1;
   uint64                    Nonce = 2;
-  bytes                     Balance = 3 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
+  string                    Balance = 3 ;
   repeated AccountTokenData Tokens = 4;
 }
 
 message AccountTokenData {
   uint64 Nonce      = 1;
   string Identifier = 2;
-  bytes  Balance    = 3 [(gogoproto.casttypewith) = "math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster"];
+  string Balance    = 3;
   string Properties = 4;
 }
