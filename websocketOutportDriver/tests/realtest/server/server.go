@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/ElrondNetwork/elrond-go-core/core/mock"
-	"github.com/ElrondNetwork/elrond-go-core/data/outport"
-	"github.com/ElrondNetwork/elrond-go-core/data/typeConverters/uint64ByteSlice"
-	"github.com/ElrondNetwork/elrond-go-core/marshal"
-	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
-	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/factory"
+	"github.com/multiversx/mx-chain-core-go/core/mock"
+	"github.com/multiversx/mx-chain-core-go/data/outport"
+	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
+	"github.com/multiversx/mx-chain-core-go/marshal"
+	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
+	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/factory"
 )
 
 var jsonMarshaller = &marshal.JsonMarshalizer{}

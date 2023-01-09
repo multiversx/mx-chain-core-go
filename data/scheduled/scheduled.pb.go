@@ -6,12 +6,12 @@ package scheduled
 import (
 	bytes "bytes"
 	fmt "fmt"
-	github_com_ElrondNetwork_elrond_go_core_data "github.com/ElrondNetwork/elrond-go-core/data"
-	block "github.com/ElrondNetwork/elrond-go-core/data/block"
-	smartContractResult "github.com/ElrondNetwork/elrond-go-core/data/smartContractResult"
-	transaction "github.com/ElrondNetwork/elrond-go-core/data/transaction"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
+	github_com_ElrondNetwork_elrond_go_core_data "github.com/multiversx/mx-chain-core-go/data"
+	block "github.com/multiversx/mx-chain-core-go/data/block"
+	smartContractResult "github.com/multiversx/mx-chain-core-go/data/smartContractResult"
+	transaction "github.com/multiversx/mx-chain-core-go/data/transaction"
 	io "io"
 	math "math"
 	math_big "math/big"
@@ -32,8 +32,8 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type GasAndFees struct {
-	AccumulatedFees *math_big.Int `protobuf:"bytes,1,opt,name=AccumulatedFees,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"AccumulatedFees,omitempty"`
-	DeveloperFees   *math_big.Int `protobuf:"bytes,2,opt,name=DeveloperFees,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"DeveloperFees,omitempty"`
+	AccumulatedFees *math_big.Int `protobuf:"bytes,1,opt,name=AccumulatedFees,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"AccumulatedFees,omitempty"`
+	DeveloperFees   *math_big.Int `protobuf:"bytes,2,opt,name=DeveloperFees,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"DeveloperFees,omitempty"`
 	GasProvided     uint64        `protobuf:"varint,3,opt,name=GasProvided,proto3" json:"GasProvided,omitempty"`
 	GasPenalized    uint64        `protobuf:"varint,4,opt,name=GasPenalized,proto3" json:"GasPenalized,omitempty"`
 	GasRefunded     uint64        `protobuf:"varint,5,opt,name=GasRefunded,proto3" json:"GasRefunded,omitempty"`

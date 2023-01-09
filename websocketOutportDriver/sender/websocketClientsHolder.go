@@ -3,7 +3,7 @@ package sender
 import (
 	"sync"
 
-	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
+	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
 type websocketClientsHolder struct {

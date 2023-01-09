@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/ElrondNetwork/elrond-go-core/display"
+	"github.com/multiversx/mx-chain-core-go/display"
 	"github.com/stretchr/testify/assert"
 )
 

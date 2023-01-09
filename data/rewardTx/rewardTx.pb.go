@@ -6,9 +6,9 @@ package rewardTx
 import (
 	bytes "bytes"
 	fmt "fmt"
-	github_com_ElrondNetwork_elrond_go_core_data "github.com/ElrondNetwork/elrond-go-core/data"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
+	github_com_ElrondNetwork_elrond_go_core_data "github.com/multiversx/mx-chain-core-go/data"
 	io "io"
 	math "math"
 	math_big "math/big"
@@ -71,7 +71,7 @@ func (Type) EnumDescriptor() ([]byte, []int) {
 // RewardTx holds the data for a reward transaction
 type RewardTx struct {
 	Round   uint64        `protobuf:"varint,1,opt,name=Round,proto3" json:"round"`
-	Value   *math_big.Int `protobuf:"bytes,3,opt,name=Value,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"value"`
+	Value   *math_big.Int `protobuf:"bytes,3,opt,name=Value,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"value"`
 	RcvAddr []byte        `protobuf:"bytes,4,opt,name=RcvAddr,proto3" json:"receiver"`
 	Epoch   uint32        `protobuf:"varint,2,opt,name=Epoch,proto3" json:"epoch"`
 }

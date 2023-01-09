@@ -6,9 +6,9 @@ package block
 import (
 	bytes "bytes"
 	fmt "fmt"
-	github_com_ElrondNetwork_elrond_go_core_data "github.com/ElrondNetwork/elrond-go-core/data"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
+	github_com_ElrondNetwork_elrond_go_core_data "github.com/multiversx/mx-chain-core-go/data"
 	io "io"
 	math "math"
 	math_big "math/big"
@@ -77,7 +77,7 @@ type PeerData struct {
 	PublicKey   []byte        `protobuf:"bytes,2,opt,name=PublicKey,proto3" json:"PublicKey,omitempty"`
 	Action      PeerAction    `protobuf:"varint,3,opt,name=Action,proto3,enum=proto.PeerAction" json:"Action,omitempty"`
 	TimeStamp   uint64        `protobuf:"varint,4,opt,name=TimeStamp,proto3" json:"TimeStamp,omitempty"`
-	ValueChange *math_big.Int `protobuf:"bytes,5,opt,name=ValueChange,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"ValueChange,omitempty"`
+	ValueChange *math_big.Int `protobuf:"bytes,5,opt,name=ValueChange,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"ValueChange,omitempty"`
 }
 
 func (m *PeerData) Reset()      { *m = PeerData{} }
@@ -153,8 +153,8 @@ type ShardData struct {
 	Round                 uint64            `protobuf:"varint,8,opt,name=Round,proto3" json:"Round,omitempty"`
 	PrevHash              []byte            `protobuf:"bytes,9,opt,name=PrevHash,proto3" json:"PrevHash,omitempty"`
 	Nonce                 uint64            `protobuf:"varint,10,opt,name=Nonce,proto3" json:"Nonce,omitempty"`
-	AccumulatedFees       *math_big.Int     `protobuf:"bytes,12,opt,name=AccumulatedFees,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"AccumulatedFees,omitempty"`
-	DeveloperFees         *math_big.Int     `protobuf:"bytes,14,opt,name=DeveloperFees,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"DeveloperFees,omitempty"`
+	AccumulatedFees       *math_big.Int     `protobuf:"bytes,12,opt,name=AccumulatedFees,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"AccumulatedFees,omitempty"`
+	DeveloperFees         *math_big.Int     `protobuf:"bytes,14,opt,name=DeveloperFees,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"DeveloperFees,omitempty"`
 	NumPendingMiniBlocks  uint32            `protobuf:"varint,11,opt,name=NumPendingMiniBlocks,proto3" json:"NumPendingMiniBlocks,omitempty"`
 	LastIncludedMetaNonce uint64            `protobuf:"varint,13,opt,name=LastIncludedMetaNonce,proto3" json:"LastIncludedMetaNonce,omitempty"`
 	ShardID               uint32            `protobuf:"varint,1,opt,name=ShardID,proto3" json:"ShardID,omitempty"`
@@ -401,12 +401,12 @@ func (m *EpochStartShardData) GetPendingMiniBlockHeaders() []MiniBlockHeader {
 
 // Economics holds the block information for total supply and rewards
 type Economics struct {
-	TotalSupply                      *math_big.Int `protobuf:"bytes,1,opt,name=TotalSupply,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"TotalSupply,omitempty"`
-	TotalToDistribute                *math_big.Int `protobuf:"bytes,2,opt,name=TotalToDistribute,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"TotalToDistribute,omitempty"`
-	TotalNewlyMinted                 *math_big.Int `protobuf:"bytes,3,opt,name=TotalNewlyMinted,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"TotalNewlyMinted,omitempty"`
-	RewardsPerBlock                  *math_big.Int `protobuf:"bytes,4,opt,name=RewardsPerBlock,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"RewardsPerBlock,omitempty"`
-	RewardsForProtocolSustainability *math_big.Int `protobuf:"bytes,5,opt,name=RewardsForProtocolSustainability,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"RewardsForProtocolSustainability,omitempty"`
-	NodePrice                        *math_big.Int `protobuf:"bytes,6,opt,name=NodePrice,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"NodePrice,omitempty"`
+	TotalSupply                      *math_big.Int `protobuf:"bytes,1,opt,name=TotalSupply,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"TotalSupply,omitempty"`
+	TotalToDistribute                *math_big.Int `protobuf:"bytes,2,opt,name=TotalToDistribute,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"TotalToDistribute,omitempty"`
+	TotalNewlyMinted                 *math_big.Int `protobuf:"bytes,3,opt,name=TotalNewlyMinted,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"TotalNewlyMinted,omitempty"`
+	RewardsPerBlock                  *math_big.Int `protobuf:"bytes,4,opt,name=RewardsPerBlock,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"RewardsPerBlock,omitempty"`
+	RewardsForProtocolSustainability *math_big.Int `protobuf:"bytes,5,opt,name=RewardsForProtocolSustainability,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"RewardsForProtocolSustainability,omitempty"`
+	NodePrice                        *math_big.Int `protobuf:"bytes,6,opt,name=NodePrice,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"NodePrice,omitempty"`
 	PrevEpochStartRound              uint64        `protobuf:"varint,7,opt,name=PrevEpochStartRound,proto3" json:"PrevEpochStartRound,omitempty"`
 	PrevEpochStartHash               []byte        `protobuf:"bytes,8,opt,name=PrevEpochStartHash,proto3" json:"PrevEpochStartHash,omitempty"`
 }
@@ -564,10 +564,10 @@ type MetaBlock struct {
 	EpochStart             EpochStart        `protobuf:"bytes,18,opt,name=EpochStart,proto3" json:"EpochStart"`
 	ChainID                []byte            `protobuf:"bytes,19,opt,name=ChainID,proto3" json:"ChainID,omitempty"`
 	SoftwareVersion        []byte            `protobuf:"bytes,20,opt,name=SoftwareVersion,proto3" json:"SoftwareVersion,omitempty"`
-	AccumulatedFees        *math_big.Int     `protobuf:"bytes,21,opt,name=AccumulatedFees,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"AccumulatedFees,omitempty"`
-	AccumulatedFeesInEpoch *math_big.Int     `protobuf:"bytes,22,opt,name=AccumulatedFeesInEpoch,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"AccumulatedFeesInEpoch,omitempty"`
-	DeveloperFees          *math_big.Int     `protobuf:"bytes,23,opt,name=DeveloperFees,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"DeveloperFees,omitempty"`
-	DevFeesInEpoch         *math_big.Int     `protobuf:"bytes,24,opt,name=DevFeesInEpoch,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"DevFeesInEpoch,omitempty"`
+	AccumulatedFees        *math_big.Int     `protobuf:"bytes,21,opt,name=AccumulatedFees,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"AccumulatedFees,omitempty"`
+	AccumulatedFeesInEpoch *math_big.Int     `protobuf:"bytes,22,opt,name=AccumulatedFeesInEpoch,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"AccumulatedFeesInEpoch,omitempty"`
+	DeveloperFees          *math_big.Int     `protobuf:"bytes,23,opt,name=DeveloperFees,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"DeveloperFees,omitempty"`
+	DevFeesInEpoch         *math_big.Int     `protobuf:"bytes,24,opt,name=DevFeesInEpoch,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"DevFeesInEpoch,omitempty"`
 	TxCount                uint32            `protobuf:"varint,25,opt,name=TxCount,proto3" json:"TxCount,omitempty"`
 	Reserved               []byte            `protobuf:"bytes,26,opt,name=Reserved,proto3" json:"Reserved,omitempty"`
 }

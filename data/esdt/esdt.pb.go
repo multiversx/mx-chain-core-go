@@ -6,9 +6,9 @@ package esdt
 import (
 	bytes "bytes"
 	fmt "fmt"
-	github_com_ElrondNetwork_elrond_go_core_data "github.com/ElrondNetwork/elrond-go-core/data"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
+	github_com_ElrondNetwork_elrond_go_core_data "github.com/multiversx/mx-chain-core-go/data"
 	io "io"
 	math "math"
 	math_big "math/big"
@@ -31,7 +31,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 // ESDigitalToken holds the data for a Elrond standard digital token transaction
 type ESDigitalToken struct {
 	Type          uint32        `protobuf:"varint,1,opt,name=Type,proto3" json:"Type"`
-	Value         *math_big.Int `protobuf:"bytes,2,opt,name=Value,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"Value"`
+	Value         *math_big.Int `protobuf:"bytes,2,opt,name=Value,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"Value"`
 	Properties    []byte        `protobuf:"bytes,3,opt,name=Properties,proto3" json:"Properties"`
 	TokenMetaData *MetaData     `protobuf:"bytes,4,opt,name=TokenMetaData,proto3" json:"MetaData"`
 	Reserved      []byte        `protobuf:"bytes,5,opt,name=Reserved,proto3" json:"Reserved"`

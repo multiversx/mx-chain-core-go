@@ -3,7 +3,7 @@ package factory
 import (
 	"fmt"
 
-	"github.com/ElrondNetwork/elrond-go-core/marshal"
+	"github.com/multiversx/mx-chain-core-go/marshal"
 )
 
 // JsonMarshalizer is the name reserved for the json marshalizer

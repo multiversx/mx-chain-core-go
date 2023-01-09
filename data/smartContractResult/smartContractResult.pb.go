@@ -6,10 +6,10 @@ package smartContractResult
 import (
 	bytes "bytes"
 	fmt "fmt"
-	github_com_ElrondNetwork_elrond_go_core_data "github.com/ElrondNetwork/elrond-go-core/data"
-	github_com_ElrondNetwork_elrond_go_core_data_vm "github.com/ElrondNetwork/elrond-go-core/data/vm"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
+	github_com_ElrondNetwork_elrond_go_core_data "github.com/multiversx/mx-chain-core-go/data"
+	github_com_ElrondNetwork_elrond_go_core_data_vm "github.com/multiversx/mx-chain-core-go/data/vm"
 	io "io"
 	math "math"
 	math_big "math/big"
@@ -31,18 +31,18 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type SmartContractResult struct {
 	Nonce          uint64                                                   `protobuf:"varint,1,opt,name=Nonce,proto3" json:"nonce"`
-	Value          *math_big.Int                                            `protobuf:"bytes,2,opt,name=Value,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"value"`
+	Value          *math_big.Int                                            `protobuf:"bytes,2,opt,name=Value,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"value"`
 	RcvAddr        []byte                                                   `protobuf:"bytes,3,opt,name=RcvAddr,proto3" json:"receiver"`
 	SndAddr        []byte                                                   `protobuf:"bytes,4,opt,name=SndAddr,proto3" json:"sender"`
 	RelayerAddr    []byte                                                   `protobuf:"bytes,5,opt,name=RelayerAddr,proto3" json:"relayer"`
-	RelayedValue   *math_big.Int                                            `protobuf:"bytes,6,opt,name=RelayedValue,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"relayedValue"`
+	RelayedValue   *math_big.Int                                            `protobuf:"bytes,6,opt,name=RelayedValue,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"relayedValue"`
 	Code           []byte                                                   `protobuf:"bytes,7,opt,name=Code,proto3" json:"code,omitempty"`
 	Data           []byte                                                   `protobuf:"bytes,8,opt,name=Data,proto3" json:"data,omitempty"`
 	PrevTxHash     []byte                                                   `protobuf:"bytes,9,opt,name=PrevTxHash,proto3" json:"prevTxHash"`
 	OriginalTxHash []byte                                                   `protobuf:"bytes,10,opt,name=OriginalTxHash,proto3" json:"originalTxHash"`
 	GasLimit       uint64                                                   `protobuf:"varint,11,opt,name=GasLimit,proto3" json:"gasLimit"`
 	GasPrice       uint64                                                   `protobuf:"varint,12,opt,name=GasPrice,proto3" json:"gasPrice"`
-	CallType       github_com_ElrondNetwork_elrond_go_core_data_vm.CallType `protobuf:"varint,13,opt,name=CallType,proto3,casttype=github.com/ElrondNetwork/elrond-go-core/data/vm.CallType" json:"callType"`
+	CallType       github_com_ElrondNetwork_elrond_go_core_data_vm.CallType `protobuf:"varint,13,opt,name=CallType,proto3,casttype=github.com/multiversx/mx-chain-core-go/data/vm.CallType" json:"callType"`
 	CodeMetadata   []byte                                                   `protobuf:"bytes,14,opt,name=CodeMetadata,proto3" json:"codeMetadata,omitempty"`
 	ReturnMessage  []byte                                                   `protobuf:"bytes,15,opt,name=ReturnMessage,proto3" json:"returnMessage,omitempty"`
 	OriginalSender []byte                                                   `protobuf:"bytes,16,opt,name=OriginalSender,proto3" json:"originalSender,omitempty"`

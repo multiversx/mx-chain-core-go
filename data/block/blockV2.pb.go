@@ -6,9 +6,9 @@ package block
 import (
 	bytes "bytes"
 	fmt "fmt"
-	github_com_ElrondNetwork_elrond_go_core_data "github.com/ElrondNetwork/elrond-go-core/data"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
+	github_com_ElrondNetwork_elrond_go_core_data "github.com/multiversx/mx-chain-core-go/data"
 	io "io"
 	math "math"
 	math_big "math/big"
@@ -32,8 +32,8 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 type HeaderV2 struct {
 	Header                   *Header       `protobuf:"bytes,1,opt,name=Header,proto3" json:"Header,omitempty"`
 	ScheduledRootHash        []byte        `protobuf:"bytes,2,opt,name=ScheduledRootHash,proto3" json:"ScheduledRootHash,omitempty"`
-	ScheduledAccumulatedFees *math_big.Int `protobuf:"bytes,3,opt,name=ScheduledAccumulatedFees,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"ScheduledAccumulatedFees,omitempty"`
-	ScheduledDeveloperFees   *math_big.Int `protobuf:"bytes,4,opt,name=ScheduledDeveloperFees,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"ScheduledDeveloperFees,omitempty"`
+	ScheduledAccumulatedFees *math_big.Int `protobuf:"bytes,3,opt,name=ScheduledAccumulatedFees,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"ScheduledAccumulatedFees,omitempty"`
+	ScheduledDeveloperFees   *math_big.Int `protobuf:"bytes,4,opt,name=ScheduledDeveloperFees,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"ScheduledDeveloperFees,omitempty"`
 	ScheduledGasProvided     uint64        `protobuf:"varint,5,opt,name=ScheduledGasProvided,proto3" json:"ScheduledGasProvided,omitempty"`
 	ScheduledGasPenalized    uint64        `protobuf:"varint,6,opt,name=ScheduledGasPenalized,proto3" json:"ScheduledGasPenalized,omitempty"`
 	ScheduledGasRefunded     uint64        `protobuf:"varint,7,opt,name=ScheduledGasRefunded,proto3" json:"ScheduledGasRefunded,omitempty"`

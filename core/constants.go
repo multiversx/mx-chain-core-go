@@ -52,69 +52,69 @@ const BuiltInFunctionSetUserName = "SetUserName"
 // BuiltInFunctionSaveKeyValue is the key for the save key value built-in function
 const BuiltInFunctionSaveKeyValue = "SaveKeyValue"
 
-// BuiltInFunctionESDTTransfer is the key for the elrond standard digital token transfer built-in function
+// BuiltInFunctionESDTTransfer is the key for the electronic standard digital token transfer built-in function
 const BuiltInFunctionESDTTransfer = "ESDTTransfer"
 
-// BuiltInFunctionESDTBurn is the key for the elrond standard digital token burn built-in function
+// BuiltInFunctionESDTBurn is the key for the electronic standard digital token burn built-in function
 const BuiltInFunctionESDTBurn = "ESDTBurn"
 
-// BuiltInFunctionESDTFreeze is the key for the elrond standard digital token freeze built-in function
+// BuiltInFunctionESDTFreeze is the key for the electronic standard digital token freeze built-in function
 const BuiltInFunctionESDTFreeze = "ESDTFreeze"
 
-// BuiltInFunctionESDTUnFreeze is the key for the elrond standard digital token unfreeze built-in function
+// BuiltInFunctionESDTUnFreeze is the key for the electronic standard digital token unfreeze built-in function
 const BuiltInFunctionESDTUnFreeze = "ESDTUnFreeze"
 
-// BuiltInFunctionESDTWipe is the key for the elrond standard digital token wipe built-in function
+// BuiltInFunctionESDTWipe is the key for the electronic standard digital token wipe built-in function
 const BuiltInFunctionESDTWipe = "ESDTWipe"
 
-// BuiltInFunctionESDTPause is the key for the elrond standard digital token pause built-in function
+// BuiltInFunctionESDTPause is the key for the electronic standard digital token pause built-in function
 const BuiltInFunctionESDTPause = "ESDTPause"
 
-// BuiltInFunctionESDTUnPause is the key for the elrond standard digital token unpause built-in function
+// BuiltInFunctionESDTUnPause is the key for the electronic standard digital token unpause built-in function
 const BuiltInFunctionESDTUnPause = "ESDTUnPause"
 
-// BuiltInFunctionSetESDTRole is the key for the elrond standard digital token set built-in function
+// BuiltInFunctionSetESDTRole is the key for the electronic standard digital token set built-in function
 const BuiltInFunctionSetESDTRole = "ESDTSetRole"
 
-// BuiltInFunctionUnSetESDTRole is the key for the elrond standard digital token unset built-in function
+// BuiltInFunctionUnSetESDTRole is the key for the electronic standard digital token unset built-in function
 const BuiltInFunctionUnSetESDTRole = "ESDTUnSetRole"
 
-// BuiltInFunctionESDTSetLimitedTransfer is the key for the elrond standard digital token built-in function which sets the property
+// BuiltInFunctionESDTSetLimitedTransfer is the key for the electronic standard digital token built-in function which sets the property
 // for the token to be transferable only through accounts with transfer roles
 const BuiltInFunctionESDTSetLimitedTransfer = "ESDTSetLimitedTransfer"
 
-// BuiltInFunctionESDTUnSetLimitedTransfer is the key for the elrond standard digital token built-in function which unsets the property
+// BuiltInFunctionESDTUnSetLimitedTransfer is the key for the electronic standard digital token built-in function which unsets the property
 // for the token to be transferable only through accounts with transfer roles
 const BuiltInFunctionESDTUnSetLimitedTransfer = "ESDTUnSetLimitedTransfer"
 
-// BuiltInFunctionESDTLocalMint is the key for the elrond standard digital token local mint built-in function
+// BuiltInFunctionESDTLocalMint is the key for the electronic standard digital token local mint built-in function
 const BuiltInFunctionESDTLocalMint = "ESDTLocalMint"
 
-// BuiltInFunctionESDTLocalBurn is the key for the elrond standard digital token local burn built-in function
+// BuiltInFunctionESDTLocalBurn is the key for the electronic standard digital token local burn built-in function
 const BuiltInFunctionESDTLocalBurn = "ESDTLocalBurn"
 
-// BuiltInFunctionESDTNFTTransfer is the key for the elrond standard digital token NFT transfer built-in function
+// BuiltInFunctionESDTNFTTransfer is the key for the electronic standard digital token NFT transfer built-in function
 const BuiltInFunctionESDTNFTTransfer = "ESDTNFTTransfer"
 
-// BuiltInFunctionESDTNFTCreate is the key for the elrond standard digital token NFT create built-in function
+// BuiltInFunctionESDTNFTCreate is the key for the electronic standard digital token NFT create built-in function
 const BuiltInFunctionESDTNFTCreate = "ESDTNFTCreate"
 
-// BuiltInFunctionESDTNFTAddQuantity is the key for the elrond standard digital token NFT add quantity built-in function
+// BuiltInFunctionESDTNFTAddQuantity is the key for the electronic standard digital token NFT add quantity built-in function
 const BuiltInFunctionESDTNFTAddQuantity = "ESDTNFTAddQuantity"
 
-// BuiltInFunctionESDTNFTCreateRoleTransfer is the key for the elrond standard digital token create role transfer function
+// BuiltInFunctionESDTNFTCreateRoleTransfer is the key for the electronic standard digital token create role transfer function
 const BuiltInFunctionESDTNFTCreateRoleTransfer = "ESDTNFTCreateRoleTransfer"
 
-// BuiltInFunctionESDTNFTBurn is the key for the elrond standard digital token NFT burn built-in function
+// BuiltInFunctionESDTNFTBurn is the key for the electronic standard digital token NFT burn built-in function
 const BuiltInFunctionESDTNFTBurn = "ESDTNFTBurn"
 
-// BuiltInFunctionESDTNFTAddURI is the key for the elrond standard digital token NFT add URI built-in function
+// BuiltInFunctionESDTNFTAddURI is the key for the electronic standard digital token NFT add URI built-in function
 const BuiltInFunctionESDTNFTAddURI = "ESDTNFTAddURI"
 
-// BuiltInFunctionESDTNFTUpdateAttributes is the key for the elrond standard digital token NFT update attributes built-in function
+// BuiltInFunctionESDTNFTUpdateAttributes is the key for the electronic standard digital token NFT update attributes built-in function
 const BuiltInFunctionESDTNFTUpdateAttributes = "ESDTNFTUpdateAttributes"
 
-// BuiltInFunctionMultiESDTNFTTransfer is the key for the elrond standard digital token multi transfer built-in function
+// BuiltInFunctionMultiESDTNFTTransfer is the key for the electronic standard digital token multi transfer built-in function
 const BuiltInFunctionMultiESDTNFTTransfer = "MultiESDTNFTTransfer"
 
 // BuiltInFunctionSetGuardian is the key for setting a guardian built-in function
@@ -175,17 +175,17 @@ const SemiFungibleESDT = "SemiFungibleESDT"
 // MaxRoyalty defines 100% as uint32
 const MaxRoyalty = uint32(10000)
 
-// RelayedTransaction is the key for the elrond meta/gassless/relayed transaction standard
+// RelayedTransaction is the key for the electronic meta/gassless/relayed transaction standard
 const RelayedTransaction = "relayedTx"
 
-// RelayedTransactionV2 is the key for the optimized elrond meta/gassless/relayed transaction standard
+// RelayedTransactionV2 is the key for the optimized electronic meta/gassless/relayed transaction standard
 const RelayedTransactionV2 = "relayedTxV2"
 
 // SCDeployInitFunctionName is the key for the function which is called at smart contract deploy time
 const SCDeployInitFunctionName = "_init"
 
-// ElrondProtectedKeyPrefix is the key prefix which is protected from writing in the trie - only for special builtin functions
-const ElrondProtectedKeyPrefix = "ELROND"
+// ProtectedKeyPrefix is the key prefix which is protected from writing in the trie - only for special builtin functions
+const ProtectedKeyPrefix = "electronic"
 
 // DelegationSystemSCKey is the key under which there is data in case of system delegation smart contracts
 const DelegationSystemSCKey = "delegation"
