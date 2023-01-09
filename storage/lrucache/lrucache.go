@@ -3,9 +3,9 @@ package lrucache
 import (
 	"sync"
 
-	"github.com/ElrondNetwork/elrond-go-core/storage"
-	"github.com/ElrondNetwork/elrond-go-core/storage/lrucache/capacity"
 	lru "github.com/hashicorp/golang-lru"
+	"github.com/multiversx/mx-chain-core-go/storage"
+	"github.com/multiversx/mx-chain-core-go/storage/lrucache/capacity"
 )
 
 var _ storage.Cacher = (*lruCache)(nil)

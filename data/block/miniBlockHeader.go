@@ -1,6 +1,6 @@
 package block
 
-import "github.com/ElrondNetwork/elrond-go-core/data"
+import "github.com/multiversx/mx-chain-core-go/data"
 
 // GetTypeInt32 gets the miniBlock type
 func (m *MiniBlockHeader) GetTypeInt32() int32 {

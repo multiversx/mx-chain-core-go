@@ -3,7 +3,7 @@ package outport
 import (
 	"time"
 
-	"github.com/ElrondNetwork/elrond-go-core/data"
+	"github.com/multiversx/mx-chain-core-go/data"
 )
 
 // TokenMetaData is the api metaData struct for tokens

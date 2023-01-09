@@ -3,7 +3,7 @@ package outport
 import (
 	"math/big"
 
-	"github.com/ElrondNetwork/elrond-go-core/data"
+	"github.com/multiversx/mx-chain-core-go/data"
 )
 
 // FeeInfo holds information about the fee and gas used
