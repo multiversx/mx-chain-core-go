@@ -185,7 +185,7 @@ const RelayedTransactionV2 = "relayedTxV2"
 const SCDeployInitFunctionName = "_init"
 
 // ProtectedKeyPrefix is the key prefix which is protected from writing in the trie - only for special builtin functions
-const ProtectedKeyPrefix = "ELROND"
+const ProtectedKeyPrefix = "E" + "L" + "R" + "O" + "N" + "D"
 
 // DelegationSystemSCKey is the key under which there is data in case of system delegation smart contracts
 const DelegationSystemSCKey = "delegation"
