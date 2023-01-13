@@ -51,6 +51,11 @@ func (ag *addressGenerator) NewAddress(creatorAddress []byte, creatorNonce uint6
 	return base, nil
 }
 
+// IsInterfaceNil returns true if there is no value under the interface
+func (ag *addressGenerator) IsInterfaceNil() bool {
+	return ag == nil
+}
+
 func hashFromAddressAndNonce(creatorAddress []byte, creatorNonce uint64) []byte {
 	buffNonce := make([]byte, 8)
 	binary.LittleEndian.PutUint64(buffNonce, creatorNonce)

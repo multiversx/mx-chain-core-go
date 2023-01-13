@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"testing"
 
+	"github.com/ElrondNetwork/elrond-go-core/core/check"
 	"github.com/ElrondNetwork/elrond-go-core/core/mock"
 	"github.com/ElrondNetwork/elrond-go-core/core/pubkeyConverter"
 	"github.com/stretchr/testify/assert"
@@ -22,6 +23,7 @@ func TestBlockChainHookImpl_NewAddressLengthNoGood(t *testing.T) {
 
 	ag, err := NewAddressGenerator(AddressPublicKeyConverter)
 	require.Nil(t, err)
+	assert.False(t, check.IfNil(ag))
 
 	address := []byte("test")
 	nonce := uint64(10)
