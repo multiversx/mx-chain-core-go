@@ -3,7 +3,7 @@ package data
 import (
 	"math/big"
 
-	"github.com/ElrondNetwork/elrond-go-core/data/headerVersionData"
+	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
 )
 
 // TriggerRegistryHandler defines getters and setters for the trigger registry

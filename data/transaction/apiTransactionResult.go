@@ -3,8 +3,8 @@ package transaction
 import (
 	"math/big"
 
-	"github.com/ElrondNetwork/elrond-go-core/data"
-	"github.com/ElrondNetwork/elrond-go-core/data/vm"
+	"github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/vm"
 )
 
 // ApiTransactionResult is the data transfer object which will be returned on the get transaction by hash endpoint
