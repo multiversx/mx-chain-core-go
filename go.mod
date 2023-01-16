@@ -1,4 +1,4 @@
-module github.com/ElrondNetwork/elrond-go-core
+module github.com/multiversx/mx-chain-core-go
 
 go 1.17
 
