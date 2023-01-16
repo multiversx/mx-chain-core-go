@@ -7,10 +7,10 @@ import (
 	"sync/atomic"
 	"time"
 
-	"github.com/ElrondNetwork/elrond-go-core/core"
-	"github.com/ElrondNetwork/elrond-go-core/core/check"
-	outportData "github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
 	"github.com/gorilla/websocket"
+	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/core/check"
+	outportData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
 var (
