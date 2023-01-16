@@ -38,8 +38,11 @@ type AlteredAccount struct {
 
 // AdditionalAccountData holds the additional data for an altered account
 type AdditionalAccountData struct {
-	IsSender       bool `json:"isSender,omitempty"`
-	BalanceChanged bool `json:"balanceChanged,omitempty"`
+	IsSender         bool   `json:"isSender,omitempty"`
+	BalanceChanged   bool   `json:"balanceChanged,omitempty"`
+	CurrentOwner     string `json:"currentOwner,omitempty"`
+	UserName         string `json:"userName,omitempty"`
+	DeveloperRewards string `json:"developerRewards,omitempty"`
 }
 
 // AdditionalAccountTokenData holds the additional data for indexing a token of an altered account
