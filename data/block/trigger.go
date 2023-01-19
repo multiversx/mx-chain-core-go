@@ -1,7 +1,7 @@
-//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/ElrondNetwork/protobuf/protobuf  --gogoslick_out=. trigger.proto
+//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf  --gogoslick_out=. trigger.proto
 package block
 
-import "github.com/ElrondNetwork/elrond-go-core/data"
+import "github.com/multiversx/mx-chain-core-go/data"
 
 // GetEpochStartHeaderHandler returns the epoch start headerHandler
 func (str *ShardTriggerRegistry) GetEpochStartHeaderHandler() data.HeaderHandler {

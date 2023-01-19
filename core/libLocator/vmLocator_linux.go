@@ -1,3 +1,4 @@
+//go:build linux
 // +build linux
 
 package vm
@@ -14,5 +15,5 @@ func WASMLibLocation() string {
 	if err != nil {
 		return ""
 	}
-	return usr.HomeDir + "/elrond-vm-binaries/" + libName
+	return usr.HomeDir + "/multiversx-vm-binaries/" + libName
 }
