@@ -4,8 +4,8 @@ import (
 	"bytes"
 	"sort"
 
-	"github.com/ElrondNetwork/elrond-go-core/data"
-	"github.com/ElrondNetwork/elrond-go-core/hashing"
+	"github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/hashing"
 )
 
 // SortTransactionsBySenderAndNonceWithFrontRunningProtection - sorts the transactions by address and randomness source to protect from front running
@@ -34,7 +34,7 @@ func SortTransactionsBySenderAndNonceWithFrontRunningProtection(transactions []d
 	sort.Slice(transactions, sorter)
 }
 
-// TODO remove duplicated function when will use the version of elrond-go which exports transaction order during processing
+// TODO remove duplicated function when will use the version of mx-chain-go which exports transaction order during processing
 
 // SortTransactionsBySenderAndNonceWithFrontRunningProtectionExtendedTransactions - sorts the transactions by address and randomness source to protect from front running
 func SortTransactionsBySenderAndNonceWithFrontRunningProtectionExtendedTransactions(transactions []data.TransactionHandlerWithGasUsedAndFee, hasher hashing.Hasher, randomness []byte) {
