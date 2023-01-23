@@ -5,10 +5,10 @@ import (
 	"testing"
 	"time"
 
-	coreMock "github.com/ElrondNetwork/elrond-go-core/core/mock"
-	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
-	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/mock"
 	"github.com/gorilla/websocket"
+	coreMock "github.com/multiversx/mx-chain-core-go/core/mock"
+	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
+	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/mock"
 	"github.com/stretchr/testify/require"
 )
 
