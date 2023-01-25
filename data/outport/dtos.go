@@ -3,7 +3,7 @@ package outport
 import (
 	"time"
 
-	"github.com/ElrondNetwork/elrond-go-core/data"
+	"github.com/multiversx/mx-chain-core-go/data"
 )
 
 // TokenMetaData is the api metaData struct for tokens
@@ -38,8 +38,11 @@ type AlteredAccount struct {
 
 // AdditionalAccountData holds the additional data for an altered account
 type AdditionalAccountData struct {
-	IsSender       bool `json:"isSender,omitempty"`
-	BalanceChanged bool `json:"balanceChanged,omitempty"`
+	IsSender         bool   `json:"isSender,omitempty"`
+	BalanceChanged   bool   `json:"balanceChanged,omitempty"`
+	CurrentOwner     string `json:"currentOwner,omitempty"`
+	UserName         string `json:"userName,omitempty"`
+	DeveloperRewards string `json:"developerRewards,omitempty"`
 }
 
 // AdditionalAccountTokenData holds the additional data for indexing a token of an altered account
@@ -71,12 +74,14 @@ type HeaderGasConsumption struct {
 
 // Pool will hold all types of transaction
 type Pool struct {
-	Txs      map[string]data.TransactionHandlerWithGasUsedAndFee
-	Scrs     map[string]data.TransactionHandlerWithGasUsedAndFee
-	Rewards  map[string]data.TransactionHandlerWithGasUsedAndFee
-	Invalid  map[string]data.TransactionHandlerWithGasUsedAndFee
-	Receipts map[string]data.TransactionHandlerWithGasUsedAndFee
-	Logs     []*data.LogData
+	Txs                                        map[string]data.TransactionHandlerWithGasUsedAndFee
+	Scrs                                       map[string]data.TransactionHandlerWithGasUsedAndFee
+	Rewards                                    map[string]data.TransactionHandlerWithGasUsedAndFee
+	Invalid                                    map[string]data.TransactionHandlerWithGasUsedAndFee
+	Receipts                                   map[string]data.TransactionHandlerWithGasUsedAndFee
+	Logs                                       []*data.LogData
+	ScheduledExecutedSCRSHashesPrevBlock       []string
+	ScheduledExecutedInvalidTxsHashesPrevBlock []string
 }
 
 // ValidatorRatingInfo is a structure containing validator rating information

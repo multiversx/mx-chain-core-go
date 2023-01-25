@@ -1,6 +1,6 @@
 package lrucache
 
-import "github.com/ElrondNetwork/elrond-go-core/storage"
+import "github.com/multiversx/mx-chain-core-go/storage"
 
 // simpleLRUCacheAdapter provides an adapter between LRUCacheHandler and SizeLRUCacheHandler
 type simpleLRUCacheAdapter struct {

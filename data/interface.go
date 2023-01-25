@@ -3,7 +3,7 @@ package data
 import (
 	"math/big"
 
-	"github.com/ElrondNetwork/elrond-go-core/data/headerVersionData"
+	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
 )
 
 // TriggerRegistryHandler defines getters and setters for the trigger registry
@@ -291,6 +291,8 @@ type TransactionHandlerWithGasUsedAndFee interface {
 	GetGasUsed() uint64
 	GetFee() *big.Int
 	GetTxHandler() TransactionHandler
+	SetExecutionOrder(order int)
+	GetExecutionOrder() int
 }
 
 // LogHandler defines the type for a log resulted from executing a transaction or smart contract call

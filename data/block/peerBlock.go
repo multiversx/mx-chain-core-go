@@ -1,6 +1,6 @@
 package block
 
-import "github.com/ElrondNetwork/elrond-go-core/data"
+import "github.com/multiversx/mx-chain-core-go/data"
 
 // SetPubKey - setter for public key
 func (pc *PeerChange) SetPubKey(pubKey []byte) error {
