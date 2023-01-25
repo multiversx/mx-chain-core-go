@@ -1,4 +1,3 @@
-
 syntax = "proto3";
 
 package proto;
@@ -10,9 +9,8 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 // RewardTx holds the data for a reward transaction
 message RewardTx {
-	uint64   Round     = 1 [(gogoproto.jsontag) = "round"];
-	bytes    Value     = 3 [(gogoproto.jsontag) = "value", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-	bytes    RcvAddr   = 4 [(gogoproto.jsontag) = "receiver"];
-	uint32   Epoch     = 2 [(gogoproto.jsontag) = "epoch"];
+	uint64   Round   = 1 [(gogoproto.jsontag) = "round"];
+	bytes    Value   = 3 [(gogoproto.jsontag) = "value", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+	bytes    RcvAddr = 4 [(gogoproto.jsontag) = "receiver"];
+	uint32   Epoch   = 2 [(gogoproto.jsontag) = "epoch"];
 }
-
