@@ -1,12 +1,12 @@
-//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/ElrondNetwork/protobuf/protobuf  --gogoslick_out=. blockV2.proto
+//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf  --gogoslick_out=. blockV2.proto
 package block
 
 import (
 	"math/big"
 
-	"github.com/ElrondNetwork/elrond-go-core/core/check"
-	"github.com/ElrondNetwork/elrond-go-core/data"
-	"github.com/ElrondNetwork/elrond-go-core/data/headerVersionData"
+	"github.com/multiversx/mx-chain-core-go/core/check"
+	"github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
 )
 
 // GetShardID returns the header shardID

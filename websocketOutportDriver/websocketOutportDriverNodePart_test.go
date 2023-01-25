@@ -4,14 +4,14 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/ElrondNetwork/elrond-go-core/core"
-	coreMock "github.com/ElrondNetwork/elrond-go-core/core/mock"
-	"github.com/ElrondNetwork/elrond-go-core/data/block"
-	"github.com/ElrondNetwork/elrond-go-core/data/outport"
-	"github.com/ElrondNetwork/elrond-go-core/data/typeConverters/uint64ByteSlice"
-	"github.com/ElrondNetwork/elrond-go-core/marshal"
-	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
-	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/mock"
+	"github.com/multiversx/mx-chain-core-go/core"
+	coreMock "github.com/multiversx/mx-chain-core-go/core/mock"
+	"github.com/multiversx/mx-chain-core-go/data/block"
+	"github.com/multiversx/mx-chain-core-go/data/outport"
+	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
+	"github.com/multiversx/mx-chain-core-go/marshal"
+	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
+	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/mock"
 	"github.com/stretchr/testify/require"
 )
 

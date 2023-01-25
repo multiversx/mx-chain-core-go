@@ -1,10 +1,10 @@
-//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/ElrondNetwork/protobuf/protobuf  --gogoslick_out=$GOPATH/src smartContractResult.proto
+//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf  --gogoslick_out=. smartContractResult.proto
 package smartContractResult
 
 import (
 	"math/big"
 
-	"github.com/ElrondNetwork/elrond-go-core/data"
+	"github.com/multiversx/mx-chain-core-go/data"
 )
 
 var _ = data.TransactionHandler(&SmartContractResult{})
