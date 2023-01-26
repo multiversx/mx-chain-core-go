@@ -28,7 +28,7 @@ message FirehoseBlock {
   map<string, Log>        Logs = 11;
   repeated uint64         SignersIndexes = 12;
   uint64                  HighestFinalBlockNonce = 13;
-  uint64                  HighestFinalBlockHash = 14;
+  bytes                   HighestFinalBlockHash = 14;
 }
 
 message FeeInfo {
