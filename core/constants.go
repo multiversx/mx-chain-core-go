@@ -126,6 +126,9 @@ const BuiltInFunctionFreezeAccount = "FreezeAccount"
 // BuiltInFunctionUnfreezeAccount is the built-in function key for unfreezing an account
 const BuiltInFunctionUnfreezeAccount = "UnfreezeAccount"
 
+// BuiltInFunctionMigrateDataTrie is the built-in function key for migrating the data trie
+const BuiltInFunctionMigrateDataTrie = "MigrateDataTrie"
+
 // ESDTRoleLocalMint is the constant string for the local role of mint for ESDT tokens
 const ESDTRoleLocalMint = "ESDTRoleLocalMint"
 
