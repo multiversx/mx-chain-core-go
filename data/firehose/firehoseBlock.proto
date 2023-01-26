@@ -27,8 +27,8 @@ message FirehoseBlock {
   map<string, TxInfo>     InvalidTxs = 10;
   map<string, Log>        Logs = 11;
   repeated uint64         SignersIndexes = 12;
-  uint64                  FinalBlockNonce = 13;
-  uint64                  FinalBlockHash = 14;
+  uint64                  HighestFinalBlockNonce = 13;
+  uint64                  HighestFinalBlockHash = 14;
 }
 
 message FeeInfo {
