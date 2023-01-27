@@ -332,7 +332,7 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 	args.WebsocketSender = &mock.WebSocketSenderStub{
 		SendOnRouteCalled: func(args data.WsSendArgs) error {
 			expectedOpBytes := []byte{0, 0, 0, 0}
-			expectedLengthBytes := []byte{0, 0, 1, 156}
+			expectedLengthBytes := []byte{0, 0, 1, 212}
 			expectedPayload := append(expectedOpBytes, expectedLengthBytes...)
 			expectedPayload = append(expectedPayload, marshaledData...)
 
