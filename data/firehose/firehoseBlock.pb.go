@@ -36,18 +36,20 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type FirehoseBlock struct {
-	HeaderBytes         []byte                           `protobuf:"bytes,1,opt,name=HeaderBytes,proto3" json:"HeaderBytes,omitempty"`
-	HeaderType          string                           `protobuf:"bytes,2,opt,name=HeaderType,proto3" json:"HeaderType,omitempty"`
-	HeaderHash          []byte                           `protobuf:"bytes,3,opt,name=HeaderHash,proto3" json:"HeaderHash,omitempty"`
-	Body                *block.Body                      `protobuf:"bytes,4,opt,name=Body,proto3" json:"Body,omitempty"`
-	AlteredAccounts     []*alteredAccount.AlteredAccount `protobuf:"bytes,5,rep,name=AlteredAccounts,proto3" json:"AlteredAccounts,omitempty"`
-	Transactions        map[string]*TxWithFee            `protobuf:"bytes,6,rep,name=Transactions,proto3" json:"Transactions,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	SmartContractResult map[string]*SCRWithFee           `protobuf:"bytes,7,rep,name=SmartContractResult,proto3" json:"SmartContractResult,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Rewards             map[string]*rewardTx.RewardTx    `protobuf:"bytes,8,rep,name=Rewards,proto3" json:"Rewards,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Receipts            map[string]*receipt.Receipt      `protobuf:"bytes,9,rep,name=Receipts,proto3" json:"Receipts,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	InvalidTxs          map[string]*TxWithFee            `protobuf:"bytes,10,rep,name=InvalidTxs,proto3" json:"InvalidTxs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Logs                map[string]*transaction.Log      `protobuf:"bytes,11,rep,name=Logs,proto3" json:"Logs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	SignersIndexes      []uint64                         `protobuf:"varint,12,rep,packed,name=SignersIndexes,proto3" json:"SignersIndexes,omitempty"`
+	HeaderBytes            []byte                           `protobuf:"bytes,1,opt,name=HeaderBytes,proto3" json:"HeaderBytes,omitempty"`
+	HeaderType             string                           `protobuf:"bytes,2,opt,name=HeaderType,proto3" json:"HeaderType,omitempty"`
+	HeaderHash             []byte                           `protobuf:"bytes,3,opt,name=HeaderHash,proto3" json:"HeaderHash,omitempty"`
+	Body                   *block.Body                      `protobuf:"bytes,4,opt,name=Body,proto3" json:"Body,omitempty"`
+	AlteredAccounts        []*alteredAccount.AlteredAccount `protobuf:"bytes,5,rep,name=AlteredAccounts,proto3" json:"AlteredAccounts,omitempty"`
+	Transactions           map[string]*TxInfo               `protobuf:"bytes,6,rep,name=Transactions,proto3" json:"Transactions,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	SmartContractResults   map[string]*SCRInfo              `protobuf:"bytes,7,rep,name=SmartContractResults,proto3" json:"SmartContractResults,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Rewards                map[string]*RewardInfo           `protobuf:"bytes,8,rep,name=Rewards,proto3" json:"Rewards,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Receipts               map[string]*receipt.Receipt      `protobuf:"bytes,9,rep,name=Receipts,proto3" json:"Receipts,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	InvalidTxs             map[string]*TxInfo               `protobuf:"bytes,10,rep,name=InvalidTxs,proto3" json:"InvalidTxs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Logs                   map[string]*transaction.Log      `protobuf:"bytes,11,rep,name=Logs,proto3" json:"Logs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	SignersIndexes         []uint64                         `protobuf:"varint,12,rep,packed,name=SignersIndexes,proto3" json:"SignersIndexes,omitempty"`
+	HighestFinalBlockNonce uint64                           `protobuf:"varint,13,opt,name=HighestFinalBlockNonce,proto3" json:"HighestFinalBlockNonce,omitempty"`
+	HighestFinalBlockHash  []byte                           `protobuf:"bytes,14,opt,name=HighestFinalBlockHash,proto3" json:"HighestFinalBlockHash,omitempty"`
 }
 
 func (m *FirehoseBlock) Reset()      { *m = FirehoseBlock{} }
@@ -113,21 +115,21 @@ func (m *FirehoseBlock) GetAlteredAccounts() []*alteredAccount.AlteredAccount {
 	return nil
 }
 
-func (m *FirehoseBlock) GetTransactions() map[string]*TxWithFee {
+func (m *FirehoseBlock) GetTransactions() map[string]*TxInfo {
 	if m != nil {
 		return m.Transactions
 	}
 	return nil
 }
 
-func (m *FirehoseBlock) GetSmartContractResult() map[string]*SCRWithFee {
+func (m *FirehoseBlock) GetSmartContractResults() map[string]*SCRInfo {
 	if m != nil {
-		return m.SmartContractResult
+		return m.SmartContractResults
 	}
 	return nil
 }
 
-func (m *FirehoseBlock) GetRewards() map[string]*rewardTx.RewardTx {
+func (m *FirehoseBlock) GetRewards() map[string]*RewardInfo {
 	if m != nil {
 		return m.Rewards
 	}
@@ -141,7 +143,7 @@ func (m *FirehoseBlock) GetReceipts() map[string]*receipt.Receipt {
 	return nil
 }
 
-func (m *FirehoseBlock) GetInvalidTxs() map[string]*TxWithFee {
+func (m *FirehoseBlock) GetInvalidTxs() map[string]*TxInfo {
 	if m != nil {
 		return m.InvalidTxs
 	}
@@ -158,6 +160,20 @@ func (m *FirehoseBlock) GetLogs() map[string]*transaction.Log {
 func (m *FirehoseBlock) GetSignersIndexes() []uint64 {
 	if m != nil {
 		return m.SignersIndexes
+	}
+	return nil
+}
+
+func (m *FirehoseBlock) GetHighestFinalBlockNonce() uint64 {
+	if m != nil {
+		return m.HighestFinalBlockNonce
+	}
+	return 0
+}
+
+func (m *FirehoseBlock) GetHighestFinalBlockHash() []byte {
+	if m != nil {
+		return m.HighestFinalBlockHash
 	}
 	return nil
 }
@@ -217,20 +233,21 @@ func (m *FeeInfo) GetInitialPaidFee() *math_big.Int {
 	return nil
 }
 
-type TxWithFee struct {
-	Transaction *transaction.Transaction `protobuf:"bytes,1,opt,name=Transaction,proto3" json:"Transaction,omitempty"`
-	FeeInfo     *FeeInfo                 `protobuf:"bytes,2,opt,name=FeeInfo,proto3" json:"FeeInfo,omitempty"`
+type TxInfo struct {
+	Transaction    *transaction.Transaction `protobuf:"bytes,1,opt,name=Transaction,proto3" json:"Transaction,omitempty"`
+	FeeInfo        *FeeInfo                 `protobuf:"bytes,2,opt,name=FeeInfo,proto3" json:"FeeInfo,omitempty"`
+	ExecutionOrder uint32                   `protobuf:"varint,3,opt,name=ExecutionOrder,proto3" json:"ExecutionOrder,omitempty"`
 }
 
-func (m *TxWithFee) Reset()      { *m = TxWithFee{} }
-func (*TxWithFee) ProtoMessage() {}
-func (*TxWithFee) Descriptor() ([]byte, []int) {
+func (m *TxInfo) Reset()      { *m = TxInfo{} }
+func (*TxInfo) ProtoMessage() {}
+func (*TxInfo) Descriptor() ([]byte, []int) {
 	return fileDescriptor_bd81671bd210eaed, []int{2}
 }
-func (m *TxWithFee) XXX_Unmarshal(b []byte) error {
+func (m *TxInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *TxWithFee) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *TxInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	b = b[:cap(b)]
 	n, err := m.MarshalToSizedBuffer(b)
 	if err != nil {
@@ -238,46 +255,54 @@ func (m *TxWithFee) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	}
 	return b[:n], nil
 }
-func (m *TxWithFee) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_TxWithFee.Merge(m, src)
+func (m *TxInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TxInfo.Merge(m, src)
 }
-func (m *TxWithFee) XXX_Size() int {
+func (m *TxInfo) XXX_Size() int {
 	return m.Size()
 }
-func (m *TxWithFee) XXX_DiscardUnknown() {
-	xxx_messageInfo_TxWithFee.DiscardUnknown(m)
+func (m *TxInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_TxInfo.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_TxWithFee proto.InternalMessageInfo
+var xxx_messageInfo_TxInfo proto.InternalMessageInfo
 
-func (m *TxWithFee) GetTransaction() *transaction.Transaction {
+func (m *TxInfo) GetTransaction() *transaction.Transaction {
 	if m != nil {
 		return m.Transaction
 	}
 	return nil
 }
 
-func (m *TxWithFee) GetFeeInfo() *FeeInfo {
+func (m *TxInfo) GetFeeInfo() *FeeInfo {
 	if m != nil {
 		return m.FeeInfo
 	}
 	return nil
 }
 
-type SCRWithFee struct {
-	SmartContractResult *smartContractResult.SmartContractResult `protobuf:"bytes,1,opt,name=SmartContractResult,proto3" json:"SmartContractResult,omitempty"`
-	FeeInfo             *FeeInfo                                 `protobuf:"bytes,2,opt,name=FeeInfo,proto3" json:"FeeInfo,omitempty"`
+func (m *TxInfo) GetExecutionOrder() uint32 {
+	if m != nil {
+		return m.ExecutionOrder
+	}
+	return 0
 }
 
-func (m *SCRWithFee) Reset()      { *m = SCRWithFee{} }
-func (*SCRWithFee) ProtoMessage() {}
-func (*SCRWithFee) Descriptor() ([]byte, []int) {
+type SCRInfo struct {
+	SmartContractResult *smartContractResult.SmartContractResult `protobuf:"bytes,1,opt,name=SmartContractResult,proto3" json:"SmartContractResult,omitempty"`
+	FeeInfo             *FeeInfo                                 `protobuf:"bytes,2,opt,name=FeeInfo,proto3" json:"FeeInfo,omitempty"`
+	ExecutionOrder      uint32                                   `protobuf:"varint,3,opt,name=ExecutionOrder,proto3" json:"ExecutionOrder,omitempty"`
+}
+
+func (m *SCRInfo) Reset()      { *m = SCRInfo{} }
+func (*SCRInfo) ProtoMessage() {}
+func (*SCRInfo) Descriptor() ([]byte, []int) {
 	return fileDescriptor_bd81671bd210eaed, []int{3}
 }
-func (m *SCRWithFee) XXX_Unmarshal(b []byte) error {
+func (m *SCRInfo) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *SCRWithFee) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *SCRInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	b = b[:cap(b)]
 	n, err := m.MarshalToSizedBuffer(b)
 	if err != nil {
@@ -285,101 +310,160 @@ func (m *SCRWithFee) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	}
 	return b[:n], nil
 }
-func (m *SCRWithFee) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_SCRWithFee.Merge(m, src)
+func (m *SCRInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SCRInfo.Merge(m, src)
 }
-func (m *SCRWithFee) XXX_Size() int {
+func (m *SCRInfo) XXX_Size() int {
 	return m.Size()
 }
-func (m *SCRWithFee) XXX_DiscardUnknown() {
-	xxx_messageInfo_SCRWithFee.DiscardUnknown(m)
+func (m *SCRInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_SCRInfo.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_SCRWithFee proto.InternalMessageInfo
+var xxx_messageInfo_SCRInfo proto.InternalMessageInfo
 
-func (m *SCRWithFee) GetSmartContractResult() *smartContractResult.SmartContractResult {
+func (m *SCRInfo) GetSmartContractResult() *smartContractResult.SmartContractResult {
 	if m != nil {
 		return m.SmartContractResult
 	}
 	return nil
 }
 
-func (m *SCRWithFee) GetFeeInfo() *FeeInfo {
+func (m *SCRInfo) GetFeeInfo() *FeeInfo {
 	if m != nil {
 		return m.FeeInfo
 	}
 	return nil
 }
 
+func (m *SCRInfo) GetExecutionOrder() uint32 {
+	if m != nil {
+		return m.ExecutionOrder
+	}
+	return 0
+}
+
+type RewardInfo struct {
+	Reward         *rewardTx.RewardTx `protobuf:"bytes,1,opt,name=Reward,proto3" json:"Reward,omitempty"`
+	ExecutionOrder uint32             `protobuf:"varint,2,opt,name=ExecutionOrder,proto3" json:"ExecutionOrder,omitempty"`
+}
+
+func (m *RewardInfo) Reset()      { *m = RewardInfo{} }
+func (*RewardInfo) ProtoMessage() {}
+func (*RewardInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_bd81671bd210eaed, []int{4}
+}
+func (m *RewardInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *RewardInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *RewardInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_RewardInfo.Merge(m, src)
+}
+func (m *RewardInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *RewardInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_RewardInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_RewardInfo proto.InternalMessageInfo
+
+func (m *RewardInfo) GetReward() *rewardTx.RewardTx {
+	if m != nil {
+		return m.Reward
+	}
+	return nil
+}
+
+func (m *RewardInfo) GetExecutionOrder() uint32 {
+	if m != nil {
+		return m.ExecutionOrder
+	}
+	return 0
+}
+
 func init() {
 	proto.RegisterType((*FirehoseBlock)(nil), "proto.FirehoseBlock")
-	proto.RegisterMapType((map[string]*TxWithFee)(nil), "proto.FirehoseBlock.InvalidTxsEntry")
+	proto.RegisterMapType((map[string]*TxInfo)(nil), "proto.FirehoseBlock.InvalidTxsEntry")
 	proto.RegisterMapType((map[string]*transaction.Log)(nil), "proto.FirehoseBlock.LogsEntry")
 	proto.RegisterMapType((map[string]*receipt.Receipt)(nil), "proto.FirehoseBlock.ReceiptsEntry")
-	proto.RegisterMapType((map[string]*rewardTx.RewardTx)(nil), "proto.FirehoseBlock.RewardsEntry")
-	proto.RegisterMapType((map[string]*SCRWithFee)(nil), "proto.FirehoseBlock.SmartContractResultEntry")
-	proto.RegisterMapType((map[string]*TxWithFee)(nil), "proto.FirehoseBlock.TransactionsEntry")
+	proto.RegisterMapType((map[string]*RewardInfo)(nil), "proto.FirehoseBlock.RewardsEntry")
+	proto.RegisterMapType((map[string]*SCRInfo)(nil), "proto.FirehoseBlock.SmartContractResultsEntry")
+	proto.RegisterMapType((map[string]*TxInfo)(nil), "proto.FirehoseBlock.TransactionsEntry")
 	proto.RegisterType((*FeeInfo)(nil), "proto.FeeInfo")
-	proto.RegisterType((*TxWithFee)(nil), "proto.TxWithFee")
-	proto.RegisterType((*SCRWithFee)(nil), "proto.SCRWithFee")
+	proto.RegisterType((*TxInfo)(nil), "proto.TxInfo")
+	proto.RegisterType((*SCRInfo)(nil), "proto.SCRInfo")
+	proto.RegisterType((*RewardInfo)(nil), "proto.RewardInfo")
 }
 
 func init() { proto.RegisterFile("firehoseBlock.proto", fileDescriptor_bd81671bd210eaed) }
 
 var fileDescriptor_bd81671bd210eaed = []byte{
-	// 820 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xac, 0x96, 0x41, 0x6f, 0xe3, 0x44,
-	0x14, 0xc7, 0xe3, 0x4d, 0xba, 0x6d, 0x9e, 0xb3, 0xed, 0xee, 0xac, 0x90, 0xac, 0x1c, 0x66, 0x43,
-	0xb4, 0x94, 0x5c, 0x92, 0x48, 0x81, 0x03, 0xa2, 0x02, 0xd4, 0x84, 0x2d, 0x6b, 0xa8, 0xb4, 0x30,
-	0x0d, 0x42, 0x0b, 0x07, 0x34, 0xb1, 0xa7, 0x8e, 0x55, 0xc7, 0x53, 0x3c, 0x93, 0x6e, 0x72, 0xe3,
-	0xc0, 0x07, 0xe0, 0x63, 0x20, 0x3e, 0x09, 0xc7, 0x1e, 0x7b, 0x83, 0xba, 0x17, 0x8e, 0x2b, 0x71,
-	0x46, 0x42, 0x99, 0xb1, 0x13, 0x3b, 0xf5, 0x4a, 0xa4, 0x70, 0x89, 0x67, 0xde, 0xfb, 0xff, 0x7f,
-	0x33, 0x9e, 0xf7, 0x32, 0x32, 0x3c, 0x3e, 0xf5, 0x23, 0x36, 0xe6, 0x82, 0xf5, 0x03, 0xee, 0x9c,
-	0x75, 0xce, 0x23, 0x2e, 0x39, 0xda, 0x52, 0x8f, 0x7a, 0xdb, 0xf3, 0xe5, 0x78, 0x3a, 0xea, 0x38,
-	0x7c, 0xd2, 0xf5, 0xb8, 0xc7, 0xbb, 0x2a, 0x3c, 0x9a, 0x9e, 0xaa, 0x99, 0x9a, 0xa8, 0x91, 0x76,
-	0xd5, 0x3f, 0xca, 0xc8, 0x27, 0xd3, 0x40, 0xfa, 0x17, 0x2c, 0x12, 0xb3, 0xee, 0x64, 0xd6, 0x76,
-	0xc6, 0xd4, 0x0f, 0xdb, 0x0e, 0x8f, 0x58, 0xdb, 0xe3, 0x5d, 0x97, 0x4a, 0xda, 0x1d, 0x2d, 0x96,
-	0xd3, 0xbf, 0x89, 0xfd, 0x70, 0x13, 0xbb, 0x8c, 0x68, 0x28, 0xa8, 0x23, 0x7d, 0x1e, 0x76, 0x03,
-	0xee, 0x25, 0x08, 0xfb, 0xae, 0x88, 0xcc, 0x38, 0x41, 0xbd, 0xdc, 0x04, 0x25, 0x26, 0x34, 0x92,
-	0x03, 0x1e, 0xca, 0x88, 0x3a, 0x92, 0x30, 0x31, 0x0d, 0x64, 0x51, 0xec, 0x2e, 0x2f, 0x1a, 0x31,
-	0x87, 0xf9, 0xe7, 0x32, 0x7d, 0x26, 0x88, 0xc1, 0x66, 0x88, 0x57, 0x34, 0x72, 0x87, 0xb3, 0xe5,
-	0x20, 0x81, 0xbc, 0xd8, 0x04, 0x42, 0x03, 0xc9, 0x22, 0xe6, 0x1e, 0x3a, 0x0e, 0x9f, 0x86, 0x72,
-	0x6d, 0xaa, 0x81, 0xcd, 0xbf, 0x77, 0xe0, 0xc1, 0x51, 0xb6, 0x9d, 0x50, 0x03, 0xcc, 0xe7, 0x8c,
-	0xba, 0x2c, 0xea, 0xcf, 0x25, 0x13, 0x96, 0xd1, 0x30, 0x5a, 0x35, 0x92, 0x0d, 0x21, 0x0c, 0xa0,
-	0xa7, 0xc3, 0xf9, 0x39, 0xb3, 0xee, 0x35, 0x8c, 0x56, 0x95, 0x64, 0x22, 0xab, 0xfc, 0x73, 0x2a,
-	0xc6, 0x56, 0x59, 0x01, 0x32, 0x11, 0xf4, 0x04, 0x2a, 0x7d, 0xee, 0xce, 0xad, 0x4a, 0xc3, 0x68,
-	0x99, 0x3d, 0x53, 0xef, 0xa4, 0xb3, 0x08, 0x11, 0x95, 0x40, 0x9f, 0xc0, 0xde, 0x61, 0x6e, 0xb3,
-	0xc2, 0xda, 0x6a, 0x94, 0x5b, 0x66, 0xef, 0xad, 0x44, 0x9b, 0xcf, 0x92, 0x75, 0x35, 0xfa, 0x1c,
-	0x6a, 0xc3, 0x55, 0x7b, 0x08, 0xeb, 0xbe, 0x72, 0xef, 0x27, 0xee, 0xdc, 0xfb, 0x76, 0xb2, 0xc2,
-	0x67, 0xa1, 0x8c, 0xe6, 0x24, 0xe7, 0x45, 0xdf, 0xc3, 0xe3, 0x93, 0xdb, 0x7d, 0x61, 0x6d, 0x2b,
-	0x64, 0xbb, 0x10, 0x59, 0xa0, 0xd7, 0xe4, 0x22, 0x12, 0x3a, 0x80, 0x6d, 0xa2, 0xaa, 0x2c, 0xac,
-	0x1d, 0x05, 0x7d, 0xbb, 0x10, 0x9a, 0x68, 0x34, 0x28, 0x75, 0xa0, 0x8f, 0x61, 0x87, 0xe8, 0x36,
-	0x13, 0x56, 0x55, 0xb9, 0x9b, 0x6f, 0x70, 0x6b, 0x91, 0xb6, 0x2f, 0x3d, 0xe8, 0x53, 0x00, 0x3b,
-	0xbc, 0xa0, 0x81, 0xef, 0x0e, 0x67, 0xc2, 0x02, 0x45, 0x78, 0x5a, 0x48, 0x58, 0xc9, 0x34, 0x23,
-	0xe3, 0x43, 0x3d, 0xa8, 0x1c, 0x73, 0x4f, 0x58, 0xa6, 0xf2, 0xe3, 0x42, 0xff, 0x42, 0xa0, 0x9d,
-	0x4a, 0x8b, 0xf6, 0x61, 0xf7, 0xc4, 0xf7, 0x42, 0x16, 0x09, 0x3b, 0x74, 0xd9, 0x8c, 0x09, 0xab,
-	0xd6, 0x28, 0xb7, 0x2a, 0x64, 0x2d, 0x5a, 0xff, 0x0a, 0x1e, 0xdd, 0x2a, 0x11, 0x7a, 0x08, 0xe5,
-	0x33, 0x36, 0x57, 0xcd, 0x59, 0x25, 0x8b, 0x21, 0xda, 0x87, 0xad, 0x0b, 0x1a, 0x4c, 0x75, 0x3f,
-	0x9a, 0xbd, 0x87, 0xc9, 0x1e, 0x86, 0xb3, 0x6f, 0x7c, 0x39, 0x3e, 0x62, 0x8c, 0xe8, 0xf4, 0x87,
-	0xf7, 0x3e, 0x30, 0xea, 0x2f, 0xc1, 0x7a, 0x53, 0x89, 0x0a, 0xc8, 0xef, 0xe6, 0xc9, 0x8f, 0x12,
-	0xf2, 0xc9, 0x80, 0x14, 0xa0, 0xbf, 0x80, 0x5a, 0xb6, 0x50, 0x05, 0xb8, 0x77, 0xf2, 0xb8, 0xbd,
-	0x04, 0x47, 0x92, 0x3f, 0x7a, 0x1e, 0xf6, 0x20, 0x57, 0xb7, 0x02, 0xda, 0xd3, 0x3c, 0x6d, 0x77,
-	0x49, 0x53, 0xb6, 0x2c, 0xec, 0x05, 0xec, 0xad, 0x95, 0xf0, 0x3f, 0x9e, 0xe2, 0x00, 0xaa, 0xcb,
-	0x9a, 0x16, 0xa0, 0x1a, 0x79, 0x14, 0x24, 0xa8, 0x63, 0xee, 0x65, 0x20, 0xcd, 0xbf, 0x0c, 0xd8,
-	0x3e, 0x62, 0xcc, 0x0e, 0x4f, 0x39, 0xb2, 0x60, 0xfb, 0x33, 0x2a, 0xbe, 0x16, 0xcc, 0x55, 0x9c,
-	0x0a, 0x49, 0xa7, 0xe8, 0x3b, 0x28, 0x1f, 0x31, 0x4d, 0xaa, 0xf5, 0xed, 0x5f, 0x7f, 0x7f, 0xf2,
-	0x6c, 0x42, 0xe5, 0xb8, 0x3b, 0xf2, 0xbd, 0x8e, 0x1d, 0xca, 0x83, 0x0d, 0x2e, 0xc5, 0x4e, 0xdf,
-	0xf7, 0xec, 0x50, 0x0e, 0xa8, 0x90, 0x2c, 0x22, 0x0b, 0x2a, 0xfa, 0x01, 0x76, 0xed, 0xd0, 0x97,
-	0x3e, 0x0d, 0xbe, 0xa4, 0xbe, 0xbb, 0x58, 0xa7, 0xfc, 0x7f, 0xaf, 0xb3, 0xb6, 0x40, 0xf3, 0x0c,
-	0xaa, 0xcb, 0x23, 0x45, 0xef, 0x83, 0x99, 0x69, 0x70, 0xf5, 0xea, 0x66, 0x0f, 0xa5, 0x27, 0xbf,
-	0xca, 0x90, 0xac, 0x0c, 0xb5, 0x96, 0xe7, 0xb6, 0x56, 0xfa, 0x24, 0x4a, 0xd2, 0x74, 0xf3, 0x27,
-	0x03, 0x60, 0xd5, 0xac, 0xe8, 0xb8, 0xf8, 0x3e, 0xd3, 0xcb, 0xd6, 0xd3, 0xe6, 0xbe, 0xad, 0x28,
-	0xbe, 0xbc, 0xfe, 0xf5, 0x36, 0xfa, 0xaf, 0x2e, 0xaf, 0x71, 0xe9, 0xea, 0x1a, 0x97, 0x5e, 0x5f,
-	0x63, 0xe3, 0xc7, 0x18, 0x1b, 0xbf, 0xc4, 0xd8, 0xf8, 0x2d, 0xc6, 0xc6, 0x65, 0x8c, 0x8d, 0xab,
-	0x18, 0x1b, 0x7f, 0xc4, 0xd8, 0xf8, 0x33, 0xc6, 0xa5, 0xd7, 0x31, 0x36, 0x7e, 0xbe, 0xc1, 0xa5,
-	0xcb, 0x1b, 0x5c, 0xba, 0xba, 0xc1, 0xa5, 0x6f, 0x37, 0xfa, 0x48, 0x49, 0xbf, 0x8d, 0x0e, 0xd2,
-	0xc1, 0xe8, 0xbe, 0xda, 0xd0, 0x7b, 0xff, 0x04, 0x00, 0x00, 0xff, 0xff, 0x37, 0xc0, 0x5d, 0xd7,
-	0x37, 0x09, 0x00, 0x00,
+	// 896 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x96, 0x4f, 0x6f, 0x1b, 0x45,
+	0x18, 0xc6, 0xbd, 0xb1, 0x13, 0xd7, 0xaf, 0xff, 0x84, 0x4e, 0x29, 0x5a, 0x7c, 0xd8, 0x1a, 0x53,
+	0xa5, 0xbe, 0xc4, 0x96, 0x4c, 0x85, 0x10, 0x11, 0xa0, 0xd8, 0x24, 0xc4, 0x10, 0x5a, 0x34, 0x31,
+	0x42, 0x80, 0x38, 0x8c, 0x77, 0x27, 0xeb, 0x55, 0xd7, 0x3b, 0x61, 0x67, 0x9c, 0xda, 0x37, 0x3e,
+	0x42, 0x3f, 0x06, 0xf0, 0x49, 0x38, 0xe6, 0x98, 0x1b, 0xc4, 0xb9, 0xf4, 0x58, 0x89, 0x2f, 0x80,
+	0x3c, 0x33, 0xb6, 0x77, 0x37, 0x1b, 0x09, 0x17, 0x7a, 0xf1, 0xce, 0xbc, 0xef, 0xfb, 0xfc, 0xe6,
+	0x9d, 0xd9, 0x67, 0xac, 0x85, 0x7b, 0xa7, 0x5e, 0x48, 0x87, 0x8c, 0xd3, 0x8e, 0xcf, 0xec, 0x67,
+	0xcd, 0xb3, 0x90, 0x09, 0x86, 0x36, 0xe5, 0xa3, 0xba, 0xeb, 0x7a, 0x62, 0x38, 0x1e, 0x34, 0x6d,
+	0x36, 0x6a, 0xb9, 0xcc, 0x65, 0x2d, 0x19, 0x1e, 0x8c, 0x4f, 0xe5, 0x4c, 0x4e, 0xe4, 0x48, 0xa9,
+	0xaa, 0x9f, 0x44, 0xca, 0x47, 0x63, 0x5f, 0x78, 0xe7, 0x34, 0xe4, 0x93, 0xd6, 0x68, 0xb2, 0x6b,
+	0x0f, 0x89, 0x17, 0xec, 0xda, 0x2c, 0xa4, 0xbb, 0x2e, 0x6b, 0x39, 0x44, 0x90, 0xd6, 0x60, 0xbe,
+	0x9c, 0xfa, 0xd5, 0xf2, 0xfd, 0x75, 0xe4, 0x22, 0x24, 0x01, 0x27, 0xb6, 0xf0, 0x58, 0xd0, 0xf2,
+	0x99, 0xab, 0x11, 0xbd, 0xd7, 0x45, 0x44, 0xc6, 0x1a, 0xf5, 0xfd, 0x3a, 0x28, 0x3e, 0x22, 0xa1,
+	0xe8, 0xb2, 0x40, 0x84, 0xc4, 0x16, 0x98, 0xf2, 0xb1, 0x2f, 0xd2, 0x62, 0xaf, 0xb3, 0xd1, 0x90,
+	0xda, 0xd4, 0x3b, 0x13, 0x8b, 0xa7, 0x46, 0x74, 0xd7, 0x43, 0x3c, 0x27, 0xa1, 0xd3, 0x9f, 0x2c,
+	0x07, 0x1a, 0xf2, 0x74, 0x1d, 0x08, 0xf1, 0x05, 0x0d, 0xa9, 0xb3, 0x6f, 0xdb, 0x6c, 0x1c, 0x88,
+	0xc4, 0x54, 0x01, 0xeb, 0x2f, 0x0b, 0x50, 0x3e, 0x8c, 0xda, 0x09, 0xd5, 0xa0, 0x78, 0x44, 0x89,
+	0x43, 0xc3, 0xce, 0x54, 0x50, 0x6e, 0x1a, 0x35, 0xa3, 0x51, 0xc2, 0xd1, 0x10, 0xb2, 0x00, 0xd4,
+	0xb4, 0x3f, 0x3d, 0xa3, 0xe6, 0x46, 0xcd, 0x68, 0x14, 0x70, 0x24, 0xb2, 0xca, 0x1f, 0x11, 0x3e,
+	0x34, 0xb3, 0x12, 0x10, 0x89, 0xa0, 0x07, 0x90, 0xeb, 0x30, 0x67, 0x6a, 0xe6, 0x6a, 0x46, 0xa3,
+	0xd8, 0x2e, 0xaa, 0x4e, 0x9a, 0xf3, 0x10, 0x96, 0x09, 0xf4, 0x19, 0x6c, 0xef, 0xc7, 0x9a, 0xe5,
+	0xe6, 0x66, 0x2d, 0xdb, 0x28, 0xb6, 0xef, 0xeb, 0xda, 0x78, 0x16, 0x27, 0xab, 0xd1, 0x97, 0x50,
+	0xea, 0xaf, 0xec, 0xc1, 0xcd, 0x2d, 0xa9, 0xde, 0xd1, 0xea, 0xd8, 0x7e, 0x9b, 0xd1, 0xc2, 0x83,
+	0x40, 0x84, 0x53, 0x1c, 0xd3, 0xa2, 0x01, 0xbc, 0x7d, 0x72, 0xd3, 0x17, 0xdc, 0xcc, 0x4b, 0x66,
+	0x33, 0x95, 0x99, 0x26, 0x50, 0xec, 0x54, 0x16, 0xda, 0x83, 0x3c, 0x96, 0x2f, 0x9a, 0x9b, 0x77,
+	0x24, 0xf6, 0xbd, 0x54, 0xac, 0xae, 0x51, 0xa4, 0x85, 0x02, 0x7d, 0x0a, 0x77, 0xb0, 0x72, 0x1a,
+	0x37, 0x0b, 0x52, 0x5d, 0xbf, 0x45, 0xad, 0x8a, 0x94, 0x7c, 0xa9, 0x41, 0x9f, 0x03, 0xf4, 0x82,
+	0x73, 0xe2, 0x7b, 0x4e, 0x7f, 0xc2, 0x4d, 0x90, 0x84, 0x87, 0xa9, 0x84, 0x55, 0x99, 0x62, 0x44,
+	0x74, 0xa8, 0x0d, 0xb9, 0x63, 0xe6, 0x72, 0xb3, 0x28, 0xf5, 0x56, 0xaa, 0x7e, 0x5e, 0xa0, 0x94,
+	0xb2, 0x16, 0xed, 0x40, 0xe5, 0xc4, 0x73, 0x03, 0x1a, 0xf2, 0x5e, 0xe0, 0xd0, 0x09, 0xe5, 0x66,
+	0xa9, 0x96, 0x6d, 0xe4, 0x70, 0x22, 0x8a, 0x3e, 0x84, 0x77, 0x8e, 0x3c, 0x77, 0x48, 0xb9, 0x38,
+	0xf4, 0x02, 0xe2, 0x4b, 0xd8, 0x13, 0x16, 0xd8, 0xd4, 0x2c, 0xd7, 0x8c, 0x46, 0x0e, 0xdf, 0x92,
+	0x45, 0x8f, 0xe1, 0xfe, 0x8d, 0x8c, 0xf4, 0x64, 0x45, 0x7a, 0x32, 0x3d, 0x59, 0x7d, 0x02, 0x77,
+	0x6f, 0x78, 0x02, 0xbd, 0x05, 0xd9, 0x67, 0x74, 0x2a, 0x6f, 0x43, 0x01, 0xcf, 0x87, 0xe8, 0x7d,
+	0xd8, 0x3c, 0x27, 0xfe, 0x58, 0x5d, 0x80, 0x62, 0xbb, 0xac, 0x77, 0xdc, 0x9f, 0xf4, 0x82, 0x53,
+	0x86, 0x55, 0xee, 0xe3, 0x8d, 0x8f, 0x8c, 0xea, 0x77, 0xf0, 0xee, 0xad, 0x7e, 0x48, 0xe1, 0x3e,
+	0x8c, 0x73, 0x2b, 0x9a, 0x7b, 0xd2, 0xc5, 0x49, 0xf0, 0xd7, 0x50, 0x8a, 0x3a, 0x22, 0x85, 0xf5,
+	0x28, 0xce, 0xba, 0xab, 0x59, 0x4a, 0x95, 0xc4, 0x7d, 0x05, 0xe5, 0x98, 0x45, 0xfe, 0x7d, 0x6f,
+	0x5a, 0x16, 0x85, 0x1d, 0xc3, 0x76, 0xc2, 0x2d, 0xff, 0xe5, 0x08, 0xbb, 0x50, 0x58, 0x7a, 0x27,
+	0x85, 0x53, 0x8b, 0x73, 0x40, 0x73, 0x8e, 0x99, 0x1b, 0x81, 0xd4, 0xff, 0x36, 0x20, 0x7f, 0x48,
+	0xe9, 0x9c, 0x8d, 0x4c, 0xc8, 0x7f, 0x41, 0xf8, 0xb7, 0x9c, 0x3a, 0x92, 0x93, 0xc3, 0x8b, 0x29,
+	0xfa, 0x11, 0xb2, 0x87, 0x54, 0x91, 0x4a, 0x9d, 0xde, 0xef, 0x7f, 0x3e, 0x38, 0x18, 0x11, 0x31,
+	0x6c, 0x0d, 0x3c, 0xb7, 0xd9, 0x0b, 0xc4, 0xde, 0x1a, 0xff, 0xbf, 0xcd, 0x8e, 0xe7, 0xf6, 0x02,
+	0xd1, 0x25, 0x5c, 0xd0, 0x10, 0xcf, 0xa9, 0xe8, 0x67, 0xa8, 0xf4, 0x02, 0x4f, 0x78, 0xc4, 0xff,
+	0x86, 0x78, 0xce, 0x7c, 0x9d, 0xec, 0xff, 0xbd, 0x4e, 0x62, 0x81, 0xfa, 0x0b, 0x03, 0xb6, 0xd4,
+	0x81, 0xa2, 0xc7, 0x50, 0x8c, 0x18, 0x5b, 0x6e, 0xbc, 0xd8, 0x46, 0x8b, 0x43, 0x5f, 0x65, 0x70,
+	0xb4, 0x0c, 0x35, 0x96, 0xa7, 0x96, 0x78, 0xeb, 0x3a, 0x8a, 0x97, 0x87, 0xba, 0x03, 0x95, 0x83,
+	0x09, 0xb5, 0xc7, 0x73, 0xd9, 0xd3, 0xd0, 0xa1, 0xa1, 0xdc, 0x5d, 0x19, 0x27, 0xa2, 0xf5, 0xdf,
+	0x0c, 0xc8, 0x6b, 0x3b, 0xa3, 0x63, 0xb8, 0x97, 0x72, 0x39, 0x74, 0x6f, 0xd5, 0x85, 0xf7, 0x6f,
+	0x56, 0xe0, 0x34, 0xd9, 0x1b, 0xe8, 0xf5, 0x27, 0x80, 0xd5, 0x6d, 0x41, 0x8f, 0x60, 0x4b, 0xcd,
+	0x74, 0x83, 0xdb, 0xb1, 0x0b, 0xd5, 0x9f, 0x60, 0x9d, 0x4e, 0xc1, 0x6f, 0xa4, 0xe1, 0x3b, 0xcf,
+	0x2f, 0xae, 0xac, 0xcc, 0xe5, 0x95, 0x95, 0x79, 0x75, 0x65, 0x19, 0xbf, 0xcc, 0x2c, 0xe3, 0xd7,
+	0x99, 0x65, 0xfc, 0x31, 0xb3, 0x8c, 0x8b, 0x99, 0x65, 0x5c, 0xce, 0x2c, 0xe3, 0xaf, 0x99, 0x65,
+	0xbc, 0x9c, 0x59, 0x99, 0x57, 0x33, 0xcb, 0x78, 0x71, 0x6d, 0x65, 0x2e, 0xae, 0xad, 0xcc, 0xe5,
+	0xb5, 0x95, 0xf9, 0x61, 0xad, 0x2f, 0xb7, 0xc5, 0x07, 0xe3, 0xde, 0x62, 0x30, 0xd8, 0x92, 0x8d,
+	0x7f, 0xf0, 0x4f, 0x00, 0x00, 0x00, 0xff, 0xff, 0x90, 0x7e, 0xad, 0xde, 0x4c, 0x0a, 0x00, 0x00,
 }
 
 func (this *FirehoseBlock) Equal(that interface{}) bool {
@@ -429,11 +513,11 @@ func (this *FirehoseBlock) Equal(that interface{}) bool {
 			return false
 		}
 	}
-	if len(this.SmartContractResult) != len(that1.SmartContractResult) {
+	if len(this.SmartContractResults) != len(that1.SmartContractResults) {
 		return false
 	}
-	for i := range this.SmartContractResult {
-		if !this.SmartContractResult[i].Equal(that1.SmartContractResult[i]) {
+	for i := range this.SmartContractResults {
+		if !this.SmartContractResults[i].Equal(that1.SmartContractResults[i]) {
 			return false
 		}
 	}
@@ -477,6 +561,12 @@ func (this *FirehoseBlock) Equal(that interface{}) bool {
 			return false
 		}
 	}
+	if this.HighestFinalBlockNonce != that1.HighestFinalBlockNonce {
+		return false
+	}
+	if !bytes.Equal(this.HighestFinalBlockHash, that1.HighestFinalBlockHash) {
+		return false
+	}
 	return true
 }
 func (this *FeeInfo) Equal(that interface{}) bool {
@@ -515,14 +605,14 @@ func (this *FeeInfo) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *TxWithFee) Equal(that interface{}) bool {
+func (this *TxInfo) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*TxWithFee)
+	that1, ok := that.(*TxInfo)
 	if !ok {
-		that2, ok := that.(TxWithFee)
+		that2, ok := that.(TxInfo)
 		if ok {
 			that1 = &that2
 		} else {
@@ -540,16 +630,19 @@ func (this *TxWithFee) Equal(that interface{}) bool {
 	if !this.FeeInfo.Equal(that1.FeeInfo) {
 		return false
 	}
+	if this.ExecutionOrder != that1.ExecutionOrder {
+		return false
+	}
 	return true
 }
-func (this *SCRWithFee) Equal(that interface{}) bool {
+func (this *SCRInfo) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*SCRWithFee)
+	that1, ok := that.(*SCRInfo)
 	if !ok {
-		that2, ok := that.(SCRWithFee)
+		that2, ok := that.(SCRInfo)
 		if ok {
 			that1 = &that2
 		} else {
@@ -567,13 +660,43 @@ func (this *SCRWithFee) Equal(that interface{}) bool {
 	if !this.FeeInfo.Equal(that1.FeeInfo) {
 		return false
 	}
+	if this.ExecutionOrder != that1.ExecutionOrder {
+		return false
+	}
+	return true
+}
+func (this *RewardInfo) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*RewardInfo)
+	if !ok {
+		that2, ok := that.(RewardInfo)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if !this.Reward.Equal(that1.Reward) {
+		return false
+	}
+	if this.ExecutionOrder != that1.ExecutionOrder {
+		return false
+	}
 	return true
 }
 func (this *FirehoseBlock) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 16)
+	s := make([]string, 0, 18)
 	s = append(s, "&firehose.FirehoseBlock{")
 	s = append(s, "HeaderBytes: "+fmt.Sprintf("%#v", this.HeaderBytes)+",\n")
 	s = append(s, "HeaderType: "+fmt.Sprintf("%#v", this.HeaderType)+",\n")
@@ -589,7 +712,7 @@ func (this *FirehoseBlock) GoString() string {
 		keysForTransactions = append(keysForTransactions, k)
 	}
 	github_com_gogo_protobuf_sortkeys.Strings(keysForTransactions)
-	mapStringForTransactions := "map[string]*TxWithFee{"
+	mapStringForTransactions := "map[string]*TxInfo{"
 	for _, k := range keysForTransactions {
 		mapStringForTransactions += fmt.Sprintf("%#v: %#v,", k, this.Transactions[k])
 	}
@@ -597,25 +720,25 @@ func (this *FirehoseBlock) GoString() string {
 	if this.Transactions != nil {
 		s = append(s, "Transactions: "+mapStringForTransactions+",\n")
 	}
-	keysForSmartContractResult := make([]string, 0, len(this.SmartContractResult))
-	for k, _ := range this.SmartContractResult {
-		keysForSmartContractResult = append(keysForSmartContractResult, k)
+	keysForSmartContractResults := make([]string, 0, len(this.SmartContractResults))
+	for k, _ := range this.SmartContractResults {
+		keysForSmartContractResults = append(keysForSmartContractResults, k)
 	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForSmartContractResult)
-	mapStringForSmartContractResult := "map[string]*SCRWithFee{"
-	for _, k := range keysForSmartContractResult {
-		mapStringForSmartContractResult += fmt.Sprintf("%#v: %#v,", k, this.SmartContractResult[k])
+	github_com_gogo_protobuf_sortkeys.Strings(keysForSmartContractResults)
+	mapStringForSmartContractResults := "map[string]*SCRInfo{"
+	for _, k := range keysForSmartContractResults {
+		mapStringForSmartContractResults += fmt.Sprintf("%#v: %#v,", k, this.SmartContractResults[k])
 	}
-	mapStringForSmartContractResult += "}"
-	if this.SmartContractResult != nil {
-		s = append(s, "SmartContractResult: "+mapStringForSmartContractResult+",\n")
+	mapStringForSmartContractResults += "}"
+	if this.SmartContractResults != nil {
+		s = append(s, "SmartContractResults: "+mapStringForSmartContractResults+",\n")
 	}
 	keysForRewards := make([]string, 0, len(this.Rewards))
 	for k, _ := range this.Rewards {
 		keysForRewards = append(keysForRewards, k)
 	}
 	github_com_gogo_protobuf_sortkeys.Strings(keysForRewards)
-	mapStringForRewards := "map[string]*rewardTx.RewardTx{"
+	mapStringForRewards := "map[string]*RewardInfo{"
 	for _, k := range keysForRewards {
 		mapStringForRewards += fmt.Sprintf("%#v: %#v,", k, this.Rewards[k])
 	}
@@ -641,7 +764,7 @@ func (this *FirehoseBlock) GoString() string {
 		keysForInvalidTxs = append(keysForInvalidTxs, k)
 	}
 	github_com_gogo_protobuf_sortkeys.Strings(keysForInvalidTxs)
-	mapStringForInvalidTxs := "map[string]*TxWithFee{"
+	mapStringForInvalidTxs := "map[string]*TxInfo{"
 	for _, k := range keysForInvalidTxs {
 		mapStringForInvalidTxs += fmt.Sprintf("%#v: %#v,", k, this.InvalidTxs[k])
 	}
@@ -663,6 +786,8 @@ func (this *FirehoseBlock) GoString() string {
 		s = append(s, "Logs: "+mapStringForLogs+",\n")
 	}
 	s = append(s, "SignersIndexes: "+fmt.Sprintf("%#v", this.SignersIndexes)+",\n")
+	s = append(s, "HighestFinalBlockNonce: "+fmt.Sprintf("%#v", this.HighestFinalBlockNonce)+",\n")
+	s = append(s, "HighestFinalBlockHash: "+fmt.Sprintf("%#v", this.HighestFinalBlockHash)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -678,33 +803,48 @@ func (this *FeeInfo) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
-func (this *TxWithFee) GoString() string {
+func (this *TxInfo) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 6)
-	s = append(s, "&firehose.TxWithFee{")
+	s := make([]string, 0, 7)
+	s = append(s, "&firehose.TxInfo{")
 	if this.Transaction != nil {
 		s = append(s, "Transaction: "+fmt.Sprintf("%#v", this.Transaction)+",\n")
 	}
 	if this.FeeInfo != nil {
 		s = append(s, "FeeInfo: "+fmt.Sprintf("%#v", this.FeeInfo)+",\n")
 	}
+	s = append(s, "ExecutionOrder: "+fmt.Sprintf("%#v", this.ExecutionOrder)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
-func (this *SCRWithFee) GoString() string {
+func (this *SCRInfo) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 6)
-	s = append(s, "&firehose.SCRWithFee{")
+	s := make([]string, 0, 7)
+	s = append(s, "&firehose.SCRInfo{")
 	if this.SmartContractResult != nil {
 		s = append(s, "SmartContractResult: "+fmt.Sprintf("%#v", this.SmartContractResult)+",\n")
 	}
 	if this.FeeInfo != nil {
 		s = append(s, "FeeInfo: "+fmt.Sprintf("%#v", this.FeeInfo)+",\n")
 	}
+	s = append(s, "ExecutionOrder: "+fmt.Sprintf("%#v", this.ExecutionOrder)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *RewardInfo) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 6)
+	s = append(s, "&firehose.RewardInfo{")
+	if this.Reward != nil {
+		s = append(s, "Reward: "+fmt.Sprintf("%#v", this.Reward)+",\n")
+	}
+	s = append(s, "ExecutionOrder: "+fmt.Sprintf("%#v", this.ExecutionOrder)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -736,6 +876,18 @@ func (m *FirehoseBlock) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.HighestFinalBlockHash) > 0 {
+		i -= len(m.HighestFinalBlockHash)
+		copy(dAtA[i:], m.HighestFinalBlockHash)
+		i = encodeVarintFirehoseBlock(dAtA, i, uint64(len(m.HighestFinalBlockHash)))
+		i--
+		dAtA[i] = 0x72
+	}
+	if m.HighestFinalBlockNonce != 0 {
+		i = encodeVarintFirehoseBlock(dAtA, i, uint64(m.HighestFinalBlockNonce))
+		i--
+		dAtA[i] = 0x68
+	}
 	if len(m.SignersIndexes) > 0 {
 		dAtA2 := make([]byte, len(m.SignersIndexes)*10)
 		var j1 int
@@ -878,14 +1030,14 @@ func (m *FirehoseBlock) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			dAtA[i] = 0x42
 		}
 	}
-	if len(m.SmartContractResult) > 0 {
-		keysForSmartContractResult := make([]string, 0, len(m.SmartContractResult))
-		for k := range m.SmartContractResult {
-			keysForSmartContractResult = append(keysForSmartContractResult, string(k))
+	if len(m.SmartContractResults) > 0 {
+		keysForSmartContractResults := make([]string, 0, len(m.SmartContractResults))
+		for k := range m.SmartContractResults {
+			keysForSmartContractResults = append(keysForSmartContractResults, string(k))
 		}
-		github_com_gogo_protobuf_sortkeys.Strings(keysForSmartContractResult)
-		for iNdEx := len(keysForSmartContractResult) - 1; iNdEx >= 0; iNdEx-- {
-			v := m.SmartContractResult[string(keysForSmartContractResult[iNdEx])]
+		github_com_gogo_protobuf_sortkeys.Strings(keysForSmartContractResults)
+		for iNdEx := len(keysForSmartContractResults) - 1; iNdEx >= 0; iNdEx-- {
+			v := m.SmartContractResults[string(keysForSmartContractResults[iNdEx])]
 			baseI := i
 			if v != nil {
 				{
@@ -899,9 +1051,9 @@ func (m *FirehoseBlock) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 				i--
 				dAtA[i] = 0x12
 			}
-			i -= len(keysForSmartContractResult[iNdEx])
-			copy(dAtA[i:], keysForSmartContractResult[iNdEx])
-			i = encodeVarintFirehoseBlock(dAtA, i, uint64(len(keysForSmartContractResult[iNdEx])))
+			i -= len(keysForSmartContractResults[iNdEx])
+			copy(dAtA[i:], keysForSmartContractResults[iNdEx])
+			i = encodeVarintFirehoseBlock(dAtA, i, uint64(len(keysForSmartContractResults[iNdEx])))
 			i--
 			dAtA[i] = 0xa
 			i = encodeVarintFirehoseBlock(dAtA, i, uint64(baseI-i))
@@ -1040,7 +1192,7 @@ func (m *FeeInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *TxWithFee) Marshal() (dAtA []byte, err error) {
+func (m *TxInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1050,16 +1202,21 @@ func (m *TxWithFee) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *TxWithFee) MarshalTo(dAtA []byte) (int, error) {
+func (m *TxInfo) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *TxWithFee) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *TxInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.ExecutionOrder != 0 {
+		i = encodeVarintFirehoseBlock(dAtA, i, uint64(m.ExecutionOrder))
+		i--
+		dAtA[i] = 0x18
+	}
 	if m.FeeInfo != nil {
 		{
 			size, err := m.FeeInfo.MarshalToSizedBuffer(dAtA[:i])
@@ -1087,7 +1244,7 @@ func (m *TxWithFee) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *SCRWithFee) Marshal() (dAtA []byte, err error) {
+func (m *SCRInfo) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -1097,16 +1254,21 @@ func (m *SCRWithFee) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *SCRWithFee) MarshalTo(dAtA []byte) (int, error) {
+func (m *SCRInfo) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *SCRWithFee) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *SCRInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.ExecutionOrder != 0 {
+		i = encodeVarintFirehoseBlock(dAtA, i, uint64(m.ExecutionOrder))
+		i--
+		dAtA[i] = 0x18
+	}
 	if m.FeeInfo != nil {
 		{
 			size, err := m.FeeInfo.MarshalToSizedBuffer(dAtA[:i])
@@ -1122,6 +1284,46 @@ func (m *SCRWithFee) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	if m.SmartContractResult != nil {
 		{
 			size, err := m.SmartContractResult.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintFirehoseBlock(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *RewardInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *RewardInfo) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *RewardInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.ExecutionOrder != 0 {
+		i = encodeVarintFirehoseBlock(dAtA, i, uint64(m.ExecutionOrder))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Reward != nil {
+		{
+			size, err := m.Reward.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -1186,8 +1388,8 @@ func (m *FirehoseBlock) Size() (n int) {
 			n += mapEntrySize + 1 + sovFirehoseBlock(uint64(mapEntrySize))
 		}
 	}
-	if len(m.SmartContractResult) > 0 {
-		for k, v := range m.SmartContractResult {
+	if len(m.SmartContractResults) > 0 {
+		for k, v := range m.SmartContractResults {
 			_ = k
 			_ = v
 			l = 0
@@ -1258,6 +1460,13 @@ func (m *FirehoseBlock) Size() (n int) {
 		}
 		n += 1 + sovFirehoseBlock(uint64(l)) + l
 	}
+	if m.HighestFinalBlockNonce != 0 {
+		n += 1 + sovFirehoseBlock(uint64(m.HighestFinalBlockNonce))
+	}
+	l = len(m.HighestFinalBlockHash)
+	if l > 0 {
+		n += 1 + l + sovFirehoseBlock(uint64(l))
+	}
 	return n
 }
 
@@ -1283,7 +1492,7 @@ func (m *FeeInfo) Size() (n int) {
 	return n
 }
 
-func (m *TxWithFee) Size() (n int) {
+func (m *TxInfo) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1297,10 +1506,13 @@ func (m *TxWithFee) Size() (n int) {
 		l = m.FeeInfo.Size()
 		n += 1 + l + sovFirehoseBlock(uint64(l))
 	}
+	if m.ExecutionOrder != 0 {
+		n += 1 + sovFirehoseBlock(uint64(m.ExecutionOrder))
+	}
 	return n
 }
 
-func (m *SCRWithFee) Size() (n int) {
+func (m *SCRInfo) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1313,6 +1525,25 @@ func (m *SCRWithFee) Size() (n int) {
 	if m.FeeInfo != nil {
 		l = m.FeeInfo.Size()
 		n += 1 + l + sovFirehoseBlock(uint64(l))
+	}
+	if m.ExecutionOrder != 0 {
+		n += 1 + sovFirehoseBlock(uint64(m.ExecutionOrder))
+	}
+	return n
+}
+
+func (m *RewardInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Reward != nil {
+		l = m.Reward.Size()
+		n += 1 + l + sovFirehoseBlock(uint64(l))
+	}
+	if m.ExecutionOrder != 0 {
+		n += 1 + sovFirehoseBlock(uint64(m.ExecutionOrder))
 	}
 	return n
 }
@@ -1337,27 +1568,27 @@ func (this *FirehoseBlock) String() string {
 		keysForTransactions = append(keysForTransactions, k)
 	}
 	github_com_gogo_protobuf_sortkeys.Strings(keysForTransactions)
-	mapStringForTransactions := "map[string]*TxWithFee{"
+	mapStringForTransactions := "map[string]*TxInfo{"
 	for _, k := range keysForTransactions {
 		mapStringForTransactions += fmt.Sprintf("%v: %v,", k, this.Transactions[k])
 	}
 	mapStringForTransactions += "}"
-	keysForSmartContractResult := make([]string, 0, len(this.SmartContractResult))
-	for k, _ := range this.SmartContractResult {
-		keysForSmartContractResult = append(keysForSmartContractResult, k)
+	keysForSmartContractResults := make([]string, 0, len(this.SmartContractResults))
+	for k, _ := range this.SmartContractResults {
+		keysForSmartContractResults = append(keysForSmartContractResults, k)
 	}
-	github_com_gogo_protobuf_sortkeys.Strings(keysForSmartContractResult)
-	mapStringForSmartContractResult := "map[string]*SCRWithFee{"
-	for _, k := range keysForSmartContractResult {
-		mapStringForSmartContractResult += fmt.Sprintf("%v: %v,", k, this.SmartContractResult[k])
+	github_com_gogo_protobuf_sortkeys.Strings(keysForSmartContractResults)
+	mapStringForSmartContractResults := "map[string]*SCRInfo{"
+	for _, k := range keysForSmartContractResults {
+		mapStringForSmartContractResults += fmt.Sprintf("%v: %v,", k, this.SmartContractResults[k])
 	}
-	mapStringForSmartContractResult += "}"
+	mapStringForSmartContractResults += "}"
 	keysForRewards := make([]string, 0, len(this.Rewards))
 	for k, _ := range this.Rewards {
 		keysForRewards = append(keysForRewards, k)
 	}
 	github_com_gogo_protobuf_sortkeys.Strings(keysForRewards)
-	mapStringForRewards := "map[string]*rewardTx.RewardTx{"
+	mapStringForRewards := "map[string]*RewardInfo{"
 	for _, k := range keysForRewards {
 		mapStringForRewards += fmt.Sprintf("%v: %v,", k, this.Rewards[k])
 	}
@@ -1377,7 +1608,7 @@ func (this *FirehoseBlock) String() string {
 		keysForInvalidTxs = append(keysForInvalidTxs, k)
 	}
 	github_com_gogo_protobuf_sortkeys.Strings(keysForInvalidTxs)
-	mapStringForInvalidTxs := "map[string]*TxWithFee{"
+	mapStringForInvalidTxs := "map[string]*TxInfo{"
 	for _, k := range keysForInvalidTxs {
 		mapStringForInvalidTxs += fmt.Sprintf("%v: %v,", k, this.InvalidTxs[k])
 	}
@@ -1399,12 +1630,14 @@ func (this *FirehoseBlock) String() string {
 		`Body:` + strings.Replace(fmt.Sprintf("%v", this.Body), "Body", "block.Body", 1) + `,`,
 		`AlteredAccounts:` + repeatedStringForAlteredAccounts + `,`,
 		`Transactions:` + mapStringForTransactions + `,`,
-		`SmartContractResult:` + mapStringForSmartContractResult + `,`,
+		`SmartContractResults:` + mapStringForSmartContractResults + `,`,
 		`Rewards:` + mapStringForRewards + `,`,
 		`Receipts:` + mapStringForReceipts + `,`,
 		`InvalidTxs:` + mapStringForInvalidTxs + `,`,
 		`Logs:` + mapStringForLogs + `,`,
 		`SignersIndexes:` + fmt.Sprintf("%v", this.SignersIndexes) + `,`,
+		`HighestFinalBlockNonce:` + fmt.Sprintf("%v", this.HighestFinalBlockNonce) + `,`,
+		`HighestFinalBlockHash:` + fmt.Sprintf("%v", this.HighestFinalBlockHash) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -1421,24 +1654,37 @@ func (this *FeeInfo) String() string {
 	}, "")
 	return s
 }
-func (this *TxWithFee) String() string {
+func (this *TxInfo) String() string {
 	if this == nil {
 		return "nil"
 	}
-	s := strings.Join([]string{`&TxWithFee{`,
+	s := strings.Join([]string{`&TxInfo{`,
 		`Transaction:` + strings.Replace(fmt.Sprintf("%v", this.Transaction), "Transaction", "transaction.Transaction", 1) + `,`,
 		`FeeInfo:` + strings.Replace(this.FeeInfo.String(), "FeeInfo", "FeeInfo", 1) + `,`,
+		`ExecutionOrder:` + fmt.Sprintf("%v", this.ExecutionOrder) + `,`,
 		`}`,
 	}, "")
 	return s
 }
-func (this *SCRWithFee) String() string {
+func (this *SCRInfo) String() string {
 	if this == nil {
 		return "nil"
 	}
-	s := strings.Join([]string{`&SCRWithFee{`,
+	s := strings.Join([]string{`&SCRInfo{`,
 		`SmartContractResult:` + strings.Replace(fmt.Sprintf("%v", this.SmartContractResult), "SmartContractResult", "smartContractResult.SmartContractResult", 1) + `,`,
 		`FeeInfo:` + strings.Replace(this.FeeInfo.String(), "FeeInfo", "FeeInfo", 1) + `,`,
+		`ExecutionOrder:` + fmt.Sprintf("%v", this.ExecutionOrder) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *RewardInfo) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&RewardInfo{`,
+		`Reward:` + strings.Replace(fmt.Sprintf("%v", this.Reward), "RewardTx", "rewardTx.RewardTx", 1) + `,`,
+		`ExecutionOrder:` + fmt.Sprintf("%v", this.ExecutionOrder) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -1680,10 +1926,10 @@ func (m *FirehoseBlock) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Transactions == nil {
-				m.Transactions = make(map[string]*TxWithFee)
+				m.Transactions = make(map[string]*TxInfo)
 			}
 			var mapkey string
-			var mapvalue *TxWithFee
+			var mapvalue *TxInfo
 			for iNdEx < postIndex {
 				entryPreIndex := iNdEx
 				var wire uint64
@@ -1757,7 +2003,7 @@ func (m *FirehoseBlock) Unmarshal(dAtA []byte) error {
 					if postmsgIndex > l {
 						return io.ErrUnexpectedEOF
 					}
-					mapvalue = &TxWithFee{}
+					mapvalue = &TxInfo{}
 					if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
 						return err
 					}
@@ -1781,7 +2027,7 @@ func (m *FirehoseBlock) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 7:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field SmartContractResult", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field SmartContractResults", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -1808,11 +2054,11 @@ func (m *FirehoseBlock) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.SmartContractResult == nil {
-				m.SmartContractResult = make(map[string]*SCRWithFee)
+			if m.SmartContractResults == nil {
+				m.SmartContractResults = make(map[string]*SCRInfo)
 			}
 			var mapkey string
-			var mapvalue *SCRWithFee
+			var mapvalue *SCRInfo
 			for iNdEx < postIndex {
 				entryPreIndex := iNdEx
 				var wire uint64
@@ -1886,7 +2132,7 @@ func (m *FirehoseBlock) Unmarshal(dAtA []byte) error {
 					if postmsgIndex > l {
 						return io.ErrUnexpectedEOF
 					}
-					mapvalue = &SCRWithFee{}
+					mapvalue = &SCRInfo{}
 					if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
 						return err
 					}
@@ -1906,7 +2152,7 @@ func (m *FirehoseBlock) Unmarshal(dAtA []byte) error {
 					iNdEx += skippy
 				}
 			}
-			m.SmartContractResult[mapkey] = mapvalue
+			m.SmartContractResults[mapkey] = mapvalue
 			iNdEx = postIndex
 		case 8:
 			if wireType != 2 {
@@ -1938,10 +2184,10 @@ func (m *FirehoseBlock) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.Rewards == nil {
-				m.Rewards = make(map[string]*rewardTx.RewardTx)
+				m.Rewards = make(map[string]*RewardInfo)
 			}
 			var mapkey string
-			var mapvalue *rewardTx.RewardTx
+			var mapvalue *RewardInfo
 			for iNdEx < postIndex {
 				entryPreIndex := iNdEx
 				var wire uint64
@@ -2015,7 +2261,7 @@ func (m *FirehoseBlock) Unmarshal(dAtA []byte) error {
 					if postmsgIndex > l {
 						return io.ErrUnexpectedEOF
 					}
-					mapvalue = &rewardTx.RewardTx{}
+					mapvalue = &RewardInfo{}
 					if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
 						return err
 					}
@@ -2196,10 +2442,10 @@ func (m *FirehoseBlock) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			if m.InvalidTxs == nil {
-				m.InvalidTxs = make(map[string]*TxWithFee)
+				m.InvalidTxs = make(map[string]*TxInfo)
 			}
 			var mapkey string
-			var mapvalue *TxWithFee
+			var mapvalue *TxInfo
 			for iNdEx < postIndex {
 				entryPreIndex := iNdEx
 				var wire uint64
@@ -2273,7 +2519,7 @@ func (m *FirehoseBlock) Unmarshal(dAtA []byte) error {
 					if postmsgIndex > l {
 						return io.ErrUnexpectedEOF
 					}
-					mapvalue = &TxWithFee{}
+					mapvalue = &TxInfo{}
 					if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
 						return err
 					}
@@ -2500,6 +2746,59 @@ func (m *FirehoseBlock) Unmarshal(dAtA []byte) error {
 			} else {
 				return fmt.Errorf("proto: wrong wireType = %d for field SignersIndexes", wireType)
 			}
+		case 13:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field HighestFinalBlockNonce", wireType)
+			}
+			m.HighestFinalBlockNonce = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowFirehoseBlock
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.HighestFinalBlockNonce |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 14:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field HighestFinalBlockHash", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowFirehoseBlock
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthFirehoseBlock
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthFirehoseBlock
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.HighestFinalBlockHash = append(m.HighestFinalBlockHash[:0], dAtA[iNdEx:postIndex]...)
+			if m.HighestFinalBlockHash == nil {
+				m.HighestFinalBlockHash = []byte{}
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipFirehoseBlock(dAtA[iNdEx:])
@@ -2672,7 +2971,7 @@ func (m *FeeInfo) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *TxWithFee) Unmarshal(dAtA []byte) error {
+func (m *TxInfo) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2695,10 +2994,10 @@ func (m *TxWithFee) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: TxWithFee: wiretype end group for non-group")
+			return fmt.Errorf("proto: TxInfo: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: TxWithFee: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: TxInfo: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2773,6 +3072,25 @@ func (m *TxWithFee) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ExecutionOrder", wireType)
+			}
+			m.ExecutionOrder = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowFirehoseBlock
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ExecutionOrder |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipFirehoseBlock(dAtA[iNdEx:])
@@ -2797,7 +3115,7 @@ func (m *TxWithFee) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *SCRWithFee) Unmarshal(dAtA []byte) error {
+func (m *SCRInfo) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -2820,10 +3138,10 @@ func (m *SCRWithFee) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: SCRWithFee: wiretype end group for non-group")
+			return fmt.Errorf("proto: SCRInfo: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: SCRWithFee: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: SCRInfo: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -2898,6 +3216,133 @@ func (m *SCRWithFee) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ExecutionOrder", wireType)
+			}
+			m.ExecutionOrder = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowFirehoseBlock
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ExecutionOrder |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		default:
+			iNdEx = preIndex
+			skippy, err := skipFirehoseBlock(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthFirehoseBlock
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthFirehoseBlock
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *RewardInfo) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowFirehoseBlock
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: RewardInfo: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: RewardInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Reward", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowFirehoseBlock
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthFirehoseBlock
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthFirehoseBlock
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.Reward == nil {
+				m.Reward = &rewardTx.RewardTx{}
+			}
+			if err := m.Reward.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ExecutionOrder", wireType)
+			}
+			m.ExecutionOrder = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowFirehoseBlock
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ExecutionOrder |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipFirehoseBlock(dAtA[iNdEx:])
