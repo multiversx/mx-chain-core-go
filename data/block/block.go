@@ -597,9 +597,6 @@ func (h *Header) CheckFieldsForNil() error {
 	if h.RandSeed == nil {
 		return fmt.Errorf("%w in Header.RandSeed", data.ErrNilValue)
 	}
-	if h.PubKeysBitmap == nil {
-		return fmt.Errorf("%w in Header.PubKeysBitmap", data.ErrNilValue)
-	}
 	if h.RootHash == nil {
 		return fmt.Errorf("%w in Header.RootHash", data.ErrNilValue)
 	}

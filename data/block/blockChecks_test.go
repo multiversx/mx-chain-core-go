@@ -14,6 +14,7 @@ import (
 var headerV1ExceptionFields = []string{
 	"Signature",
 	"LeaderSignature",
+	"PubKeysBitmap",
 	"MetaBlockHashes",
 	"EpochStartMetaHash",
 	"ReceiptsHash",
