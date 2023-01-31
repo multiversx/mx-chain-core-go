@@ -2,6 +2,7 @@
 package block
 
 import (
+	"fmt"
 	"math/big"
 
 	"github.com/multiversx/mx-chain-core-go/core/check"
@@ -628,4 +629,26 @@ func (hv2 *HeaderV2) GetAdditionalData() headerVersionData.HeaderAdditionalData 
 		ScheduledGasRefunded:     hv2.GetScheduledGasRefunded(),
 	}
 	return additionalVersionData
+}
+
+// CheckFieldsForNil checks a predefined set of fields for nil values
+func (hv2 *HeaderV2) CheckFieldsForNil() error {
+	if hv2 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	err := hv2.Header.CheckFieldsForNil()
+	if err != nil {
+		return err
+	}
+	if hv2.ScheduledRootHash == nil {
+		return fmt.Errorf("%w in HeaderV2.ScheduledRootHash", data.ErrNilValue)
+	}
+	if hv2.ScheduledAccumulatedFees == nil {
+		return fmt.Errorf("%w in HeaderV2.ScheduledAccumulatedFees", data.ErrNilValue)
+	}
+	if hv2.ScheduledDeveloperFees == nil {
+		return fmt.Errorf("%w in HeaderV2.ScheduledDeveloperFees", data.ErrNilValue)
+	}
+
+	return nil
 }

@@ -2,6 +2,7 @@
 package block
 
 import (
+	"fmt"
 	"math/big"
 
 	"github.com/multiversx/mx-chain-core-go/data"
@@ -579,5 +580,41 @@ func (h *Header) HasScheduledMiniBlocks() bool {
 // GetAdditionalData gets the additional version-related data for the header
 func (h *Header) GetAdditionalData() headerVersionData.HeaderAdditionalData {
 	// no extra data for the initial version of shard block header
+	return nil
+}
+
+// CheckFieldsForNil checks a predefined set of fields for nil values
+func (h *Header) CheckFieldsForNil() error {
+	if h == nil {
+		return data.ErrNilPointerReceiver
+	}
+	if h.PrevHash == nil {
+		return fmt.Errorf("%w in Header.PrevHash", data.ErrNilValue)
+	}
+	if h.PrevRandSeed == nil {
+		return fmt.Errorf("%w in Header.PrevRandSeed", data.ErrNilValue)
+	}
+	if h.RandSeed == nil {
+		return fmt.Errorf("%w in Header.RandSeed", data.ErrNilValue)
+	}
+	if h.PubKeysBitmap == nil {
+		return fmt.Errorf("%w in Header.PubKeysBitmap", data.ErrNilValue)
+	}
+	if h.RootHash == nil {
+		return fmt.Errorf("%w in Header.RootHash", data.ErrNilValue)
+	}
+	if h.ChainID == nil {
+		return fmt.Errorf("%w in Header.ChainID", data.ErrNilValue)
+	}
+	if h.SoftwareVersion == nil {
+		return fmt.Errorf("%w in Header.SoftwareVersion", data.ErrNilValue)
+	}
+	if h.AccumulatedFees == nil {
+		return fmt.Errorf("%w in Header.AccumulatedFees", data.ErrNilValue)
+	}
+	if h.DeveloperFees == nil {
+		return fmt.Errorf("%w in Header.DeveloperFees", data.ErrNilValue)
+	}
+
 	return nil
 }
