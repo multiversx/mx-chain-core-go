@@ -9,7 +9,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-var headerV2ExceptionFields = []string{"Header"}
+var headerV2ExceptionFields = []string{
+	"Header",
+	"ScheduledRootHash",
+}
 
 func TestBlockHeaderV2_Checks(t *testing.T) {
 	t.Parallel()

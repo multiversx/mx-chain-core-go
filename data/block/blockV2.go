@@ -640,9 +640,7 @@ func (hv2 *HeaderV2) CheckFieldsForNil() error {
 	if err != nil {
 		return err
 	}
-	if hv2.ScheduledRootHash == nil {
-		return fmt.Errorf("%w in HeaderV2.ScheduledRootHash", data.ErrNilValue)
-	}
+
 	if hv2.ScheduledAccumulatedFees == nil {
 		return fmt.Errorf("%w in HeaderV2.ScheduledAccumulatedFees", data.ErrNilValue)
 	}
