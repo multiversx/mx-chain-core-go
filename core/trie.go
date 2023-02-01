@@ -11,6 +11,10 @@ const (
 	AutoBalanceEnabled
 )
 
+// MaxValidTrieNodeVersion is the maximum valid trie node version.
+// This should be updated when a new trie node version is added
+const MaxValidTrieNodeVersion = 1
+
 // TrieData holds the data that will be inserted into the trie
 type TrieData struct {
 	Key     []byte
