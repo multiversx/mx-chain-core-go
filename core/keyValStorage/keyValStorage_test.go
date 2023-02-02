@@ -3,8 +3,8 @@ package keyValStorage_test
 import (
 	"testing"
 
-	"github.com/ElrondNetwork/elrond-go-core/core"
-	"github.com/ElrondNetwork/elrond-go-core/core/keyValStorage"
+	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/core/keyValStorage"
 	"github.com/stretchr/testify/assert"
 )
 

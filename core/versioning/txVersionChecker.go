@@ -1,8 +1,8 @@
 package versioning
 
 import (
-	"github.com/ElrondNetwork/elrond-go-core/core"
-	"github.com/ElrondNetwork/elrond-go-core/data/transaction"
+	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/data/transaction"
 )
 
 // There are different options based on the tx version. If version is the initial version of transaction no options can be used.

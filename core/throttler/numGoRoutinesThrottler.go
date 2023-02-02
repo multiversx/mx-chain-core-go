@@ -3,7 +3,7 @@ package throttler
 import (
 	"sync/atomic"
 
-	"github.com/ElrondNetwork/elrond-go-core/core"
+	"github.com/multiversx/mx-chain-core-go/core"
 )
 
 // NumGoRoutinesThrottler can limit the number of go routines launched

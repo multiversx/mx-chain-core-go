@@ -6,9 +6,9 @@ package transaction
 import (
 	bytes "bytes"
 	fmt "fmt"
-	github_com_ElrondNetwork_elrond_go_core_data "github.com/ElrondNetwork/elrond-go-core/data"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
+	github_com_multiversx_mx_chain_core_go_data "github.com/multiversx/mx-chain-core-go/data"
 	io "io"
 	math "math"
 	math_big "math/big"
@@ -31,7 +31,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 // Transaction holds all the data needed for a value transfer or SC call
 type Transaction struct {
 	Nonce             uint64        `protobuf:"varint,1,opt,name=Nonce,proto3" json:"nonce"`
-	Value             *math_big.Int `protobuf:"bytes,2,opt,name=Value,proto3,casttypewith=math/big.Int;github.com/ElrondNetwork/elrond-go-core/data.BigIntCaster" json:"value"`
+	Value             *math_big.Int `protobuf:"bytes,2,opt,name=Value,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"value"`
 	RcvAddr           []byte        `protobuf:"bytes,3,opt,name=RcvAddr,proto3" json:"receiver"`
 	RcvUserName       []byte        `protobuf:"bytes,4,opt,name=RcvUserName,proto3" json:"rcvUserName,omitempty"`
 	SndAddr           []byte        `protobuf:"bytes,5,opt,name=SndAddr,proto3" json:"sender"`
@@ -249,7 +249,7 @@ func (this *Transaction) Equal(that interface{}) bool {
 		return false
 	}
 	{
-		__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+		__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
 		if !__caster.Equal(this.Value, that1.Value) {
 			return false
 		}
@@ -431,7 +431,7 @@ func (m *Transaction) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x1a
 	}
 	{
-		__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+		__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
 		size := __caster.Size(m.Value)
 		i -= size
 		if _, err := __caster.MarshalTo(m.Value, dAtA[i:]); err != nil {
@@ -470,7 +470,7 @@ func (m *Transaction) Size() (n int) {
 		n += 1 + sovTransaction(uint64(m.Nonce))
 	}
 	{
-		__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+		__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
 		l = __caster.Size(m.Value)
 		n += 1 + l + sovTransaction(uint64(l))
 	}
@@ -641,7 +641,7 @@ func (m *Transaction) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			{
-				__caster := &github_com_ElrondNetwork_elrond_go_core_data.BigIntCaster{}
+				__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
 				if tmp, err := __caster.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 					return err
 				} else {

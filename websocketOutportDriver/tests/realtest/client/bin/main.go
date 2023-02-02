@@ -4,8 +4,8 @@ import (
 	"flag"
 	"log"
 
-	"github.com/ElrondNetwork/elrond-go-core/marshal"
-	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/tests/realtest/client"
+	"github.com/multiversx/mx-chain-core-go/marshal"
+	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/tests/realtest/client"
 )
 
 var (
