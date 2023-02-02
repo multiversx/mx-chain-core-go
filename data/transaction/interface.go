@@ -1,6 +1,6 @@
 package transaction
 
-import "github.com/ElrondNetwork/elrond-go-core/data/block"
+import "github.com/multiversx/mx-chain-core-go/data/block"
 
 // StatusComputerHandler computes a transaction status
 type StatusComputerHandler interface {
