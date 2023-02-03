@@ -2,6 +2,7 @@
 package block
 
 import (
+	"fmt"
 	"math/big"
 
 	"github.com/multiversx/mx-chain-core-go/data"
@@ -477,6 +478,23 @@ func (hv *HeaderWithValidatorStats) HasScheduledSupport() bool {
 func (hv *HeaderWithValidatorStats) ValidateHeaderVersion() error {
 	if hv == nil {
 		return data.ErrNilPointerReceiver
+	}
+
+	return nil
+}
+
+// CheckFieldsForNil checks a predefined set of fields for nil values
+func (hv *HeaderWithValidatorStats) CheckFieldsForNil() error {
+	if hv == nil {
+		return data.ErrNilPointerReceiver
+	}
+	err := hv.Header.CheckFieldsForNil()
+	if err != nil {
+		return err
+	}
+
+	if hv.ValidatorStatsRootHash == nil {
+		return fmt.Errorf("%w in hv.ValidatorStatsRootHash", data.ErrNilValue)
 	}
 
 	return nil
