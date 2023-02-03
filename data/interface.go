@@ -73,6 +73,8 @@ type CommonHeaderHandler interface {
 	SetReceiptsHash(hash []byte) error
 	ValidateHeaderVersion() error
 	IsStartOfEpochBlock() bool
+	ShallowClone() HeaderHandler
+	CheckFieldsForNil() error
 	IsInterfaceNil() bool
 }
 
