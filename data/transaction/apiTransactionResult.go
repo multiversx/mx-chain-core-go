@@ -124,4 +124,5 @@ type CostResponse struct {
 	GasUnits             uint64                             `json:"txGasUnits"`
 	ReturnMessage        string                             `json:"returnMessage"`
 	SmartContractResults map[string]*ApiSmartContractResult `json:"smartContractResults"`
+	Logs                 *ApiLogs                           `json:"logs,omitempty"`
 }
