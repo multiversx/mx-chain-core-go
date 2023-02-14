@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"testing"
 
-	"github.com/ElrondNetwork/elrond-go-core/data/block"
-	"github.com/ElrondNetwork/elrond-go-core/marshal"
+	"github.com/multiversx/mx-chain-core-go/data/block"
+	"github.com/multiversx/mx-chain-core-go/marshal"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -49,7 +49,7 @@ func TestGogoProtoMarshalizer_Marshal(t *testing.T) {
 
 func TestGogoProtoMarshalizer_MarshalWrongObj(t *testing.T) {
 
-	obj := "elrond"
+	obj := "multiversx"
 	encNode, err := recovedMarshal(obj)
 	assert.Nil(t, encNode)
 	assert.NotNil(t, err)

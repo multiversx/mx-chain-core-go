@@ -5,9 +5,9 @@ import (
 	"reflect"
 	"testing"
 
-	"github.com/ElrondNetwork/elrond-go-core/data"
-	"github.com/ElrondNetwork/elrond-go-core/data/block"
-	"github.com/ElrondNetwork/elrond-go-core/data/headerVersionData"
+	"github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/block"
+	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -834,4 +834,14 @@ func TestHeader_HasScheduledMiniBlocks(t *testing.T) {
 	_ = mbHeader.SetProcessingType(int32(block.Scheduled))
 	h.MiniBlockHeaders = []block.MiniBlockHeader{*mbHeader}
 	require.False(t, h.HasScheduledMiniBlocks())
+}
+
+func TestMiniBlockHeader_GetMiniBlockHeaderReservedShouldErrWhenReservedFieldIsNil(t *testing.T) {
+	t.Parallel()
+
+	mbh := &block.MiniBlockHeader{}
+
+	mbhr, err := mbh.GetMiniBlockHeaderReserved()
+	assert.Nil(t, mbhr)
+	assert.Equal(t, data.ErrNilReservedField, err)
 }

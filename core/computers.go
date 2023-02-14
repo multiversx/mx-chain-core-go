@@ -5,6 +5,9 @@ import (
 	"strconv"
 	"strings"
 	"time"
+
+	"github.com/multiversx/mx-chain-core-go/core/check"
+	"github.com/multiversx/mx-chain-core-go/data"
 )
 
 // MaxInt32 returns the maximum of two given numbers
@@ -180,5 +183,19 @@ func IsValidESDTRole(role string) bool {
 		return true
 	default:
 		return false
+	}
+}
+
+// GetHeaderType will return the type of the provided header
+func GetHeaderType(header data.HeaderHandler) HeaderType {
+	switch {
+	case check.IfNil(header):
+		return ""
+	case header.GetShardID() == MetachainShardId:
+		return MetaHeader
+	case check.IfNil(header.GetAdditionalData()):
+		return ShardHeaderV1
+	default:
+		return ShardHeaderV2
 	}
 }

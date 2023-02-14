@@ -4,7 +4,8 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/ElrondNetwork/elrond-go-core/data/transaction"
+	"github.com/multiversx/mx-chain-core-go/data/outport"
+	"github.com/multiversx/mx-chain-core-go/data/transaction"
 )
 
 // Block represents the structure for block that is returned by api routes
@@ -22,6 +23,8 @@ type Block struct {
 	AccumulatedFeesInEpoch string                 `json:"accumulatedFeesInEpoch,omitempty"`
 	DeveloperFeesInEpoch   string                 `json:"developerFeesInEpoch,omitempty"`
 	Status                 string                 `json:"status,omitempty"`
+	RandSeed               string                 `json:"randSeed,omitempty"`
+	PrevRandSeed           string                 `json:"prevRandSeed,omitempty"`
 	Timestamp              time.Duration          `json:"timestamp,omitempty"`
 	NotarizedBlocks        []*NotarizedBlock      `json:"notarizedBlocks,omitempty"`
 	MiniBlocks             []*MiniBlock           `json:"miniBlocks,omitempty"`
@@ -54,10 +57,13 @@ type EpochStartInfo struct {
 
 // NotarizedBlock represents a notarized block
 type NotarizedBlock struct {
-	Hash  string `json:"hash"`
-	Nonce uint64 `json:"nonce"`
-	Round uint64 `json:"round"`
-	Shard uint32 `json:"shard"`
+	Hash            string                    `json:"hash"`
+	Nonce           uint64                    `json:"nonce"`
+	Round           uint64                    `json:"round"`
+	Shard           uint32                    `json:"shard"`
+	RootHash        string                    `json:"rootHash"`
+	MiniBlockHashes []string                  `json:"miniBlockHashes,omitempty"`
+	AlteredAccounts []*outport.AlteredAccount `json:"alteredAccounts,omitempty"`
 }
 
 // EpochStartShardData is a structure that holds data about the epoch start shard data
@@ -115,4 +121,34 @@ type Delegator struct {
 	DelegatedTo      []*DelegatedValue `json:"delegatedTo"`
 	Total            string            `json:"total"`
 	TotalAsBigInt    *big.Int          `json:"-"`
+}
+
+// BlockFetchType is the type that specifies how a block should be queried from API
+type BlockFetchType string
+
+func (aft BlockFetchType) String() string {
+	return string(aft)
+}
+
+const (
+	// BlockFetchTypeByHash is to be used when a block should be fetched from API based on its hash
+	BlockFetchTypeByHash BlockFetchType = "by-hash"
+
+	// BlockFetchTypeByNonce is to be used when a block should be fetched from API based on its nonce
+	BlockFetchTypeByNonce BlockFetchType = "by-nonce"
+)
+
+// TODO: GetBlockParameters can be used for other endpoints as well
+
+// GetBlockParameters holds the parameters for requesting a block on API
+type GetBlockParameters struct {
+	RequestType BlockFetchType
+	Hash        []byte
+	Nonce       uint64
+}
+
+// GetAlteredAccountsForBlockOptions specifies the options for returning altered accounts for a given block
+type GetAlteredAccountsForBlockOptions struct {
+	GetBlockParameters
+	TokensFilter string
 }

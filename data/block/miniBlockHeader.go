@@ -1,6 +1,6 @@
 package block
 
-import "github.com/ElrondNetwork/elrond-go-core/data"
+import "github.com/multiversx/mx-chain-core-go/data"
 
 // GetTypeInt32 gets the miniBlock type
 func (m *MiniBlockHeader) GetTypeInt32() int32 {
@@ -145,7 +145,7 @@ func (m *MiniBlockHeader) getMiniBlockHeaderReserved() (*MiniBlockHeaderReserved
 
 		return mbhr, nil
 	}
-	return nil, nil
+	return nil, data.ErrNilReservedField
 }
 
 // SetMiniBlockHeaderReserved sets the Reserved field for the miniBlock header with the given parameter

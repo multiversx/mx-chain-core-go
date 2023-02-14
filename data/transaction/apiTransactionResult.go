@@ -3,8 +3,8 @@ package transaction
 import (
 	"math/big"
 
-	"github.com/ElrondNetwork/elrond-go-core/data"
-	"github.com/ElrondNetwork/elrond-go-core/data/vm"
+	"github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/vm"
 )
 
 // ApiTransactionResult is the data transfer object which will be returned on the get transaction by hash endpoint
@@ -25,6 +25,7 @@ type ApiTransactionResult struct {
 	ReceiverUsername                  []byte                    `json:"receiverUsername,omitempty"`
 	GasPrice                          uint64                    `json:"gasPrice,omitempty"`
 	GasLimit                          uint64                    `json:"gasLimit,omitempty"`
+	GasUsed                           uint64                    `json:"gasUsed,omitempty"`
 	Data                              []byte                    `json:"data,omitempty"`
 	CodeMetadata                      []byte                    `json:"codeMetadata,omitempty"`
 	Code                              string                    `json:"code,omitempty"`
@@ -57,8 +58,15 @@ type ApiTransactionResult struct {
 	Operation                         string                    `json:"operation,omitempty"`
 	Function                          string                    `json:"function,omitempty"`
 	InitiallyPaidFee                  string                    `json:"initiallyPaidFee,omitempty"`
+	Fee                               string                    `json:"fee,omitempty"`
 	IsRelayed                         bool                      `json:"isRelayed,omitempty"`
 	IsRefund                          bool                      `json:"isRefund,omitempty"`
+	CallType                          string                    `json:"callType,omitempty"`
+	RelayerAddress                    string                    `json:"relayerAddress,omitempty"`
+	RelayedValue                      string                    `json:"relayedValue,omitempty"`
+	ChainID                           string                    `json:"chainID,omitempty"`
+	Version                           uint32                    `json:"version,omitempty"`
+	Options                           uint32                    `json:"options"`
 }
 
 // ApiSmartContractResult represents a smart contract result with changed fields' types in order to make it friendly for API's json

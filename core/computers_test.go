@@ -7,7 +7,9 @@ import (
 	"testing"
 	"time"
 
-	"github.com/ElrondNetwork/elrond-go-core/core"
+	"github.com/multiversx/mx-chain-core-go/core"
+	dataCore "github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/block"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
@@ -501,4 +503,17 @@ func TestIsValidESDTRole(t *testing.T) {
 	for _, tt := range tests {
 		require.Equal(t, tt.output, core.IsValidESDTRole(tt.input))
 	}
+}
+
+func TestGetHeaderType(t *testing.T) {
+	t.Parallel()
+
+	require.Equal(t, core.HeaderType(""), core.GetHeaderType(nil))
+
+	var nilHeader dataCore.HeaderHandler
+	require.Equal(t, core.HeaderType(""), core.GetHeaderType(nilHeader))
+
+	require.Equal(t, core.MetaHeader, core.GetHeaderType(&block.MetaBlock{}))
+	require.Equal(t, core.ShardHeaderV1, core.GetHeaderType(&block.Header{}))
+	require.Equal(t, core.ShardHeaderV2, core.GetHeaderType(&block.HeaderV2{}))
 }
