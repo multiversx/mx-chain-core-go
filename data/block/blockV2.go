@@ -1,12 +1,13 @@
-//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/ElrondNetwork/protobuf/protobuf  --gogoslick_out=. blockV2.proto
+//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf  --gogoslick_out=. blockV2.proto
 package block
 
 import (
+	"fmt"
 	"math/big"
 
-	"github.com/ElrondNetwork/elrond-go-core/core/check"
-	"github.com/ElrondNetwork/elrond-go-core/data"
-	"github.com/ElrondNetwork/elrond-go-core/data/headerVersionData"
+	"github.com/multiversx/mx-chain-core-go/core/check"
+	"github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
 )
 
 // GetShardID returns the header shardID
@@ -628,4 +629,24 @@ func (hv2 *HeaderV2) GetAdditionalData() headerVersionData.HeaderAdditionalData 
 		ScheduledGasRefunded:     hv2.GetScheduledGasRefunded(),
 	}
 	return additionalVersionData
+}
+
+// CheckFieldsForNil checks a predefined set of fields for nil values
+func (hv2 *HeaderV2) CheckFieldsForNil() error {
+	if hv2 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	err := hv2.Header.CheckFieldsForNil()
+	if err != nil {
+		return err
+	}
+
+	if hv2.ScheduledAccumulatedFees == nil {
+		return fmt.Errorf("%w in HeaderV2.ScheduledAccumulatedFees", data.ErrNilValue)
+	}
+	if hv2.ScheduledDeveloperFees == nil {
+		return fmt.Errorf("%w in HeaderV2.ScheduledDeveloperFees", data.ErrNilValue)
+	}
+
+	return nil
 }

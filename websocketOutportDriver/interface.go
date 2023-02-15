@@ -1,9 +1,9 @@
 package websocketOutportDriver
 
 import (
-	"github.com/ElrondNetwork/elrond-go-core/data"
-	"github.com/ElrondNetwork/elrond-go-core/data/outport"
-	outportSenderData "github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
+	"github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/outport"
+	outportSenderData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
 // Driver is an interface for saving node specific data to other storage.

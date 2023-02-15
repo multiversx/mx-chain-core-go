@@ -1,13 +1,14 @@
-//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/ElrondNetwork/protobuf/protobuf  --gogoslick_out=. metaBlock.proto
+//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf  --gogoslick_out=. metaBlock.proto
 package block
 
 import (
+	"fmt"
 	"math/big"
 	"sort"
 
-	"github.com/ElrondNetwork/elrond-go-core/core"
-	"github.com/ElrondNetwork/elrond-go-core/data"
-	"github.com/ElrondNetwork/elrond-go-core/data/headerVersionData"
+	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
 )
 
 // don't break the interface
@@ -521,5 +522,47 @@ func (m *MetaBlock) SetAdditionalData(_ headerVersionData.HeaderAdditionalData) 
 // GetAdditionalData gets the additional version-related data for the header
 func (m *MetaBlock) GetAdditionalData() headerVersionData.HeaderAdditionalData {
 	// no extra data for the initial version of meta block header
+	return nil
+}
+
+// CheckFieldsForNil checks a predefined set of fields for nil values
+func (m *MetaBlock) CheckFieldsForNil() error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	if m.PrevHash == nil {
+		return fmt.Errorf("%w in MetaBlock.PrevHash", data.ErrNilValue)
+	}
+	if m.PrevRandSeed == nil {
+		return fmt.Errorf("%w in MetaBlock.PrevRandSeed", data.ErrNilValue)
+	}
+	if m.RandSeed == nil {
+		return fmt.Errorf("%w in MetaBlock.RandSeed", data.ErrNilValue)
+	}
+	if m.RootHash == nil {
+		return fmt.Errorf("%w in MetaBlock.RootHash", data.ErrNilValue)
+	}
+	if m.ValidatorStatsRootHash == nil {
+		return fmt.Errorf("%w in MetaBlock.ValidatorStatsRootHash", data.ErrNilValue)
+	}
+	if m.ChainID == nil {
+		return fmt.Errorf("%w in MetaBlock.ChainID", data.ErrNilValue)
+	}
+	if m.SoftwareVersion == nil {
+		return fmt.Errorf("%w in MetaBlock.SoftwareVersion", data.ErrNilValue)
+	}
+	if m.AccumulatedFees == nil {
+		return fmt.Errorf("%w in MetaBlock.AccumulatedFees", data.ErrNilValue)
+	}
+	if m.AccumulatedFeesInEpoch == nil {
+		return fmt.Errorf("%w in MetaBlock.AccumulatedFeesInEpoch", data.ErrNilValue)
+	}
+	if m.DeveloperFees == nil {
+		return fmt.Errorf("%w in MetaBlock.DeveloperFees", data.ErrNilValue)
+	}
+	if m.DevFeesInEpoch == nil {
+		return fmt.Errorf("%w in MetaBlock.DevFeesInEpoch", data.ErrNilValue)
+	}
+
 	return nil
 }

@@ -4,7 +4,7 @@ import (
 	"container/list"
 	"sync"
 
-	"github.com/ElrondNetwork/elrond-go-core/storage"
+	"github.com/multiversx/mx-chain-core-go/storage"
 )
 
 // capacityLRU implements a non thread safe LRU Cache with a max capacity size

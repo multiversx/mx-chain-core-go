@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"math"
 
-	"github.com/ElrondNetwork/elrond-go-core/core"
+	"github.com/multiversx/mx-chain-core-go/core"
 )
 
 // multiShardCoordinator struct defines the functionality for handling transaction dispatching to

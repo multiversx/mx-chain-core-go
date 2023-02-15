@@ -5,10 +5,10 @@ import (
 	"encoding/hex"
 	"fmt"
 
-	"github.com/ElrondNetwork/elrond-go-core/core/check"
-	dataCore "github.com/ElrondNetwork/elrond-go-core/data"
-	"github.com/ElrondNetwork/elrond-go-core/data/outport"
-	"github.com/ElrondNetwork/elrond-go-core/websocketOutportDriver/data"
+	"github.com/multiversx/mx-chain-core-go/core/check"
+	dataCore "github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/outport"
+	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
 const (
@@ -106,7 +106,8 @@ func padUint32ByteSlice(initial []byte) []byte {
 	return append(padding, initial...)
 }
 
-func prepareArgsSaveBlock(args outport.ArgsSaveBlockData) outport.ArgsSaveBlockData {
+// PrepareArgsSaveBlock will prepare save block data
+func PrepareArgsSaveBlock(args outport.ArgsSaveBlockData) outport.ArgsSaveBlockData {
 	var pool *outport.Pool
 	if args.TransactionsPool != nil {
 		pool = &outport.Pool{
