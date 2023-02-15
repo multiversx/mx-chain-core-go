@@ -1,4 +1,4 @@
-module github.com/ElrondNetwork/elrond-go-core
+module github.com/multiversx/mx-chain-core-go
 
 go 1.17
 
@@ -25,4 +25,4 @@ require (
 	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
 )
 
-replace github.com/gogo/protobuf => github.com/ElrondNetwork/protobuf v1.3.2
+replace github.com/gogo/protobuf => github.com/multiversx/protobuf v1.3.2

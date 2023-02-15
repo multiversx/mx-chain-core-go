@@ -4,8 +4,8 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/ElrondNetwork/elrond-go-core/data/outport"
-	"github.com/ElrondNetwork/elrond-go-core/data/transaction"
+	"github.com/multiversx/mx-chain-core-go/data/outport"
+	"github.com/multiversx/mx-chain-core-go/data/transaction"
 )
 
 // Block represents the structure for block that is returned by api routes
@@ -23,6 +23,8 @@ type Block struct {
 	AccumulatedFeesInEpoch string                 `json:"accumulatedFeesInEpoch,omitempty"`
 	DeveloperFeesInEpoch   string                 `json:"developerFeesInEpoch,omitempty"`
 	Status                 string                 `json:"status,omitempty"`
+	RandSeed               string                 `json:"randSeed,omitempty"`
+	PrevRandSeed           string                 `json:"prevRandSeed,omitempty"`
 	Timestamp              time.Duration          `json:"timestamp,omitempty"`
 	NotarizedBlocks        []*NotarizedBlock      `json:"notarizedBlocks,omitempty"`
 	MiniBlocks             []*MiniBlock           `json:"miniBlocks,omitempty"`
