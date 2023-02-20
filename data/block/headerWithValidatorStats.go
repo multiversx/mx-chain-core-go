@@ -469,6 +469,24 @@ func (hv *HeaderWithValidatorStats) SetReceiptsHash(hash []byte) error {
 	return hv.Header.SetReceiptsHash(hash)
 }
 
+// SetMetaBlockHashes sets the metaBlock hashes
+func (hv *HeaderWithValidatorStats) SetMetaBlockHashes(hashes [][]byte) error {
+	if hv == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return hv.Header.SetMetaBlockHashes(hashes)
+}
+
+// SetEpochStartMetaHash sets the epoch start metaBlock hash
+func (hv *HeaderWithValidatorStats) SetEpochStartMetaHash(hash []byte) error {
+	if hv == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return hv.Header.SetEpochStartMetaHash(hash)
+}
+
 // HasScheduledSupport returns true as the second block version does support scheduled data
 func (hv *HeaderWithValidatorStats) HasScheduledSupport() bool {
 	return false
