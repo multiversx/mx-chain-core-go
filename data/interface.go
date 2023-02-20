@@ -93,10 +93,12 @@ type HeaderHandler interface {
 	HasScheduledSupport() bool
 	GetAdditionalData() headerVersionData.HeaderAdditionalData
 	HasScheduledMiniBlocks() bool
+	GetValidatorStatsRootHash() []byte
 
 	SetShardID(shId uint32) error
 	SetScheduledRootHash(rootHash []byte) error
 	SetAdditionalData(headerVersionData headerVersionData.HeaderAdditionalData) error
+	SetValidatorStatsRootHash(rHash []byte) error
 	ShallowClone() HeaderHandler
 }
 
@@ -114,11 +116,9 @@ type ShardHeaderHandler interface {
 // MetaHeaderHandler defines getters and setters for the meta block header
 type MetaHeaderHandler interface {
 	HeaderHandler
-	GetValidatorStatsRootHash() []byte
 	GetEpochStartHandler() EpochStartHandler
 	GetDevFeesInEpoch() *big.Int
 	GetShardInfoHandlers() []ShardDataHandler
-	SetValidatorStatsRootHash(rHash []byte) error
 	SetDevFeesInEpoch(value *big.Int) error
 	SetShardInfoHandlers(shardInfo []ShardDataHandler) error
 	SetAccumulatedFeesInEpoch(value *big.Int) error

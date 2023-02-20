@@ -64,7 +64,8 @@ func (h *Header) SetRootHash(rHash []byte) error {
 }
 
 // SetValidatorStatsRootHash sets the root hash for the validator statistics trie
-func (h *Header) SetValidatorStatsRootHash(_ []byte) {
+func (h *Header) SetValidatorStatsRootHash(_ []byte) error {
+	return nil
 }
 
 // SetPrevHash sets prev hash
@@ -75,11 +76,6 @@ func (h *Header) SetPrevHash(pvHash []byte) error {
 
 	h.PrevHash = pvHash
 	return nil
-}
-
-// GetValidatorStatsRootHash returns the root hash for the validator statistics trie
-func (h *Header) GetValidatorStatsRootHash() []byte {
-	return []byte{}
 }
 
 // SetPrevRandSeed sets previous random seed
@@ -614,6 +610,11 @@ func (h *Header) HasScheduledMiniBlocks() bool {
 func (h *Header) GetAdditionalData() headerVersionData.HeaderAdditionalData {
 	// no extra data for the initial version of shard block header
 	return nil
+}
+
+// GetValidatorStatsRootHash returns the root hash for the validator statistics trie
+func (h *Header) GetValidatorStatsRootHash() []byte {
+	return []byte{}
 }
 
 // CheckFieldsForNil checks a predefined set of fields for nil values
