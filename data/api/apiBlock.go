@@ -120,6 +120,7 @@ type Delegator struct {
 	DelegatorAddress string            `json:"delegatorAddress"`
 	DelegatedTo      []*DelegatedValue `json:"delegatedTo"`
 	Total            string            `json:"total"`
+	TotalUnDelegated string            `json:"totalUnDelegated"`
 	TotalAsBigInt    *big.Int          `json:"-"`
 }
 
