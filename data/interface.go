@@ -82,6 +82,7 @@ type HeaderHandler interface {
 	SetAdditionalData(headerVersionData headerVersionData.HeaderAdditionalData) error
 	IsStartOfEpochBlock() bool
 	ShallowClone() HeaderHandler
+	CheckFieldsForNil() error
 	IsInterfaceNil() bool
 }
 
