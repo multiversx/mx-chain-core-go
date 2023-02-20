@@ -117,11 +117,12 @@ type DelegatedValue struct {
 
 // Delegator holds the delegator address and the slice of delegated values
 type Delegator struct {
-	DelegatorAddress string            `json:"delegatorAddress"`
-	DelegatedTo      []*DelegatedValue `json:"delegatedTo"`
-	Total            string            `json:"total"`
-	TotalUnDelegated string            `json:"totalUnDelegated"`
-	TotalAsBigInt    *big.Int          `json:"-"`
+	DelegatorAddress    string            `json:"delegatorAddress"`
+	DelegatedTo         []*DelegatedValue `json:"delegatedTo"`
+	Total               string            `json:"total"`
+	TotalUnDelegated    string            `json:"totalUnDelegated"`
+	TotalUnDelegatedBig *big.Int          `json:"-"`
+	TotalAsBigInt       *big.Int          `json:"-"`
 }
 
 // BlockFetchType is the type that specifies how a block should be queried from API
