@@ -10,6 +10,7 @@ import (
 
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type TestStruct struct {
@@ -66,6 +67,62 @@ func TestLoadTomlFile_FileExitsShouldPass(t *testing.T) {
 	}
 
 	assert.Nil(t, err)
+}
+
+func TestSaveTomlFile(t *testing.T) {
+	t.Parallel()
+
+	t.Run("empty filename, should fail", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := &TestStruct{}
+
+		fileName := ""
+
+		err := core.SaveTomlFile(cfg, fileName)
+		require.Error(t, err)
+	})
+
+	t.Run("invalid path, should fail", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := &TestStruct{}
+
+		fileName := "invalid_path" + "/testFile1"
+
+		err := core.SaveTomlFile(cfg, fileName)
+		require.Error(t, err)
+	})
+
+	t.Run("should work with valid dir", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := &TestStruct{}
+
+		dir := t.TempDir()
+		fileName := dir + "/testFile1"
+
+		err := core.SaveTomlFile(cfg, fileName)
+		if _, errF := os.Stat(fileName); errF == nil {
+			_ = os.Remove(fileName)
+		}
+
+		require.Nil(t, err)
+	})
+
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := &TestStruct{}
+		fileName := "testFile2"
+
+		err := core.SaveTomlFile(cfg, fileName)
+		if _, errF := os.Stat(fileName); errF == nil {
+			_ = os.Remove(fileName)
+		}
+
+		assert.Nil(t, err)
+	})
 }
 
 func TestLoadJSonFile_NoExistingFileShouldErr(t *testing.T) {
