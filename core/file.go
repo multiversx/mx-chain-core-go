@@ -50,7 +50,7 @@ func LoadTomlFile(dest interface{}, relativePath string) error {
 
 // SaveTomlFile will open and save data to toml file
 func SaveTomlFile(dest interface{}, relativePath string) error {
-	f, err := OpenFile(relativePath)
+	f, err := os.Create(relativePath)
 	if err != nil {
 		return err
 	}
