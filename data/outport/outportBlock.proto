@@ -1,0 +1,55 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/multiversx/mx-chain-core-go/data/outport;outport";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "github.com/multiversx/mx-chain-core-go/data/block/block.proto";
+import "github.com/multiversx/mx-chain-core-go/data/transaction/log.proto";
+import "github.com/multiversx/mx-chain-core-go/data/transaction/transaction.proto";
+import "github.com/multiversx/mx-chain-core-go/data/smartContractResult/smartContractResult.proto";
+import "github.com/multiversx/mx-chain-core-go/data/receipt/receipt.proto";
+import "github.com/multiversx/mx-chain-core-go/data/rewardTx/rewardTx.proto";
+import "github.com/multiversx/mx-chain-core-go/data/alteredAccount/alteredAccount.proto";
+
+message OutportBlock {
+  bytes                   HeaderBytes = 1;
+  string                  HeaderType = 2;
+  bytes                   HeaderHash = 3;
+  Body                    Body = 4;
+  repeated AlteredAccount AlteredAccounts = 5;
+  map<string, TxInfo>     Transactions = 6;
+  map<string, SCRInfo>    SmartContractResults = 7;
+  map<string, RewardInfo> Rewards = 8;
+  map<string, Receipt>    Receipts = 9;
+  map<string, TxInfo>     InvalidTxs = 10;
+  map<string, Log>        Logs = 11;
+  repeated uint64         SignersIndexes = 12;
+  uint64                  HighestFinalBlockNonce = 13;
+  bytes                   HighestFinalBlockHash = 14;
+}
+
+message FeeInfo {
+  uint64 GasUsed = 1;
+  bytes  Fee = 2 [(gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  bytes  InitialPaidFee = 3 [(gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+}
+
+message TxInfo {
+  Transaction Transaction = 1;
+  FeeInfo     FeeInfo = 2;
+  uint32      ExecutionOrder = 3;
+}
+
+message SCRInfo {
+  SmartContractResult SmartContractResult = 1;
+  FeeInfo             FeeInfo = 2;
+  uint32              ExecutionOrder = 3;
+}
+
+message RewardInfo {
+  RewardTx Reward = 1;
+  uint32   ExecutionOrder = 2;
+}

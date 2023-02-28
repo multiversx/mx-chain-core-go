@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/multiversx/mx-chain-core-go/data/alteredAccount;alteredAccount";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+message AlteredAccount {
+  string                    Address = 1;
+  uint64                    Nonce = 2;
+  string                    Balance = 3 ;
+  repeated AccountTokenData Tokens = 4;
+}
+
+message AccountTokenData {
+  uint64 Nonce      = 1;
+  string Identifier = 2;
+  string Balance    = 3;
+  string Properties = 4;
+}

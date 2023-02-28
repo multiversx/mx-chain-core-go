@@ -62,6 +62,8 @@ type ArgsSaveBlockData struct {
 	AlteredAccounts        map[string]*AlteredAccount
 	NumberOfShards         uint32
 	IsImportDB             bool
+	HighestFinalBlockNonce uint64
+	HighestFinalBlockHash  []byte
 }
 
 // HeaderGasConsumption holds the data needed to save the gas consumption of a header
