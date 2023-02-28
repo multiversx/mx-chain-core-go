@@ -281,6 +281,7 @@ type TransactionHandler interface {
 	CheckIntegrity() error
 }
 
+// FeeInfoHandler defines transactions fee related info
 type FeeInfoHandler interface {
 	SetInitialPaidFee(fee *big.Int)
 	SetGasUsed(gasUsed uint64)
