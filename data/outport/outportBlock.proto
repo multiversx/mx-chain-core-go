@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package proto;
 
-option go_package = "github.com/multiversx/mx-chain-core-go/data/firehose;firehose";
+option go_package = "github.com/multiversx/mx-chain-core-go/data/outport;outport";
 option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
@@ -14,7 +14,7 @@ import "github.com/multiversx/mx-chain-core-go/data/receipt/receipt.proto";
 import "github.com/multiversx/mx-chain-core-go/data/rewardTx/rewardTx.proto";
 import "github.com/multiversx/mx-chain-core-go/data/alteredAccount/alteredAccount.proto";
 
-message FirehoseBlock {
+message OutportBlock {
   bytes                   HeaderBytes = 1;
   string                  HeaderType = 2;
   bytes                   HeaderHash = 3;
