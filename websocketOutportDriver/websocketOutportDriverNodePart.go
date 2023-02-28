@@ -61,7 +61,7 @@ func NewWebsocketOutportDriverNodePart(args WebsocketOutportDriverNodePartArgs) 
 func (o *websocketOutportDriverNodePart) SaveBlock(args *outport.ArgsSaveBlockData) error {
 	argsSaveBlock := outportSenderData.ArgsSaveBlock{
 		HeaderType:        core.GetHeaderType(args.Header),
-		ArgsSaveBlockData: prepareArgsSaveBlock(*args),
+		ArgsSaveBlockData: PrepareArgsSaveBlock(*args),
 	}
 
 	return o.handleAction(argsSaveBlock, outportSenderData.OperationSaveBlock)
