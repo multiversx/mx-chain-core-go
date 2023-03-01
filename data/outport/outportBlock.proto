@@ -17,7 +17,7 @@ import "github.com/multiversx/mx-chain-core-go/data/alteredAccount/alteredAccoun
 message OutportBlock {
   bytes                   HeaderBytes = 1 [(gogoproto.jsontag) = "headerBytes,omitempty"];
   string                  HeaderType = 2 [(gogoproto.jsontag) = "headerType,omitempty"];
-  bytes                   HeaderHash = 3 [(gogoproto.jsontag) = "headerBytes,omitempty"];
+  bytes                   HeaderHash = 3 [(gogoproto.jsontag) = "headerHash,omitempty"];
   Body                    Body = 4 [(gogoproto.jsontag) = "body,omitempty"];
   repeated AlteredAccount AlteredAccounts = 5 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
   map<string, TxInfo>     Transactions = 6 [(gogoproto.jsontag) = "transactions,omitempty"];
