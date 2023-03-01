@@ -8,7 +8,7 @@ syntax = "proto3";
 
 package proto;
 
-option go_package = "github.com/multiversx/mx-chain-core-go/data/block;block";
+option go_package = "block";
 option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
@@ -62,7 +62,7 @@ message PeerChange {
 // Header holds the metadata of a block. This is the part that is being hashed and run through consensus.
 // The header holds the hash of the body and also the link to the previous block header hash
 message Header  {
-  uint64                   Nonce = 1[(gogoproto.jsontag) = "nonce,omitempty"];
+  uint64                   Nonce = 1 [(gogoproto.jsontag) = "nonce,omitempty"];
   bytes                    PrevHash = 2 [(gogoproto.jsontag) = "prevHash,omitempty"];
   bytes                    PrevRandSeed = 3 [(gogoproto.jsontag) = "prevRandSeed,omitempty"];
   bytes                    RandSeed = 4 [(gogoproto.jsontag) = "randSeed,omitempty"];
