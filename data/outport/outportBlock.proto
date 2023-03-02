@@ -20,15 +20,24 @@ message OutportBlock {
   bytes                   HeaderHash = 3 [(gogoproto.jsontag) = "headerHash,omitempty"];
   Body                    Body = 4 [(gogoproto.jsontag) = "body,omitempty"];
   repeated AlteredAccount AlteredAccounts = 5 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
-  map<string, TxInfo>     Transactions = 6 [(gogoproto.jsontag) = "transactions,omitempty"];
-  map<string, SCRInfo>    SmartContractResults = 7 [(gogoproto.jsontag) = "smartContractResults,omitempty"];
-  map<string, RewardInfo> Rewards = 8 [(gogoproto.jsontag) = "rewards,omitempty"];
-  map<string, Receipt>    Receipts = 9 [(gogoproto.jsontag) = "receipts,omitempty"];
-  map<string, TxInfo>     InvalidTxs = 10 [(gogoproto.jsontag) = "invalidTxs,omitempty"];
-  map<string, Log>        Logs = 11 [(gogoproto.jsontag) = "logs,omitempty"];
-  repeated uint64         SignersIndexes = 12 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
-  uint64                  HighestFinalBlockNonce = 13 [(gogoproto.jsontag) = "highestFinalBlockNonce"];
-  bytes                   HighestFinalBlockHash = 14 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
+  TransactionPool         TransactionPool = 6 [(gogoproto.jsontag) = "transactionPool,omitempty"];
+  HeaderGasConsumption    HeaderGasConsumption = 7 [(gogoproto.jsontag) = "headerGasConsumption,omitempty"];
+  uint32                  NumberOfShards = 8 [(gogoproto.jsontag) = "numberOfShards"];
+  bool                    IsImportDB = 9 [(gogoproto.jsontag) = "isImportDB"];
+  repeated uint64         SignersIndexes = 10 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
+  uint64                  HighestFinalBlockNonce = 11 [(gogoproto.jsontag) = "highestFinalBlockNonce"];
+  bytes                   HighestFinalBlockHash = 12 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
+}
+
+message TransactionPool {
+  map<string, TxInfo>     Transactions = 1 [(gogoproto.jsontag) = "transactions,omitempty"];
+  map<string, SCRInfo>    SmartContractResults = 2 [(gogoproto.jsontag) = "smartContractResults,omitempty"];
+  map<string, RewardInfo> Rewards = 3 [(gogoproto.jsontag) = "rewards,omitempty"];
+  map<string, Receipt>    Receipts = 4 [(gogoproto.jsontag) = "receipts,omitempty"];
+  map<string, TxInfo>     InvalidTxs = 5 [(gogoproto.jsontag) = "invalidTxs,omitempty"];
+  map<string, Log>        Logs = 6 [(gogoproto.jsontag) = "logs,omitempty"];
+  repeated string         ScheduledExecutedSCRSHashesPrevBlock = 7 [(gogoproto.jsontag) = "scheduledExecutedSCRSHashesPrevBlock,omitempty"];
+  repeated string         ScheduledExecutedInvalidTxsHashesPrevBlock = 8 [(gogoproto.jsontag) = "ScheduledExecutedInvalidTxsHashesPrevBlock,omitempty"];
 }
 
 message FeeInfo {
@@ -52,4 +61,11 @@ message SCRInfo {
 message RewardInfo {
   RewardTx Reward = 1 [(gogoproto.jsontag) = "reward,omitempty"];
   uint32   ExecutionOrder = 2 [(gogoproto.jsontag) = "executionOrder"];
+}
+
+message HeaderGasConsumption {
+  uint64 GasProvided = 1 [(gogoproto.jsontag) = "reward,omitempty"];
+  uint64 GasRefunded = 2 [(gogoproto.jsontag) = "reward,omitempty"];
+  uint64 GasPenalized = 3 [(gogoproto.jsontag) = "reward,omitempty"];
+  uint64 MaxGasPerBlock = 4 [(gogoproto.jsontag) = "reward,omitempty"];
 }
