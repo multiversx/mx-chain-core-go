@@ -319,9 +319,9 @@ func TestWebsocketOutportDriverNodePart_SaveValidatorsRating(t *testing.T) {
 func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 	t.Parallel()
 
-	args := getMockArgs()
+	mockArgs := getMockArgs()
 
-	marshaledData, err := args.Marshaller.Marshal(&data.ArgsSaveBlock{
+	marshaledData, err := mockArgs.Marshaller.Marshal(&data.ArgsSaveBlock{
 		HeaderType: core.MetaHeader,
 		ArgsSaveBlockData: outport.ArgsSaveBlockData{
 			Header: &block.MetaBlock{},
@@ -329,10 +329,14 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 	})
 	require.Nil(t, err)
 
-	args.WebsocketSender = &mock.WebSocketSenderStub{
+	mockArgs.WebsocketSender = &mock.WebSocketSenderStub{
 		SendOnRouteCalled: func(args data.WsSendArgs) error {
 			expectedOpBytes := []byte{0, 0, 0, 0}
-			expectedLengthBytes := []byte{0, 0, 1, 212}
+
+			messageLength := uint64(len(marshaledData))
+			messageLengthBytes := mockArgs.Uint64ByteSliceConverter.ToByteSlice(messageLength)
+			expectedLengthBytes := messageLengthBytes[uint32NumBytes:]
+
 			expectedPayload := append(expectedOpBytes, expectedLengthBytes...)
 			expectedPayload = append(expectedPayload, marshaledData...)
 
@@ -341,7 +345,7 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 			return nil
 		},
 	}
-	o, err := NewWebsocketOutportDriverNodePart(args)
+	o, err := NewWebsocketOutportDriverNodePart(mockArgs)
 	require.NoError(t, err)
 
 	err = o.SaveBlock(&outport.ArgsSaveBlockData{Header: &block.MetaBlock{}})

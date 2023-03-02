@@ -8,15 +8,15 @@ option (gogoproto.stable_marshaler_all) = true;
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 message AlteredAccount {
-  string                    Address = 1;
-  uint64                    Nonce = 2;
-  string                    Balance = 3 ;
-  repeated AccountTokenData Tokens = 4;
+  string                    Address = 1 [(gogoproto.jsontag) = "address,omitempty"];
+  uint64                    Nonce = 2 [(gogoproto.jsontag) = "nonce"];
+  string                    Balance = 3 [(gogoproto.jsontag) = "balance,omitempty"];
+  repeated AccountTokenData Tokens = 4 [(gogoproto.jsontag) = "tokens,omitempty"];
 }
 
 message AccountTokenData {
-  uint64 Nonce      = 1;
-  string Identifier = 2;
-  string Balance    = 3;
-  string Properties = 4;
+  uint64 Nonce      = 1 [(gogoproto.jsontag) = "nonce"];
+  string Identifier = 2 [(gogoproto.jsontag) = "identifier,omitempty"];
+  string Balance    = 3 [(gogoproto.jsontag) = "balance,omitempty"];
+  string Properties = 4 [(gogoproto.jsontag) = "properties,omitempty"];
 }
