@@ -136,7 +136,7 @@ func (tc *tempClient) verifyPayloadAndSendAckIfNeeded(payload []byte, ackHandler
 		if err != nil {
 			log.Error(tc.name+" -> cannot unmarshal block", "error", err)
 		} else {
-			log.Info(tc.name+" -> successfully unmarshalled block", "hash", argsBlock.HeaderHash)
+			log.Info(tc.name+" -> successfully unmarshalled block", "hash", argsBlock.HeaderBody.HeaderHash)
 		}
 	}
 

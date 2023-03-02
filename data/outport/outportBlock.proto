@@ -82,7 +82,7 @@ message ValidatorRatingInfo {
 
 message RoundInfo {
   uint64 Index                   = 1 [(gogoproto.jsontag) = "index"];
-  repeated uint64 SignersIndexes = 2 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
+  repeated uint64 SignersIndexes = 2 [(gogoproto.jsontag) = "signersIndexes"];
   bool BlockWasProposed          = 3 [(gogoproto.jsontag) = "blockWasProposed"];
   uint32 ShardId                 = 4 [(gogoproto.jsontag) = "shardId"];
   uint32 Epoch                   = 5 [(gogoproto.jsontag) = "epoch"];
