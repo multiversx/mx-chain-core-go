@@ -47,9 +47,3 @@ type ArgsSaveAccounts struct {
 type ArgsFinalizedBlock struct {
 	HeaderHash []byte
 }
-
-// ArgsSaveBlock holds the driver's arguments needed for handling a save block
-type ArgsSaveBlock struct {
-	HeaderType core.HeaderType
-	outport.ArgsSaveBlockData
-}

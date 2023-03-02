@@ -4,7 +4,6 @@ import (
 	"errors"
 	"testing"
 
-	"github.com/multiversx/mx-chain-core-go/core"
 	coreMock "github.com/multiversx/mx-chain-core-go/core/mock"
 	"github.com/multiversx/mx-chain-core-go/data/block"
 	"github.com/multiversx/mx-chain-core-go/data/outport"
@@ -104,7 +103,7 @@ func TestWebsocketOutportDriverNodePart_SaveBlock(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.SaveBlock(&outport.ArgsSaveBlockData{})
+		err = o.SaveBlock(&outport.OutportBlock{})
 		require.True(t, errors.Is(err, cannotSendOnRouteErr))
 	})
 
@@ -119,7 +118,7 @@ func TestWebsocketOutportDriverNodePart_SaveBlock(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.SaveBlock(&outport.ArgsSaveBlockData{})
+		err = o.SaveBlock(&outport.OutportBlock{})
 		require.NoError(t, err)
 	})
 }
@@ -321,12 +320,8 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 
 	mockArgs := getMockArgs()
 
-	marshaledData, err := mockArgs.Marshaller.Marshal(&data.ArgsSaveBlock{
-		HeaderType: core.MetaHeader,
-		ArgsSaveBlockData: outport.ArgsSaveBlockData{
-			Header: &block.MetaBlock{},
-		},
-	})
+	outportBlock := &outport.OutportBlock{Body: &block.Body{}}
+	marshaledData, err := mockArgs.Marshaller.Marshal(outportBlock)
 	require.Nil(t, err)
 
 	mockArgs.WebsocketSender = &mock.WebSocketSenderStub{
@@ -348,7 +343,7 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 	o, err := NewWebsocketOutportDriverNodePart(mockArgs)
 	require.NoError(t, err)
 
-	err = o.SaveBlock(&outport.ArgsSaveBlockData{Header: &block.MetaBlock{}})
+	err = o.SaveBlock(outportBlock)
 	require.NoError(t, err)
 }
 

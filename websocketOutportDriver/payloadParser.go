@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/multiversx/mx-chain-core-go/core/check"
-	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
@@ -102,32 +101,4 @@ func (wpp *websocketPayloadParser) ExtractPayloadData(payload []byte) (*PayloadD
 func padUint32ByteSlice(initial []byte) []byte {
 	padding := bytes.Repeat([]byte{0}, 4)
 	return append(padding, initial...)
-}
-
-// PrepareArgsSaveBlock will prepare save block data
-func PrepareArgsSaveBlock(args outport.ArgsSaveBlockData) outport.ArgsSaveBlockData {
-	var pool *outport.TransactionPool
-	if args.TransactionsPool != nil {
-		pool = &outport.TransactionPool{
-			Transactions:         args.TransactionsPool.Transactions,
-			SmartContractResults: args.TransactionsPool.SmartContractResults,
-			Rewards:              args.TransactionsPool.Rewards,
-			InvalidTxs:           args.TransactionsPool.InvalidTxs,
-			Receipts:             args.TransactionsPool.Receipts,
-			Logs:                 args.TransactionsPool.Logs,
-		}
-	}
-
-	return outport.ArgsSaveBlockData{
-		HeaderHash:             args.HeaderHash,
-		Body:                   args.Body,
-		Header:                 args.Header,
-		SignersIndexes:         args.SignersIndexes,
-		NotarizedHeadersHashes: args.NotarizedHeadersHashes,
-		HeaderGasConsumption:   args.HeaderGasConsumption,
-		TransactionsPool:       pool,
-		AlteredAccounts:        args.AlteredAccounts,
-		NumberOfShards:         args.NumberOfShards,
-		IsImportDB:             args.IsImportDB,
-	}
 }
