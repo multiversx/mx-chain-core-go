@@ -1,5 +1,9 @@
 package core
 
+import (
+	"github.com/multiversx/mx-chain-core-go/core/check"
+)
+
 // TrieNodeVersion defines the version of the trie node
 type TrieNodeVersion uint8
 
@@ -11,9 +15,32 @@ const (
 	AutoBalanceEnabled
 )
 
-// MaxValidTrieNodeVersion is the maximum valid trie node version.
-// This should be updated when a new trie node version is added
-const MaxValidTrieNodeVersion = 1
+type trieNodeVersionVerifier struct {
+	enableEpochsHandler EnableEpochsHandler
+}
+
+func NewTrieNodeVersionVerifier(enableEpochsHandler EnableEpochsHandler) (*trieNodeVersionVerifier, error) {
+	if check.IfNil(enableEpochsHandler) {
+		return nil, ErrNilEnableEpochsHandler
+	}
+
+	return &trieNodeVersionVerifier{
+		enableEpochsHandler: enableEpochsHandler,
+	}, nil
+}
+
+// IsValidVersion returns true if the given trie node version is valid
+func (vv *trieNodeVersionVerifier) IsValidVersion(version TrieNodeVersion) bool {
+	if vv.enableEpochsHandler.IsAutoBalanceDataTriesEnabled() {
+		return version <= AutoBalanceEnabled
+	}
+
+	return version == NotSpecified
+}
+
+func (vv *trieNodeVersionVerifier) IsInterfaceNil() bool {
+	return vv == nil
+}
 
 // TrieData holds the data that will be inserted into the trie
 type TrieData struct {

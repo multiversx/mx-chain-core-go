@@ -126,3 +126,15 @@ type Logger interface {
 	LogIfError(err error, args ...interface{})
 	IsInterfaceNil() bool
 }
+
+// TrieNodeVersionVerifier defines the behavior of a component that can verify if a trie node version is valid
+type TrieNodeVersionVerifier interface {
+	IsValidVersion(version TrieNodeVersion) bool
+	IsInterfaceNil() bool
+}
+
+// EnableEpochsHandler defines the behavior of a component that can return if a feature is enabled or not
+type EnableEpochsHandler interface {
+	IsAutoBalanceDataTriesEnabled() bool
+	IsInterfaceNil() bool
+}

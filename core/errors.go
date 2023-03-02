@@ -109,3 +109,6 @@ var ErrNilGoRoutineProcessor = errors.New("nil go routine processor")
 
 // ErrNilPubkeyConverter signals that a nil public key converter has been provided
 var ErrNilPubkeyConverter = errors.New("nil pubkey converter")
+
+// ErrNilEnableEpochsHandler signals that a nil enable epochs handler has been provided
+var ErrNilEnableEpochsHandler = errors.New("nil enable epochs handler")
