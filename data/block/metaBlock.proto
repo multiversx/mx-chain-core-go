@@ -29,7 +29,7 @@ enum PeerAction {
 message PeerData {
 	bytes      Address     = 1 [(gogoproto.jsontag) = "address,omitempty"];
 	bytes      PublicKey   = 2 [(gogoproto.jsontag) = "publicKey,omitempty"];
-	PeerAction Action      = 3 [(gogoproto.jsontag) = "action,omitempty"];
+	PeerAction Action      = 3 [(gogoproto.jsontag) = "action"];
 	uint64     TimeStamp   = 4 [(gogoproto.jsontag) = "timeStamp,omitempty"];
 	bytes      ValueChange = 5 [(gogoproto.jsontag) = "valueChange,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
 }
@@ -41,23 +41,23 @@ message ShardData {
 	bytes                    PrevRandSeed          = 4 [(gogoproto.jsontag) = "prevRandSeed,omitempty"];
 	bytes                    PubKeysBitmap         = 5 [(gogoproto.jsontag) = "pubKeysBitmap,omitempty"];
 	bytes                    Signature             = 6 [(gogoproto.jsontag) = "signature,omitempty"];
-	uint64                   Round                 = 8 [(gogoproto.jsontag) = "round,omitempty"];
+	uint64                   Round                 = 8 [(gogoproto.jsontag) = "round"];
 	bytes                    PrevHash              = 9 [(gogoproto.jsontag) = "prevHash,omitempty"];
-	uint64                   Nonce                 = 10 [(gogoproto.jsontag) = "nonce,omitempty"];
+	uint64                   Nonce                 = 10 [(gogoproto.jsontag) = "nonce"];
 	bytes                    AccumulatedFees       = 12 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
 	bytes                    DeveloperFees         = 14 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-	uint32                   NumPendingMiniBlocks  = 11 [(gogoproto.jsontag) = "numPendingMiniBlocks,omitempty"];
-	uint64                   LastIncludedMetaNonce = 13 [(gogoproto.jsontag) = "lastIncludedMetaNonce,omitempty"];
-	uint32                   ShardID               = 1 [(gogoproto.jsontag) = "shardID,omitempty"];
-	uint32                   TxCount               = 7 [(gogoproto.jsontag) = "txCount,omitempty"];
+	uint32                   NumPendingMiniBlocks  = 11 [(gogoproto.jsontag) = "numPendingMiniBlocks"];
+	uint64                   LastIncludedMetaNonce = 13 [(gogoproto.jsontag) = "lastIncludedMetaNonce"];
+	uint32                   ShardID               = 1 [(gogoproto.jsontag) = "shardID"];
+	uint32                   TxCount               = 7 [(gogoproto.jsontag) = "txCount"];
 }
 
 // EpochStartShardData hold the last finalized headers hash and state root hash
 message EpochStartShardData {
-	uint32                        ShardID                  = 1 [(gogoproto.jsontag) = "shardID,omitempty"];
-	uint32                        Epoch                    = 9 [(gogoproto.jsontag) = "epoch,omitempty"];
-	uint64                        Round                    = 7 [(gogoproto.jsontag) = "round,omitempty"];
-	uint64                        Nonce                    = 8 [(gogoproto.jsontag) = "nonce,omitempty"];
+	uint32                        ShardID                  = 1 [(gogoproto.jsontag) = "shardID"];
+	uint32                        Epoch                    = 9 [(gogoproto.jsontag) = "epoch"];
+	uint64                        Round                    = 7 [(gogoproto.jsontag) = "round"];
+	uint64                        Nonce                    = 8 [(gogoproto.jsontag) = "nonce"];
 	bytes                         HeaderHash               = 2 [(gogoproto.jsontag) = "headerHash,omitempty"];
 	bytes                         RootHash                 = 3 [(gogoproto.jsontag) = "rootHash,omitempty"];
 	bytes                         ScheduledRootHash        = 10 [(gogoproto.jsontag) = "scheduledRootHash,omitempty"];
@@ -74,7 +74,7 @@ message Economics {
 	bytes  RewardsPerBlock                  = 4 [(gogoproto.jsontag) = "rewardsPerBlock,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
 	bytes  RewardsForProtocolSustainability = 5 [(gogoproto.jsontag) = "rewardsForProtocolSustainability,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
 	bytes  NodePrice                        = 6 [(gogoproto.jsontag) = "nodePrice,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-	uint64 PrevEpochStartRound              = 7 [(gogoproto.jsontag) = "prevEpochStartRound,omitempty"];
+	uint64 PrevEpochStartRound              = 7 [(gogoproto.jsontag) = "prevEpochStartRound"];
 	bytes  PrevEpochStartHash               = 8 [(gogoproto.jsontag) = "prevEpochStartHash,omitempty"];
 }
 
@@ -86,9 +86,9 @@ message EpochStart {
 
 // MetaBlock holds the data that will be saved to the metachain each round
 message MetaBlock {
-	 uint64            Nonce                    = 1 [(gogoproto.jsontag) = "nonce,omitempty"];
-	 uint32            Epoch                    = 2 [(gogoproto.jsontag) = "epoch,omitempty"];
-	 uint64            Round                    = 3 [(gogoproto.jsontag) = "round,omitempty"];
+	 uint64            Nonce                    = 1 [(gogoproto.jsontag) = "nonce"];
+	 uint32            Epoch                    = 2 [(gogoproto.jsontag) = "epoch"];
+	 uint64            Round                    = 3 [(gogoproto.jsontag) = "round"];
 	 uint64            TimeStamp                = 4 [(gogoproto.jsontag) = "timeStamp,omitempty"];
 	 repeated ShardData       ShardInfo         = 5 [(gogoproto.jsontag) = "shardInfo", (gogoproto.nullable) = false];
 	 repeated PeerData        PeerInfo          = 6 [(gogoproto.jsontag) = "peerInfo", (gogoproto.nullable) = false];
@@ -102,13 +102,13 @@ message MetaBlock {
 	 bytes             ValidatorStatsRootHash   = 14 [(gogoproto.jsontag) = "validatorStatsRootHash,omitempty"];
 	 repeated MiniBlockHeader MiniBlockHeaders  = 16 [(gogoproto.jsontag) = "miniBlockHeaders", (gogoproto.nullable) = false];
 	 bytes             ReceiptsHash             = 17 [(gogoproto.jsontag) = "receiptsHash,omitempty"];
-	 EpochStart        EpochStart               = 18 [(gogoproto.jsontag) = "epochStart", (gogoproto.nullable) = false];
+	 EpochStart        EpochStart               = 18 [(gogoproto.jsontag) = "epochStart,omitempty", (gogoproto.nullable) = false];
 	 bytes             ChainID                  = 19 [(gogoproto.jsontag) = "chainID,omitempty"];
 	 bytes             SoftwareVersion          = 20 [(gogoproto.jsontag) = "softwareVersion,omitempty"];
 	 bytes             AccumulatedFees          = 21 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
 	 bytes             AccumulatedFeesInEpoch   = 22 [(gogoproto.jsontag) = "accumulatedFeesInEpoch,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
 	 bytes             DeveloperFees            = 23 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
 	 bytes             DevFeesInEpoch           = 24 [(gogoproto.jsontag) = "devFeesInEpoch,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-	 uint32            TxCount                  = 25 [(gogoproto.jsontag) = "txCount,omitempty"];
+	 uint32            TxCount                  = 25 [(gogoproto.jsontag) = "txCount"];
 	 bytes             Reserved                 = 26 [(gogoproto.jsontag) = "reserved,omitempty"];
 }

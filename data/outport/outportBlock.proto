@@ -27,12 +27,12 @@ message OutportBlock {
   map<string, TxInfo>     InvalidTxs = 10 [(gogoproto.jsontag) = "invalidTxs,omitempty"];
   map<string, Log>        Logs = 11 [(gogoproto.jsontag) = "logs,omitempty"];
   repeated uint64         SignersIndexes = 12 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
-  uint64                  HighestFinalBlockNonce = 13 [(gogoproto.jsontag) = "highestFinalBlockNonce,omitempty"];
+  uint64                  HighestFinalBlockNonce = 13 [(gogoproto.jsontag) = "highestFinalBlockNonce"];
   bytes                   HighestFinalBlockHash = 14 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
 }
 
 message FeeInfo {
-  uint64 GasUsed = 1 [(gogoproto.jsontag) = "gasUsed,omitempty"];
+  uint64 GasUsed = 1 [(gogoproto.jsontag) = "gasUsed"];
   bytes  Fee = 2 [(gogoproto.jsontag) = "fee,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
   bytes  InitialPaidFee = 3 [(gogoproto.jsontag) = "initialPaidFee,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
 }
@@ -40,16 +40,16 @@ message FeeInfo {
 message TxInfo {
   Transaction Transaction = 1 [(gogoproto.jsontag) = "transaction,omitempty"];
   FeeInfo     FeeInfo = 2 [(gogoproto.jsontag) = "feeInfo,omitempty"];
-  uint32      ExecutionOrder = 3 [(gogoproto.jsontag) = "executionOrder,omitempty"];
+  uint32      ExecutionOrder = 3 [(gogoproto.jsontag) = "executionOrder"];
 }
 
 message SCRInfo {
   SmartContractResult SmartContractResult = 1 [(gogoproto.jsontag) = "smartContractResult,omitempty"];
   FeeInfo             FeeInfo = 2 [(gogoproto.jsontag) = "feeInfo,omitempty"];
-  uint32              ExecutionOrder = 3 [(gogoproto.jsontag) = "executionOrder,omitempty"];
+  uint32              ExecutionOrder = 3 [(gogoproto.jsontag) = "executionOrder"];
 }
 
 message RewardInfo {
   RewardTx Reward = 1 [(gogoproto.jsontag) = "reward,omitempty"];
-  uint32   ExecutionOrder = 2 [(gogoproto.jsontag) = "executionOrder,omitempty"];
+  uint32   ExecutionOrder = 2 [(gogoproto.jsontag) = "executionOrder"];
 }

@@ -15,19 +15,19 @@ message HeaderV2 {
   bytes   ScheduledRootHash = 2 [(gogoproto.jsontag) = "scheduledRootHash,omitempty"];
   bytes   ScheduledAccumulatedFees = 3 [(gogoproto.jsontag) = "scheduledAccumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
   bytes   ScheduledDeveloperFees = 4 [(gogoproto.jsontag) = "scheduledDeveloperFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-  uint64  ScheduledGasProvided = 5 [(gogoproto.jsontag) = "scheduledGasProvided,omitempty"];
-  uint64  ScheduledGasPenalized = 6 [(gogoproto.jsontag) = "scheduledGasPenalized,omitempty"];
-  uint64  ScheduledGasRefunded = 7 [(gogoproto.jsontag) = "scheduledGasRefunded,omitempty"];
+  uint64  ScheduledGasProvided = 5 [(gogoproto.jsontag) = "scheduledGasProvided"];
+  uint64  ScheduledGasPenalized = 6 [(gogoproto.jsontag) = "scheduledGasPenalized"];
+  uint64  ScheduledGasRefunded = 7 [(gogoproto.jsontag) = "scheduledGasRefunded"];
 }
 
 message MiniBlockReserved {
-  ProcessingType ExecutionType = 1 [(gogoproto.jsontag) = "executionType,omitempty"];
-  bytes TransactionsType = 2 [(gogoproto.jsontag) = "transactionsType,omitempty"];
+  ProcessingType ExecutionType = 1 [(gogoproto.jsontag) = "executionType"];
+  bytes TransactionsType = 2 [(gogoproto.jsontag) = "transactionsType"];
 }
 
 message MiniBlockHeaderReserved {
-  ProcessingType ExecutionType = 1 [(gogoproto.jsontag) = "executionType,omitempty"];
-  MiniBlockState State = 2 [(gogoproto.jsontag) = "state,omitempty"];
-  int32 IndexOfFirstTxProcessed = 3 [(gogoproto.jsontag) = "indexOfFirstTxProcessed,omitempty"];
-  int32 IndexOfLastTxProcessed = 4 [(gogoproto.jsontag) = "indexOfLastTxProcessed,omitempty"];
+  ProcessingType ExecutionType = 1 [(gogoproto.jsontag) = "executionType"];
+  MiniBlockState State = 2 [(gogoproto.jsontag) = "state"];
+  int32 IndexOfFirstTxProcessed = 3 [(gogoproto.jsontag) = "indexOfFirstTxProcessed"];
+  int32 IndexOfLastTxProcessed = 4 [(gogoproto.jsontag) = "indexOfLastTxProcessed"];
 }
