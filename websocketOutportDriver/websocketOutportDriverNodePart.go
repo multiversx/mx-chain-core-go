@@ -7,6 +7,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core/atomic"
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/alteredAccount"
 	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/marshal"
 	outportSenderData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
@@ -108,7 +109,7 @@ func (o *websocketOutportDriverNodePart) SaveValidatorsRating(indexID string, in
 }
 
 // SaveAccounts will handle the accounts' saving
-func (o *websocketOutportDriverNodePart) SaveAccounts(blockTimestamp uint64, acc map[string]*outport.AlteredAccount, shardID uint32) error {
+func (o *websocketOutportDriverNodePart) SaveAccounts(blockTimestamp uint64, acc map[string]*alteredAccount.AlteredAccount, shardID uint32) error {
 	args := outportSenderData.ArgsSaveAccounts{
 		BlockTimestamp: blockTimestamp,
 		Acc:            acc,

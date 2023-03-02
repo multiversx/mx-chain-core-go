@@ -15,18 +15,18 @@ import "github.com/multiversx/mx-chain-core-go/data/rewardTx/rewardTx.proto";
 import "github.com/multiversx/mx-chain-core-go/data/alteredAccount/alteredAccount.proto";
 
 message OutportBlock {
-  bytes                   HeaderBytes = 1 [(gogoproto.jsontag) = "headerBytes,omitempty"];
-  string                  HeaderType = 2 [(gogoproto.jsontag) = "headerType,omitempty"];
-  bytes                   HeaderHash = 3 [(gogoproto.jsontag) = "headerHash,omitempty"];
-  Body                    Body = 4 [(gogoproto.jsontag) = "body,omitempty"];
-  repeated AlteredAccount AlteredAccounts = 5 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
-  TransactionPool         TransactionPool = 6 [(gogoproto.jsontag) = "transactionPool,omitempty"];
-  HeaderGasConsumption    HeaderGasConsumption = 7 [(gogoproto.jsontag) = "headerGasConsumption,omitempty"];
-  uint32                  NumberOfShards = 8 [(gogoproto.jsontag) = "numberOfShards"];
-  bool                    IsImportDB = 9 [(gogoproto.jsontag) = "isImportDB"];
-  repeated uint64         SignersIndexes = 10 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
-  uint64                  HighestFinalBlockNonce = 11 [(gogoproto.jsontag) = "highestFinalBlockNonce"];
-  bytes                   HighestFinalBlockHash = 12 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
+  bytes                        HeaderBytes = 1 [(gogoproto.jsontag) = "headerBytes,omitempty"];
+  string                       HeaderType = 2 [(gogoproto.jsontag) = "headerType,omitempty"];
+  bytes                        HeaderHash = 3 [(gogoproto.jsontag) = "headerHash,omitempty"];
+  Body                         Body = 4 [(gogoproto.jsontag) = "body,omitempty"];
+  map <string, AlteredAccount> AlteredAccounts = 5 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
+  TransactionPool              TransactionPool = 6 [(gogoproto.jsontag) = "transactionPool,omitempty"];
+  HeaderGasConsumption         HeaderGasConsumption = 7 [(gogoproto.jsontag) = "headerGasConsumption,omitempty"];
+  uint32                       NumberOfShards = 8 [(gogoproto.jsontag) = "numberOfShards"];
+  bool                         IsImportDB = 9 [(gogoproto.jsontag) = "isImportDB"];
+  repeated uint64              SignersIndexes = 10 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
+  uint64                       HighestFinalBlockNonce = 11 [(gogoproto.jsontag) = "highestFinalBlockNonce"];
+  bytes                        HighestFinalBlockHash = 12 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
 }
 
 message TransactionPool {

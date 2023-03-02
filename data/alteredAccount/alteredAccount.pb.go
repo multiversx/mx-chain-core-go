@@ -4,6 +4,7 @@
 package alteredAccount
 
 import (
+	bytes "bytes"
 	fmt "fmt"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
@@ -26,10 +27,11 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type AlteredAccount struct {
-	Address string              `protobuf:"bytes,1,opt,name=Address,proto3" json:"address,omitempty"`
-	Nonce   uint64              `protobuf:"varint,2,opt,name=Nonce,proto3" json:"nonce"`
-	Balance string              `protobuf:"bytes,3,opt,name=Balance,proto3" json:"balance,omitempty"`
-	Tokens  []*AccountTokenData `protobuf:"bytes,4,rep,name=Tokens,proto3" json:"tokens,omitempty"`
+	Address        string                 `protobuf:"bytes,1,opt,name=Address,proto3" json:"address"`
+	Nonce          uint64                 `protobuf:"varint,2,opt,name=Nonce,proto3" json:"nonce"`
+	Balance        string                 `protobuf:"bytes,3,opt,name=Balance,proto3" json:"balance,omitempty"`
+	Tokens         []*AccountTokenData    `protobuf:"bytes,4,rep,name=Tokens,proto3" json:"tokens,omitempty"`
+	AdditionalData *AdditionalAccountData `protobuf:"bytes,5,opt,name=AdditionalData,proto3" json:"additionalAccountData,omitempty"`
 }
 
 func (m *AlteredAccount) Reset()      { *m = AlteredAccount{} }
@@ -88,11 +90,20 @@ func (m *AlteredAccount) GetTokens() []*AccountTokenData {
 	return nil
 }
 
+func (m *AlteredAccount) GetAdditionalData() *AdditionalAccountData {
+	if m != nil {
+		return m.AdditionalData
+	}
+	return nil
+}
+
 type AccountTokenData struct {
-	Nonce      uint64 `protobuf:"varint,1,opt,name=Nonce,proto3" json:"nonce"`
-	Identifier string `protobuf:"bytes,2,opt,name=Identifier,proto3" json:"identifier,omitempty"`
-	Balance    string `protobuf:"bytes,3,opt,name=Balance,proto3" json:"balance,omitempty"`
-	Properties string `protobuf:"bytes,4,opt,name=Properties,proto3" json:"properties,omitempty"`
+	Nonce          uint64                      `protobuf:"varint,1,opt,name=Nonce,proto3" json:"nonce"`
+	Identifier     string                      `protobuf:"bytes,2,opt,name=Identifier,proto3" json:"identifier"`
+	Balance        string                      `protobuf:"bytes,3,opt,name=Balance,proto3" json:"balance"`
+	Properties     string                      `protobuf:"bytes,4,opt,name=Properties,proto3" json:"properties"`
+	MetaData       *TokenMetaData              `protobuf:"bytes,5,opt,name=MetaData,proto3" json:"metaData,omitempty"`
+	AdditionalData *AdditionalAccountTokenData `protobuf:"bytes,6,opt,name=AdditionalData,proto3" json:"additionalData,omitempty"`
 }
 
 func (m *AccountTokenData) Reset()      { *m = AccountTokenData{} }
@@ -151,40 +162,277 @@ func (m *AccountTokenData) GetProperties() string {
 	return ""
 }
 
+func (m *AccountTokenData) GetMetaData() *TokenMetaData {
+	if m != nil {
+		return m.MetaData
+	}
+	return nil
+}
+
+func (m *AccountTokenData) GetAdditionalData() *AdditionalAccountTokenData {
+	if m != nil {
+		return m.AdditionalData
+	}
+	return nil
+}
+
+type TokenMetaData struct {
+	Nonce      uint64   `protobuf:"varint,1,opt,name=Nonce,proto3" json:"nonce"`
+	Name       string   `protobuf:"bytes,2,opt,name=Name,proto3" json:"name"`
+	Creator    string   `protobuf:"bytes,3,opt,name=Creator,proto3" json:"creator"`
+	Royalties  uint32   `protobuf:"varint,4,opt,name=Royalties,proto3" json:"royalties"`
+	Hash       []byte   `protobuf:"bytes,5,opt,name=Hash,proto3" json:"hash"`
+	URIs       [][]byte `protobuf:"bytes,6,rep,name=URIs,proto3" json:"uris"`
+	Attributes []byte   `protobuf:"bytes,7,opt,name=Attributes,proto3" json:"attributes"`
+}
+
+func (m *TokenMetaData) Reset()      { *m = TokenMetaData{} }
+func (*TokenMetaData) ProtoMessage() {}
+func (*TokenMetaData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_804e04a1cde31bca, []int{2}
+}
+func (m *TokenMetaData) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *TokenMetaData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *TokenMetaData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_TokenMetaData.Merge(m, src)
+}
+func (m *TokenMetaData) XXX_Size() int {
+	return m.Size()
+}
+func (m *TokenMetaData) XXX_DiscardUnknown() {
+	xxx_messageInfo_TokenMetaData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_TokenMetaData proto.InternalMessageInfo
+
+func (m *TokenMetaData) GetNonce() uint64 {
+	if m != nil {
+		return m.Nonce
+	}
+	return 0
+}
+
+func (m *TokenMetaData) GetName() string {
+	if m != nil {
+		return m.Name
+	}
+	return ""
+}
+
+func (m *TokenMetaData) GetCreator() string {
+	if m != nil {
+		return m.Creator
+	}
+	return ""
+}
+
+func (m *TokenMetaData) GetRoyalties() uint32 {
+	if m != nil {
+		return m.Royalties
+	}
+	return 0
+}
+
+func (m *TokenMetaData) GetHash() []byte {
+	if m != nil {
+		return m.Hash
+	}
+	return nil
+}
+
+func (m *TokenMetaData) GetURIs() [][]byte {
+	if m != nil {
+		return m.URIs
+	}
+	return nil
+}
+
+func (m *TokenMetaData) GetAttributes() []byte {
+	if m != nil {
+		return m.Attributes
+	}
+	return nil
+}
+
+type AdditionalAccountTokenData struct {
+	IsNFTCreate bool `protobuf:"varint,1,opt,name=IsNFTCreate,proto3" json:"isNFTCreate,omitempty"`
+}
+
+func (m *AdditionalAccountTokenData) Reset()      { *m = AdditionalAccountTokenData{} }
+func (*AdditionalAccountTokenData) ProtoMessage() {}
+func (*AdditionalAccountTokenData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_804e04a1cde31bca, []int{3}
+}
+func (m *AdditionalAccountTokenData) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *AdditionalAccountTokenData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *AdditionalAccountTokenData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AdditionalAccountTokenData.Merge(m, src)
+}
+func (m *AdditionalAccountTokenData) XXX_Size() int {
+	return m.Size()
+}
+func (m *AdditionalAccountTokenData) XXX_DiscardUnknown() {
+	xxx_messageInfo_AdditionalAccountTokenData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AdditionalAccountTokenData proto.InternalMessageInfo
+
+func (m *AdditionalAccountTokenData) GetIsNFTCreate() bool {
+	if m != nil {
+		return m.IsNFTCreate
+	}
+	return false
+}
+
+type AdditionalAccountData struct {
+	IsSender         bool   `protobuf:"varint,1,opt,name=IsSender,proto3" json:"isSender,omitempty"`
+	BalanceChanged   bool   `protobuf:"varint,2,opt,name=BalanceChanged,proto3" json:"balanceChanged,omitempty"`
+	CurrentOwner     string `protobuf:"bytes,3,opt,name=CurrentOwner,proto3" json:"currentOwner,omitempty"`
+	UserName         string `protobuf:"bytes,4,opt,name=UserName,proto3" json:"userName,omitempty"`
+	DeveloperRewards string `protobuf:"bytes,5,opt,name=DeveloperRewards,proto3" json:"developerRewards,omitempty"`
+}
+
+func (m *AdditionalAccountData) Reset()      { *m = AdditionalAccountData{} }
+func (*AdditionalAccountData) ProtoMessage() {}
+func (*AdditionalAccountData) Descriptor() ([]byte, []int) {
+	return fileDescriptor_804e04a1cde31bca, []int{4}
+}
+func (m *AdditionalAccountData) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *AdditionalAccountData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *AdditionalAccountData) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AdditionalAccountData.Merge(m, src)
+}
+func (m *AdditionalAccountData) XXX_Size() int {
+	return m.Size()
+}
+func (m *AdditionalAccountData) XXX_DiscardUnknown() {
+	xxx_messageInfo_AdditionalAccountData.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_AdditionalAccountData proto.InternalMessageInfo
+
+func (m *AdditionalAccountData) GetIsSender() bool {
+	if m != nil {
+		return m.IsSender
+	}
+	return false
+}
+
+func (m *AdditionalAccountData) GetBalanceChanged() bool {
+	if m != nil {
+		return m.BalanceChanged
+	}
+	return false
+}
+
+func (m *AdditionalAccountData) GetCurrentOwner() string {
+	if m != nil {
+		return m.CurrentOwner
+	}
+	return ""
+}
+
+func (m *AdditionalAccountData) GetUserName() string {
+	if m != nil {
+		return m.UserName
+	}
+	return ""
+}
+
+func (m *AdditionalAccountData) GetDeveloperRewards() string {
+	if m != nil {
+		return m.DeveloperRewards
+	}
+	return ""
+}
+
 func init() {
 	proto.RegisterType((*AlteredAccount)(nil), "proto.AlteredAccount")
 	proto.RegisterType((*AccountTokenData)(nil), "proto.AccountTokenData")
+	proto.RegisterType((*TokenMetaData)(nil), "proto.TokenMetaData")
+	proto.RegisterType((*AdditionalAccountTokenData)(nil), "proto.AdditionalAccountTokenData")
+	proto.RegisterType((*AdditionalAccountData)(nil), "proto.AdditionalAccountData")
 }
 
 func init() { proto.RegisterFile("alteredAccount.proto", fileDescriptor_804e04a1cde31bca) }
 
 var fileDescriptor_804e04a1cde31bca = []byte{
-	// 391 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0x3f, 0x6b, 0xdb, 0x40,
-	0x18, 0xc6, 0x75, 0xf5, 0x9f, 0xe2, 0x2b, 0x14, 0x57, 0xb8, 0x54, 0x74, 0x38, 0x19, 0x4f, 0x1e,
-	0x2a, 0x0b, 0xda, 0xc5, 0xd0, 0xc9, 0xa2, 0x1d, 0xbc, 0x94, 0x62, 0x32, 0x65, 0x3b, 0x49, 0x67,
-	0xf9, 0x88, 0xa5, 0x13, 0xa7, 0x53, 0x70, 0xb6, 0x40, 0xbe, 0x40, 0x3e, 0x46, 0x3e, 0x4a, 0x46,
-	0x8f, 0x22, 0x83, 0x88, 0xcf, 0x4b, 0xd0, 0xe4, 0x8f, 0x10, 0x74, 0x72, 0x6c, 0x39, 0x90, 0x21,
-	0x93, 0xf4, 0xfe, 0xf4, 0xbc, 0xcf, 0xfb, 0xbc, 0xe8, 0x85, 0x3d, 0xbc, 0x14, 0x84, 0x13, 0x7f,
-	0xe2, 0x79, 0x2c, 0x8d, 0xc4, 0x28, 0xe6, 0x4c, 0x30, 0xbd, 0xa5, 0x1e, 0xdf, 0xad, 0x80, 0x8a,
-	0x45, 0xea, 0x8e, 0x3c, 0x16, 0xda, 0x01, 0x0b, 0x98, 0xad, 0xb0, 0x9b, 0xce, 0x55, 0xa5, 0x0a,
-	0xf5, 0x56, 0x75, 0x0d, 0x1e, 0x00, 0xfc, 0x3c, 0x39, 0xb1, 0xd3, 0x6d, 0xf8, 0x71, 0xe2, 0xfb,
-	0x9c, 0x24, 0x89, 0x01, 0xfa, 0x60, 0xd8, 0x71, 0xbe, 0x16, 0xb9, 0xf9, 0x05, 0x57, 0xe8, 0x07,
-	0x0b, 0xa9, 0x20, 0x61, 0x2c, 0xae, 0x66, 0x2f, 0x2a, 0xdd, 0x84, 0xad, 0x7f, 0x2c, 0xf2, 0x88,
-	0xf1, 0xa1, 0x0f, 0x86, 0x4d, 0xa7, 0x53, 0xe4, 0x66, 0x2b, 0x2a, 0xc1, 0xac, 0xe2, 0xa5, 0xa3,
-	0x83, 0x97, 0xb8, 0x94, 0x34, 0x8e, 0x8e, 0x6e, 0x85, 0xea, 0x8e, 0x7b, 0x95, 0xfe, 0x17, 0xb6,
-	0xcf, 0xd8, 0x05, 0x89, 0x12, 0xa3, 0xd9, 0x6f, 0x0c, 0x3f, 0xfd, 0xfc, 0x56, 0xa5, 0x1d, 0xed,
-	0x23, 0xaa, 0x6f, 0x7f, 0xb0, 0xc0, 0x4e, 0xaf, 0xc8, 0xcd, 0xae, 0x50, 0xd2, 0x9a, 0xcf, 0xbe,
-	0x79, 0x90, 0x01, 0xd8, 0x7d, 0xdd, 0x72, 0x4c, 0x0b, 0xde, 0x48, 0x3b, 0x86, 0x70, 0xea, 0x93,
-	0x48, 0xd0, 0x39, 0x25, 0x5c, 0xed, 0xd4, 0x71, 0x8c, 0x22, 0x37, 0x7b, 0xf4, 0x40, 0x6b, 0xb3,
-	0x6a, 0xda, 0xf7, 0xef, 0x39, 0x86, 0xf0, 0x3f, 0x67, 0x31, 0xe1, 0x82, 0x92, 0x72, 0xd7, 0xc3,
-	0xa8, 0xf8, 0x40, 0xeb, 0xa3, 0x8e, 0x5a, 0xe7, 0x06, 0xac, 0x37, 0x48, 0xcb, 0x36, 0x48, 0xdb,
-	0x6d, 0x10, 0xb8, 0x96, 0x08, 0xdc, 0x49, 0x04, 0xee, 0x25, 0x02, 0x6b, 0x89, 0x40, 0x26, 0x11,
-	0x78, 0x94, 0x08, 0x3c, 0x49, 0xa4, 0xed, 0x24, 0x02, 0xb7, 0x5b, 0xa4, 0xad, 0xb7, 0x48, 0xcb,
-	0xb6, 0x48, 0x3b, 0x9f, 0xd6, 0x2e, 0x24, 0x4c, 0x97, 0x82, 0x5e, 0x12, 0x9e, 0xac, 0xec, 0x70,
-	0x65, 0x79, 0x0b, 0x4c, 0x23, 0xcb, 0x63, 0x9c, 0x58, 0x01, 0xb3, 0x7d, 0x2c, 0xb0, 0x7d, 0x7a,
-	0x6a, 0xbf, 0x4f, 0x4b, 0xb7, 0xad, 0x7e, 0xcb, 0xaf, 0xe7, 0x00, 0x00, 0x00, 0xff, 0xff, 0xc7,
-	0xa4, 0xc4, 0x50, 0x92, 0x02, 0x00, 0x00,
+	// 759 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x84, 0x95, 0xcd, 0x6a, 0xdb, 0x4a,
+	0x18, 0x86, 0x2d, 0xc7, 0xbf, 0xe3, 0xc4, 0xe4, 0x88, 0x24, 0xc7, 0xc7, 0x04, 0x8d, 0x8f, 0x4b,
+	0xc1, 0xd0, 0xda, 0x86, 0x74, 0x19, 0x28, 0x58, 0x49, 0x4b, 0x5c, 0x68, 0x5a, 0xd4, 0x64, 0xd1,
+	0xee, 0xc6, 0xd2, 0xc4, 0x1e, 0x6a, 0x69, 0xcc, 0x68, 0x94, 0x9f, 0x5d, 0xa1, 0xfb, 0xd2, 0xcb,
+	0xe8, 0x3d, 0xf4, 0x06, 0xba, 0x4c, 0x77, 0x59, 0x89, 0x46, 0xd9, 0x14, 0x41, 0x21, 0x97, 0x50,
+	0x34, 0x92, 0xec, 0x51, 0x7e, 0xda, 0x95, 0x3d, 0xef, 0xf7, 0xce, 0xab, 0x4f, 0xcf, 0x37, 0x63,
+	0x83, 0x35, 0x34, 0xe5, 0x98, 0x61, 0x6b, 0x60, 0x9a, 0xd4, 0x73, 0x78, 0x6f, 0xc6, 0x28, 0xa7,
+	0x6a, 0x51, 0x7c, 0x34, 0xbb, 0x63, 0xc2, 0x27, 0xde, 0xa8, 0x67, 0x52, 0xbb, 0x3f, 0xa6, 0x63,
+	0xda, 0x17, 0xf2, 0xc8, 0x3b, 0x12, 0x2b, 0xb1, 0x10, 0xdf, 0xe2, 0x5d, 0xed, 0xaf, 0x79, 0x50,
+	0x1f, 0x64, 0xe2, 0xd4, 0x87, 0xa0, 0x3c, 0xb0, 0x2c, 0x86, 0x5d, 0xb7, 0xa1, 0xb4, 0x94, 0x4e,
+	0x55, 0xaf, 0x85, 0x3e, 0x2c, 0xa3, 0x58, 0x32, 0xd2, 0x9a, 0x0a, 0x41, 0x71, 0x9f, 0x3a, 0x26,
+	0x6e, 0xe4, 0x5b, 0x4a, 0xa7, 0xa0, 0x57, 0x43, 0x1f, 0x16, 0x9d, 0x48, 0x30, 0x62, 0x5d, 0xed,
+	0x83, 0xb2, 0x8e, 0xa6, 0x28, 0xb2, 0x2c, 0x89, 0x9c, 0xf5, 0xd0, 0x87, 0xff, 0x8c, 0x62, 0xe9,
+	0x31, 0xb5, 0x09, 0xc7, 0xf6, 0x8c, 0x9f, 0x19, 0xa9, 0x4b, 0x7d, 0x06, 0x4a, 0x07, 0xf4, 0x3d,
+	0x76, 0xdc, 0x46, 0xa1, 0xb5, 0xd4, 0xa9, 0x6d, 0xfd, 0x1b, 0xf7, 0xd8, 0x4b, 0x1a, 0x13, 0xb5,
+	0x5d, 0xc4, 0x91, 0xbe, 0x16, 0xfa, 0x70, 0x95, 0x0b, 0xab, 0x94, 0x93, 0x6c, 0x56, 0x09, 0xa8,
+	0x0f, 0x2c, 0x8b, 0x70, 0x42, 0x1d, 0x34, 0x8d, 0xfc, 0x8d, 0x62, 0x4b, 0xe9, 0xd4, 0xb6, 0x36,
+	0xd3, 0xb8, 0x79, 0x31, 0x09, 0x16, 0x99, 0x0f, 0x42, 0x1f, 0x42, 0x74, 0x57, 0x49, 0x7a, 0xc4,
+	0x8d, 0xe0, 0xf6, 0xaf, 0x3c, 0x58, 0xbd, 0xd9, 0xdd, 0x02, 0x8c, 0x72, 0x0f, 0x98, 0x1e, 0x00,
+	0x43, 0x0b, 0x3b, 0x9c, 0x1c, 0x11, 0xcc, 0x04, 0xbe, 0xaa, 0x5e, 0x0f, 0x7d, 0x08, 0xc8, 0x5c,
+	0x35, 0x24, 0x47, 0x34, 0x90, 0x2c, 0x48, 0x31, 0x90, 0x04, 0xe4, 0x02, 0x5f, 0x0f, 0x80, 0xd7,
+	0x8c, 0xce, 0x30, 0xe3, 0x04, 0x47, 0x08, 0xe7, 0xb1, 0xb3, 0xb9, 0x6a, 0x48, 0x0e, 0x75, 0x0f,
+	0x54, 0x5e, 0x62, 0x8e, 0x24, 0x42, 0x6b, 0x09, 0x21, 0xf1, 0x2e, 0x69, 0x4d, 0xdf, 0x08, 0x7d,
+	0xa8, 0xda, 0xc9, 0x4a, 0x82, 0x31, 0xdf, 0xad, 0x8e, 0x6f, 0x11, 0x2f, 0x89, 0xbc, 0xff, 0xef,
+	0x23, 0xbe, 0x18, 0xe5, 0x66, 0xe8, 0xc3, 0x06, 0xca, 0x6c, 0xfe, 0x03, 0xef, 0x4f, 0x79, 0xb0,
+	0x92, 0x69, 0xee, 0xef, 0xb0, 0x37, 0x41, 0x61, 0x1f, 0xd9, 0x38, 0xc1, 0x5c, 0x09, 0x7d, 0x58,
+	0x70, 0x90, 0x8d, 0x0d, 0xa1, 0x46, 0x68, 0x77, 0x18, 0x46, 0x9c, 0x32, 0x19, 0xad, 0x19, 0x4b,
+	0x46, 0x5a, 0x53, 0x1f, 0x81, 0xaa, 0x41, 0xcf, 0xd0, 0x74, 0x4e, 0x76, 0x45, 0x5f, 0x09, 0x7d,
+	0x58, 0x65, 0xa9, 0x68, 0x2c, 0xea, 0xd1, 0x13, 0xf7, 0x90, 0x3b, 0x11, 0x4c, 0x97, 0xe3, 0x27,
+	0x4e, 0x90, 0x3b, 0x31, 0x84, 0x1a, 0x55, 0x0f, 0x8d, 0xa1, 0xdb, 0x28, 0xb5, 0x96, 0xd2, 0xaa,
+	0xc7, 0x88, 0x6b, 0x08, 0x35, 0x9a, 0xe1, 0x80, 0x73, 0x46, 0x46, 0x1e, 0xc7, 0x6e, 0xa3, 0x2c,
+	0x12, 0xc4, 0x0c, 0xd1, 0x5c, 0x35, 0x24, 0x47, 0xfb, 0x2d, 0x68, 0xde, 0x0f, 0x57, 0xdd, 0x06,
+	0xb5, 0xa1, 0xbb, 0xff, 0xfc, 0x40, 0xbc, 0x46, 0x8c, 0xa8, 0xa2, 0xff, 0x17, 0xfa, 0x70, 0x9d,
+	0x2c, 0x64, 0x09, 0xb7, 0xec, 0x6e, 0x7f, 0xcf, 0x83, 0xf5, 0x3b, 0xaf, 0x8a, 0xba, 0x05, 0x2a,
+	0x43, 0xf7, 0x0d, 0x76, 0x2c, 0xcc, 0x92, 0x4c, 0x71, 0x44, 0x48, 0xa2, 0xc9, 0x47, 0x24, 0xf5,
+	0xa9, 0xbb, 0xa0, 0x9e, 0x9c, 0xd3, 0x9d, 0x09, 0x72, 0xc6, 0xd8, 0x12, 0x03, 0xa9, 0xc4, 0xf3,
+	0x1f, 0x65, 0x2a, 0xf2, 0xfc, 0xb3, 0x7b, 0xd4, 0xa7, 0x60, 0x79, 0xc7, 0x63, 0x0c, 0x3b, 0xfc,
+	0xd5, 0x89, 0x83, 0xd3, 0x99, 0x35, 0x43, 0x1f, 0x6e, 0x98, 0x92, 0x2e, 0x25, 0x64, 0xfc, 0x51,
+	0xe7, 0x87, 0x2e, 0x66, 0xe2, 0x40, 0xc4, 0x17, 0x44, 0x74, 0xee, 0x25, 0x9a, 0xdc, 0x79, 0xea,
+	0x53, 0x5f, 0x80, 0xd5, 0x5d, 0x7c, 0x8c, 0xa7, 0xd1, 0xbd, 0x31, 0xf0, 0x09, 0x62, 0x96, 0x2b,
+	0x46, 0x5b, 0xd5, 0xb5, 0xd0, 0x87, 0x4d, 0xeb, 0x46, 0x4d, 0xca, 0xb8, 0xb5, 0x4f, 0xff, 0xa8,
+	0x9c, 0x5f, 0x6a, 0xb9, 0x8b, 0x4b, 0x2d, 0x77, 0x7d, 0xa9, 0x29, 0x1f, 0x02, 0x4d, 0xf9, 0x12,
+	0x68, 0xca, 0xb7, 0x40, 0x53, 0xce, 0x03, 0x4d, 0xb9, 0x08, 0x34, 0xe5, 0x47, 0xa0, 0x29, 0x3f,
+	0x03, 0x2d, 0x77, 0x1d, 0x68, 0xca, 0xe7, 0x2b, 0x2d, 0x77, 0x7e, 0xa5, 0xe5, 0x2e, 0xae, 0xb4,
+	0xdc, 0xbb, 0xa1, 0xf4, 0xbb, 0x6e, 0x7b, 0x53, 0x4e, 0x8e, 0x31, 0x73, 0x4f, 0xfb, 0xf6, 0x69,
+	0xd7, 0x9c, 0x20, 0xe2, 0x74, 0x4d, 0xca, 0x70, 0x77, 0x4c, 0xfb, 0x16, 0xe2, 0xa8, 0x9f, 0xfd,
+	0x83, 0xd8, 0xce, 0x2e, 0x47, 0x25, 0x71, 0x2b, 0x9f, 0xfc, 0x0e, 0x00, 0x00, 0xff, 0xff, 0xdd,
+	0xf1, 0x90, 0xfb, 0x48, 0x06, 0x00, 0x00,
 }
 
 func (this *AlteredAccount) Equal(that interface{}) bool {
@@ -223,6 +471,9 @@ func (this *AlteredAccount) Equal(that interface{}) bool {
 			return false
 		}
 	}
+	if !this.AdditionalData.Equal(that1.AdditionalData) {
+		return false
+	}
 	return true
 }
 func (this *AccountTokenData) Equal(that interface{}) bool {
@@ -256,19 +507,135 @@ func (this *AccountTokenData) Equal(that interface{}) bool {
 	if this.Properties != that1.Properties {
 		return false
 	}
+	if !this.MetaData.Equal(that1.MetaData) {
+		return false
+	}
+	if !this.AdditionalData.Equal(that1.AdditionalData) {
+		return false
+	}
+	return true
+}
+func (this *TokenMetaData) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*TokenMetaData)
+	if !ok {
+		that2, ok := that.(TokenMetaData)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Nonce != that1.Nonce {
+		return false
+	}
+	if this.Name != that1.Name {
+		return false
+	}
+	if this.Creator != that1.Creator {
+		return false
+	}
+	if this.Royalties != that1.Royalties {
+		return false
+	}
+	if !bytes.Equal(this.Hash, that1.Hash) {
+		return false
+	}
+	if len(this.URIs) != len(that1.URIs) {
+		return false
+	}
+	for i := range this.URIs {
+		if !bytes.Equal(this.URIs[i], that1.URIs[i]) {
+			return false
+		}
+	}
+	if !bytes.Equal(this.Attributes, that1.Attributes) {
+		return false
+	}
+	return true
+}
+func (this *AdditionalAccountTokenData) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*AdditionalAccountTokenData)
+	if !ok {
+		that2, ok := that.(AdditionalAccountTokenData)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.IsNFTCreate != that1.IsNFTCreate {
+		return false
+	}
+	return true
+}
+func (this *AdditionalAccountData) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*AdditionalAccountData)
+	if !ok {
+		that2, ok := that.(AdditionalAccountData)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.IsSender != that1.IsSender {
+		return false
+	}
+	if this.BalanceChanged != that1.BalanceChanged {
+		return false
+	}
+	if this.CurrentOwner != that1.CurrentOwner {
+		return false
+	}
+	if this.UserName != that1.UserName {
+		return false
+	}
+	if this.DeveloperRewards != that1.DeveloperRewards {
+		return false
+	}
 	return true
 }
 func (this *AlteredAccount) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 8)
+	s := make([]string, 0, 9)
 	s = append(s, "&alteredAccount.AlteredAccount{")
 	s = append(s, "Address: "+fmt.Sprintf("%#v", this.Address)+",\n")
 	s = append(s, "Nonce: "+fmt.Sprintf("%#v", this.Nonce)+",\n")
 	s = append(s, "Balance: "+fmt.Sprintf("%#v", this.Balance)+",\n")
 	if this.Tokens != nil {
 		s = append(s, "Tokens: "+fmt.Sprintf("%#v", this.Tokens)+",\n")
+	}
+	if this.AdditionalData != nil {
+		s = append(s, "AdditionalData: "+fmt.Sprintf("%#v", this.AdditionalData)+",\n")
 	}
 	s = append(s, "}")
 	return strings.Join(s, "")
@@ -277,12 +644,58 @@ func (this *AccountTokenData) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 8)
+	s := make([]string, 0, 10)
 	s = append(s, "&alteredAccount.AccountTokenData{")
 	s = append(s, "Nonce: "+fmt.Sprintf("%#v", this.Nonce)+",\n")
 	s = append(s, "Identifier: "+fmt.Sprintf("%#v", this.Identifier)+",\n")
 	s = append(s, "Balance: "+fmt.Sprintf("%#v", this.Balance)+",\n")
 	s = append(s, "Properties: "+fmt.Sprintf("%#v", this.Properties)+",\n")
+	if this.MetaData != nil {
+		s = append(s, "MetaData: "+fmt.Sprintf("%#v", this.MetaData)+",\n")
+	}
+	if this.AdditionalData != nil {
+		s = append(s, "AdditionalData: "+fmt.Sprintf("%#v", this.AdditionalData)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *TokenMetaData) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 11)
+	s = append(s, "&alteredAccount.TokenMetaData{")
+	s = append(s, "Nonce: "+fmt.Sprintf("%#v", this.Nonce)+",\n")
+	s = append(s, "Name: "+fmt.Sprintf("%#v", this.Name)+",\n")
+	s = append(s, "Creator: "+fmt.Sprintf("%#v", this.Creator)+",\n")
+	s = append(s, "Royalties: "+fmt.Sprintf("%#v", this.Royalties)+",\n")
+	s = append(s, "Hash: "+fmt.Sprintf("%#v", this.Hash)+",\n")
+	s = append(s, "URIs: "+fmt.Sprintf("%#v", this.URIs)+",\n")
+	s = append(s, "Attributes: "+fmt.Sprintf("%#v", this.Attributes)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *AdditionalAccountTokenData) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&alteredAccount.AdditionalAccountTokenData{")
+	s = append(s, "IsNFTCreate: "+fmt.Sprintf("%#v", this.IsNFTCreate)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *AdditionalAccountData) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 9)
+	s = append(s, "&alteredAccount.AdditionalAccountData{")
+	s = append(s, "IsSender: "+fmt.Sprintf("%#v", this.IsSender)+",\n")
+	s = append(s, "BalanceChanged: "+fmt.Sprintf("%#v", this.BalanceChanged)+",\n")
+	s = append(s, "CurrentOwner: "+fmt.Sprintf("%#v", this.CurrentOwner)+",\n")
+	s = append(s, "UserName: "+fmt.Sprintf("%#v", this.UserName)+",\n")
+	s = append(s, "DeveloperRewards: "+fmt.Sprintf("%#v", this.DeveloperRewards)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -314,6 +727,18 @@ func (m *AlteredAccount) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.AdditionalData != nil {
+		{
+			size, err := m.AdditionalData.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintAlteredAccount(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x2a
+	}
 	if len(m.Tokens) > 0 {
 		for iNdEx := len(m.Tokens) - 1; iNdEx >= 0; iNdEx-- {
 			{
@@ -370,6 +795,30 @@ func (m *AccountTokenData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.AdditionalData != nil {
+		{
+			size, err := m.AdditionalData.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintAlteredAccount(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x32
+	}
+	if m.MetaData != nil {
+		{
+			size, err := m.MetaData.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintAlteredAccount(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x2a
+	}
 	if len(m.Properties) > 0 {
 		i -= len(m.Properties)
 		copy(dAtA[i:], m.Properties)
@@ -393,6 +842,173 @@ func (m *AccountTokenData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	}
 	if m.Nonce != 0 {
 		i = encodeVarintAlteredAccount(dAtA, i, uint64(m.Nonce))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *TokenMetaData) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *TokenMetaData) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *TokenMetaData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.Attributes) > 0 {
+		i -= len(m.Attributes)
+		copy(dAtA[i:], m.Attributes)
+		i = encodeVarintAlteredAccount(dAtA, i, uint64(len(m.Attributes)))
+		i--
+		dAtA[i] = 0x3a
+	}
+	if len(m.URIs) > 0 {
+		for iNdEx := len(m.URIs) - 1; iNdEx >= 0; iNdEx-- {
+			i -= len(m.URIs[iNdEx])
+			copy(dAtA[i:], m.URIs[iNdEx])
+			i = encodeVarintAlteredAccount(dAtA, i, uint64(len(m.URIs[iNdEx])))
+			i--
+			dAtA[i] = 0x32
+		}
+	}
+	if len(m.Hash) > 0 {
+		i -= len(m.Hash)
+		copy(dAtA[i:], m.Hash)
+		i = encodeVarintAlteredAccount(dAtA, i, uint64(len(m.Hash)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if m.Royalties != 0 {
+		i = encodeVarintAlteredAccount(dAtA, i, uint64(m.Royalties))
+		i--
+		dAtA[i] = 0x20
+	}
+	if len(m.Creator) > 0 {
+		i -= len(m.Creator)
+		copy(dAtA[i:], m.Creator)
+		i = encodeVarintAlteredAccount(dAtA, i, uint64(len(m.Creator)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if len(m.Name) > 0 {
+		i -= len(m.Name)
+		copy(dAtA[i:], m.Name)
+		i = encodeVarintAlteredAccount(dAtA, i, uint64(len(m.Name)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if m.Nonce != 0 {
+		i = encodeVarintAlteredAccount(dAtA, i, uint64(m.Nonce))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *AdditionalAccountTokenData) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *AdditionalAccountTokenData) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AdditionalAccountTokenData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.IsNFTCreate {
+		i--
+		if m.IsNFTCreate {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *AdditionalAccountData) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *AdditionalAccountData) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *AdditionalAccountData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.DeveloperRewards) > 0 {
+		i -= len(m.DeveloperRewards)
+		copy(dAtA[i:], m.DeveloperRewards)
+		i = encodeVarintAlteredAccount(dAtA, i, uint64(len(m.DeveloperRewards)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.UserName) > 0 {
+		i -= len(m.UserName)
+		copy(dAtA[i:], m.UserName)
+		i = encodeVarintAlteredAccount(dAtA, i, uint64(len(m.UserName)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if len(m.CurrentOwner) > 0 {
+		i -= len(m.CurrentOwner)
+		copy(dAtA[i:], m.CurrentOwner)
+		i = encodeVarintAlteredAccount(dAtA, i, uint64(len(m.CurrentOwner)))
+		i--
+		dAtA[i] = 0x1a
+	}
+	if m.BalanceChanged {
+		i--
+		if m.BalanceChanged {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.IsSender {
+		i--
+		if m.IsSender {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
 		i--
 		dAtA[i] = 0x8
 	}
@@ -433,6 +1049,10 @@ func (m *AlteredAccount) Size() (n int) {
 			n += 1 + l + sovAlteredAccount(uint64(l))
 		}
 	}
+	if m.AdditionalData != nil {
+		l = m.AdditionalData.Size()
+		n += 1 + l + sovAlteredAccount(uint64(l))
+	}
 	return n
 }
 
@@ -454,6 +1074,90 @@ func (m *AccountTokenData) Size() (n int) {
 		n += 1 + l + sovAlteredAccount(uint64(l))
 	}
 	l = len(m.Properties)
+	if l > 0 {
+		n += 1 + l + sovAlteredAccount(uint64(l))
+	}
+	if m.MetaData != nil {
+		l = m.MetaData.Size()
+		n += 1 + l + sovAlteredAccount(uint64(l))
+	}
+	if m.AdditionalData != nil {
+		l = m.AdditionalData.Size()
+		n += 1 + l + sovAlteredAccount(uint64(l))
+	}
+	return n
+}
+
+func (m *TokenMetaData) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Nonce != 0 {
+		n += 1 + sovAlteredAccount(uint64(m.Nonce))
+	}
+	l = len(m.Name)
+	if l > 0 {
+		n += 1 + l + sovAlteredAccount(uint64(l))
+	}
+	l = len(m.Creator)
+	if l > 0 {
+		n += 1 + l + sovAlteredAccount(uint64(l))
+	}
+	if m.Royalties != 0 {
+		n += 1 + sovAlteredAccount(uint64(m.Royalties))
+	}
+	l = len(m.Hash)
+	if l > 0 {
+		n += 1 + l + sovAlteredAccount(uint64(l))
+	}
+	if len(m.URIs) > 0 {
+		for _, b := range m.URIs {
+			l = len(b)
+			n += 1 + l + sovAlteredAccount(uint64(l))
+		}
+	}
+	l = len(m.Attributes)
+	if l > 0 {
+		n += 1 + l + sovAlteredAccount(uint64(l))
+	}
+	return n
+}
+
+func (m *AdditionalAccountTokenData) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.IsNFTCreate {
+		n += 2
+	}
+	return n
+}
+
+func (m *AdditionalAccountData) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.IsSender {
+		n += 2
+	}
+	if m.BalanceChanged {
+		n += 2
+	}
+	l = len(m.CurrentOwner)
+	if l > 0 {
+		n += 1 + l + sovAlteredAccount(uint64(l))
+	}
+	l = len(m.UserName)
+	if l > 0 {
+		n += 1 + l + sovAlteredAccount(uint64(l))
+	}
+	l = len(m.DeveloperRewards)
 	if l > 0 {
 		n += 1 + l + sovAlteredAccount(uint64(l))
 	}
@@ -480,6 +1184,7 @@ func (this *AlteredAccount) String() string {
 		`Nonce:` + fmt.Sprintf("%v", this.Nonce) + `,`,
 		`Balance:` + fmt.Sprintf("%v", this.Balance) + `,`,
 		`Tokens:` + repeatedStringForTokens + `,`,
+		`AdditionalData:` + strings.Replace(this.AdditionalData.String(), "AdditionalAccountData", "AdditionalAccountData", 1) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -493,6 +1198,48 @@ func (this *AccountTokenData) String() string {
 		`Identifier:` + fmt.Sprintf("%v", this.Identifier) + `,`,
 		`Balance:` + fmt.Sprintf("%v", this.Balance) + `,`,
 		`Properties:` + fmt.Sprintf("%v", this.Properties) + `,`,
+		`MetaData:` + strings.Replace(this.MetaData.String(), "TokenMetaData", "TokenMetaData", 1) + `,`,
+		`AdditionalData:` + strings.Replace(this.AdditionalData.String(), "AdditionalAccountTokenData", "AdditionalAccountTokenData", 1) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *TokenMetaData) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&TokenMetaData{`,
+		`Nonce:` + fmt.Sprintf("%v", this.Nonce) + `,`,
+		`Name:` + fmt.Sprintf("%v", this.Name) + `,`,
+		`Creator:` + fmt.Sprintf("%v", this.Creator) + `,`,
+		`Royalties:` + fmt.Sprintf("%v", this.Royalties) + `,`,
+		`Hash:` + fmt.Sprintf("%v", this.Hash) + `,`,
+		`URIs:` + fmt.Sprintf("%v", this.URIs) + `,`,
+		`Attributes:` + fmt.Sprintf("%v", this.Attributes) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *AdditionalAccountTokenData) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&AdditionalAccountTokenData{`,
+		`IsNFTCreate:` + fmt.Sprintf("%v", this.IsNFTCreate) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *AdditionalAccountData) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&AdditionalAccountData{`,
+		`IsSender:` + fmt.Sprintf("%v", this.IsSender) + `,`,
+		`BalanceChanged:` + fmt.Sprintf("%v", this.BalanceChanged) + `,`,
+		`CurrentOwner:` + fmt.Sprintf("%v", this.CurrentOwner) + `,`,
+		`UserName:` + fmt.Sprintf("%v", this.UserName) + `,`,
+		`DeveloperRewards:` + fmt.Sprintf("%v", this.DeveloperRewards) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -648,6 +1395,42 @@ func (m *AlteredAccount) Unmarshal(dAtA []byte) error {
 			}
 			m.Tokens = append(m.Tokens, &AccountTokenData{})
 			if err := m.Tokens[len(m.Tokens)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AdditionalData", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAlteredAccount
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.AdditionalData == nil {
+				m.AdditionalData = &AdditionalAccountData{}
+			}
+			if err := m.AdditionalData.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -818,6 +1601,595 @@ func (m *AccountTokenData) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.Properties = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MetaData", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAlteredAccount
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.MetaData == nil {
+				m.MetaData = &TokenMetaData{}
+			}
+			if err := m.MetaData.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AdditionalData", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAlteredAccount
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.AdditionalData == nil {
+				m.AdditionalData = &AdditionalAccountTokenData{}
+			}
+			if err := m.AdditionalData.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAlteredAccount(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *TokenMetaData) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAlteredAccount
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: TokenMetaData: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: TokenMetaData: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Nonce", wireType)
+			}
+			m.Nonce = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAlteredAccount
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Nonce |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Name", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAlteredAccount
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Name = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Creator", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAlteredAccount
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Creator = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Royalties", wireType)
+			}
+			m.Royalties = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAlteredAccount
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Royalties |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Hash", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAlteredAccount
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Hash = append(m.Hash[:0], dAtA[iNdEx:postIndex]...)
+			if m.Hash == nil {
+				m.Hash = []byte{}
+			}
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field URIs", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAlteredAccount
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.URIs = append(m.URIs, make([]byte, postIndex-iNdEx))
+			copy(m.URIs[len(m.URIs)-1], dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Attributes", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAlteredAccount
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.Attributes = append(m.Attributes[:0], dAtA[iNdEx:postIndex]...)
+			if m.Attributes == nil {
+				m.Attributes = []byte{}
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAlteredAccount(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *AdditionalAccountTokenData) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAlteredAccount
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AdditionalAccountTokenData: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AdditionalAccountTokenData: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsNFTCreate", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAlteredAccount
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsNFTCreate = bool(v != 0)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipAlteredAccount(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *AdditionalAccountData) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowAlteredAccount
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: AdditionalAccountData: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: AdditionalAccountData: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsSender", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAlteredAccount
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsSender = bool(v != 0)
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field BalanceChanged", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAlteredAccount
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.BalanceChanged = bool(v != 0)
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CurrentOwner", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAlteredAccount
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.CurrentOwner = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UserName", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAlteredAccount
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.UserName = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DeveloperRewards", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowAlteredAccount
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthAlteredAccount
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.DeveloperRewards = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
