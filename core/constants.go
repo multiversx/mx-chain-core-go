@@ -254,3 +254,6 @@ const CompletedTxEventIdentifier = "completedTxEvent"
 
 // GasRefundForRelayerMessage is the return message for to the smart contract result with refund for the relayer
 const GasRefundForRelayerMessage = "gas refund for relayer"
+
+// TopicRequestSuffix represents the topic name suffix for requests
+const TopicRequestSuffix = "_REQUEST"
