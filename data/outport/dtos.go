@@ -58,24 +58,12 @@ type ArgsSaveBlockData struct {
 	SignersIndexes         []uint64
 	NotarizedHeadersHashes []string
 	HeaderGasConsumption   HeaderGasConsumption
-	TransactionsPool       *Pool
+	TransactionsPool       *TransactionPool
 	AlteredAccounts        map[string]*AlteredAccount
 	NumberOfShards         uint32
 	IsImportDB             bool
 	HighestFinalBlockNonce uint64
 	HighestFinalBlockHash  []byte
-}
-
-// Pool will hold all types of transaction
-type Pool struct {
-	Txs                                        map[string]data.TransactionHandlerWithGasUsedAndFee
-	Scrs                                       map[string]data.TransactionHandlerWithGasUsedAndFee
-	Rewards                                    map[string]data.TransactionHandlerWithGasUsedAndFee
-	Invalid                                    map[string]data.TransactionHandlerWithGasUsedAndFee
-	Receipts                                   map[string]data.TransactionHandlerWithGasUsedAndFee
-	Logs                                       []*data.LogData
-	ScheduledExecutedSCRSHashesPrevBlock       []string
-	ScheduledExecutedInvalidTxsHashesPrevBlock []string
 }
 
 // ValidatorRatingInfo is a structure containing validator rating information
