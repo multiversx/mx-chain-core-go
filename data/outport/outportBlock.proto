@@ -86,7 +86,7 @@ message ValidatorsRating{
 }
 
 message RoundInfo {
-  uint64          Index            = 1 [(gogoproto.jsontag) = "index"];
+  uint64          Round            = 1 [(gogoproto.jsontag) = "round"];
   repeated uint64 SignersIndexes   = 2 [(gogoproto.jsontag) = "signersIndexes"];
   bool            BlockWasProposed = 3 [(gogoproto.jsontag) = "blockWasProposed"];
   uint32          ShardId          = 4 [(gogoproto.jsontag) = "shardId"];
