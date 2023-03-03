@@ -63,8 +63,8 @@ func (o *websocketOutportDriverNodePart) SaveBlock(outportBlock *outport.Outport
 }
 
 // RevertIndexedBlock will handle the action of reverting the indexed block
-func (o *websocketOutportDriverNodePart) RevertIndexedBlock(headerBody *outport.HeaderBody) error {
-	return o.handleAction(headerBody, outportSenderData.OperationRevertIndexedBlock)
+func (o *websocketOutportDriverNodePart) RevertIndexedBlock(blockData *outport.BlockData) error {
+	return o.handleAction(blockData, outportSenderData.OperationRevertIndexedBlock)
 }
 
 // SaveRoundsInfo will handle the saving of rounds

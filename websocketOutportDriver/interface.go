@@ -10,7 +10,7 @@ import (
 // This could be an elastic search index, a MySql database or any other external services.
 type Driver interface {
 	SaveBlock(outportBlock *outport.OutportBlock) error
-	RevertIndexedBlock(headerBody *outport.HeaderBody) error
+	RevertIndexedBlock(blockData *outport.BlockData) error
 	SaveRoundsInfo(roundsInfos *outport.RoundsInfo) error
 	SaveValidatorsPubKeys(validatorsPubKeys *outport.ValidatorsPubKeys) error
 	SaveValidatorsRating(indexID string, infoRating []*outport.ValidatorRatingInfo) error
