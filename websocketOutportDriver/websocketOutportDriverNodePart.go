@@ -6,7 +6,6 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/atomic"
 	"github.com/multiversx/mx-chain-core-go/core/check"
-	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/alteredAccount"
 	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/marshal"
@@ -59,38 +58,23 @@ func NewWebsocketOutportDriverNodePart(args WebsocketOutportDriverNodePartArgs) 
 }
 
 // SaveBlock will send the provided block saving arguments within the websocket
-func (o *websocketOutportDriverNodePart) SaveBlock(args *outport.OutportBlock) error {
-	return o.handleAction(args, outportSenderData.OperationSaveBlock)
+func (o *websocketOutportDriverNodePart) SaveBlock(outportBlock *outport.OutportBlock) error {
+	return o.handleAction(outportBlock, outportSenderData.OperationSaveBlock)
 }
 
 // RevertIndexedBlock will handle the action of reverting the indexed block
-func (o *websocketOutportDriverNodePart) RevertIndexedBlock(header data.HeaderHandler, body data.BodyHandler) error {
-	args := outportSenderData.ArgsRevertIndexedBlock{
-		Header:     header,
-		Body:       body,
-		HeaderType: core.GetHeaderType(header),
-	}
-
-	return o.handleAction(args, outportSenderData.OperationRevertIndexedBlock)
+func (o *websocketOutportDriverNodePart) RevertIndexedBlock(headerBody *outport.HeaderBody) error {
+	return o.handleAction(headerBody, outportSenderData.OperationRevertIndexedBlock)
 }
 
 // SaveRoundsInfo will handle the saving of rounds
-func (o *websocketOutportDriverNodePart) SaveRoundsInfo(roundsInfos []*outport.RoundInfo) error {
-	args := outportSenderData.ArgsSaveRoundsInfo{
-		RoundsInfos: roundsInfos,
-	}
-
-	return o.handleAction(args, outportSenderData.OperationSaveRoundsInfo)
+func (o *websocketOutportDriverNodePart) SaveRoundsInfo(roundsInfos *outport.RoundsInfo) error {
+	return o.handleAction(roundsInfos, outportSenderData.OperationSaveRoundsInfo)
 }
 
 // SaveValidatorsPubKeys will handle the saving of the validators' public keys
-func (o *websocketOutportDriverNodePart) SaveValidatorsPubKeys(validatorsPubKeys map[uint32][][]byte, epoch uint32) error {
-	args := outportSenderData.ArgsSaveValidatorsPubKeys{
-		ValidatorsPubKeys: validatorsPubKeys,
-		Epoch:             epoch,
-	}
-
-	return o.handleAction(args, outportSenderData.OperationSaveValidatorsPubKeys)
+func (o *websocketOutportDriverNodePart) SaveValidatorsPubKeys(validatorsPubKeys *outport.ValidatorsPubKeys) error {
+	return o.handleAction(validatorsPubKeys, outportSenderData.OperationSaveValidatorsPubKeys)
 }
 
 // SaveValidatorsRating will handle the saving of the validators' rating

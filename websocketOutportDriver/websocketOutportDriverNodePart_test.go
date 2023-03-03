@@ -168,7 +168,7 @@ func TestWebsocketOutportDriverNodePart_RevertIndexedBlock(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.RevertIndexedBlock(nil, nil)
+		err = o.RevertIndexedBlock(nil)
 		require.True(t, errors.Is(err, cannotSendOnRouteErr))
 	})
 
@@ -182,7 +182,7 @@ func TestWebsocketOutportDriverNodePart_RevertIndexedBlock(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.RevertIndexedBlock(nil, nil)
+		err = o.RevertIndexedBlock(nil)
 		require.NoError(t, err)
 	})
 }
@@ -264,7 +264,7 @@ func TestWebsocketOutportDriverNodePart_SaveValidatorsPubKeys(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.SaveValidatorsPubKeys(nil, 0)
+		err = o.SaveValidatorsPubKeys(nil)
 		require.True(t, errors.Is(err, cannotSendOnRouteErr))
 	})
 
@@ -278,7 +278,7 @@ func TestWebsocketOutportDriverNodePart_SaveValidatorsPubKeys(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.SaveValidatorsPubKeys(nil, 0)
+		err = o.SaveValidatorsPubKeys(nil)
 		require.NoError(t, err)
 	})
 }

@@ -88,3 +88,16 @@ message RoundInfo {
   uint32 Epoch                   = 5 [(gogoproto.jsontag) = "epoch"];
   uint64 Timestamp               = 6 [(gogoproto.jsontag) = "timestamp"];
 }
+
+message RoundsInfo {
+  repeated RoundInfo RoundsInfo = 1 [(gogoproto.jsontag) = "roundsInfo,omitempty"];
+}
+
+message PubKeys {
+  repeated bytes Keys = 1 [(gogoproto.jsontag) = "keys,omitempty"];
+}
+
+message ValidatorsPubKeys{
+  map<string, PubKeys> ShardValidatorsPubKeys = 1 [(gogoproto.jsontag) = "validatorsPubKeys,omitempty"];
+  uint32               Epoch                  = 2 [(gogoproto.jsontag) = "epoch,omitempty"];
+}
