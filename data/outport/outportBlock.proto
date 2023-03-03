@@ -110,7 +110,7 @@ message ValidatorsPubKeys{
 message Accounts {
   uint32 ShardID                              = 1 [(gogoproto.jsontag) = "shardID"];
   uint64 BlockTimestamp                       = 2 [(gogoproto.jsontag) = "blockTimestamp"];
-  map<string, AlteredAccount> AlteredAccounts = 3 [(gogoproto.jsontag) = "shardID,omitempty"];
+  map<string, AlteredAccount> AlteredAccounts = 3 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
 }
 
 message FinalizedBlock {
