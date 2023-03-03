@@ -1,7 +1,6 @@
 package websocketOutportDriver
 
 import (
-	"github.com/multiversx/mx-chain-core-go/data/alteredAccount"
 	"github.com/multiversx/mx-chain-core-go/data/outport"
 	outportSenderData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
@@ -13,9 +12,9 @@ type Driver interface {
 	RevertIndexedBlock(blockData *outport.BlockData) error
 	SaveRoundsInfo(roundsInfos *outport.RoundsInfo) error
 	SaveValidatorsPubKeys(validatorsPubKeys *outport.ValidatorsPubKeys) error
-	SaveValidatorsRating(indexID string, infoRating []*outport.ValidatorRatingInfo) error
-	SaveAccounts(blockTimestamp uint64, acc map[string]*alteredAccount.AlteredAccount, shardID uint32) error
-	FinalizedBlock(headerHash []byte) error
+	SaveValidatorsRating(validatorsRating *outport.ValidatorsRating) error
+	SaveAccounts(accounts *outport.Accounts) error
+	FinalizedBlock(finalizedBlock *outport.FinalizedBlock) error
 	Close() error
 	IsInterfaceNil() bool
 }

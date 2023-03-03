@@ -6,7 +6,6 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/atomic"
 	"github.com/multiversx/mx-chain-core-go/core/check"
-	"github.com/multiversx/mx-chain-core-go/data/alteredAccount"
 	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/marshal"
 	outportSenderData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
@@ -78,33 +77,18 @@ func (o *websocketOutportDriverNodePart) SaveValidatorsPubKeys(validatorsPubKeys
 }
 
 // SaveValidatorsRating will handle the saving of the validators' rating
-func (o *websocketOutportDriverNodePart) SaveValidatorsRating(indexID string, infoRating []*outport.ValidatorRatingInfo) error {
-	args := outportSenderData.ArgsSaveValidatorsRating{
-		IndexID:    indexID,
-		InfoRating: infoRating,
-	}
-
-	return o.handleAction(args, outportSenderData.OperationSaveValidatorsRating)
+func (o *websocketOutportDriverNodePart) SaveValidatorsRating(validatorsRating *outport.ValidatorsRating) error {
+	return o.handleAction(validatorsRating, outportSenderData.OperationSaveValidatorsRating)
 }
 
 // SaveAccounts will handle the accounts' saving
-func (o *websocketOutportDriverNodePart) SaveAccounts(blockTimestamp uint64, acc map[string]*alteredAccount.AlteredAccount, shardID uint32) error {
-	args := outportSenderData.ArgsSaveAccounts{
-		BlockTimestamp: blockTimestamp,
-		Acc:            acc,
-		ShardID:        shardID,
-	}
-
-	return o.handleAction(args, outportSenderData.OperationSaveAccounts)
+func (o *websocketOutportDriverNodePart) SaveAccounts(accounts *outport.Accounts) error {
+	return o.handleAction(accounts, outportSenderData.OperationSaveAccounts)
 }
 
 // FinalizedBlock will handle the finalized block
-func (o *websocketOutportDriverNodePart) FinalizedBlock(headerHash []byte) error {
-	args := outportSenderData.ArgsFinalizedBlock{
-		HeaderHash: headerHash,
-	}
-
-	return o.handleAction(args, outportSenderData.OperationFinalizedBlock)
+func (o *websocketOutportDriverNodePart) FinalizedBlock(finalizedBlock *outport.FinalizedBlock) error {
+	return o.handleAction(finalizedBlock, outportSenderData.OperationFinalizedBlock)
 }
 
 // Close will handle the closing of the outport driver web socket sender

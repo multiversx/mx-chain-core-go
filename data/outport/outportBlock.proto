@@ -80,13 +80,18 @@ message ValidatorRatingInfo {
   float   Rating    = 2 [(gogoproto.jsontag) = "rating"];
 }
 
+message ValidatorsRating{
+  string   IndexID                                   = 1 [(gogoproto.jsontag) = "indexID"];
+  repeated ValidatorRatingInfo ValidatorsRatingInfo  = 2 [(gogoproto.jsontag) = "validatorsRatingInfo,omitempty"];
+}
+
 message RoundInfo {
-  uint64 Index                   = 1 [(gogoproto.jsontag) = "index"];
-  repeated uint64 SignersIndexes = 2 [(gogoproto.jsontag) = "signersIndexes"];
-  bool BlockWasProposed          = 3 [(gogoproto.jsontag) = "blockWasProposed"];
-  uint32 ShardId                 = 4 [(gogoproto.jsontag) = "shardId"];
-  uint32 Epoch                   = 5 [(gogoproto.jsontag) = "epoch"];
-  uint64 Timestamp               = 6 [(gogoproto.jsontag) = "timestamp"];
+  uint64          Index            = 1 [(gogoproto.jsontag) = "index"];
+  repeated uint64 SignersIndexes   = 2 [(gogoproto.jsontag) = "signersIndexes"];
+  bool            BlockWasProposed = 3 [(gogoproto.jsontag) = "blockWasProposed"];
+  uint32          ShardId          = 4 [(gogoproto.jsontag) = "shardId"];
+  uint32          Epoch            = 5 [(gogoproto.jsontag) = "epoch"];
+  uint64          Timestamp        = 6 [(gogoproto.jsontag) = "timestamp"];
 }
 
 message RoundsInfo {
@@ -99,5 +104,15 @@ message PubKeys {
 
 message ValidatorsPubKeys{
   map<string, PubKeys> ShardValidatorsPubKeys = 1 [(gogoproto.jsontag) = "validatorsPubKeys,omitempty"];
-  uint32               Epoch                  = 2 [(gogoproto.jsontag) = "epoch,omitempty"];
+  uint32               Epoch                  = 2 [(gogoproto.jsontag) = "epoch"];
+}
+
+message Accounts {
+  uint32 ShardID                              = 1 [(gogoproto.jsontag) = "shardID"];
+  uint64 BlockTimestamp                       = 2 [(gogoproto.jsontag) = "blockTimestamp"];
+  map<string, AlteredAccount> AlteredAccounts = 3 [(gogoproto.jsontag) = "shardID,omitempty"];
+}
+
+message FinalizedBlock {
+  bytes HeaderHash = 1 [(gogoproto.jsontag) = "headerHash"];
 }
