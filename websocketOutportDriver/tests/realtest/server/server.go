@@ -51,7 +51,7 @@ func doAction(server Driver) {
 		fmt.Println(err.Error())
 	}
 
-	err = server.SaveAccounts(nil)
+	err = server.SaveAccounts(&outport.Accounts{BlockTimestamp: 1155})
 	if err != nil {
 		fmt.Println(err.Error())
 	}
