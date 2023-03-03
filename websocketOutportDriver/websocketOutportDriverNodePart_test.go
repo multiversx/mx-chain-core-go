@@ -320,7 +320,7 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 
 	mockArgs := getMockArgs()
 
-	outportBlock := &outport.OutportBlock{HeaderBody: &outport.HeaderBody{Body: &block.Body{}}}
+	outportBlock := &outport.OutportBlock{BlockData: &outport.BlockData{Body: &block.Body{}}}
 	marshaledData, err := mockArgs.Marshaller.Marshal(outportBlock)
 	require.Nil(t, err)
 

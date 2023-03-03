@@ -15,7 +15,7 @@ import "github.com/multiversx/mx-chain-core-go/data/rewardTx/rewardTx.proto";
 import "github.com/multiversx/mx-chain-core-go/data/alteredAccount/alteredAccount.proto";
 
 message OutportBlock {
-  HeaderBody                   HeaderBody             = 1 [(gogoproto.jsontag) = "headerBody,omitempty"];
+  BlockData                    BlockData              = 1 [(gogoproto.jsontag) = "blockData,omitempty"];
   TransactionPool              TransactionPool        = 2 [(gogoproto.jsontag) = "transactionPool,omitempty"];
   HeaderGasConsumption         HeaderGasConsumption   = 3 [(gogoproto.jsontag) = "headerGasConsumption,omitempty"];
   map <string, AlteredAccount> AlteredAccounts        = 4 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
@@ -27,7 +27,7 @@ message OutportBlock {
   bytes                        HighestFinalBlockHash  = 10 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
 }
 
-message HeaderBody {
+message BlockData {
   bytes  HeaderBytes = 1 [(gogoproto.jsontag) = "headerBytes,omitempty"];
   string HeaderType  = 2 [(gogoproto.jsontag) = "headerType,omitempty"];
   bytes  HeaderHash  = 3 [(gogoproto.jsontag) = "headerHash,omitempty"];
