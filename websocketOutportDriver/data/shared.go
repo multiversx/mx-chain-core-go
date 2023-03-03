@@ -3,6 +3,7 @@ package data
 import (
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/alteredAccount"
 	"github.com/multiversx/mx-chain-core-go/data/outport"
 )
 
@@ -39,16 +40,10 @@ type ArgsSaveValidatorsRating struct {
 type ArgsSaveAccounts struct {
 	ShardID        uint32
 	BlockTimestamp uint64
-	Acc            map[string]*outport.AlteredAccount
+	Acc            map[string]*alteredAccount.AlteredAccount
 }
 
 // ArgsFinalizedBlock holds the driver's arguments needed for handling a finalized block
 type ArgsFinalizedBlock struct {
 	HeaderHash []byte
-}
-
-// ArgsSaveBlock holds the driver's arguments needed for handling a save block
-type ArgsSaveBlock struct {
-	HeaderType core.HeaderType
-	outport.ArgsSaveBlockData
 }

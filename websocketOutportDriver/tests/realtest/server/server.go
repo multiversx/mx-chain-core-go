@@ -46,7 +46,7 @@ func main() {
 }
 
 func doAction(server Driver) {
-	err := server.SaveBlock(&outport.ArgsSaveBlockData{HeaderHash: []byte("header hash")})
+	err := server.SaveBlock(&outport.OutportBlock{BlockData: &outport.BlockData{HeaderHash: []byte("header hash")}})
 	if err != nil {
 		fmt.Println(err.Error())
 	}

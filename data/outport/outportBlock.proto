@@ -15,41 +15,76 @@ import "github.com/multiversx/mx-chain-core-go/data/rewardTx/rewardTx.proto";
 import "github.com/multiversx/mx-chain-core-go/data/alteredAccount/alteredAccount.proto";
 
 message OutportBlock {
-  bytes                   HeaderBytes = 1 [(gogoproto.jsontag) = "headerBytes,omitempty"];
-  string                  HeaderType = 2 [(gogoproto.jsontag) = "headerType,omitempty"];
-  bytes                   HeaderHash = 3 [(gogoproto.jsontag) = "headerHash,omitempty"];
-  Body                    Body = 4 [(gogoproto.jsontag) = "body,omitempty"];
-  repeated AlteredAccount AlteredAccounts = 5 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
-  map<string, TxInfo>     Transactions = 6 [(gogoproto.jsontag) = "transactions,omitempty"];
-  map<string, SCRInfo>    SmartContractResults = 7 [(gogoproto.jsontag) = "smartContractResults,omitempty"];
-  map<string, RewardInfo> Rewards = 8 [(gogoproto.jsontag) = "rewards,omitempty"];
-  map<string, Receipt>    Receipts = 9 [(gogoproto.jsontag) = "receipts,omitempty"];
-  map<string, TxInfo>     InvalidTxs = 10 [(gogoproto.jsontag) = "invalidTxs,omitempty"];
-  map<string, Log>        Logs = 11 [(gogoproto.jsontag) = "logs,omitempty"];
-  repeated uint64         SignersIndexes = 12 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
-  uint64                  HighestFinalBlockNonce = 13 [(gogoproto.jsontag) = "highestFinalBlockNonce"];
-  bytes                   HighestFinalBlockHash = 14 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
+  BlockData                    BlockData              = 1 [(gogoproto.jsontag) = "blockData,omitempty"];
+  TransactionPool              TransactionPool        = 2 [(gogoproto.jsontag) = "transactionPool,omitempty"];
+  HeaderGasConsumption         HeaderGasConsumption   = 3 [(gogoproto.jsontag) = "headerGasConsumption,omitempty"];
+  map <string, AlteredAccount> AlteredAccounts        = 4 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
+  repeated string              NotarizedHeadersHashes = 5 [(gogoproto.jsontag) = "notarizedHeadersHashes,omitempty"];
+  uint32                       NumberOfShards         = 6 [(gogoproto.jsontag) = "numberOfShards"];
+  bool                         IsImportDB             = 7 [(gogoproto.jsontag) = "isImportDB"];
+  repeated uint64              SignersIndexes         = 8 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
+  uint64                       HighestFinalBlockNonce = 9 [(gogoproto.jsontag) = "highestFinalBlockNonce"];
+  bytes                        HighestFinalBlockHash  = 10 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
+}
+
+message BlockData {
+  bytes  HeaderBytes = 1 [(gogoproto.jsontag) = "headerBytes,omitempty"];
+  string HeaderType  = 2 [(gogoproto.jsontag) = "headerType,omitempty"];
+  bytes  HeaderHash  = 3 [(gogoproto.jsontag) = "headerHash,omitempty"];
+  Body   Body        = 4 [(gogoproto.jsontag) = "body,omitempty"];
+}
+
+message TransactionPool {
+  map<string, TxInfo>     Transactions                               = 1 [(gogoproto.jsontag) = "transactions,omitempty"];
+  map<string, SCRInfo>    SmartContractResults                       = 2 [(gogoproto.jsontag) = "smartContractResults,omitempty"];
+  map<string, RewardInfo> Rewards                                    = 3 [(gogoproto.jsontag) = "rewards,omitempty"];
+  map<string, Receipt>    Receipts                                   = 4 [(gogoproto.jsontag) = "receipts,omitempty"];
+  map<string, TxInfo>     InvalidTxs                                 = 5 [(gogoproto.jsontag) = "invalidTxs,omitempty"];
+  map<string, Log>        Logs                                       = 6 [(gogoproto.jsontag) = "logs,omitempty"];
+  repeated string         ScheduledExecutedSCRSHashesPrevBlock       = 7 [(gogoproto.jsontag) = "scheduledExecutedSCRSHashesPrevBlock,omitempty"];
+  repeated string         ScheduledExecutedInvalidTxsHashesPrevBlock = 8 [(gogoproto.jsontag) = "scheduledExecutedInvalidTxsHashesPrevBlock,omitempty"];
 }
 
 message FeeInfo {
-  uint64 GasUsed = 1 [(gogoproto.jsontag) = "gasUsed"];
-  bytes  Fee = 2 [(gogoproto.jsontag) = "fee,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  uint64 GasUsed        = 1 [(gogoproto.jsontag) = "gasUsed"];
+  bytes  Fee            = 2 [(gogoproto.jsontag) = "fee,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
   bytes  InitialPaidFee = 3 [(gogoproto.jsontag) = "initialPaidFee,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
 }
 
 message TxInfo {
-  Transaction Transaction = 1 [(gogoproto.jsontag) = "transaction,omitempty"];
-  FeeInfo     FeeInfo = 2 [(gogoproto.jsontag) = "feeInfo,omitempty"];
+  Transaction Transaction    = 1 [(gogoproto.jsontag) = "transaction,omitempty"];
+  FeeInfo     FeeInfo        = 2 [(gogoproto.jsontag) = "feeInfo,omitempty"];
   uint32      ExecutionOrder = 3 [(gogoproto.jsontag) = "executionOrder"];
 }
 
 message SCRInfo {
   SmartContractResult SmartContractResult = 1 [(gogoproto.jsontag) = "smartContractResult,omitempty"];
-  FeeInfo             FeeInfo = 2 [(gogoproto.jsontag) = "feeInfo,omitempty"];
-  uint32              ExecutionOrder = 3 [(gogoproto.jsontag) = "executionOrder"];
+  FeeInfo             FeeInfo             = 2 [(gogoproto.jsontag) = "feeInfo,omitempty"];
+  uint32              ExecutionOrder      = 3 [(gogoproto.jsontag) = "executionOrder"];
 }
 
 message RewardInfo {
-  RewardTx Reward = 1 [(gogoproto.jsontag) = "reward,omitempty"];
+  RewardTx Reward         = 1 [(gogoproto.jsontag) = "reward,omitempty"];
   uint32   ExecutionOrder = 2 [(gogoproto.jsontag) = "executionOrder"];
+}
+
+message HeaderGasConsumption {
+  uint64 GasProvided    = 1 [(gogoproto.jsontag) = "gasProvided"];
+  uint64 GasRefunded    = 2 [(gogoproto.jsontag) = "gasRefunded"];
+  uint64 GasPenalized   = 3 [(gogoproto.jsontag) = "gasPenalized"];
+  uint64 MaxGasPerBlock = 4 [(gogoproto.jsontag) = "maxGasPerBlock"];
+}
+
+message ValidatorRatingInfo {
+  string  PublicKey = 1 [(gogoproto.jsontag) = "publicKey"];
+  float   Rating    = 2 [(gogoproto.jsontag) = "rating"];
+}
+
+message RoundInfo {
+  uint64 Index                   = 1 [(gogoproto.jsontag) = "index"];
+  repeated uint64 SignersIndexes = 2 [(gogoproto.jsontag) = "signersIndexes"];
+  bool BlockWasProposed          = 3 [(gogoproto.jsontag) = "blockWasProposed"];
+  uint32 ShardId                 = 4 [(gogoproto.jsontag) = "shardId"];
+  uint32 Epoch                   = 5 [(gogoproto.jsontag) = "epoch"];
+  uint64 Timestamp               = 6 [(gogoproto.jsontag) = "timestamp"];
 }

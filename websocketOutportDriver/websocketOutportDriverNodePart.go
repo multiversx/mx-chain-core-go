@@ -7,6 +7,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core/atomic"
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/alteredAccount"
 	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/marshal"
 	outportSenderData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
@@ -58,13 +59,8 @@ func NewWebsocketOutportDriverNodePart(args WebsocketOutportDriverNodePartArgs) 
 }
 
 // SaveBlock will send the provided block saving arguments within the websocket
-func (o *websocketOutportDriverNodePart) SaveBlock(args *outport.ArgsSaveBlockData) error {
-	argsSaveBlock := outportSenderData.ArgsSaveBlock{
-		HeaderType:        core.GetHeaderType(args.Header),
-		ArgsSaveBlockData: PrepareArgsSaveBlock(*args),
-	}
-
-	return o.handleAction(argsSaveBlock, outportSenderData.OperationSaveBlock)
+func (o *websocketOutportDriverNodePart) SaveBlock(args *outport.OutportBlock) error {
+	return o.handleAction(args, outportSenderData.OperationSaveBlock)
 }
 
 // RevertIndexedBlock will handle the action of reverting the indexed block
@@ -108,7 +104,7 @@ func (o *websocketOutportDriverNodePart) SaveValidatorsRating(indexID string, in
 }
 
 // SaveAccounts will handle the accounts' saving
-func (o *websocketOutportDriverNodePart) SaveAccounts(blockTimestamp uint64, acc map[string]*outport.AlteredAccount, shardID uint32) error {
+func (o *websocketOutportDriverNodePart) SaveAccounts(blockTimestamp uint64, acc map[string]*alteredAccount.AlteredAccount, shardID uint32) error {
 	args := outportSenderData.ArgsSaveAccounts{
 		BlockTimestamp: blockTimestamp,
 		Acc:            acc,
