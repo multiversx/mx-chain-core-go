@@ -81,8 +81,9 @@ message ValidatorRatingInfo {
 }
 
 message ValidatorsRating{
-  string   IndexID                                   = 1 [(gogoproto.jsontag) = "indexID"];
-  repeated ValidatorRatingInfo ValidatorsRatingInfo  = 2 [(gogoproto.jsontag) = "validatorsRatingInfo,omitempty"];
+  uint32                       ShardID               = 1 [(gogoproto.jsontag) = "shardID"];
+  uint32                       Epoch                 = 2 [(gogoproto.jsontag) = "epoch"];
+  repeated ValidatorRatingInfo ValidatorsRatingInfo  = 3 [(gogoproto.jsontag) = "validatorsRatingInfo,omitempty"];
 }
 
 message RoundInfo {
