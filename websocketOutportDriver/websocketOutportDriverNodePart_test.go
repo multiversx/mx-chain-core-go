@@ -136,7 +136,7 @@ func TestWebsocketOutportDriverNodePart_FinalizedBlock(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.FinalizedBlock([]byte("header hash"))
+		err = o.FinalizedBlock(&outport.FinalizedBlock{HeaderHash: []byte("header hash")})
 		require.True(t, errors.Is(err, cannotSendOnRouteErr))
 	})
 
@@ -150,7 +150,7 @@ func TestWebsocketOutportDriverNodePart_FinalizedBlock(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.FinalizedBlock([]byte("header hash"))
+		err = o.FinalizedBlock(&outport.FinalizedBlock{HeaderHash: []byte("header hash")})
 		require.NoError(t, err)
 	})
 }
@@ -168,7 +168,7 @@ func TestWebsocketOutportDriverNodePart_RevertIndexedBlock(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.RevertIndexedBlock(nil, nil)
+		err = o.RevertIndexedBlock(nil)
 		require.True(t, errors.Is(err, cannotSendOnRouteErr))
 	})
 
@@ -182,7 +182,7 @@ func TestWebsocketOutportDriverNodePart_RevertIndexedBlock(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.RevertIndexedBlock(nil, nil)
+		err = o.RevertIndexedBlock(nil)
 		require.NoError(t, err)
 	})
 }
@@ -200,7 +200,7 @@ func TestWebsocketOutportDriverNodePart_SaveAccounts(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.SaveAccounts(0, nil, 0)
+		err = o.SaveAccounts(nil)
 		require.True(t, errors.Is(err, cannotSendOnRouteErr))
 	})
 
@@ -214,7 +214,7 @@ func TestWebsocketOutportDriverNodePart_SaveAccounts(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.SaveAccounts(0, nil, 0)
+		err = o.SaveAccounts(nil)
 		require.NoError(t, err)
 	})
 }
@@ -264,7 +264,7 @@ func TestWebsocketOutportDriverNodePart_SaveValidatorsPubKeys(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.SaveValidatorsPubKeys(nil, 0)
+		err = o.SaveValidatorsPubKeys(nil)
 		require.True(t, errors.Is(err, cannotSendOnRouteErr))
 	})
 
@@ -278,7 +278,7 @@ func TestWebsocketOutportDriverNodePart_SaveValidatorsPubKeys(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.SaveValidatorsPubKeys(nil, 0)
+		err = o.SaveValidatorsPubKeys(nil)
 		require.NoError(t, err)
 	})
 }
@@ -296,7 +296,7 @@ func TestWebsocketOutportDriverNodePart_SaveValidatorsRating(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.SaveValidatorsRating("", nil)
+		err = o.SaveValidatorsRating(nil)
 		require.True(t, errors.Is(err, cannotSendOnRouteErr))
 	})
 
@@ -310,7 +310,7 @@ func TestWebsocketOutportDriverNodePart_SaveValidatorsRating(t *testing.T) {
 		o, err := NewWebsocketOutportDriverNodePart(args)
 		require.NoError(t, err)
 
-		err = o.SaveValidatorsRating("", nil)
+		err = o.SaveValidatorsRating(nil)
 		require.NoError(t, err)
 	})
 }

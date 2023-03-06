@@ -51,12 +51,12 @@ func doAction(server Driver) {
 		fmt.Println(err.Error())
 	}
 
-	err = server.SaveAccounts(1155, nil, 0)
+	err = server.SaveAccounts(&outport.Accounts{BlockTimestamp: 1155})
 	if err != nil {
 		fmt.Println(err.Error())
 	}
 
-	err = server.FinalizedBlock([]byte("reverted header hash"))
+	err = server.FinalizedBlock(&outport.FinalizedBlock{HeaderHash: []byte("reverted header hash")})
 	if err != nil {
 		fmt.Println(err.Error())
 	}
