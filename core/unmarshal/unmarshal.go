@@ -11,6 +11,7 @@ import (
 
 var errInvalidHeaderType = errors.New("invalid header type")
 
+// GetHeaderFromBytes will unmarshal the header bytes based on the header type
 func GetHeaderFromBytes(marshaller marshal.Marshalizer, headerType core.HeaderType, headerBytes []byte) (data.HeaderHandler, error) {
 	var header data.HeaderHandler
 
