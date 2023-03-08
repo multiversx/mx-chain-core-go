@@ -60,3 +60,11 @@ func TestTrieNodeVersionVerifier_IsValidVersion(t *testing.T) {
 		assert.False(t, vv.IsValidVersion(AutoBalanceEnabled+1))
 	})
 }
+
+func TestGetStringForVersion(t *testing.T) {
+	t.Parallel()
+
+	assert.Equal(t, "not specified", GetStringForVersion(NotSpecified))
+	assert.Equal(t, "auto balanced", GetStringForVersion(AutoBalanceEnabled))
+	assert.Equal(t, "unknown: 100", GetStringForVersion(100))
+}

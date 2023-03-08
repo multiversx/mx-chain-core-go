@@ -1,6 +1,8 @@
 package core
 
 import (
+	"strconv"
+
 	"github.com/multiversx/mx-chain-core-go/core/check"
 )
 
@@ -14,6 +16,18 @@ const (
 	// AutoBalanceEnabled is used for data tries, and only after the activation of AutoBalanceDataTriesEnableEpoch flag
 	AutoBalanceEnabled
 )
+
+// GetStringForVersion returns the string representation of the given trie node version
+func GetStringForVersion(version TrieNodeVersion) string {
+	switch version {
+	case NotSpecified:
+		return "not specified"
+	case AutoBalanceEnabled:
+		return "auto balanced"
+	default:
+		return "unknown: " + strconv.Itoa(int(version))
+	}
+}
 
 type trieNodeVersionVerifier struct {
 	enableEpochsHandler EnableEpochsHandler
