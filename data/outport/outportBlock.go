@@ -6,6 +6,6 @@ import "github.com/multiversx/mx-chain-core-go/data"
 
 // OutportBlockWithHeader will extend the OutportBlock structure
 type OutportBlockWithHeader struct {
-	OutportBlock
+	*OutportBlock
 	Header data.HeaderHandler
 }
