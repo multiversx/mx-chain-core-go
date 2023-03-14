@@ -104,7 +104,7 @@ message PubKeys {
 }
 
 message ValidatorsPubKeys{
-  map<string, PubKeys> ShardValidatorsPubKeys = 1 [(gogoproto.jsontag) = "validatorsPubKeys,omitempty"];
+  map<uint32, PubKeys> ShardValidatorsPubKeys = 1 [(gogoproto.jsontag) = "validatorsPubKeys,omitempty"];
   uint32               Epoch                  = 2 [(gogoproto.jsontag) = "epoch"];
 }
 
