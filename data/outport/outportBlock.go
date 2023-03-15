@@ -14,10 +14,22 @@ func (t *TxInfo) SetExecutionOrder(order uint32) {
 	t.ExecutionOrder = order
 }
 
+func (t *TxInfo) GetTxHandler() data.TransactionHandler {
+	return t.Transaction
+}
+
 func (s *SCRInfo) SetExecutionOrder(order uint32) {
 	s.ExecutionOrder = order
 }
 
+func (s *SCRInfo) GetTxHandler() data.TransactionHandler {
+	return s.SmartContractResult
+}
+
 func (r *RewardInfo) SetExecutionOrder(order uint32) {
 	r.ExecutionOrder = order
+}
+
+func (r *RewardInfo) GetTxHandler() data.TransactionHandler {
+	return r.Reward
 }

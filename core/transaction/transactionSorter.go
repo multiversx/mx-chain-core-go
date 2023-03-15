@@ -37,7 +37,7 @@ func SortTransactionsBySenderAndNonceWithFrontRunningProtection(transactions []d
 // TODO remove duplicated function when will use the version of mx-chain-go which exports transaction order during processing
 
 // SortTransactionsBySenderAndNonceWithFrontRunningProtectionExtendedTransactions - sorts the transactions by address and randomness source to protect from front running
-func SortTransactionsBySenderAndNonceWithFrontRunningProtectionExtendedTransactions(transactions []data.TransactionHandlerWithGasUsedAndFee, hasher hashing.Hasher, randomness []byte) {
+func SortTransactionsBySenderAndNonceWithFrontRunningProtectionExtendedTransactions(transactions []data.TransactionHandler, hasher hashing.Hasher, randomness []byte) {
 	// make sure randomness is 32bytes and uniform
 	randSeed := hasher.Compute(string(randomness))
 	xoredAddresses := make(map[string][]byte)
@@ -80,7 +80,7 @@ func SortTransactionsBySenderAndNonce(transactions []data.TransactionHandler) {
 }
 
 // SortTransactionsBySenderAndNonceExtendedTransactions - sorts the transactions by address without the front running protection
-func SortTransactionsBySenderAndNonceExtendedTransactions(transactions []data.TransactionHandlerWithGasUsedAndFee) {
+func SortTransactionsBySenderAndNonceExtendedTransactions(transactions []data.TransactionHandler) {
 	sorter := func(i, j int) bool {
 		txI := transactions[i]
 		txJ := transactions[j]
