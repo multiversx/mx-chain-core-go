@@ -78,11 +78,13 @@ type CommonHeaderHandler interface {
 	IsInterfaceNil() bool
 }
 
-// ValidatorStatisticsInfoHandler simple handler needed for validator info
-type ValidatorStatisticsInfoHandler interface {
+// SovereignChainHeaderHandler defines getters and setters for the sovereign chain header
+type SovereignChainHeaderHandler interface {
+	CommonHeaderHandler
 	SetValidatorStatsRootHash(rHash []byte) error
 	GetValidatorStatsRootHash() []byte
-	IsInterfaceNil() bool
+	SetMainChainShardHeaderHashes(hdrHashes [][]byte) error
+	GetMainChainShardHeaderHashes() [][]byte
 }
 
 // HeaderHandler defines getters and setters for header data holder
@@ -411,4 +413,11 @@ type UserAccountHandler interface {
 	GetNonce() uint64
 	AddressBytes() []byte
 	IsInterfaceNil() bool
+}
+
+// ShardHeaderExtendedHandler extends ShardHeaderHandler interface, by also including incoming mini blocks needed by sovereign chain
+type ShardHeaderExtendedHandler interface {
+	ShardHeaderHandler
+	GetIncomingMiniBlockHeaderHandlers() []MiniBlockHeaderHandler
+	SetIncomingMiniBlockHeaderHandlers(mbHeaderHandlers []MiniBlockHeaderHandler) error
 }
