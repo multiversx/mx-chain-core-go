@@ -40,6 +40,9 @@ const AllShardId = uint32(0xFFFFFFF0)
 // MegabyteSize represents the size in bytes of a megabyte
 const MegabyteSize = 1024 * 1024
 
+// MaxMachineIDLen is the maximum machine ID length
+const MaxMachineIDLen = 10
+
 // BuiltInFunctionClaimDeveloperRewards is the key for the claim developer rewards built-in function
 const BuiltInFunctionClaimDeveloperRewards = "ClaimDeveloperRewards"
 
