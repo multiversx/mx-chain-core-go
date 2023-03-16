@@ -262,7 +262,7 @@ func (she *ShardHeaderExtended) GetEpochStartMetaHash() []byte {
 	return she.Header.GetEpochStartMetaHash()
 }
 
-// SetNonce sets header nonce
+// SetNonce sets the header nonce
 func (she *ShardHeaderExtended) SetNonce(n uint64) error {
 	if she == nil {
 		return data.ErrNilPointerReceiver
@@ -274,7 +274,7 @@ func (she *ShardHeaderExtended) SetNonce(n uint64) error {
 	return she.Header.SetNonce(n)
 }
 
-// SetEpoch sets header epoch
+// SetEpoch sets the header epoch
 func (she *ShardHeaderExtended) SetEpoch(e uint32) error {
 	if she == nil {
 		return data.ErrNilPointerReceiver
@@ -286,7 +286,7 @@ func (she *ShardHeaderExtended) SetEpoch(e uint32) error {
 	return she.Header.SetEpoch(e)
 }
 
-// SetRound sets header round
+// SetRound sets the header round
 func (she *ShardHeaderExtended) SetRound(r uint64) error {
 	if she == nil {
 		return data.ErrNilPointerReceiver
@@ -298,7 +298,7 @@ func (she *ShardHeaderExtended) SetRound(r uint64) error {
 	return she.Header.SetRound(r)
 }
 
-// SetRootHash sets root hash
+// SetRootHash sets the root hash
 func (she *ShardHeaderExtended) SetRootHash(rHash []byte) error {
 	if she == nil {
 		return data.ErrNilPointerReceiver
@@ -310,12 +310,12 @@ func (she *ShardHeaderExtended) SetRootHash(rHash []byte) error {
 	return she.Header.SetRootHash(rHash)
 }
 
-// SetValidatorStatsRootHash sets the root hash for the validator statistics trie
+// SetValidatorStatsRootHash does nothing and returns nil
 func (she *ShardHeaderExtended) SetValidatorStatsRootHash(_ []byte) error {
 	return nil
 }
 
-// SetPrevHash sets prev hash
+// SetPrevHash sets the previous hash
 func (she *ShardHeaderExtended) SetPrevHash(pvHash []byte) error {
 	if she == nil {
 		return data.ErrNilPointerReceiver
@@ -327,7 +327,7 @@ func (she *ShardHeaderExtended) SetPrevHash(pvHash []byte) error {
 	return she.Header.SetPrevHash(pvHash)
 }
 
-// SetPrevRandSeed sets previous random seed
+// SetPrevRandSeed sets the previous random seed
 func (she *ShardHeaderExtended) SetPrevRandSeed(pvRandSeed []byte) error {
 	if she == nil {
 		return data.ErrNilPointerReceiver
@@ -339,7 +339,7 @@ func (she *ShardHeaderExtended) SetPrevRandSeed(pvRandSeed []byte) error {
 	return she.Header.SetPrevRandSeed(pvRandSeed)
 }
 
-// SetRandSeed sets previous random seed
+// SetRandSeed sets the random seed
 func (she *ShardHeaderExtended) SetRandSeed(randSeed []byte) error {
 	if she == nil {
 		return data.ErrNilPointerReceiver
@@ -351,7 +351,7 @@ func (she *ShardHeaderExtended) SetRandSeed(randSeed []byte) error {
 	return she.Header.SetRandSeed(randSeed)
 }
 
-// SetPubKeysBitmap sets public key bitmap
+// SetPubKeysBitmap sets the public key bitmap
 func (she *ShardHeaderExtended) SetPubKeysBitmap(pkbm []byte) error {
 	if she == nil {
 		return data.ErrNilPointerReceiver
@@ -363,7 +363,7 @@ func (she *ShardHeaderExtended) SetPubKeysBitmap(pkbm []byte) error {
 	return she.Header.SetPubKeysBitmap(pkbm)
 }
 
-// SetSignature sets header signature
+// SetSignature sets the header signature
 func (she *ShardHeaderExtended) SetSignature(sg []byte) error {
 	if she == nil {
 		return data.ErrNilPointerReceiver
@@ -375,7 +375,7 @@ func (she *ShardHeaderExtended) SetSignature(sg []byte) error {
 	return she.Header.SetSignature(sg)
 }
 
-// SetLeaderSignature will set the leader's signature
+// SetLeaderSignature sets the leader's signature
 func (she *ShardHeaderExtended) SetLeaderSignature(sg []byte) error {
 	if she == nil {
 		return data.ErrNilPointerReceiver
@@ -411,7 +411,7 @@ func (she *ShardHeaderExtended) SetSoftwareVersion(version []byte) error {
 	return she.Header.SetSoftwareVersion(version)
 }
 
-// SetTimeStamp sets header timestamp
+// SetTimeStamp sets the header timestamp
 func (she *ShardHeaderExtended) SetTimeStamp(ts uint64) error {
 	if she == nil {
 		return data.ErrNilPointerReceiver
@@ -459,7 +459,7 @@ func (she *ShardHeaderExtended) SetTxCount(txCount uint32) error {
 	return she.Header.SetTxCount(txCount)
 }
 
-// SetShardID sets header shard ID
+// SetShardID sets the header shard ID
 func (she *ShardHeaderExtended) SetShardID(shId uint32) error {
 	if she == nil {
 		return data.ErrNilPointerReceiver
@@ -471,7 +471,7 @@ func (she *ShardHeaderExtended) SetShardID(shId uint32) error {
 	return she.Header.SetShardID(shId)
 }
 
-// GetMiniBlockHeadersWithDst as a map of hashes and sender IDs
+// GetMiniBlockHeadersWithDst gets the map of miniBlockHeader hashes and sender IDs
 func (she *ShardHeaderExtended) GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32 {
 	if she == nil {
 		return nil
@@ -483,7 +483,7 @@ func (she *ShardHeaderExtended) GetMiniBlockHeadersWithDst(destId uint32) map[st
 	return she.Header.GetMiniBlockHeadersWithDst(destId)
 }
 
-// GetOrderedCrossMiniblocksWithDst gets all cross miniblocks with the given destination shard ID, ordered in a
+// GetOrderedCrossMiniblocksWithDst gets all the cross miniBlocks with the given destination shard ID, ordered in a
 // chronological way, taking into consideration the round in which they were created/executed in the sender shard
 func (she *ShardHeaderExtended) GetOrderedCrossMiniblocksWithDst(destId uint32) []*data.MiniBlockInfo {
 	if she == nil {
@@ -496,7 +496,7 @@ func (she *ShardHeaderExtended) GetOrderedCrossMiniblocksWithDst(destId uint32) 
 	return she.Header.GetOrderedCrossMiniblocksWithDst(destId)
 }
 
-// GetMiniBlockHeadersHashes gets the miniblock hashes
+// GetMiniBlockHeadersHashes gets the miniBlock hashes
 func (she *ShardHeaderExtended) GetMiniBlockHeadersHashes() [][]byte {
 	if she == nil {
 		return nil
@@ -508,7 +508,7 @@ func (she *ShardHeaderExtended) GetMiniBlockHeadersHashes() [][]byte {
 	return she.Header.GetMiniBlockHeadersHashes()
 }
 
-// MapMiniBlockHashesToShards is a map of mini block hashes and sender IDs
+// MapMiniBlockHashesToShards gets the map of miniBlock hashes and sender IDs
 func (she *ShardHeaderExtended) MapMiniBlockHashesToShards() map[string]uint32 {
 	if she == nil {
 		return nil
@@ -553,7 +553,7 @@ func (she *ShardHeaderExtended) IsStartOfEpochBlock() bool {
 	return she.Header.IsStartOfEpochBlock()
 }
 
-// GetBlockBodyTypeInt32 returns the block body type as int32
+// GetBlockBodyTypeInt32 returns the blockBody type as int32
 func (she *ShardHeaderExtended) GetBlockBodyTypeInt32() int32 {
 	if she == nil {
 		return -1
@@ -821,9 +821,9 @@ func (she *ShardHeaderExtended) GetAdditionalData() headerVersionData.HeaderAddi
 	return additionalVersionData
 }
 
-// GetValidatorStatsRootHash returns the root hash for the validator statistics trie
+// GetValidatorStatsRootHash returns an empty byte slice
 func (she *ShardHeaderExtended) GetValidatorStatsRootHash() []byte {
-	return []byte{}
+	return make([]byte, 0)
 }
 
 // CheckFieldsForNil checks a predefined set of fields for nil values

@@ -9,27 +9,27 @@ import (
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
 )
 
-// GetAdditionalData returns nil
+// GetAdditionalData returns nil for the sovereign chain header
 func (sch *SovereignChainHeader) GetAdditionalData() headerVersionData.HeaderAdditionalData {
 	return nil
 }
 
-// HasScheduledMiniBlocks returns false
+// HasScheduledMiniBlocks returns false for the sovereign chain header
 func (sch *SovereignChainHeader) HasScheduledMiniBlocks() bool {
 	return false
 }
 
-// SetScheduledRootHash returns nil
+// SetScheduledRootHash does nothing and returns nil for the sovereign chain header
 func (sch *SovereignChainHeader) SetScheduledRootHash(_ []byte) error {
 	return nil
 }
 
-// SetAdditionalData will not do anything
+// SetAdditionalData does nothing and returns nil for the sovereign chain header
 func (sch *SovereignChainHeader) SetAdditionalData(_ headerVersionData.HeaderAdditionalData) error {
 	return nil
 }
 
-// ShallowClone  will return a clone of the object
+// ShallowClone returns a clone of the object
 func (sch *SovereignChainHeader) ShallowClone() data.HeaderHandler {
 	if sch == nil || sch.Header == nil {
 		return nil
@@ -42,7 +42,7 @@ func (sch *SovereignChainHeader) ShallowClone() data.HeaderHandler {
 	return &headerCopy
 }
 
-// GetShardID returns the header shardID
+// GetShardID returns 0 as the shardID for the sovereign chain header
 func (sch *SovereignChainHeader) GetShardID() uint32 {
 	return 0
 }
@@ -227,7 +227,7 @@ func (sch *SovereignChainHeader) GetEpochStartMetaHash() []byte {
 	return sch.Header.GetEpochStartMetaHash()
 }
 
-// SetNonce sets header nonce
+// SetNonce sets the header nonce
 func (sch *SovereignChainHeader) SetNonce(n uint64) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
@@ -235,7 +235,7 @@ func (sch *SovereignChainHeader) SetNonce(n uint64) error {
 	return sch.Header.SetNonce(n)
 }
 
-// SetEpoch sets header epoch
+// SetEpoch sets the header epoch
 func (sch *SovereignChainHeader) SetEpoch(e uint32) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
@@ -244,7 +244,7 @@ func (sch *SovereignChainHeader) SetEpoch(e uint32) error {
 	return sch.Header.SetEpoch(e)
 }
 
-// SetRound sets header round
+// SetRound sets the header round
 func (sch *SovereignChainHeader) SetRound(r uint64) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
@@ -253,7 +253,7 @@ func (sch *SovereignChainHeader) SetRound(r uint64) error {
 	return sch.Header.SetRound(r)
 }
 
-// SetRootHash sets root hash
+// SetRootHash sets the root hash
 func (sch *SovereignChainHeader) SetRootHash(rHash []byte) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
@@ -262,7 +262,7 @@ func (sch *SovereignChainHeader) SetRootHash(rHash []byte) error {
 	return sch.Header.SetRootHash(rHash)
 }
 
-// SetPrevHash sets prev hash
+// SetPrevHash sets the previous hash
 func (sch *SovereignChainHeader) SetPrevHash(pvHash []byte) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
@@ -271,7 +271,7 @@ func (sch *SovereignChainHeader) SetPrevHash(pvHash []byte) error {
 	return sch.Header.SetPrevHash(pvHash)
 }
 
-// SetPrevRandSeed sets previous random seed
+// SetPrevRandSeed sets the previous random seed
 func (sch *SovereignChainHeader) SetPrevRandSeed(pvRandSeed []byte) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
@@ -280,7 +280,7 @@ func (sch *SovereignChainHeader) SetPrevRandSeed(pvRandSeed []byte) error {
 	return sch.Header.SetPrevRandSeed(pvRandSeed)
 }
 
-// SetRandSeed sets previous random seed
+// SetRandSeed sets the random seed
 func (sch *SovereignChainHeader) SetRandSeed(randSeed []byte) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
@@ -289,7 +289,7 @@ func (sch *SovereignChainHeader) SetRandSeed(randSeed []byte) error {
 	return sch.Header.SetRandSeed(randSeed)
 }
 
-// SetPubKeysBitmap sets public key bitmap
+// SetPubKeysBitmap sets the public key bitmap
 func (sch *SovereignChainHeader) SetPubKeysBitmap(pkbm []byte) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
@@ -298,7 +298,7 @@ func (sch *SovereignChainHeader) SetPubKeysBitmap(pkbm []byte) error {
 	return sch.Header.SetPubKeysBitmap(pkbm)
 }
 
-// SetSignature sets header signature
+// SetSignature sets the header signature
 func (sch *SovereignChainHeader) SetSignature(sg []byte) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
@@ -307,7 +307,7 @@ func (sch *SovereignChainHeader) SetSignature(sg []byte) error {
 	return sch.Header.SetSignature(sg)
 }
 
-// SetLeaderSignature will set the leader's signature
+// SetLeaderSignature sets the leader's signature
 func (sch *SovereignChainHeader) SetLeaderSignature(sg []byte) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
@@ -334,7 +334,7 @@ func (sch *SovereignChainHeader) SetSoftwareVersion(version []byte) error {
 	return sch.Header.SetSoftwareVersion(version)
 }
 
-// SetTimeStamp sets header timestamp
+// SetTimeStamp sets the header timestamp
 func (sch *SovereignChainHeader) SetTimeStamp(ts uint64) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
@@ -370,7 +370,7 @@ func (sch *SovereignChainHeader) SetTxCount(txCount uint32) error {
 	return sch.Header.SetTxCount(txCount)
 }
 
-// SetShardID sets header shard ID
+// SetShardID does nothing and returns nil for the sovereign chain header
 func (sch *SovereignChainHeader) SetShardID(_ uint32) error {
 	return nil
 }
@@ -406,7 +406,7 @@ func (sch *SovereignChainHeader) GetMiniBlockHeadersWithDst(destId uint32) map[s
 	return sch.Header.GetMiniBlockHeadersWithDst(destId)
 }
 
-// GetOrderedCrossMiniblocksWithDst gets all cross miniblocks with the given destination shard ID, ordered in a
+// GetOrderedCrossMiniblocksWithDst gets all the cross miniblocks with the given destination shard ID, ordered in a
 // chronological way, taking into consideration the round in which they were created/executed in the sender shard
 func (sch *SovereignChainHeader) GetOrderedCrossMiniblocksWithDst(destId uint32) []*data.MiniBlockInfo {
 	if sch == nil {
@@ -416,7 +416,7 @@ func (sch *SovereignChainHeader) GetOrderedCrossMiniblocksWithDst(destId uint32)
 	return sch.Header.GetOrderedCrossMiniblocksWithDst(destId)
 }
 
-// GetMiniBlockHeadersHashes gets the miniblock hashes
+// GetMiniBlockHeadersHashes gets the miniBlock hashes
 func (sch *SovereignChainHeader) GetMiniBlockHeadersHashes() [][]byte {
 	if sch == nil {
 		return nil
@@ -425,7 +425,7 @@ func (sch *SovereignChainHeader) GetMiniBlockHeadersHashes() [][]byte {
 	return sch.Header.GetMiniBlockHeadersHashes()
 }
 
-// MapMiniBlockHashesToShards is a map of mini block hashes and sender IDs
+// MapMiniBlockHashesToShards gets the map of miniBlock hashes and sender IDs
 func (sch *SovereignChainHeader) MapMiniBlockHashesToShards() map[string]uint32 {
 	if sch == nil {
 		return nil
@@ -439,12 +439,12 @@ func (sch *SovereignChainHeader) IsInterfaceNil() bool {
 	return sch == nil
 }
 
-// IsStartOfEpochBlock verifies if the block is of type start of epoch
+// IsStartOfEpochBlock returns false for the sovereign chain header
 func (sch *SovereignChainHeader) IsStartOfEpochBlock() bool {
 	return false
 }
 
-// GetBlockBodyTypeInt32 returns the block body type as int32
+// GetBlockBodyTypeInt32 returns the blockBody type as int32
 func (sch *SovereignChainHeader) GetBlockBodyTypeInt32() int32 {
 	if sch == nil {
 		return -1
@@ -498,12 +498,12 @@ func (sch *SovereignChainHeader) SetEpochStartMetaHash(hash []byte) error {
 	return sch.Header.SetEpochStartMetaHash(hash)
 }
 
-// HasScheduledSupport returns false for sovereign chain header
+// HasScheduledSupport returns false for the sovereign chain header
 func (sch *SovereignChainHeader) HasScheduledSupport() bool {
 	return false
 }
 
-// ValidateHeaderVersion does extra validation for header version
+// ValidateHeaderVersion does extra validation for the header version
 func (sch *SovereignChainHeader) ValidateHeaderVersion() error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
