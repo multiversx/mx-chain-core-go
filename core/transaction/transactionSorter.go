@@ -37,23 +37,27 @@ func SortTransactionsBySenderAndNonceWithFrontRunningProtection(transactions []d
 // TODO remove duplicated function when will use the version of mx-chain-go which exports transaction order during processing
 
 // SortTransactionsBySenderAndNonceWithFrontRunningProtectionExtendedTransactions - sorts the transactions by address and randomness source to protect from front running
-func SortTransactionsBySenderAndNonceWithFrontRunningProtectionExtendedTransactions(transactions []data.TransactionHandler, hasher hashing.Hasher, randomness []byte) {
+func SortTransactionsBySenderAndNonceWithFrontRunningProtectionExtendedTransactions(transactions []data.TxWithExecutionOrderHandler, hasher hashing.Hasher, randomness []byte) {
 	// make sure randomness is 32bytes and uniform
 	randSeed := hasher.Compute(string(randomness))
 	xoredAddresses := make(map[string][]byte)
 
 	for _, tx := range transactions {
-		xoredBytes := xorBytes(tx.GetSndAddr(), randSeed)
-		xoredAddresses[string(tx.GetSndAddr())] = hasher.Compute(string(xoredBytes))
+		txHandler := tx.GetTxHandler()
+
+		xoredBytes := xorBytes(txHandler.GetSndAddr(), randSeed)
+		xoredAddresses[string(txHandler.GetSndAddr())] = hasher.Compute(string(xoredBytes))
 	}
 
 	sorter := func(i, j int) bool {
 		txI := transactions[i]
 		txJ := transactions[j]
+		txIHandler := txI.GetTxHandler()
+		txJHandler := txJ.GetTxHandler()
 
-		delta := bytes.Compare(xoredAddresses[string(txI.GetSndAddr())], xoredAddresses[string(txJ.GetSndAddr())])
+		delta := bytes.Compare(xoredAddresses[string(txIHandler.GetSndAddr())], xoredAddresses[string(txJHandler.GetSndAddr())])
 		if delta == 0 {
-			delta = int(txI.GetNonce()) - int(txJ.GetNonce())
+			delta = int(txIHandler.GetNonce()) - int(txJHandler.GetNonce())
 		}
 
 		return delta < 0
@@ -80,14 +84,16 @@ func SortTransactionsBySenderAndNonce(transactions []data.TransactionHandler) {
 }
 
 // SortTransactionsBySenderAndNonceExtendedTransactions - sorts the transactions by address without the front running protection
-func SortTransactionsBySenderAndNonceExtendedTransactions(transactions []data.TransactionHandler) {
+func SortTransactionsBySenderAndNonceExtendedTransactions(transactions []data.TxWithExecutionOrderHandler) {
 	sorter := func(i, j int) bool {
 		txI := transactions[i]
 		txJ := transactions[j]
+		txIHandler := txI.GetTxHandler()
+		txJHandler := txJ.GetTxHandler()
 
-		delta := bytes.Compare(txI.GetSndAddr(), txJ.GetSndAddr())
+		delta := bytes.Compare(txIHandler.GetSndAddr(), txJHandler.GetSndAddr())
 		if delta == 0 {
-			delta = int(txI.GetNonce()) - int(txJ.GetNonce())
+			delta = int(txIHandler.GetNonce()) - int(txJHandler.GetNonce())
 		}
 
 		return delta < 0
