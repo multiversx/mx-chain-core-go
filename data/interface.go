@@ -78,6 +78,13 @@ type CommonHeaderHandler interface {
 	IsInterfaceNil() bool
 }
 
+// ValidatorStatisticsInfoHandler is a simple handler needed for validator statistics info
+type ValidatorStatisticsInfoHandler interface {
+	SetValidatorStatsRootHash(rootHash []byte) error
+	GetValidatorStatsRootHash() []byte
+	IsInterfaceNil() bool
+}
+
 // SovereignChainHeaderHandler defines getters and setters for the sovereign chain header
 type SovereignChainHeaderHandler interface {
 	CommonHeaderHandler
