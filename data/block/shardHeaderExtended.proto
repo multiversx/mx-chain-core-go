@@ -1,0 +1,17 @@
+// This file holds the data structures related with the functionality of an extended shard header needed by sovereign chain
+syntax = "proto3";
+
+package proto;
+
+option go_package = "block";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "block.proto";
+import "blockV2.proto";
+
+// ShardHeaderExtended extends the HeaderV2 structure with extra fields needed by sovereign chain
+message ShardHeaderExtended {
+  HeaderV2  Header = 1;
+  repeated MiniBlockHeader IncomingMiniBlockHeaders = 2 [(gogoproto.nullable) = false];
+}
