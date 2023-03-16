@@ -80,7 +80,7 @@ type CommonHeaderHandler interface {
 
 // ValidatorStatisticsInfoHandler is a simple handler needed for validator statistics info
 type ValidatorStatisticsInfoHandler interface {
-	SetValidatorStatsRootHash(rHash []byte) error
+	SetValidatorStatsRootHash(rootHash []byte) error
 	GetValidatorStatsRootHash() []byte
 	IsInterfaceNil() bool
 }
