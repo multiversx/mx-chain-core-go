@@ -301,6 +301,12 @@ type TransactionHandlerWithGasUsedAndFee interface {
 	GetExecutionOrder() int
 }
 
+type TxWithExecutionOrderHandler interface {
+	SetExecutionOrder(order uint32)
+	GetExecutionOrder() uint32
+	GetTxHandler() TransactionHandler
+}
+
 // LogHandler defines the type for a log resulted from executing a transaction or smart contract call
 type LogHandler interface {
 	// GetAddress returns the address of the sc that was originally called by the user
