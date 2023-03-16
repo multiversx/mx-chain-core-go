@@ -386,7 +386,7 @@ func (hv *HeaderWithValidatorStats) SetValidatorStatsRootHash(rHash []byte) erro
 	return nil
 }
 
-// GetMiniBlockHeadersWithDst as a map of hashes and sender IDs
+// GetMiniBlockHeadersWithDst returns the miniblocks headers hashes for the destination shard
 func (hv *HeaderWithValidatorStats) GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32 {
 	if hv == nil {
 		return nil
@@ -487,7 +487,7 @@ func (hv *HeaderWithValidatorStats) SetEpochStartMetaHash(hash []byte) error {
 	return hv.Header.SetEpochStartMetaHash(hash)
 }
 
-// HasScheduledSupport returns true as the second block version does support scheduled data
+// HasScheduledSupport returns true for headerWithValidatorStats
 func (hv *HeaderWithValidatorStats) HasScheduledSupport() bool {
 	return false
 }
