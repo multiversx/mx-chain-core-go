@@ -81,7 +81,7 @@ type CommonHeaderHandler interface {
 // SovereignChainHeaderHandler defines getters and setters for the sovereign chain header
 type SovereignChainHeaderHandler interface {
 	CommonHeaderHandler
-	SetValidatorStatsRootHash(rHash []byte) error
+	SetValidatorStatsRootHash(rootHash []byte) error
 	GetValidatorStatsRootHash() []byte
 	SetMainChainShardHeaderHashes(hdrHashes [][]byte) error
 	GetMainChainShardHeaderHashes() [][]byte

@@ -376,12 +376,12 @@ func (sch *SovereignChainHeader) SetShardID(_ uint32) error {
 }
 
 // SetValidatorStatsRootHash sets the root hash for the validator statistics trie
-func (sch *SovereignChainHeader) SetValidatorStatsRootHash(rHash []byte) error {
+func (sch *SovereignChainHeader) SetValidatorStatsRootHash(rootHash []byte) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
 	}
 
-	sch.ValidatorStatsRootHash = rHash
+	sch.ValidatorStatsRootHash = rootHash
 
 	return nil
 }
@@ -397,7 +397,7 @@ func (sch *SovereignChainHeader) SetMainChainShardHeaderHashes(hdrHashes [][]byt
 	return nil
 }
 
-// GetMiniBlockHeadersWithDst as a map of hashes and sender IDs
+// GetMiniBlockHeadersWithDst returns the miniblocks headers hashes for the destination shard
 func (sch *SovereignChainHeader) GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32 {
 	if sch == nil {
 		return nil
@@ -498,7 +498,7 @@ func (sch *SovereignChainHeader) SetEpochStartMetaHash(hash []byte) error {
 	return sch.Header.SetEpochStartMetaHash(hash)
 }
 
-// HasScheduledSupport returns true as the second block version does support scheduled data
+// HasScheduledSupport returns false for sovereign chain header
 func (sch *SovereignChainHeader) HasScheduledSupport() bool {
 	return false
 }
