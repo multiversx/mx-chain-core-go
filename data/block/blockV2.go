@@ -234,6 +234,11 @@ func (hv2 *HeaderV2) SetRootHash(rHash []byte) error {
 	return hv2.Header.SetRootHash(rHash)
 }
 
+// SetValidatorStatsRootHash sets the root hash for the validator statistics trie
+func (hv2 *HeaderV2) SetValidatorStatsRootHash(_ []byte) error {
+	return nil
+}
+
 // SetPrevHash sets prev hash
 func (hv2 *HeaderV2) SetPrevHash(pvHash []byte) error {
 	if hv2 == nil {
@@ -629,6 +634,11 @@ func (hv2 *HeaderV2) GetAdditionalData() headerVersionData.HeaderAdditionalData 
 		ScheduledGasRefunded:     hv2.GetScheduledGasRefunded(),
 	}
 	return additionalVersionData
+}
+
+// GetValidatorStatsRootHash returns the root hash for the validator statistics trie
+func (hv2 *HeaderV2) GetValidatorStatsRootHash() []byte {
+	return []byte{}
 }
 
 // CheckFieldsForNil checks a predefined set of fields for nil values

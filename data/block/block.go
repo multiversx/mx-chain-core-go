@@ -64,7 +64,8 @@ func (h *Header) SetRootHash(rHash []byte) error {
 }
 
 // SetValidatorStatsRootHash sets the root hash for the validator statistics trie
-func (h *Header) SetValidatorStatsRootHash(_ []byte) {
+func (h *Header) SetValidatorStatsRootHash(_ []byte) error {
+	return nil
 }
 
 // SetPrevHash sets prev hash
@@ -75,11 +76,6 @@ func (h *Header) SetPrevHash(pvHash []byte) error {
 
 	h.PrevHash = pvHash
 	return nil
-}
-
-// GetValidatorStatsRootHash returns the root hash for the validator statistics trie
-func (h *Header) GetValidatorStatsRootHash() []byte {
-	return []byte{}
 }
 
 // SetPrevRandSeed sets previous random seed
@@ -385,6 +381,39 @@ func (h *Header) ValidateHeaderVersion() error {
 	return nil
 }
 
+// Clone creates a clones the miniblock
+func (m *MiniBlock) Clone() data.MiniBlockHandler {
+	if m == nil {
+		return nil
+	}
+
+	return m.DeepClone()
+}
+
+// IsInterfaceNil returns true if underlying object is nil
+func (m *MiniBlock) IsInterfaceNil() bool {
+	return m == nil
+}
+
+// SetMiniBlocks will set a new set of miniblocks
+func (b *Body) SetMiniBlocks(miniBlocks []data.MiniBlockHandler) error {
+	if b == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	b.MiniBlocks = make([]*MiniBlock, len(miniBlocks))
+	for i, mb := range miniBlocks {
+		mbHandlerClone := mb.Clone()
+		mbClone, ok := mbHandlerClone.(*MiniBlock)
+		if !ok {
+			return data.ErrWrongTypeAssertion
+		}
+		b.MiniBlocks[i] = mbClone
+	}
+
+	return nil
+}
+
 // IntegrityAndValidity checks if data is valid
 func (b *Body) IntegrityAndValidity() error {
 	if b == nil {
@@ -416,8 +445,8 @@ func (b *Body) IsInterfaceNil() bool {
 	return b == nil
 }
 
-// Clone the underlying data
-func (mb *MiniBlock) Clone() *MiniBlock {
+// DeepClone the underlying data
+func (mb *MiniBlock) DeepClone() *MiniBlock {
 	if mb == nil {
 		return nil
 	}
@@ -581,6 +610,11 @@ func (h *Header) HasScheduledMiniBlocks() bool {
 func (h *Header) GetAdditionalData() headerVersionData.HeaderAdditionalData {
 	// no extra data for the initial version of shard block header
 	return nil
+}
+
+// GetValidatorStatsRootHash returns the root hash for the validator statistics trie
+func (h *Header) GetValidatorStatsRootHash() []byte {
+	return []byte{}
 }
 
 // CheckFieldsForNil checks a predefined set of fields for nil values
