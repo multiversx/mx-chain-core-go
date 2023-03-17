@@ -2,12 +2,21 @@
 
 package outport
 
-import "github.com/multiversx/mx-chain-core-go/data"
+import (
+	"github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/block"
+)
 
 // OutportBlockWithHeader will extend the OutportBlock structure
 type OutportBlockWithHeader struct {
 	*OutportBlock
 	Header data.HeaderHandler
+}
+
+type HeaderDataWithBody struct {
+	Body       *block.Body
+	Header     data.HeaderHandler
+	HeaderHash []byte
 }
 
 func (t *TxInfo) SetExecutionOrder(order uint32) {
