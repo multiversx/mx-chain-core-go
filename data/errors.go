@@ -81,9 +81,3 @@ var ErrWrongTransactionsTypeSize = errors.New("wrong transactions type size")
 
 // ErrNilReservedField signals that a nil reserved field was provided
 var ErrNilReservedField = errors.New("reserved field is nil")
-
-var errInvalidHeaderType = errors.New("received invalid/unknown header type")
-
-var errNilBodyHandler = errors.New("nil body handler")
-
-var errCannotCastBlockBody = errors.New("cannot cast block body")
