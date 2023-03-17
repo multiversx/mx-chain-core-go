@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/multiversx/mx-chain-core-go/data/outport"
+	"github.com/multiversx/mx-chain-core-go/marshal"
 )
 
 // Driver is an interface for saving node specific data to other storage.
@@ -14,6 +15,7 @@ type Driver interface {
 	SaveValidatorsRating(validatorsRating *outport.ValidatorsRating) error
 	SaveAccounts(accounts *outport.Accounts) error
 	FinalizedBlock(finalizedBlock *outport.FinalizedBlock) error
+	GetMarshaller() marshal.Marshalizer
 	Close() error
 	IsInterfaceNil() bool
 }
