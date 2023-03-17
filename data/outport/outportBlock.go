@@ -12,17 +12,17 @@ type OutportBlockWithHeader struct {
 	Header data.HeaderHandler
 }
 
-// OutportBlockWithHeaderAndBody is a wrapper for OutportBlock used for outport handler
-type OutportBlockWithHeaderAndBody struct {
-	*OutportBlock
-	Header data.HeaderHandler
-	Body   data.BodyHandler
-}
-
+// HeaderDataWithBody holds header and body data
 type HeaderDataWithBody struct {
 	Body       data.BodyHandler
 	Header     data.HeaderHandler
 	HeaderHash []byte
+}
+
+// OutportBlockWithHeaderAndBody is a wrapper for OutportBlock used for outport handler
+type OutportBlockWithHeaderAndBody struct {
+	*OutportBlock
+	HeaderDataWithBody *HeaderDataWithBody
 }
 
 func (t *TxInfo) SetExecutionOrder(order uint32) {
