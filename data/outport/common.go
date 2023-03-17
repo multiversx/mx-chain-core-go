@@ -10,6 +10,10 @@ import (
 
 // GetHeaderBytesAndType returns the marshalled header bytes along with header type, if known
 func GetHeaderBytesAndType(marshaller marshal.Marshalizer, headerHandler data.HeaderHandler) ([]byte, core.HeaderType, error) {
+	if check.IfNil(marshaller) {
+		return nil, "", core.ErrNilMarshalizer
+	}
+
 	var err error
 	var headerBytes []byte
 	var headerType core.HeaderType
@@ -43,4 +47,15 @@ func GetBody(bodyHandler data.BodyHandler) (*block.Body, error) {
 	}
 
 	return body, nil
+}
+
+// ConvertPubKeys converts a map<shard, validators> into a map<shard, validatorsProtoMessage>
+func ConvertPubKeys(validatorsPubKeys map[uint32][][]byte) map[uint32]*PubKeys {
+	ret := make(map[uint32]*PubKeys, len(validatorsPubKeys))
+
+	for shard, validators := range validatorsPubKeys {
+		ret[shard] = &PubKeys{Keys: validators}
+	}
+
+	return ret
 }
