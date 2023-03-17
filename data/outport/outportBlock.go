@@ -13,6 +13,13 @@ type OutportBlockWithHeader struct {
 	Header data.HeaderHandler
 }
 
+// OutportBlockWithHeaderAndBody is a wrapper for OutportBlock used for outport handler
+type OutportBlockWithHeaderAndBody struct {
+	*OutportBlock
+	Header data.HeaderHandler
+	Body   data.BodyHandler
+}
+
 type HeaderDataWithBody struct {
 	Body       *block.Body
 	Header     data.HeaderHandler
