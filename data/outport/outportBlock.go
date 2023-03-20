@@ -25,26 +25,32 @@ type OutportBlockWithHeaderAndBody struct {
 	HeaderDataWithBody *HeaderDataWithBody
 }
 
+// SetExecutionOrder sets execution order
 func (t *TxInfo) SetExecutionOrder(order uint32) {
 	t.ExecutionOrder = order
 }
 
+// GetTxHandler returns tx handler
 func (t *TxInfo) GetTxHandler() data.TransactionHandler {
 	return t.Transaction
 }
 
+// SetExecutionOrder sets execution order
 func (s *SCRInfo) SetExecutionOrder(order uint32) {
 	s.ExecutionOrder = order
 }
 
+// GetTxHandler returns tx handler
 func (s *SCRInfo) GetTxHandler() data.TransactionHandler {
 	return s.SmartContractResult
 }
 
+// SetExecutionOrder sets execution order
 func (r *RewardInfo) SetExecutionOrder(order uint32) {
 	r.ExecutionOrder = order
 }
 
+// GetTxHandler returns tx handler
 func (r *RewardInfo) GetTxHandler() data.TransactionHandler {
 	return r.Reward
 }
