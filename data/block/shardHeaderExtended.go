@@ -848,8 +848,24 @@ func (she *ShardHeaderExtended) CheckFieldsForNil() error {
 	return nil
 }
 
-// SetIncomingMiniBlocks sets the incoming mini blocks from the given array of mini blocks
-func (she *ShardHeaderExtended) SetIncomingMiniBlocks(miniBlockHandlers []data.MiniBlockHandler) error {
+// GetIncomingMiniBlockHandlers gets the incoming mini blocks as an array of mini blocks handlers
+func (she *ShardHeaderExtended) GetIncomingMiniBlockHandlers() []data.MiniBlockHandler {
+	if she == nil {
+		return nil
+	}
+
+	miniBlocks := she.GetIncomingMiniBlocks()
+	miniBlockHandlers := make([]data.MiniBlockHandler, len(miniBlocks))
+
+	for i := range miniBlocks {
+		miniBlockHandlers[i] = miniBlocks[i]
+	}
+
+	return miniBlockHandlers
+}
+
+// SetIncomingMiniBlockHandlers sets the incoming mini blocks from the given array of mini blocks handlers
+func (she *ShardHeaderExtended) SetIncomingMiniBlockHandlers(miniBlockHandlers []data.MiniBlockHandler) error {
 	if she == nil {
 		return data.ErrNilPointerReceiver
 	}
