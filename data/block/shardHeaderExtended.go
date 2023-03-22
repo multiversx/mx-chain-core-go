@@ -881,7 +881,8 @@ func (she *ShardHeaderExtended) SetIncomingMiniBlockHandlers(miniBlockHandlers [
 		if !ok {
 			return data.ErrWrongTypeAssertion
 		}
-		she.IncomingMiniBlocks[i] = miniBlock
+
+		incomingMiniBlocks[i] = miniBlock
 	}
 
 	she.IncomingMiniBlocks = incomingMiniBlocks
