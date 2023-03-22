@@ -13,5 +13,5 @@ import "blockV2.proto";
 // ShardHeaderExtended extends the HeaderV2 structure with extra fields needed by sovereign chain
 message ShardHeaderExtended {
   HeaderV2  Header = 1;
-  repeated MiniBlockHeader IncomingMiniBlockHeaders = 2 [(gogoproto.nullable) = false];
+  repeated MiniBlock IncomingMiniBlocks = 2;
 }

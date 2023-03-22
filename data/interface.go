@@ -3,6 +3,7 @@ package data
 import (
 	"math/big"
 
+	"github.com/multiversx/mx-chain-core-go/data/block"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
 )
 
@@ -425,6 +426,6 @@ type UserAccountHandler interface {
 // ShardHeaderExtendedHandler extends ShardHeaderHandler interface, by also including incoming mini blocks needed by sovereign chain
 type ShardHeaderExtendedHandler interface {
 	ShardHeaderHandler
-	GetIncomingMiniBlockHeaderHandlers() []MiniBlockHeaderHandler
-	SetIncomingMiniBlockHeaderHandlers(mbHeaderHandlers []MiniBlockHeaderHandler) error
+	GetIncomingMiniBlocks() []*block.MiniBlock
+	SetIncomingMiniBlocks(miniBlocksHandlers []MiniBlockHandler) error
 }

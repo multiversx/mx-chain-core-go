@@ -848,47 +848,27 @@ func (she *ShardHeaderExtended) CheckFieldsForNil() error {
 	return nil
 }
 
-// GetIncomingMiniBlockHeaderHandlers gets the incoming mini blocks headers as an array of mini blocks headers handlers
-func (she *ShardHeaderExtended) GetIncomingMiniBlockHeaderHandlers() []data.MiniBlockHeaderHandler {
-	if she == nil {
-		return nil
-	}
-
-	mbHeaders := she.GetIncomingMiniBlockHeaders()
-	mbHeaderHandlers := make([]data.MiniBlockHeaderHandler, len(mbHeaders))
-
-	for i := range mbHeaders {
-		mbHeaderHandlers[i] = &mbHeaders[i]
-	}
-
-	return mbHeaderHandlers
-}
-
-// SetIncomingMiniBlockHeaderHandlers sets the incoming mini blocks headers from the given array of mini blocks headers handlers
-func (she *ShardHeaderExtended) SetIncomingMiniBlockHeaderHandlers(mbHeaderHandlers []data.MiniBlockHeaderHandler) error {
+// SetIncomingMiniBlocks sets the incoming mini blocks from the given array of mini blocks
+func (she *ShardHeaderExtended) SetIncomingMiniBlocks(miniBlocksHandlers []data.MiniBlockHandler) error {
 	if she == nil {
 		return data.ErrNilPointerReceiver
 	}
-	if len(mbHeaderHandlers) == 0 {
-		she.IncomingMiniBlockHeaders = nil
+	if len(miniBlocksHandlers) == 0 {
+		she.IncomingMiniBlocks = nil
 		return nil
 	}
 
-	incomingMiniBlockHeaders := make([]MiniBlockHeader, len(mbHeaderHandlers))
-	for i, mbHeaderHandler := range mbHeaderHandlers {
-		mbHeader, ok := mbHeaderHandler.(*MiniBlockHeader)
+	incomingMiniBlocks := make([]*MiniBlock, len(miniBlocksHandlers))
+	for i, miniBlockHandler := range miniBlocksHandlers {
+		miniBlockHandlerClone := miniBlockHandler.Clone()
+		miniBlock, ok := miniBlockHandlerClone.(*MiniBlock)
 		if !ok {
-			return data.ErrInvalidTypeAssertion
+			return data.ErrWrongTypeAssertion
 		}
-
-		if mbHeader == nil {
-			return data.ErrNilPointerDereference
-		}
-
-		incomingMiniBlockHeaders[i] = *mbHeader
+		she.IncomingMiniBlocks[i] = miniBlock
 	}
 
-	she.IncomingMiniBlockHeaders = incomingMiniBlockHeaders
+	she.IncomingMiniBlocks = incomingMiniBlocks
 
 	return nil
 }
