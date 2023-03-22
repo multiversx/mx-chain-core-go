@@ -40,7 +40,7 @@ message TransactionPool {
   map<string, RewardInfo> Rewards                                    = 3 [(gogoproto.jsontag) = "rewards,omitempty"];
   map<string, Receipt>    Receipts                                   = 4 [(gogoproto.jsontag) = "receipts,omitempty"];
   map<string, TxInfo>     InvalidTxs                                 = 5 [(gogoproto.jsontag) = "invalidTxs,omitempty"];
-  map<string, Log>        Logs                                       = 6 [(gogoproto.jsontag) = "logs,omitempty"];
+  repeated LogData        Logs                                       = 6 [(gogoproto.jsontag) = "logs,omitempty"];
   repeated string         ScheduledExecutedSCRSHashesPrevBlock       = 7 [(gogoproto.jsontag) = "scheduledExecutedSCRSHashesPrevBlock,omitempty"];
   repeated string         ScheduledExecutedInvalidTxsHashesPrevBlock = 8 [(gogoproto.jsontag) = "scheduledExecutedInvalidTxsHashesPrevBlock,omitempty"];
 }
@@ -61,6 +61,11 @@ message SCRInfo {
   SmartContractResult SmartContractResult = 1 [(gogoproto.jsontag) = "smartContractResult,omitempty"];
   FeeInfo             FeeInfo             = 2 [(gogoproto.jsontag) = "feeInfo,omitempty"];
   uint32              ExecutionOrder      = 3 [(gogoproto.jsontag) = "executionOrder"];
+}
+
+message LogData{
+  string TxHash = 1 [(gogoproto.jsontag) = "txHash"];
+  Log    Log    = 2 [(gogoproto.jsontag) = "log"];
 }
 
 message RewardInfo {
