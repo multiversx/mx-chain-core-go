@@ -17,3 +17,8 @@ type OperationHandler interface {
 type PayloadParser interface {
 	ExtractPayloadData(payload []byte) (*websocketOutportDriver.PayloadData, error)
 }
+
+type WSConnClient interface {
+	data.WSConn
+	OpenConnection(url string) error
+}

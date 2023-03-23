@@ -22,7 +22,7 @@ var (
 
 type client struct {
 	url                      string
-	wsConn                   data.WSConn
+	wsConn                   WSConnClient
 	payloadParser            PayloadParser
 	operationHandler         OperationHandler
 	uint64ByteSliceConverter sender.Uint64ByteSliceConverter
@@ -33,15 +33,19 @@ type ArgsWsClient struct {
 	OperationHandler         OperationHandler
 	PayloadParser            PayloadParser
 	Uint64ByteSliceConverter sender.Uint64ByteSliceConverter
+	WSConnClient             WSConnClient
 }
 
-// NewWsClient will create a ws client to receive data from an observer/light client
-func NewWsClient(args *ArgsWsClient) (*client, error) {
+// NewWsClientHandler will create a ws client to receive data from an observer/light client
+func NewWsClientHandler(args *ArgsWsClient) (*client, error) {
 	if args.OperationHandler == nil {
 		return nil, errNilOperationHandler
 	}
 	if args.PayloadParser == nil {
 		return nil, errNilPayloadParser
+	}
+	if args.WSConnClient == nil {
+		return nil, errNilWsConnReceiver
 	}
 	if args.Uint64ByteSliceConverter == nil {
 		return nil, errNilUint64ByteSliceConverter
@@ -52,9 +56,11 @@ func NewWsClient(args *ArgsWsClient) (*client, error) {
 
 	urlReceiveData := url.URL{Scheme: "ws", Host: args.Url, Path: data.WSRoute}
 	return &client{
-		operationHandler: args.OperationHandler,
-		url:              urlReceiveData.String(),
-		payloadParser:    args.PayloadParser,
+		url:                      urlReceiveData.String(),
+		wsConn:                   args.WSConnClient,
+		payloadParser:            args.PayloadParser,
+		operationHandler:         args.OperationHandler,
+		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
 	}, nil
 }
 
@@ -63,7 +69,7 @@ func (c *client) Start() {
 	log.Info("connecting to", "url", c.url)
 
 	for {
-		err := c.openConnection()
+		err := c.wsConn.OpenConnection(c.url)
 		if err != nil {
 			log.Warn(fmt.Sprintf("c.openConnection(), retrying in %v...", retryDuration), "error", err.Error())
 			time.Sleep(retryDuration)
@@ -75,16 +81,6 @@ func (c *client) Start() {
 			return
 		}
 	}
-}
-
-func (c *client) openConnection() error {
-	var err error
-	c.wsConn, _, err = websocket.DefaultDialer.Dial(c.url, nil)
-	if err != nil {
-		return err
-	}
-
-	return nil
 }
 
 func (c *client) listenOnWebSocket() (closed bool) {
