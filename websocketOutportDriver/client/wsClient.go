@@ -8,7 +8,6 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core/check"
-	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/sender"
 	logger "github.com/multiversx/mx-chain-logger-go"
@@ -22,15 +21,17 @@ var (
 )
 
 type client struct {
-	operationHandler         OperationHandler
-	wsConn                   data.WSConn
 	url                      string
+	wsConn                   data.WSConn
+	payloadParser            PayloadParser
+	operationHandler         OperationHandler
 	uint64ByteSliceConverter sender.Uint64ByteSliceConverter
 }
 
 type ArgsWsClient struct {
 	Url                      string
 	OperationHandler         OperationHandler
+	PayloadParser            PayloadParser
 	Uint64ByteSliceConverter sender.Uint64ByteSliceConverter
 }
 
@@ -39,8 +40,11 @@ func NewWsClient(args *ArgsWsClient) (*client, error) {
 	if args.OperationHandler == nil {
 		return nil, errNilOperationHandler
 	}
+	if args.PayloadParser == nil {
+		return nil, errNilPayloadParser
+	}
 	if args.Uint64ByteSliceConverter == nil {
-		return nil, data.ErrNilUint64ByteSliceConverter
+		return nil, errNilUint64ByteSliceConverter
 	}
 	if len(args.Url) == 0 {
 		return nil, errEmptyUrlProvided
@@ -48,9 +52,9 @@ func NewWsClient(args *ArgsWsClient) (*client, error) {
 
 	urlReceiveData := url.URL{Scheme: "ws", Host: args.Url, Path: data.WSRoute}
 	return &client{
-		operationHandler:         args.OperationHandler,
-		url:                      urlReceiveData.String(),
-		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
+		operationHandler: args.OperationHandler,
+		url:              urlReceiveData.String(),
+		payloadParser:    args.PayloadParser,
 	}, nil
 }
 
@@ -66,7 +70,7 @@ func (c *client) Start() {
 			continue
 		}
 
-		closed := c.listeningOnWebSocket()
+		closed := c.listenOnWebSocket()
 		if closed {
 			return
 		}
@@ -83,7 +87,7 @@ func (c *client) openConnection() error {
 	return nil
 }
 
-func (c *client) listeningOnWebSocket() (closed bool) {
+func (c *client) listenOnWebSocket() (closed bool) {
 	for {
 		_, message, err := c.wsConn.ReadMessage()
 		if err == nil {
@@ -96,13 +100,12 @@ func (c *client) listeningOnWebSocket() (closed bool) {
 			if strings.Contains(err.Error(), closedConnection) {
 				return true
 			}
-			log.Warn("c.listeningOnWebSocket()-> connection problem, retrying", "error", err.Error())
+			log.Warn("c.listenOnWebSocket()-> connection problem, retrying", "error", err.Error())
 		} else {
 			log.Warn(fmt.Sprintf("websocket terminated by the server side, retrying in %v...", retryDuration), "error", err.Error())
 		}
 		return
 	}
-
 }
 
 func (c *client) verifyPayloadAndSendAckIfNeeded(payload []byte) {
@@ -111,8 +114,7 @@ func (c *client) verifyPayloadAndSendAckIfNeeded(payload []byte) {
 		return
 	}
 
-	payloadParser, _ := websocketOutportDriver.NewWebSocketPayloadParser(c.uint64ByteSliceConverter)
-	payloadData, err := payloadParser.ExtractPayloadData(payload)
+	payloadData, err := c.payloadParser.ExtractPayloadData(payload)
 	if err != nil {
 		log.Error("error while extracting payload data: " + err.Error())
 		return
@@ -131,15 +133,26 @@ func (c *client) verifyPayloadAndSendAckIfNeeded(payload []byte) {
 
 	err = function(payloadData.Payload)
 	if err != nil {
-		log.Error("something went wrong", "error", err.Error())
+		log.Error("could not process payload", "error", err.Error(), "payload", payloadData.Payload)
 	}
 
 	if payloadData.WithAcknowledge {
-		counterBytes := c.uint64ByteSliceConverter.ToByteSlice(payloadData.Counter)
-		err = c.wsConn.WriteMessage(websocket.BinaryMessage, counterBytes)
+		c.waitForAckSignal(payloadData.Counter)
+	}
+}
+
+func (c *client) waitForAckSignal(counter uint64) {
+	for {
+		counterBytes := c.uint64ByteSliceConverter.ToByteSlice(counter)
+		err := c.wsConn.WriteMessage(websocket.BinaryMessage, counterBytes)
 		if err != nil {
-			log.Error("write acknowledge message", "error", err.Error())
+			log.Error("could not write acknowledge message",
+				"error", err.Error(), "retrying in", retryDuration)
+			time.Sleep(retryDuration)
+			continue
 		}
+
+		return
 	}
 }
 

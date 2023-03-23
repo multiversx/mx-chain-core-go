@@ -1,6 +1,7 @@
 package client
 
 import (
+	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
@@ -11,4 +12,8 @@ type HandlerFunc func(data []byte) error
 type OperationHandler interface {
 	GetOperationHandler(operation data.OperationType) (HandlerFunc, bool)
 	Close() error
+}
+
+type PayloadParser interface {
+	ExtractPayloadData(payload []byte) (*websocketOutportDriver.PayloadData, error)
 }
