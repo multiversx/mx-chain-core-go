@@ -7,7 +7,6 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
-	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/sender"
 	logger "github.com/multiversx/mx-chain-logger-go"
@@ -152,30 +151,15 @@ func (c *client) waitForAckSignal(counter uint64) {
 	}
 }
 
-func (c *client) closeWsConnection() {
-	log.Debug("closing ws connection...")
-	if check.IfNilReflect(c.wsConn) {
-		return
-	}
-
-	//Cleanly close the connection by sending a close message and then
-	//waiting (with timeout) for the server to close the connection.
-	err := c.wsConn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-	if err != nil {
-		log.Error("cannot send close message", "error", err)
-	}
-	err = c.wsConn.Close()
-	if err != nil {
-		log.Error("cannot close ws connection", "error", err)
-	}
-}
-
 // Close will close the underlying ws connection
 func (c *client) Close() {
 	log.Info("closing all components...")
-	c.closeWsConnection()
+	err := c.wsConn.Close()
+	if err != nil {
+		log.Error("cannot close ws connection", "error", err)
+	}
 
-	err := c.operationHandler.Close()
+	err = c.operationHandler.Close()
 	if err != nil {
 		log.Error("cannot close the operations handler", "error", err)
 	}
