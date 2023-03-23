@@ -848,47 +848,44 @@ func (she *ShardHeaderExtended) CheckFieldsForNil() error {
 	return nil
 }
 
-// GetIncomingMiniBlockHeaderHandlers gets the incoming mini blocks headers as an array of mini blocks headers handlers
-func (she *ShardHeaderExtended) GetIncomingMiniBlockHeaderHandlers() []data.MiniBlockHeaderHandler {
+// GetIncomingMiniBlockHandlers gets the incoming mini blocks as an array of mini blocks handlers
+func (she *ShardHeaderExtended) GetIncomingMiniBlockHandlers() []data.MiniBlockHandler {
 	if she == nil {
 		return nil
 	}
 
-	mbHeaders := she.GetIncomingMiniBlockHeaders()
-	mbHeaderHandlers := make([]data.MiniBlockHeaderHandler, len(mbHeaders))
+	miniBlocks := she.GetIncomingMiniBlocks()
+	miniBlockHandlers := make([]data.MiniBlockHandler, len(miniBlocks))
 
-	for i := range mbHeaders {
-		mbHeaderHandlers[i] = &mbHeaders[i]
+	for i := range miniBlocks {
+		miniBlockHandlers[i] = miniBlocks[i]
 	}
 
-	return mbHeaderHandlers
+	return miniBlockHandlers
 }
 
-// SetIncomingMiniBlockHeaderHandlers sets the incoming mini blocks headers from the given array of mini blocks headers handlers
-func (she *ShardHeaderExtended) SetIncomingMiniBlockHeaderHandlers(mbHeaderHandlers []data.MiniBlockHeaderHandler) error {
+// SetIncomingMiniBlockHandlers sets the incoming mini blocks from the given array of mini blocks handlers
+func (she *ShardHeaderExtended) SetIncomingMiniBlockHandlers(miniBlockHandlers []data.MiniBlockHandler) error {
 	if she == nil {
 		return data.ErrNilPointerReceiver
 	}
-	if len(mbHeaderHandlers) == 0 {
-		she.IncomingMiniBlockHeaders = nil
+	if len(miniBlockHandlers) == 0 {
+		she.IncomingMiniBlocks = nil
 		return nil
 	}
 
-	incomingMiniBlockHeaders := make([]MiniBlockHeader, len(mbHeaderHandlers))
-	for i, mbHeaderHandler := range mbHeaderHandlers {
-		mbHeader, ok := mbHeaderHandler.(*MiniBlockHeader)
+	incomingMiniBlocks := make([]*MiniBlock, len(miniBlockHandlers))
+	for i, miniBlockHandler := range miniBlockHandlers {
+		miniBlockHandlerClone := miniBlockHandler.Clone()
+		miniBlock, ok := miniBlockHandlerClone.(*MiniBlock)
 		if !ok {
-			return data.ErrInvalidTypeAssertion
+			return data.ErrWrongTypeAssertion
 		}
 
-		if mbHeader == nil {
-			return data.ErrNilPointerDereference
-		}
-
-		incomingMiniBlockHeaders[i] = *mbHeader
+		incomingMiniBlocks[i] = miniBlock
 	}
 
-	she.IncomingMiniBlockHeaders = incomingMiniBlockHeaders
+	she.IncomingMiniBlocks = incomingMiniBlocks
 
 	return nil
 }
