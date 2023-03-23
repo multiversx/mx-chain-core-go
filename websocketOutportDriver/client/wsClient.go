@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"net/url"
 	"strings"
 	"time"
 
@@ -38,10 +39,17 @@ func NewWsClient(args *ArgsWsClient) (*client, error) {
 	if args.OperationHandler == nil {
 		return nil, errNilOperationHandler
 	}
+	if args.Uint64ByteSliceConverter == nil {
+		return nil, data.ErrNilUint64ByteSliceConverter
+	}
+	if len(args.Url) == 0 {
+		return nil, errEmptyUrlProvided
+	}
 
+	urlReceiveData := url.URL{Scheme: "ws", Host: args.Url, Path: data.WSRoute}
 	return &client{
 		operationHandler:         args.OperationHandler,
-		url:                      args.Url,
+		url:                      urlReceiveData.String(),
 		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
 	}, nil
 }
