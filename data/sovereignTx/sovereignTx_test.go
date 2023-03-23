@@ -40,10 +40,8 @@ func TestSovereignTx_SettersAndGetters(t *testing.T) {
 	assert.Equal(t, nonce, stx.GetNonce())
 }
 
-func TestSovereignTx_CheckIntegrityShouldWork(t *testing.T) {
-	t.Parallel()
-
-	stx := &sovereignTx.SovereignTx{
+func createValidSovereignTx() *sovereignTx.SovereignTx {
+	return &sovereignTx.SovereignTx{
 		Nonce:    1,
 		Value:    big.NewInt(10),
 		GasPrice: 1,
@@ -52,34 +50,41 @@ func TestSovereignTx_CheckIntegrityShouldWork(t *testing.T) {
 		RcvAddr:  []byte("rcv-address"),
 		SndAddr:  []byte("snd-address"),
 	}
+}
 
+func TestSovereignTx_CheckIntegrityShouldWork(t *testing.T) {
+	t.Parallel()
+
+	stx := createValidSovereignTx()
 	err := stx.CheckIntegrity()
+
 	assert.Nil(t, err)
 }
 
 func TestSovereignTx_CheckIntegrityShouldErr(t *testing.T) {
 	t.Parallel()
 
-	stx := &sovereignTx.SovereignTx{
-		Nonce: 1,
-		Data:  []byte("data"),
-	}
-
+	stx := createValidSovereignTx()
+	stx.RcvAddr = nil
 	err := stx.CheckIntegrity()
+
 	assert.Equal(t, data.ErrNilRcvAddr, err)
 
-	stx.RcvAddr = []byte("rcv-address")
-
+	stx = createValidSovereignTx()
+	stx.SndAddr = nil
 	err = stx.CheckIntegrity()
+
 	assert.Equal(t, data.ErrNilSndAddr, err)
 
-	stx.SndAddr = []byte("snd-address")
-
+	stx = createValidSovereignTx()
+	stx.Value = nil
 	err = stx.CheckIntegrity()
+
 	assert.Equal(t, data.ErrNilValue, err)
 
+	stx = createValidSovereignTx()
 	stx.Value = big.NewInt(-1)
-
 	err = stx.CheckIntegrity()
+
 	assert.Equal(t, data.ErrNegativeValue, err)
 }
