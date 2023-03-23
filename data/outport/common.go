@@ -14,24 +14,20 @@ func GetHeaderBytesAndType(marshaller marshal.Marshalizer, headerHandler data.He
 		return nil, "", core.ErrNilMarshalizer
 	}
 
-	var err error
-	var headerBytes []byte
 	var headerType core.HeaderType
 
-	switch header := headerHandler.(type) {
+	switch headerHandler.(type) {
 	case *block.HeaderV2:
 		headerType = core.ShardHeaderV2
-		headerBytes, err = marshaller.Marshal(header)
 	case *block.MetaBlock:
 		headerType = core.MetaHeader
-		headerBytes, err = marshaller.Marshal(header)
 	case *block.Header:
 		headerType = core.ShardHeaderV1
-		headerBytes, err = marshaller.Marshal(header)
 	default:
 		return nil, "", errInvalidHeaderType
 	}
 
+	headerBytes, err := marshaller.Marshal(headerHandler)
 	return headerBytes, headerType, err
 }
 
