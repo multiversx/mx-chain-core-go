@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/sender"
 	logger "github.com/multiversx/mx-chain-logger-go"
@@ -18,6 +19,7 @@ var log = logger.GetOrCreate("process/wsclient")
 
 type client struct {
 	url                      string
+	blockingOnError          bool
 	retryDuration            time.Duration
 	wsConn                   WSConnClient
 	payloadParser            PayloadParser
@@ -28,6 +30,7 @@ type client struct {
 type ArgsWsClient struct {
 	Url                      string
 	RetryDurationInSec       uint32
+	BlockingAckOnError       bool
 	OperationHandler         OperationHandler
 	PayloadParser            PayloadParser
 	Uint64ByteSliceConverter sender.Uint64ByteSliceConverter
@@ -53,9 +56,12 @@ func NewWsClientHandler(args *ArgsWsClient) (*client, error) {
 	}
 
 	urlReceiveData := url.URL{Scheme: "ws", Host: args.Url, Path: data.WSRoute}
+	retryDuration := time.Duration(args.RetryDurationInSec) * time.Second
+
 	return &client{
 		url:                      urlReceiveData.String(),
-		retryDuration:            time.Duration(args.RetryDurationInSec) * time.Second,
+		blockingOnError:          args.BlockingAckOnError,
+		retryDuration:            retryDuration,
 		wsConn:                   args.WSConnClient,
 		payloadParser:            args.PayloadParser,
 		operationHandler:         args.OperationHandler,
@@ -118,22 +124,37 @@ func (c *client) verifyPayloadAndSendAckIfNeeded(payload []byte) {
 	log.Info("processing payload",
 		"counter", payloadData.Counter,
 		"operation type", payloadData.OperationType,
+		"payload", payloadData.Payload,
 		"message length", len(payloadData.Payload),
 	)
 
 	function, ok := c.operationHandler.GetOperationHandler(payloadData.OperationType)
 	if !ok {
 		log.Warn("invalid operation", "operation type", payloadData.OperationType.String())
+		c.sendAckIfNeeded(payloadData, true)
+		return
 	}
 
 	err = function(payloadData.Payload)
 	if err != nil {
-		log.Error("could not process payload", "error", err.Error(), "payload", payloadData.Payload)
+		log.Error("could not process payload", "error", err.Error())
+		c.sendAckIfNeeded(payloadData, true)
+		return
 	}
 
-	if payloadData.WithAcknowledge {
-		c.waitForAckSignal(payloadData.Counter)
+	c.sendAckIfNeeded(payloadData, false)
+}
+
+func (c *client) sendAckIfNeeded(payloadData *websocketOutportDriver.PayloadData, hadError bool) {
+	if !payloadData.WithAcknowledge {
+		return
 	}
+
+	if hadError && c.blockingOnError {
+		return
+	}
+
+	c.waitForAckSignal(payloadData.Counter)
 }
 
 func (c *client) waitForAckSignal(counter uint64) {
@@ -143,6 +164,7 @@ func (c *client) waitForAckSignal(counter uint64) {
 		if err != nil {
 			log.Error("could not write acknowledge message",
 				"error", err.Error(), "retrying in", c.retryDuration)
+
 			time.Sleep(time.Second * c.retryDuration)
 			continue
 		}
