@@ -281,24 +281,10 @@ type TransactionHandler interface {
 	CheckIntegrity() error
 }
 
-// FeeInfoHandler defines transactions fee related info
-type FeeInfoHandler interface {
-	SetInitialPaidFee(fee *big.Int)
-	SetGasUsed(gasUsed uint64)
-	SetFee(fee *big.Int)
-	GetInitialPaidFee() *big.Int
-	GetGasUsed() uint64
-	GetFee() *big.Int
-}
-
-// TransactionHandlerWithGasUsedAndFee extends TransactionHandler by also including used gas and fee
-type TransactionHandlerWithGasUsedAndFee interface {
-	TransactionHandler
-	FeeInfoHandler
-
+type TxWithExecutionOrderHandler interface {
+	SetExecutionOrder(order uint32)
+	GetExecutionOrder() uint32
 	GetTxHandler() TransactionHandler
-	SetExecutionOrder(order int)
-	GetExecutionOrder() int
 }
 
 // LogHandler defines the type for a log resulted from executing a transaction or smart contract call
