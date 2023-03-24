@@ -14,13 +14,11 @@ import (
 
 const closedConnection = "use of closed network connection"
 
-var (
-	log           = logger.GetOrCreate("process/wsclient")
-	retryDuration = time.Second * 5
-)
+var log = logger.GetOrCreate("process/wsclient")
 
 type client struct {
 	url                      string
+	retryDuration            time.Duration
 	wsConn                   WSConnClient
 	payloadParser            PayloadParser
 	operationHandler         OperationHandler
@@ -29,6 +27,7 @@ type client struct {
 
 type ArgsWsClient struct {
 	Url                      string
+	RetryDurationInSec       uint32
 	OperationHandler         OperationHandler
 	PayloadParser            PayloadParser
 	Uint64ByteSliceConverter sender.Uint64ByteSliceConverter
@@ -56,6 +55,7 @@ func NewWsClientHandler(args *ArgsWsClient) (*client, error) {
 	urlReceiveData := url.URL{Scheme: "ws", Host: args.Url, Path: data.WSRoute}
 	return &client{
 		url:                      urlReceiveData.String(),
+		retryDuration:            time.Duration(args.RetryDurationInSec) * time.Second,
 		wsConn:                   args.WSConnClient,
 		payloadParser:            args.PayloadParser,
 		operationHandler:         args.OperationHandler,
@@ -70,8 +70,8 @@ func (c *client) Start() {
 	for {
 		err := c.wsConn.OpenConnection(c.url)
 		if err != nil {
-			log.Warn(fmt.Sprintf("c.openConnection(), retrying in %v...", retryDuration), "error", err.Error())
-			time.Sleep(retryDuration)
+			log.Warn(fmt.Sprintf("c.openConnection(), retrying in %v...", c.retryDuration), "error", err.Error())
+			time.Sleep(c.retryDuration)
 			continue
 		}
 
@@ -97,7 +97,7 @@ func (c *client) listenOnWebSocket() (closed bool) {
 			}
 			log.Warn("c.listenOnWebSocket()-> connection problem, retrying", "error", err.Error())
 		} else {
-			log.Warn(fmt.Sprintf("websocket terminated by the server side, retrying in %v...", retryDuration), "error", err.Error())
+			log.Warn(fmt.Sprintf("websocket terminated by the server side, retrying in %v...", c.retryDuration), "error", err.Error())
 		}
 		return
 	}
@@ -142,8 +142,8 @@ func (c *client) waitForAckSignal(counter uint64) {
 		err := c.wsConn.WriteMessage(websocket.BinaryMessage, counterBytes)
 		if err != nil {
 			log.Error("could not write acknowledge message",
-				"error", err.Error(), "retrying in", retryDuration)
-			time.Sleep(retryDuration)
+				"error", err.Error(), "retrying in", c.retryDuration)
+			time.Sleep(time.Second * c.retryDuration)
 			continue
 		}
 
