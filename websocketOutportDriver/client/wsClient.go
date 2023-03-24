@@ -15,7 +15,7 @@ import (
 
 const closedConnection = "use of closed network connection"
 
-var log = logger.GetOrCreate("process/wsclient")
+var log = logger.GetOrCreate("wsClient")
 
 type client struct {
 	url                      string
