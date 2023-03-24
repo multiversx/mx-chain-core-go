@@ -91,6 +91,11 @@ func (o *websocketOutportDriverNodePart) FinalizedBlock(finalizedBlock *outport.
 	return o.handleAction(finalizedBlock, outportSenderData.OperationFinalizedBlock)
 }
 
+// GetMarshaller returns the internal marshaller
+func (o *websocketOutportDriverNodePart) GetMarshaller() marshal.Marshalizer {
+	return o.marshalizer
+}
+
 // Close will handle the closing of the outport driver web socket sender
 func (o *websocketOutportDriverNodePart) Close() error {
 	o.isClosed.SetValue(true)

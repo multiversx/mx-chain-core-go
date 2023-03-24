@@ -2,6 +2,7 @@ package websocketOutportDriver
 
 import (
 	"github.com/multiversx/mx-chain-core-go/data/outport"
+	"github.com/multiversx/mx-chain-core-go/marshal"
 	outportSenderData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
@@ -15,6 +16,7 @@ type Driver interface {
 	SaveValidatorsRating(validatorsRating *outport.ValidatorsRating) error
 	SaveAccounts(accounts *outport.Accounts) error
 	FinalizedBlock(finalizedBlock *outport.FinalizedBlock) error
+	GetMarshaller() marshal.Marshalizer
 	Close() error
 	IsInterfaceNil() bool
 }
