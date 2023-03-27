@@ -8,9 +8,8 @@ import (
 // HandlerFunc defines the func responsible for handling received payload data from node
 type HandlerFunc func(data []byte) error
 
-// OperationHandler defines a HandlerFunc for each indexer operation type from node
-type OperationHandler interface {
-	GetOperationHandler(operation data.OperationType) (HandlerFunc, bool)
+type PayloadProcessor interface {
+	ProcessPayload(payload *websocketOutportDriver.PayloadData) error
 	Close() error
 }
 

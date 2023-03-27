@@ -2,9 +2,18 @@ package mock
 
 // WebsocketConnectionStub -
 type WebsocketConnectionStub struct {
-	ReadMessageCalled  func() (messageType int, payload []byte, err error)
-	WriteMessageCalled func(messageType int, data []byte) error
-	CloseCalled        func() error
+	OpenConnectionCalled func(url string) error
+	ReadMessageCalled    func() (messageType int, payload []byte, err error)
+	WriteMessageCalled   func(messageType int, data []byte) error
+	CloseCalled          func() error
+}
+
+func (w *WebsocketConnectionStub) OpenConnection(url string) error {
+	if w.OpenConnectionCalled != nil {
+		return w.OpenConnectionCalled(url)
+	}
+
+	return nil
 }
 
 // ReadMessage -

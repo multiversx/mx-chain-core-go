@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/gorilla/websocket"
+	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/sender"
@@ -19,28 +20,31 @@ var log = logger.GetOrCreate("wsClient")
 
 type client struct {
 	url                      string
-	blockingOnError          bool
+	blockingAckOnError       bool
 	retryDuration            time.Duration
 	wsConn                   WSConnClient
 	payloadParser            PayloadParser
-	operationHandler         OperationHandler
+	payloadProcessor         PayloadProcessor
 	uint64ByteSliceConverter sender.Uint64ByteSliceConverter
+	safeCloser               core.SafeCloser
 }
 
+// ArgsWsClient holds the arguments required to create a new websocket client handler
 type ArgsWsClient struct {
 	Url                      string
 	RetryDurationInSec       uint32
 	BlockingAckOnError       bool
-	OperationHandler         OperationHandler
+	PayloadProcessor         PayloadProcessor
 	PayloadParser            PayloadParser
 	Uint64ByteSliceConverter sender.Uint64ByteSliceConverter
 	WSConnClient             WSConnClient
+	SafeCloser               core.SafeCloser
 }
 
 // NewWsClientHandler will create a ws client to receive data from an observer/light client
-func NewWsClientHandler(args *ArgsWsClient) (*client, error) {
-	if args.OperationHandler == nil {
-		return nil, errNilOperationHandler
+func NewWsClientHandler(args ArgsWsClient) (*client, error) {
+	if args.PayloadProcessor == nil {
+		return nil, errNilPayloadProcessor
 	}
 	if args.PayloadParser == nil {
 		return nil, errNilPayloadParser
@@ -51,6 +55,9 @@ func NewWsClientHandler(args *ArgsWsClient) (*client, error) {
 	if args.Uint64ByteSliceConverter == nil {
 		return nil, errNilUint64ByteSliceConverter
 	}
+	if args.SafeCloser == nil {
+		return nil, errNilSafeCloser
+	}
 	if len(args.Url) == 0 {
 		return nil, errEmptyUrlProvided
 	}
@@ -60,12 +67,13 @@ func NewWsClientHandler(args *ArgsWsClient) (*client, error) {
 
 	return &client{
 		url:                      urlReceiveData.String(),
-		blockingOnError:          args.BlockingAckOnError,
+		blockingAckOnError:       args.BlockingAckOnError,
 		retryDuration:            retryDuration,
 		wsConn:                   args.WSConnClient,
 		payloadParser:            args.PayloadParser,
-		operationHandler:         args.OperationHandler,
+		payloadProcessor:         args.PayloadProcessor,
 		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
+		safeCloser:               args.SafeCloser,
 	}, nil
 }
 
@@ -73,18 +81,26 @@ func NewWsClientHandler(args *ArgsWsClient) (*client, error) {
 func (c *client) Start() {
 	log.Info("connecting to", "url", c.url)
 
-	for {
+	timer := time.NewTimer(c.retryDuration)
+	defer timer.Stop()
+
+	closed := false
+	for !closed {
 		err := c.wsConn.OpenConnection(c.url)
-		if err != nil {
-			log.Warn(fmt.Sprintf("c.openConnection(), retrying in %v...", c.retryDuration), "error", err.Error())
-			time.Sleep(c.retryDuration)
-			continue
+		if err == nil {
+			closed = c.listenOnWebSocket()
 		}
 
-		closed := c.listenOnWebSocket()
-		if closed {
+		timer.Reset(c.retryDuration)
+		log.Warn(fmt.Sprintf("c.openConnection(), retrying in %v...", c.retryDuration), "error", err.Error())
+
+		select {
+		case <-timer.C:
+		case <-c.safeCloser.ChanClose():
+			c.Close()
 			return
 		}
+
 	}
 }
 
@@ -128,29 +144,18 @@ func (c *client) verifyPayloadAndSendAckIfNeeded(payload []byte) {
 		"message length", len(payloadData.Payload),
 	)
 
-	function, ok := c.operationHandler.GetOperationHandler(payloadData.OperationType)
-	if !ok {
-		log.Warn("invalid operation", "operation type", payloadData.OperationType.String())
-		c.sendAckIfNeeded(payloadData, true)
-		return
-	}
-
-	err = function(payloadData.Payload)
-	if err != nil {
-		log.Error("could not process payload", "error", err.Error())
-		c.sendAckIfNeeded(payloadData, true)
-		return
-	}
-
-	c.sendAckIfNeeded(payloadData, false)
+	err = c.payloadProcessor.ProcessPayload(payloadData)
+	c.sendAckIfNeeded(payloadData, err)
 }
 
-func (c *client) sendAckIfNeeded(payloadData *websocketOutportDriver.PayloadData, hadError bool) {
+func (c *client) sendAckIfNeeded(payloadData *websocketOutportDriver.PayloadData, err error) {
+	log.LogIfError(err)
+
 	if !payloadData.WithAcknowledge {
 		return
 	}
 
-	if hadError && c.blockingOnError {
+	if err != nil && c.blockingAckOnError {
 		return
 	}
 
@@ -158,30 +163,40 @@ func (c *client) sendAckIfNeeded(payloadData *websocketOutportDriver.PayloadData
 }
 
 func (c *client) waitForAckSignal(counter uint64) {
-	for {
-		counterBytes := c.uint64ByteSliceConverter.ToByteSlice(counter)
-		err := c.wsConn.WriteMessage(websocket.BinaryMessage, counterBytes)
-		if err != nil {
-			log.Error("could not write acknowledge message",
-				"error", err.Error(), "retrying in", c.retryDuration)
+	timer := time.NewTimer(c.retryDuration)
+	defer timer.Stop()
 
-			time.Sleep(time.Second * c.retryDuration)
-			continue
+	counterBytes := c.uint64ByteSliceConverter.ToByteSlice(counter)
+	for {
+		timer.Reset(c.retryDuration)
+
+		err := c.wsConn.WriteMessage(websocket.BinaryMessage, counterBytes)
+		if err == nil {
+			return
 		}
 
-		return
+		log.Error("could not write acknowledge message", "error", err.Error(), "retrying in", c.retryDuration)
+
+		select {
+		case <-timer.C:
+		case <-c.safeCloser.ChanClose():
+			c.Close()
+			return
+		}
 	}
 }
 
 // Close will close the underlying ws connection
 func (c *client) Close() {
+	defer c.safeCloser.Close()
+
 	log.Info("closing all components...")
 	err := c.wsConn.Close()
 	if err != nil {
 		log.Error("cannot close ws connection", "error", err)
 	}
 
-	err = c.operationHandler.Close()
+	err = c.payloadProcessor.Close()
 	if err != nil {
 		log.Error("cannot close the operations handler", "error", err)
 	}
