@@ -1,16 +1,11 @@
 package block
 
 import (
-	"errors"
 	"sync"
 
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
-)
-
-var (
-	errInvalidHeaderType = errors.New("invalid header type")
 )
 
 type emptyBlockCreatorsContainer struct {
@@ -45,7 +40,7 @@ func (container *emptyBlockCreatorsContainer) Get(headerType core.HeaderType) (E
 	container.mut.RUnlock()
 
 	if !ok {
-		return nil, errInvalidHeaderType
+		return nil, data.ErrInvalidHeaderType
 	}
 
 	return creator, nil

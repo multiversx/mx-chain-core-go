@@ -46,7 +46,7 @@ func TestEmptyBlockCreatorsContainer_Get(t *testing.T) {
 	t.Run("missing header creator should error", func(t *testing.T) {
 		container := NewEmptyBlockCreatorsContainer()
 		creator, err := container.Get(core.ShardHeaderV1)
-		assert.Equal(t, errInvalidHeaderType, err)
+		assert.Equal(t, data.ErrInvalidHeaderType, err)
 		assert.True(t, check.IfNil(creator))
 	})
 	t.Run("existing header creator should work", func(t *testing.T) {
