@@ -19,7 +19,7 @@ type emptyBlockCreatorsContainer struct {
 }
 
 // NewEmptyBlockCreatorsContainer creates a new block creators container
-func NewEmptyBlockCreatorsContainer(creators ...EmptyBlockCreator) *emptyBlockCreatorsContainer {
+func NewEmptyBlockCreatorsContainer() *emptyBlockCreatorsContainer {
 	return &emptyBlockCreatorsContainer{
 		blockCreators: make(map[core.HeaderType]EmptyBlockCreator),
 	}
