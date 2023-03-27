@@ -59,7 +59,10 @@ func NewWsClientHandler(args ArgsWsClient) (*client, error) {
 		return nil, errNilSafeCloser
 	}
 	if len(args.Url) == 0 {
-		return nil, errEmptyUrlProvided
+		return nil, errEmptyUrl
+	}
+	if args.RetryDurationInSec == 0 {
+		return nil, errZeroValueRetryDuration
 	}
 
 	urlReceiveData := url.URL{Scheme: "ws", Host: args.Url, Path: data.WSRoute}
@@ -118,9 +121,10 @@ func (c *client) listenOnWebSocket() (closed bool) {
 				return true
 			}
 			log.Warn("c.listenOnWebSocket()-> connection problem, retrying", "error", err.Error())
-		} else {
-			log.Warn(fmt.Sprintf("websocket terminated by the server side, retrying in %v...", c.retryDuration), "error", err.Error())
+			return
 		}
+
+		log.Warn(fmt.Sprintf("websocket terminated by the server side, retrying in %v...", c.retryDuration), "error", err.Error())
 		return
 	}
 }
@@ -133,7 +137,7 @@ func (c *client) verifyPayloadAndSendAckIfNeeded(payload []byte) {
 
 	payloadData, err := c.payloadParser.ExtractPayloadData(payload)
 	if err != nil {
-		log.Error("error while extracting payload data: " + err.Error())
+		log.Error("error while extracting payload data: ", "error", err.Error())
 		return
 	}
 

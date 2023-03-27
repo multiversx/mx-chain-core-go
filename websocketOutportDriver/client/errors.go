@@ -10,6 +10,8 @@ var errNilUint64ByteSliceConverter = errors.New("nil uint64 byte slice converter
 
 var errNilWsConnReceiver = errors.New("nil ws connection receiver provided")
 
-var errEmptyUrlProvided = errors.New("empty ws url provided")
+var errEmptyUrl = errors.New("empty websocket url provided")
+
+var errZeroValueRetryDuration = errors.New("zero value provided for retry duration")
 
 var errNilSafeCloser = errors.New("nil safe closer provided")

@@ -35,9 +35,9 @@ func TestClient_Start(t *testing.T) {
 
 	go wsClient.Start()
 
-	time.Sleep(3 * time.Second)
+	time.Sleep(2 * time.Second)
 	args.SafeCloser.Close()
 
 	time.Sleep(1 * time.Second)
-	require.Equal(t, int64(4), openConnectionCalledCt.Get())
+	require.Equal(t, int64(3), openConnectionCalledCt.Get())
 }

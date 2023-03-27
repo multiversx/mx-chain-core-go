@@ -8,6 +8,7 @@ type WebsocketConnectionStub struct {
 	CloseCalled          func() error
 }
 
+// OpenConnection -
 func (w *WebsocketConnectionStub) OpenConnection(url string) error {
 	if w.OpenConnectionCalled != nil {
 		return w.OpenConnectionCalled(url)
