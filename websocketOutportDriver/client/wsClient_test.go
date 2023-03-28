@@ -352,7 +352,8 @@ func TestClient_NormalFlowWithAck(t *testing.T) {
 			err = errClosedConn
 			mutCloseConn.RUnlock()
 
-			return 0, []byte(fmt.Sprintf("payload%d", expectedPayload.Counter)), err
+			expectedPayload.Payload = []byte(fmt.Sprintf("payload%d", expectedPayload.Counter))
+			return 0, expectedPayload.Payload, err
 		},
 		WriteMessageCalled: func(messageType int, data []byte) error {
 			require.Equal(t, []byte{byte(expectedPayload.Counter)}, data)
@@ -398,6 +399,10 @@ func TestClient_NormalFlowWithAck(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 	require.Equal(t, int64(4), writeMsgCalledCt.Get())
 	require.Equal(t, int64(5), readMsgCalledCt.Get())
+	require.Equal(t, &data.PayloadData{
+		WithAcknowledge: true,
+		Payload:         []byte("payload4"),
+		Counter:         4}, expectedPayload)
 }
 
 func TestClient_NormalFlowWithoutAck(t *testing.T) {
