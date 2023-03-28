@@ -18,14 +18,6 @@ var (
 	minBytesForCorrectPayload = withAcknowledgeNumBytes + uint64NumBytes + uint32NumBytes + uint32NumBytes
 )
 
-// PayloadData holds the arguments that should be parsed from a websocket payload
-type PayloadData struct {
-	WithAcknowledge bool
-	Counter         uint64
-	OperationType   data.OperationType
-	Payload         []byte
-}
-
 type websocketPayloadParser struct {
 	uint64ByteSliceConverter Uint64ByteSliceConverter
 }
@@ -48,7 +40,7 @@ func NewWebSocketPayloadParser(uint64ByteSliceConverter Uint64ByteSliceConverter
 // next 4 bytes - operation type (uint32 big endian)
 // next 4 bytes - message length (uint32 big endian)
 // next X bytes - the actual data to parse
-func (wpp *websocketPayloadParser) ExtractPayloadData(payload []byte) (*PayloadData, error) {
+func (wpp *websocketPayloadParser) ExtractPayloadData(payload []byte) (*data.PayloadData, error) {
 	if len(payload) < minBytesForCorrectPayload {
 		return nil, fmt.Errorf("invalid payload. minimum required length is %d bytes, but only provided %d",
 			minBytesForCorrectPayload,
@@ -56,7 +48,7 @@ func (wpp *websocketPayloadParser) ExtractPayloadData(payload []byte) (*PayloadD
 	}
 
 	var err error
-	payloadData := &PayloadData{
+	payloadData := &data.PayloadData{
 		WithAcknowledge: false,
 	}
 

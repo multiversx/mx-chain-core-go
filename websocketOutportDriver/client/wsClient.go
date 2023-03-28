@@ -8,7 +8,6 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
-	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/sender"
 	logger "github.com/multiversx/mx-chain-logger-go"
@@ -152,7 +151,7 @@ func (c *client) verifyPayloadAndSendAckIfNeeded(payload []byte) {
 	c.sendAckIfNeeded(payloadData, err)
 }
 
-func (c *client) sendAckIfNeeded(payloadData *websocketOutportDriver.PayloadData, err error) {
+func (c *client) sendAckIfNeeded(payloadData *data.PayloadData, err error) {
 	log.LogIfError(err)
 
 	if !payloadData.WithAcknowledge {

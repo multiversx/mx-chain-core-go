@@ -1,4 +1,4 @@
-package mock
+package testscommon
 
 // WebsocketConnectionStub -
 type WebsocketConnectionStub struct {

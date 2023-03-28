@@ -7,8 +7,7 @@ import (
 
 	"github.com/multiversx/mx-chain-core-go/core/atomic"
 	"github.com/multiversx/mx-chain-core-go/core/closing"
-	"github.com/multiversx/mx-chain-core-go/data/mock"
-	mock2 "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/mock"
+	"github.com/multiversx/mx-chain-core-go/testscommon"
 	"github.com/stretchr/testify/require"
 )
 
@@ -20,10 +19,10 @@ func TestClient_Start(t *testing.T) {
 		Url:                      "url",
 		RetryDurationInSec:       1,
 		BlockingAckOnError:       false,
-		PayloadProcessor:         &mock.PayloadProcessorStub{},
-		PayloadParser:            &mock.PayloadParserStub{},
-		Uint64ByteSliceConverter: &mock2.Uint64ByteSliceConverterStub{},
-		WSConnClient: &mock2.WebsocketConnectionStub{
+		PayloadProcessor:         &testscommon.PayloadProcessorStub{},
+		PayloadParser:            &testscommon.PayloadParserStub{},
+		Uint64ByteSliceConverter: &testscommon.Uint64ByteSliceConverterStub{},
+		WSConnClient: &testscommon.WebsocketConnectionStub{
 			OpenConnectionCalled: func(url string) error {
 				openConnectionCalledCt.Increment()
 				return fmt.Errorf("dsa")

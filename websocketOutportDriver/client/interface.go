@@ -1,7 +1,6 @@
 package client
 
 import (
-	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
@@ -10,13 +9,13 @@ type HandlerFunc func(data []byte) error
 
 // PayloadProcessor defines what a websocket payload processor should do
 type PayloadProcessor interface {
-	ProcessPayload(payload *websocketOutportDriver.PayloadData) error
+	ProcessPayload(payload *data.PayloadData) error
 	Close() error
 }
 
 // PayloadParser defines what a websocket payload parser should do
 type PayloadParser interface {
-	ExtractPayloadData(payload []byte) (*websocketOutportDriver.PayloadData, error)
+	ExtractPayloadData(payload []byte) (*data.PayloadData, error)
 }
 
 // WSConnClient extends the existing data.WSConn with an option to OpenConnection on demand
