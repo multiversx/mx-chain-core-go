@@ -12,7 +12,7 @@ type PayloadParserStub struct {
 // ExtractPayloadData -
 func (pps *PayloadParserStub) ExtractPayloadData(payload []byte) (*data.PayloadData, error) {
 	if pps.ExtractPayloadDataCalled != nil {
-		return pps.ExtractPayloadData(payload)
+		return pps.ExtractPayloadDataCalled(payload)
 	}
 
 	return &data.PayloadData{}, nil

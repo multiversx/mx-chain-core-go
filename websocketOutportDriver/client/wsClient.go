@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/core/closing"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/sender"
 	logger "github.com/multiversx/mx-chain-logger-go"
@@ -37,31 +38,13 @@ type ArgsWsClient struct {
 	PayloadParser            PayloadParser
 	Uint64ByteSliceConverter sender.Uint64ByteSliceConverter
 	WSConnClient             WSConnClient
-	SafeCloser               core.SafeCloser
 }
 
 // NewWsClientHandler will create a ws client to receive data from an observer/light client
 func NewWsClientHandler(args ArgsWsClient) (*client, error) {
-	if args.PayloadProcessor == nil {
-		return nil, errNilPayloadProcessor
-	}
-	if args.PayloadParser == nil {
-		return nil, errNilPayloadParser
-	}
-	if args.WSConnClient == nil {
-		return nil, errNilWsConnReceiver
-	}
-	if args.Uint64ByteSliceConverter == nil {
-		return nil, errNilUint64ByteSliceConverter
-	}
-	if args.SafeCloser == nil {
-		return nil, errNilSafeCloser
-	}
-	if len(args.Url) == 0 {
-		return nil, errEmptyUrl
-	}
-	if args.RetryDurationInSec == 0 {
-		return nil, errZeroValueRetryDuration
+	err := checkArgs(args)
+	if err != nil {
+		return nil, err
 	}
 
 	urlReceiveData := url.URL{Scheme: "ws", Host: args.Url, Path: data.WSRoute}
@@ -75,8 +58,31 @@ func NewWsClientHandler(args ArgsWsClient) (*client, error) {
 		payloadParser:            args.PayloadParser,
 		payloadProcessor:         args.PayloadProcessor,
 		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
-		safeCloser:               args.SafeCloser,
+		safeCloser:               closing.NewSafeChanCloser(),
 	}, nil
+}
+
+func checkArgs(args ArgsWsClient) error {
+	if args.PayloadProcessor == nil {
+		return errNilPayloadProcessor
+	}
+	if args.PayloadParser == nil {
+		return errNilPayloadParser
+	}
+	if args.WSConnClient == nil {
+		return errNilWsConnReceiver
+	}
+	if args.Uint64ByteSliceConverter == nil {
+		return errNilUint64ByteSliceConverter
+	}
+	if len(args.Url) == 0 {
+		return errEmptyUrl
+	}
+	if args.RetryDurationInSec == 0 {
+		return errZeroValueRetryDuration
+	}
+
+	return nil
 }
 
 // Start will start the client listening ws process
@@ -91,18 +97,17 @@ func (c *client) Start() {
 		err := c.wsConn.OpenConnection(c.url)
 		if err == nil {
 			closed = c.listenOnWebSocket()
+		} else {
+			log.Warn(fmt.Sprintf("c.openConnection(), retrying in %v...", c.retryDuration), "error", err)
 		}
 
 		timer.Reset(c.retryDuration)
-		log.Warn(fmt.Sprintf("c.openConnection(), retrying in %v...", c.retryDuration), "error", err.Error())
 
 		select {
 		case <-timer.C:
 		case <-c.safeCloser.ChanClose():
-			c.Close()
 			return
 		}
-
 	}
 }
 
@@ -117,6 +122,7 @@ func (c *client) listenOnWebSocket() (closed bool) {
 		_, isConnectionClosed := err.(*websocket.CloseError)
 		if !isConnectionClosed {
 			if strings.Contains(err.Error(), closedConnection) {
+				log.Info("connection closed by server")
 				return true
 			}
 			log.Warn("c.listenOnWebSocket()-> connection problem, retrying", "error", err.Error())
@@ -136,7 +142,7 @@ func (c *client) verifyPayloadAndSendAckIfNeeded(payload []byte) {
 
 	payloadData, err := c.payloadParser.ExtractPayloadData(payload)
 	if err != nil {
-		log.Error("error while extracting payload data: ", "error", err.Error())
+		log.Error("error while extracting payload data: ", "error", err)
 		return
 	}
 
@@ -183,7 +189,6 @@ func (c *client) waitForAckSignal(counter uint64) {
 		select {
 		case <-timer.C:
 		case <-c.safeCloser.ChanClose():
-			c.Close()
 			return
 		}
 	}
