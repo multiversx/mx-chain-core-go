@@ -13,5 +13,3 @@ var errNilWsConnReceiver = errors.New("nil ws connection receiver provided")
 var errEmptyUrl = errors.New("empty websocket url provided")
 
 var errZeroValueRetryDuration = errors.New("zero value provided for retry duration")
-
-var errNilSafeCloser = errors.New("nil safe closer provided")
