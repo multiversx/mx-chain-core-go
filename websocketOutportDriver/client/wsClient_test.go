@@ -334,6 +334,7 @@ func TestClient_NormalFlowWithAck(t *testing.T) {
 
 	var errClosedConn error
 	mutCloseConn := sync.RWMutex{}
+	mutPayload := sync.RWMutex{}
 	readMsgCalledCt := &atomic.Counter{}
 	writeMsgCalledCt := &atomic.Counter{}
 
@@ -351,6 +352,9 @@ func TestClient_NormalFlowWithAck(t *testing.T) {
 			mutCloseConn.RLock()
 			err = errClosedConn
 			mutCloseConn.RUnlock()
+
+			mutPayload.Lock()
+			defer mutPayload.Unlock()
 
 			expectedPayload.Payload = []byte(fmt.Sprintf("payload%d", expectedPayload.Counter))
 			return 0, expectedPayload.Payload, err
@@ -370,6 +374,9 @@ func TestClient_NormalFlowWithAck(t *testing.T) {
 	}
 	args.Uint64ByteSliceConverter = &testscommon.Uint64ByteSliceConverterStub{
 		ToByteSliceCalled: func(num uint64) []byte {
+			mutPayload.RLock()
+			defer mutPayload.RUnlock()
+
 			require.Equal(t, expectedPayload.Counter, num)
 			return []byte{byte(num)}
 		},
@@ -377,6 +384,9 @@ func TestClient_NormalFlowWithAck(t *testing.T) {
 
 	args.PayloadParser = &testscommon.PayloadParserStub{
 		ExtractPayloadDataCalled: func(payload []byte) (*data.PayloadData, error) {
+			mutPayload.Lock()
+			defer mutPayload.Unlock()
+
 			require.Equal(t, []byte(fmt.Sprintf("payload%d", expectedPayload.Counter)), payload)
 			expectedPayload.Counter++
 
@@ -399,6 +409,9 @@ func TestClient_NormalFlowWithAck(t *testing.T) {
 	time.Sleep(100 * time.Millisecond)
 	require.Equal(t, int64(4), writeMsgCalledCt.Get())
 	require.Equal(t, int64(5), readMsgCalledCt.Get())
+
+	mutPayload.RLock()
+	defer mutPayload.RUnlock()
 	require.Equal(t, &data.PayloadData{
 		WithAcknowledge: true,
 		Payload:         []byte("payload4"),
