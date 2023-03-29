@@ -20,12 +20,14 @@ func filterAddress(originalURL string) string {
 	return originalURL
 }
 
-func createURLForTestServer(server *httptest.Server) *url.URL {
-	return &url.URL{
+func createConnectionURLForTestServer(server *httptest.Server) string {
+	u := url.URL{
 		Scheme: "ws",
 		Host:   filterAddress(server.URL),
 		Path:   "/echo",
 	}
+
+	return u.String()
 }
 
 func TestWsConnClient_OpenCloseConnectionShouldWork(t *testing.T) {
@@ -34,10 +36,9 @@ func TestWsConnClient_OpenCloseConnectionShouldWork(t *testing.T) {
 	testServer := mock.NewHttpTestEchoHandler()
 	defer testServer.Close()
 
-	u := createURLForTestServer(testServer)
-
 	conClient := NewWSConnClient()
-	err := conClient.OpenConnection(u.String())
+	connectionURL := createConnectionURLForTestServer(testServer)
+	err := conClient.OpenConnection(connectionURL)
 	require.Nil(t, err)
 
 	err = conClient.Close()
@@ -50,10 +51,9 @@ func TestWsConnClient_WriteAndReadMessageShouldWork(t *testing.T) {
 	testServer := mock.NewHttpTestEchoHandler()
 	defer testServer.Close()
 
-	u := createURLForTestServer(testServer)
-
 	conClient := NewWSConnClient()
-	_ = conClient.OpenConnection(u.String())
+	connectionURL := createConnectionURLForTestServer(testServer)
+	_ = conClient.OpenConnection(connectionURL)
 	defer func() {
 		_ = conClient.Close()
 	}()
@@ -94,10 +94,9 @@ func TestWsConnClient_WorkingWithAClosedConnectionShouldNotPanic(t *testing.T) {
 	testServer := mock.NewHttpTestEchoHandler()
 	defer testServer.Close()
 
-	u := createURLForTestServer(testServer)
-
 	conClient := NewWSConnClient()
-	_ = conClient.OpenConnection(u.String())
+	connectionURL := createConnectionURLForTestServer(testServer)
+	_ = conClient.OpenConnection(connectionURL)
 	_ = conClient.Close()
 
 	assert.NotPanics(t, func() {
@@ -122,15 +121,14 @@ func TestWsConnClient_ReOpenConnectionAfterCloseShouldWork(t *testing.T) {
 	testServer := mock.NewHttpTestEchoHandler()
 	defer testServer.Close()
 
-	u := createURLForTestServer(testServer)
-
 	conClient := NewWSConnClient()
-	err := conClient.OpenConnection(u.String())
+	connectionURL := createConnectionURLForTestServer(testServer)
+	err := conClient.OpenConnection(connectionURL)
 	require.Nil(t, err)
 	err = conClient.Close()
 	require.Nil(t, err)
 
-	err = conClient.OpenConnection(u.String())
+	err = conClient.OpenConnection(connectionURL)
 	require.Nil(t, err)
 
 	message := "TEST"
@@ -152,13 +150,12 @@ func TestWsConnClient_ReOpenAlreadyOpenedConnectionShouldError(t *testing.T) {
 	testServer := mock.NewHttpTestEchoHandler()
 	defer testServer.Close()
 
-	u := createURLForTestServer(testServer)
-
 	conClient := NewWSConnClient()
-	err := conClient.OpenConnection(u.String())
+	connectionURL := createConnectionURLForTestServer(testServer)
+	err := conClient.OpenConnection(connectionURL)
 	require.Nil(t, err)
 
-	err = conClient.OpenConnection(u.String())
+	err = conClient.OpenConnection(connectionURL)
 	assert.Equal(t, errConnectionAlreadyOpened, err)
 
 	_ = conClient.Close()
