@@ -150,9 +150,10 @@ func (c *client) verifyPayloadAndSendAckIfNeeded(payload []byte) {
 	log.Info("processing payload",
 		"counter", payloadData.Counter,
 		"operation type", payloadData.OperationType,
-		"payload", payloadData.Payload,
 		"message length", len(payloadData.Payload),
 	)
+
+	log.Trace("processing payload data", "payload", payloadData.Payload)
 
 	err = c.payloadProcessor.ProcessPayload(payloadData)
 	c.sendAckIfNeeded(payloadData, err)
