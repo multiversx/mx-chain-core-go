@@ -1,4 +1,4 @@
-package mock
+package testscommon
 
 // Uint64ByteSliceConverterStub -
 type Uint64ByteSliceConverterStub struct {

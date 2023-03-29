@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	coreMock "github.com/multiversx/mx-chain-core-go/core/mock"
+	"github.com/multiversx/mx-chain-core-go/testscommon"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/mock"
 	"github.com/stretchr/testify/require"
@@ -78,7 +79,7 @@ func TestWebSocketSender_AddClient(t *testing.T) {
 
 		wss, _ := NewWebSocketSender(getMockWebSocketSender())
 
-		wss.AddClient(&mock.WebsocketConnectionStub{}, "remote addr")
+		wss.AddClient(&testscommon.WebsocketConnectionStub{}, "remote addr")
 
 		clients := wss.clientsHolder.GetAll()
 		require.NotNil(t, clients["remote addr"])
@@ -98,7 +99,7 @@ func TestWebSocketSender_AddClient(t *testing.T) {
 
 		wss, _ := NewWebSocketSender(args)
 
-		wss.AddClient(&mock.WebsocketConnectionStub{
+		wss.AddClient(&testscommon.WebsocketConnectionStub{
 			ReadMessageCalled: func() (_ int, _ []byte, err error) {
 				err = errors.New("early exit - close the go routine")
 				return
@@ -135,7 +136,7 @@ func TestWebSocketSender_Send(t *testing.T) {
 
 		wss, _ := NewWebSocketSender(getMockWebSocketSender())
 
-		wss.AddClient(&mock.WebsocketConnectionStub{
+		wss.AddClient(&testscommon.WebsocketConnectionStub{
 			ReadMessageCalled: func() (_ int, _ []byte, err error) {
 				err = errors.New("early exit - close the go routine")
 				return
@@ -160,7 +161,7 @@ func TestWebSocketSender_Send(t *testing.T) {
 		chClientAck := make(chan bool)
 		wasMsgProcessed := false
 
-		wss.AddClient(&mock.WebsocketConnectionStub{
+		wss.AddClient(&testscommon.WebsocketConnectionStub{
 			ReadMessageCalled: func() (msgType int, payload []byte, err error) {
 				if wasMsgProcessed {
 					time.Sleep(100 * time.Millisecond)
@@ -207,7 +208,7 @@ func TestWebSocketSender_Close(t *testing.T) {
 func getMockWebSocketSender() WebSocketSenderArgs {
 	return WebSocketSenderArgs{
 		Server:                   &mock.HttpServerStub{},
-		Uint64ByteSliceConverter: &mock.Uint64ByteSliceConverterStub{},
+		Uint64ByteSliceConverter: &testscommon.Uint64ByteSliceConverterStub{},
 		Log:                      coreMock.LoggerMock{},
 	}
 }
