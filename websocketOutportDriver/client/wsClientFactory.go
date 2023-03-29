@@ -5,6 +5,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver"
 )
 
+// ArgsCreateWsClient is a placeholder struct for args required to create a WSClient
 type ArgsCreateWsClient struct {
 	Url                string
 	RetryDurationInSec uint32
@@ -12,6 +13,7 @@ type ArgsCreateWsClient struct {
 	PayloadProcessor   PayloadProcessor
 }
 
+// CreateWsClient creates a WSClient
 func CreateWsClient(args ArgsCreateWsClient) (WSClient, error) {
 	uint64ByteSliceConverter := uint64ByteSlice.NewBigEndianConverter()
 	payloadParser, err := websocketOutportDriver.NewWebSocketPayloadParser(uint64ByteSliceConverter)
