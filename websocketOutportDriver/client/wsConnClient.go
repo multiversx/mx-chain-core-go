@@ -27,6 +27,16 @@ func (wsc *wsConnClient) OpenConnection(url string) error {
 	return nil
 }
 
+// ReadMessage calls the underlying reading message ws connection func
+func (wsc *wsConnClient) ReadMessage() (messageType int, p []byte, err error) {
+	return wsc.conn.ReadMessage()
+}
+
+// WriteMessage calls the underlying write message ws connection func
+func (wsc *wsConnClient) WriteMessage(messageType int, data []byte) error {
+	return wsc.conn.WriteMessage(messageType, data)
+}
+
 // Close will try to cleanly close the connection, if possible
 func (wsc *wsConnClient) Close() error {
 	log.Debug("closing ws connection...")
@@ -44,12 +54,7 @@ func (wsc *wsConnClient) Close() error {
 	return wsc.conn.Close()
 }
 
-// ReadMessage calls the underlying reading message ws connection func
-func (wsc *wsConnClient) ReadMessage() (messageType int, p []byte, err error) {
-	return wsc.conn.ReadMessage()
-}
-
-// WriteMessage calls the underlying write message ws connection func
-func (wsc *wsConnClient) WriteMessage(messageType int, data []byte) error {
-	return wsc.conn.WriteMessage(messageType, data)
+// IsInterfaceNil -
+func (wsc *wsConnClient) IsInterfaceNil() bool {
+	return wsc == nil
 }

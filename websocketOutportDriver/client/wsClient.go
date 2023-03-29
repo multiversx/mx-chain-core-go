@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/core/closing"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/sender"
@@ -63,16 +64,16 @@ func NewWsClientHandler(args ArgsWsClient) (*client, error) {
 }
 
 func checkArgs(args ArgsWsClient) error {
-	if args.PayloadProcessor == nil {
+	if check.IfNil(args.PayloadProcessor) {
 		return errNilPayloadProcessor
 	}
-	if args.PayloadParser == nil {
+	if check.IfNil(args.PayloadParser) {
 		return errNilPayloadParser
 	}
-	if args.WSConnClient == nil {
+	if check.IfNil(args.WSConnClient) {
 		return errNilWsConnReceiver
 	}
-	if args.Uint64ByteSliceConverter == nil {
+	if check.IfNil(args.Uint64ByteSliceConverter) {
 		return errNilUint64ByteSliceConverter
 	}
 	if len(args.Url) == 0 {

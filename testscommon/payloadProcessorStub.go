@@ -27,3 +27,8 @@ func (pps *PayloadProcessorStub) Close() error {
 
 	return nil
 }
+
+// IsInterfaceNil -
+func (pps *PayloadProcessorStub) IsInterfaceNil() bool {
+	return pps == nil
+}

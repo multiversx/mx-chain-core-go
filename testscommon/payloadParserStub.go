@@ -17,3 +17,8 @@ func (pps *PayloadParserStub) ExtractPayloadData(payload []byte) (*data.PayloadD
 
 	return &data.PayloadData{}, nil
 }
+
+// IsInterfaceNil -
+func (pps *PayloadParserStub) IsInterfaceNil() bool {
+	return pps == nil
+}

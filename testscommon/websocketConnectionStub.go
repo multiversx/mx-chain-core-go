@@ -43,3 +43,8 @@ func (w *WebsocketConnectionStub) Close() error {
 
 	return nil
 }
+
+// IsInterfaceNil -
+func (w *WebsocketConnectionStub) IsInterfaceNil() bool {
+	return w == nil
+}
