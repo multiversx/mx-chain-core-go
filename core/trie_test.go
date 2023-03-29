@@ -68,3 +68,33 @@ func TestGetStringForVersion(t *testing.T) {
 	assert.Equal(t, "auto balanced", GetStringForVersion(AutoBalanceEnabled))
 	assert.Equal(t, "unknown: 100", GetStringForVersion(100))
 }
+
+func TestGetVersionForNewData(t *testing.T) {
+	t.Parallel()
+
+	t.Run("auto balance enabled", func(t *testing.T) {
+		t.Parallel()
+
+		getVersionForNewData := GetVersionForNewData(
+			&mock.EnableEpochsHandlerStub{
+				IsAutoBalanceDataTriesEnabledCalled: func() bool {
+					return true
+				},
+			},
+		)
+		assert.Equal(t, AutoBalanceEnabled, getVersionForNewData)
+	})
+
+	t.Run("auto balance disabled", func(t *testing.T) {
+		t.Parallel()
+
+		getVersionForNewData := GetVersionForNewData(
+			&mock.EnableEpochsHandlerStub{
+				IsAutoBalanceDataTriesEnabledCalled: func() bool {
+					return false
+				},
+			},
+		)
+		assert.Equal(t, NotSpecified, getVersionForNewData)
+	})
+}
