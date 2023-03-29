@@ -56,6 +56,15 @@ func (vv *trieNodeVersionVerifier) IsInterfaceNil() bool {
 	return vv == nil
 }
 
+// GetVersionForNewData returns the trie node version that should be used for new data
+func GetVersionForNewData(handler EnableEpochsHandler) TrieNodeVersion {
+	if handler.IsAutoBalanceDataTriesEnabled() {
+		return AutoBalanceEnabled
+	}
+
+	return NotSpecified
+}
+
 // TrieData holds the data that will be inserted into the trie
 type TrieData struct {
 	Key     []byte
