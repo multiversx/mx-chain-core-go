@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
 	"github.com/multiversx/mx-chain-core-go/testscommon"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
@@ -26,7 +27,7 @@ func TestNewWebSocketPayloadParser(t *testing.T) {
 	t.Run("constructor should work", func(t *testing.T) {
 		wpp, err := NewWebSocketPayloadParser(uint64ByteSliceConv)
 		require.NoError(t, err)
-		require.NotNil(t, wpp)
+		require.False(t, check.IfNil(wpp))
 	})
 }
 
