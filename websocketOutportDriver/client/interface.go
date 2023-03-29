@@ -26,3 +26,9 @@ type WSConnClient interface {
 	OpenConnection(url string) error
 	IsInterfaceNil() bool
 }
+
+// WSClient defines what a websocket client handler should do
+type WSClient interface {
+	Start()
+	Close()
+}
