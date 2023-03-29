@@ -1,23 +1,30 @@
 package client
 
 import (
+	"sync"
+
 	"github.com/gorilla/websocket"
-	"github.com/multiversx/mx-chain-core-go/core/check"
 )
 
 type wsConnClient struct {
+	mut  sync.RWMutex
 	conn *websocket.Conn
 }
 
 // NewWSConnClient creates a new wrapper over a websocket connection
 func NewWSConnClient() *wsConnClient {
-	return &wsConnClient{
-		conn: &websocket.Conn{},
-	}
+	return &wsConnClient{}
 }
 
 // OpenConnection will open a new client with a background context
 func (wsc *wsConnClient) OpenConnection(url string) error {
+	wsc.mut.Lock()
+	defer wsc.mut.Unlock()
+
+	if wsc.conn != nil {
+		return errConnectionAlreadyOpened
+	}
+
 	var err error
 	wsc.conn, _, err = websocket.DefaultDialer.Dial(url, nil)
 	if err != nil {
@@ -29,10 +36,15 @@ func (wsc *wsConnClient) OpenConnection(url string) error {
 
 // Close will try to cleanly close the connection, if possible
 func (wsc *wsConnClient) Close() error {
-	log.Debug("closing ws connection...")
-	if check.IfNilReflect(wsc.conn) {
-		return nil
+	// critical section
+	wsc.mut.Lock()
+	defer wsc.mut.Unlock()
+
+	if wsc.conn == nil {
+		return errConnectionNotOpened
 	}
+
+	log.Debug("closing ws connection...")
 
 	//Cleanly close the connection by sending a close message and then
 	//waiting (with timeout) for the server to close the connection.
@@ -41,15 +53,35 @@ func (wsc *wsConnClient) Close() error {
 		log.Error("cannot send close message", "error", err)
 	}
 
-	return wsc.conn.Close()
+	err = wsc.conn.Close()
+	if err != nil {
+		return err
+	}
+
+	wsc.conn = nil
+	return nil
 }
 
 // ReadMessage calls the underlying reading message ws connection func
 func (wsc *wsConnClient) ReadMessage() (messageType int, p []byte, err error) {
+	wsc.mut.RLock()
+	defer wsc.mut.RUnlock()
+
+	if wsc.conn == nil {
+		return 0, nil, errConnectionNotOpened
+	}
+
 	return wsc.conn.ReadMessage()
 }
 
 // WriteMessage calls the underlying write message ws connection func
 func (wsc *wsConnClient) WriteMessage(messageType int, data []byte) error {
+	wsc.mut.RLock()
+	defer wsc.mut.RUnlock()
+
+	if wsc.conn == nil {
+		return errConnectionNotOpened
+	}
+
 	return wsc.conn.WriteMessage(messageType, data)
 }
