@@ -34,6 +34,30 @@ func (wsc *wsConnClient) OpenConnection(url string) error {
 	return nil
 }
 
+// ReadMessage calls the underlying reading message ws connection func
+func (wsc *wsConnClient) ReadMessage() (messageType int, p []byte, err error) {
+	wsc.mut.RLock()
+	defer wsc.mut.RUnlock()
+
+	if wsc.conn == nil {
+		return 0, nil, errConnectionNotOpened
+	}
+
+	return wsc.conn.ReadMessage()
+}
+
+// WriteMessage calls the underlying write message ws connection func
+func (wsc *wsConnClient) WriteMessage(messageType int, data []byte) error {
+	wsc.mut.RLock()
+	defer wsc.mut.RUnlock()
+
+	if wsc.conn == nil {
+		return errConnectionNotOpened
+	}
+
+	return wsc.conn.WriteMessage(messageType, data)
+}
+
 // Close will try to cleanly close the connection, if possible
 func (wsc *wsConnClient) Close() error {
 	// critical section
@@ -62,26 +86,7 @@ func (wsc *wsConnClient) Close() error {
 	return nil
 }
 
-// ReadMessage calls the underlying reading message ws connection func
-func (wsc *wsConnClient) ReadMessage() (messageType int, p []byte, err error) {
-	wsc.mut.RLock()
-	defer wsc.mut.RUnlock()
-
-	if wsc.conn == nil {
-		return 0, nil, errConnectionNotOpened
-	}
-
-	return wsc.conn.ReadMessage()
-}
-
-// WriteMessage calls the underlying write message ws connection func
-func (wsc *wsConnClient) WriteMessage(messageType int, data []byte) error {
-	wsc.mut.RLock()
-	defer wsc.mut.RUnlock()
-
-	if wsc.conn == nil {
-		return errConnectionNotOpened
-	}
-
-	return wsc.conn.WriteMessage(messageType, data)
+// IsInterfaceNil -
+func (wsc *wsConnClient) IsInterfaceNil() bool {
+	return wsc == nil
 }
