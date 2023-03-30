@@ -94,3 +94,8 @@ func padUint32ByteSlice(initial []byte) []byte {
 	padding := bytes.Repeat([]byte{0}, 4)
 	return append(padding, initial...)
 }
+
+// IsInterfaceNil -
+func (wpp *websocketPayloadParser) IsInterfaceNil() bool {
+	return wpp == nil
+}
