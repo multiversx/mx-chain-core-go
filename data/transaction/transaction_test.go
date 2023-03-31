@@ -162,9 +162,9 @@ func TestTransaction_GetDataForSigningMarshalizerErrShouldErr(t *testing.T) {
 	expectedErr := errors.New("expected error")
 	buff, err := tx.GetDataForSigning(
 		&mock.PubkeyConverterStub{
-			EncodeCalled: func(pkBytes []byte) string {
+			EncodeCalled: func(pkBytes []byte) (string, error) {
 				numEncodeCalled++
-				return ""
+				return "", nil
 			},
 		},
 		&mock.MarshalizerStub{
@@ -188,9 +188,9 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 	marshalizerWasCalled := false
 	buff, err := tx.GetDataForSigning(
 		&mock.PubkeyConverterStub{
-			EncodeCalled: func(pkBytes []byte) string {
+			EncodeCalled: func(pkBytes []byte) (string, error) {
 				numEncodeCalled++
-				return ""
+				return "", nil
 			},
 		},
 		&mock.MarshalizerStub{

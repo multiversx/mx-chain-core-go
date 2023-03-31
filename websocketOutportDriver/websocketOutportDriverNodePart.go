@@ -6,7 +6,6 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/atomic"
 	"github.com/multiversx/mx-chain-core-go/core/check"
-	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/marshal"
 	outportSenderData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
@@ -58,73 +57,43 @@ func NewWebsocketOutportDriverNodePart(args WebsocketOutportDriverNodePartArgs) 
 }
 
 // SaveBlock will send the provided block saving arguments within the websocket
-func (o *websocketOutportDriverNodePart) SaveBlock(args *outport.ArgsSaveBlockData) error {
-	argsSaveBlock := outportSenderData.ArgsSaveBlock{
-		HeaderType:        core.GetHeaderType(args.Header),
-		ArgsSaveBlockData: PrepareArgsSaveBlock(*args),
-	}
-
-	return o.handleAction(argsSaveBlock, outportSenderData.OperationSaveBlock)
+func (o *websocketOutportDriverNodePart) SaveBlock(outportBlock *outport.OutportBlock) error {
+	return o.handleAction(outportBlock, outportSenderData.OperationSaveBlock)
 }
 
 // RevertIndexedBlock will handle the action of reverting the indexed block
-func (o *websocketOutportDriverNodePart) RevertIndexedBlock(header data.HeaderHandler, body data.BodyHandler) error {
-	args := outportSenderData.ArgsRevertIndexedBlock{
-		Header:     header,
-		Body:       body,
-		HeaderType: core.GetHeaderType(header),
-	}
-
-	return o.handleAction(args, outportSenderData.OperationRevertIndexedBlock)
+func (o *websocketOutportDriverNodePart) RevertIndexedBlock(blockData *outport.BlockData) error {
+	return o.handleAction(blockData, outportSenderData.OperationRevertIndexedBlock)
 }
 
 // SaveRoundsInfo will handle the saving of rounds
-func (o *websocketOutportDriverNodePart) SaveRoundsInfo(roundsInfos []*outport.RoundInfo) error {
-	args := outportSenderData.ArgsSaveRoundsInfo{
-		RoundsInfos: roundsInfos,
-	}
-
-	return o.handleAction(args, outportSenderData.OperationSaveRoundsInfo)
+func (o *websocketOutportDriverNodePart) SaveRoundsInfo(roundsInfos *outport.RoundsInfo) error {
+	return o.handleAction(roundsInfos, outportSenderData.OperationSaveRoundsInfo)
 }
 
 // SaveValidatorsPubKeys will handle the saving of the validators' public keys
-func (o *websocketOutportDriverNodePart) SaveValidatorsPubKeys(validatorsPubKeys map[uint32][][]byte, epoch uint32) error {
-	args := outportSenderData.ArgsSaveValidatorsPubKeys{
-		ValidatorsPubKeys: validatorsPubKeys,
-		Epoch:             epoch,
-	}
-
-	return o.handleAction(args, outportSenderData.OperationSaveValidatorsPubKeys)
+func (o *websocketOutportDriverNodePart) SaveValidatorsPubKeys(validatorsPubKeys *outport.ValidatorsPubKeys) error {
+	return o.handleAction(validatorsPubKeys, outportSenderData.OperationSaveValidatorsPubKeys)
 }
 
 // SaveValidatorsRating will handle the saving of the validators' rating
-func (o *websocketOutportDriverNodePart) SaveValidatorsRating(indexID string, infoRating []*outport.ValidatorRatingInfo) error {
-	args := outportSenderData.ArgsSaveValidatorsRating{
-		IndexID:    indexID,
-		InfoRating: infoRating,
-	}
-
-	return o.handleAction(args, outportSenderData.OperationSaveValidatorsRating)
+func (o *websocketOutportDriverNodePart) SaveValidatorsRating(validatorsRating *outport.ValidatorsRating) error {
+	return o.handleAction(validatorsRating, outportSenderData.OperationSaveValidatorsRating)
 }
 
 // SaveAccounts will handle the accounts' saving
-func (o *websocketOutportDriverNodePart) SaveAccounts(blockTimestamp uint64, acc map[string]*outport.AlteredAccount, shardID uint32) error {
-	args := outportSenderData.ArgsSaveAccounts{
-		BlockTimestamp: blockTimestamp,
-		Acc:            acc,
-		ShardID:        shardID,
-	}
-
-	return o.handleAction(args, outportSenderData.OperationSaveAccounts)
+func (o *websocketOutportDriverNodePart) SaveAccounts(accounts *outport.Accounts) error {
+	return o.handleAction(accounts, outportSenderData.OperationSaveAccounts)
 }
 
 // FinalizedBlock will handle the finalized block
-func (o *websocketOutportDriverNodePart) FinalizedBlock(headerHash []byte) error {
-	args := outportSenderData.ArgsFinalizedBlock{
-		HeaderHash: headerHash,
-	}
+func (o *websocketOutportDriverNodePart) FinalizedBlock(finalizedBlock *outport.FinalizedBlock) error {
+	return o.handleAction(finalizedBlock, outportSenderData.OperationFinalizedBlock)
+}
 
-	return o.handleAction(args, outportSenderData.OperationFinalizedBlock)
+// GetMarshaller returns the internal marshaller
+func (o *websocketOutportDriverNodePart) GetMarshaller() marshal.Marshalizer {
+	return o.marshalizer
 }
 
 // Close will handle the closing of the outport driver web socket sender

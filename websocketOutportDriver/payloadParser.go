@@ -2,12 +2,9 @@ package websocketOutportDriver
 
 import (
 	"bytes"
-	"encoding/hex"
 	"fmt"
 
 	"github.com/multiversx/mx-chain-core-go/core/check"
-	dataCore "github.com/multiversx/mx-chain-core-go/data"
-	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
@@ -20,14 +17,6 @@ const (
 var (
 	minBytesForCorrectPayload = withAcknowledgeNumBytes + uint64NumBytes + uint32NumBytes + uint32NumBytes
 )
-
-// PayloadData holds the arguments that should be parsed from a websocket payload
-type PayloadData struct {
-	WithAcknowledge bool
-	Counter         uint64
-	OperationType   data.OperationType
-	Payload         []byte
-}
 
 type websocketPayloadParser struct {
 	uint64ByteSliceConverter Uint64ByteSliceConverter
@@ -51,7 +40,7 @@ func NewWebSocketPayloadParser(uint64ByteSliceConverter Uint64ByteSliceConverter
 // next 4 bytes - operation type (uint32 big endian)
 // next 4 bytes - message length (uint32 big endian)
 // next X bytes - the actual data to parse
-func (wpp *websocketPayloadParser) ExtractPayloadData(payload []byte) (*PayloadData, error) {
+func (wpp *websocketPayloadParser) ExtractPayloadData(payload []byte) (*data.PayloadData, error) {
 	if len(payload) < minBytesForCorrectPayload {
 		return nil, fmt.Errorf("invalid payload. minimum required length is %d bytes, but only provided %d",
 			minBytesForCorrectPayload,
@@ -59,7 +48,7 @@ func (wpp *websocketPayloadParser) ExtractPayloadData(payload []byte) (*PayloadD
 	}
 
 	var err error
-	payloadData := &PayloadData{
+	payloadData := &data.PayloadData{
 		WithAcknowledge: false,
 	}
 
@@ -106,49 +95,7 @@ func padUint32ByteSlice(initial []byte) []byte {
 	return append(padding, initial...)
 }
 
-// PrepareArgsSaveBlock will prepare save block data
-func PrepareArgsSaveBlock(args outport.ArgsSaveBlockData) outport.ArgsSaveBlockData {
-	var pool *outport.Pool
-	if args.TransactionsPool != nil {
-		pool = &outport.Pool{
-			Txs:      prepareTxs(args.TransactionsPool.Txs),
-			Scrs:     prepareTxs(args.TransactionsPool.Scrs),
-			Rewards:  prepareTxs(args.TransactionsPool.Rewards),
-			Invalid:  prepareTxs(args.TransactionsPool.Invalid),
-			Receipts: prepareTxs(args.TransactionsPool.Receipts),
-			Logs:     prepareLogs(args.TransactionsPool.Logs),
-		}
-	}
-
-	return outport.ArgsSaveBlockData{
-		HeaderHash:             args.HeaderHash,
-		Body:                   args.Body,
-		Header:                 args.Header,
-		SignersIndexes:         args.SignersIndexes,
-		NotarizedHeadersHashes: args.NotarizedHeadersHashes,
-		HeaderGasConsumption:   args.HeaderGasConsumption,
-		TransactionsPool:       pool,
-		AlteredAccounts:        args.AlteredAccounts,
-		NumberOfShards:         args.NumberOfShards,
-		IsImportDB:             args.IsImportDB,
-	}
-}
-
-func prepareLogs(initial []*dataCore.LogData) []*dataCore.LogData {
-	res := make([]*dataCore.LogData, 0, len(initial))
-	for _, logHandler := range initial {
-		res = append(res, &dataCore.LogData{
-			LogHandler: logHandler.LogHandler,
-			TxHash:     hex.EncodeToString([]byte(logHandler.TxHash)),
-		})
-	}
-	return res
-}
-
-func prepareTxs(initial map[string]dataCore.TransactionHandlerWithGasUsedAndFee) map[string]dataCore.TransactionHandlerWithGasUsedAndFee {
-	res := make(map[string]dataCore.TransactionHandlerWithGasUsedAndFee)
-	for txHash, tx := range initial {
-		res[hex.EncodeToString([]byte(txHash))] = tx
-	}
-	return res
+// IsInterfaceNil -
+func (wpp *websocketPayloadParser) IsInterfaceNil() bool {
+	return wpp == nil
 }
