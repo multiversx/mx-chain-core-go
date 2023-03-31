@@ -3,8 +3,8 @@ package sender
 import (
 	"testing"
 
+	"github.com/multiversx/mx-chain-core-go/testscommon"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
-	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/mock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -69,7 +69,7 @@ func TestWebsocketClientsHolder_CloseAndRemove(t *testing.T) {
 
 		wch := NewWebsocketClientsHolder()
 		closeWasCalled := false
-		_ = wch.AddClient(&webSocketClient{remoteAddr: "cl", conn: &mock.WebsocketConnectionStub{
+		_ = wch.AddClient(&webSocketClient{remoteAddr: "cl", conn: &testscommon.WebsocketConnectionStub{
 			CloseCalled: func() error {
 				closeWasCalled = true
 				return nil

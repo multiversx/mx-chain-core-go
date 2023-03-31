@@ -11,6 +11,7 @@ require (
 	github.com/gorilla/websocket v1.4.2
 	github.com/hashicorp/golang-lru v0.5.4
 	github.com/mr-tron/base58 v1.2.0
+	github.com/multiversx/mx-chain-logger-go v1.0.11
 	github.com/pelletier/go-toml v1.9.3
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.7.0

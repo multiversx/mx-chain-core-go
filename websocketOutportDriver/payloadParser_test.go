@@ -6,9 +6,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
+	"github.com/multiversx/mx-chain-core-go/testscommon"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
-	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/mock"
 	"github.com/stretchr/testify/require"
 )
 
@@ -26,7 +27,7 @@ func TestNewWebSocketPayloadParser(t *testing.T) {
 	t.Run("constructor should work", func(t *testing.T) {
 		wpp, err := NewWebSocketPayloadParser(uint64ByteSliceConv)
 		require.NoError(t, err)
-		require.NotNil(t, wpp)
+		require.False(t, check.IfNil(wpp))
 	})
 }
 
@@ -49,7 +50,7 @@ func testExtractPayloadDataInvalidLength(t *testing.T) {
 
 func testExtractPayloadDataInvalidCounterByteSlice(t *testing.T) {
 	localErr := errors.New("local error")
-	uint64ConvStub := &mock.Uint64ByteSliceConverterStub{
+	uint64ConvStub := &testscommon.Uint64ByteSliceConverterStub{
 		ToUint64Called: func(_ []byte) (uint64, error) {
 			return 0, localErr
 		},
@@ -64,7 +65,7 @@ func testExtractPayloadDataInvalidCounterByteSlice(t *testing.T) {
 func testExtractPayloadDataInvalidOperationTypeByteSlice(t *testing.T) {
 	localErr := errors.New("local error")
 	numCalled := 0
-	uint64ConvStub := &mock.Uint64ByteSliceConverterStub{
+	uint64ConvStub := &testscommon.Uint64ByteSliceConverterStub{
 		ToUint64Called: func(_ []byte) (uint64, error) {
 			numCalled++
 			if numCalled == 2 {
@@ -84,7 +85,7 @@ func testExtractPayloadDataInvalidOperationTypeByteSlice(t *testing.T) {
 func testExtractPayloadDataInvalidMessageCounterByteSlice(t *testing.T) {
 	localErr := errors.New("local error")
 	numCalled := 0
-	uint64ConvStub := &mock.Uint64ByteSliceConverterStub{
+	uint64ConvStub := &testscommon.Uint64ByteSliceConverterStub{
 		ToUint64Called: func(_ []byte) (uint64, error) {
 			numCalled++
 			if numCalled == 3 {
@@ -102,7 +103,7 @@ func testExtractPayloadDataInvalidMessageCounterByteSlice(t *testing.T) {
 }
 
 func testExtractPayloadDataMessageCounterDoesNotMatchActualPayloadSize(t *testing.T) {
-	uint64ConvStub := &mock.Uint64ByteSliceConverterStub{
+	uint64ConvStub := &testscommon.Uint64ByteSliceConverterStub{
 		ToUint64Called: func(_ []byte) (uint64, error) {
 			return 0, nil
 		},

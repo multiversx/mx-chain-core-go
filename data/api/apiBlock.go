@@ -4,7 +4,7 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/multiversx/mx-chain-core-go/data/outport"
+	"github.com/multiversx/mx-chain-core-go/data/alteredAccount"
 	"github.com/multiversx/mx-chain-core-go/data/transaction"
 )
 
@@ -57,13 +57,13 @@ type EpochStartInfo struct {
 
 // NotarizedBlock represents a notarized block
 type NotarizedBlock struct {
-	Hash            string                    `json:"hash"`
-	Nonce           uint64                    `json:"nonce"`
-	Round           uint64                    `json:"round"`
-	Shard           uint32                    `json:"shard"`
-	RootHash        string                    `json:"rootHash"`
-	MiniBlockHashes []string                  `json:"miniBlockHashes,omitempty"`
-	AlteredAccounts []*outport.AlteredAccount `json:"alteredAccounts,omitempty"`
+	Hash            string                           `json:"hash"`
+	Nonce           uint64                           `json:"nonce"`
+	Round           uint64                           `json:"round"`
+	Shard           uint32                           `json:"shard"`
+	RootHash        string                           `json:"rootHash"`
+	MiniBlockHashes []string                         `json:"miniBlockHashes,omitempty"`
+	AlteredAccounts []*alteredAccount.AlteredAccount `json:"alteredAccounts,omitempty"`
 }
 
 // EpochStartShardData is a structure that holds data about the epoch start shard data

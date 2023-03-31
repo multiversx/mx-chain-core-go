@@ -22,6 +22,9 @@ var ErrNilShardCoordinator = errors.New("nil shard coordinator")
 // ErrNilMarshalizer is raised when the NewTrie() function is called, but a marshalizer isn't provided
 var ErrNilMarshalizer = errors.New("no marshalizer provided")
 
+// ErrNilEmptyBlockCreator is raised when attempting to work with a nil empty block creator
+var ErrNilEmptyBlockCreator = errors.New("nil empty block creator")
+
 // ErrNilDatabase is raised when a database operation is called, but no database is provided
 var ErrNilDatabase = errors.New("no database provided")
 
