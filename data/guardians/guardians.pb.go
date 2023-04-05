@@ -29,6 +29,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 type Guardian struct {
 	Address         []byte `protobuf:"bytes,1,opt,name=Address,proto3" json:"Address,omitempty"`
 	ActivationEpoch uint32 `protobuf:"varint,2,opt,name=ActivationEpoch,proto3" json:"ActivationEpoch,omitempty"`
+	ServiceUID      []byte `protobuf:"bytes,3,opt,name=ServiceUID,proto3" json:"ServiceUID,omitempty"`
 }
 
 func (m *Guardian) Reset()      { *m = Guardian{} }
@@ -73,8 +74,15 @@ func (m *Guardian) GetActivationEpoch() uint32 {
 	return 0
 }
 
+func (m *Guardian) GetServiceUID() []byte {
+	if m != nil {
+		return m.ServiceUID
+	}
+	return nil
+}
+
 type Guardians struct {
-	Data []*Guardian `protobuf:"bytes,1,rep,name=Data,proto3" json:"Data,omitempty"`
+	Slice []*Guardian `protobuf:"bytes,1,rep,name=Slice,proto3" json:"Slice,omitempty"`
 }
 
 func (m *Guardians) Reset()      { *m = Guardians{} }
@@ -105,9 +113,9 @@ func (m *Guardians) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_Guardians proto.InternalMessageInfo
 
-func (m *Guardians) GetData() []*Guardian {
+func (m *Guardians) GetSlice() []*Guardian {
 	if m != nil {
-		return m.Data
+		return m.Slice
 	}
 	return nil
 }
@@ -120,23 +128,24 @@ func init() {
 func init() { proto.RegisterFile("guardians.proto", fileDescriptor_038b1a485f6c9757) }
 
 var fileDescriptor_038b1a485f6c9757 = []byte{
-	// 248 bytes of a gzipped FileDescriptorProto
+	// 269 bytes of a gzipped FileDescriptorProto
 	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xe2, 0x4f, 0x2f, 0x4d, 0x2c,
 	0x4a, 0xc9, 0x4c, 0xcc, 0x2b, 0xd6, 0x2b, 0x28, 0xca, 0x2f, 0xc9, 0x17, 0x12, 0x05, 0x53, 0x4e,
 	0xa5, 0x99, 0x39, 0x25, 0x9e, 0x79, 0x6e, 0xa5, 0x79, 0xc9, 0x25, 0x99, 0xf9, 0x79, 0xc5, 0x52,
 	0xba, 0xe9, 0x99, 0x25, 0x19, 0xa5, 0x49, 0x7a, 0xc9, 0xf9, 0xb9, 0xfa, 0xe9, 0xf9, 0xe9, 0xf9,
-	0xfa, 0x60, 0x65, 0x49, 0xa5, 0x69, 0x60, 0x1e, 0x98, 0x03, 0x66, 0x41, 0x4c, 0x51, 0xf2, 0xe3,
+	0xfa, 0x60, 0x65, 0x49, 0xa5, 0x69, 0x60, 0x1e, 0x98, 0x03, 0x66, 0x41, 0x4c, 0x51, 0xca, 0xe3,
 	0xe2, 0x70, 0x87, 0x1a, 0x2c, 0x24, 0xc1, 0xc5, 0xee, 0x98, 0x92, 0x52, 0x94, 0x5a, 0x5c, 0x2c,
 	0xc1, 0xa8, 0xc0, 0xa8, 0xc1, 0x13, 0x04, 0xe3, 0x0a, 0x69, 0x70, 0xf1, 0x3b, 0x26, 0x97, 0x64,
 	0x96, 0x25, 0x82, 0xec, 0x70, 0x2d, 0xc8, 0x4f, 0xce, 0x90, 0x60, 0x52, 0x60, 0xd4, 0xe0, 0x0d,
-	0x42, 0x17, 0x56, 0x72, 0xe0, 0xe2, 0x84, 0x99, 0x57, 0x2c, 0x64, 0xcc, 0xc5, 0xe2, 0x92, 0x58,
-	0x92, 0x28, 0xc1, 0xa8, 0xc0, 0xac, 0xc1, 0x6d, 0x24, 0xaf, 0x87, 0xd5, 0xc5, 0x7a, 0x30, 0xf5,
-	0x41, 0x60, 0xc5, 0x4e, 0xce, 0x17, 0x1e, 0xca, 0x31, 0xdc, 0x78, 0x28, 0xc7, 0xf0, 0xe1, 0xa1,
-	0x1c, 0x63, 0xc3, 0x23, 0x39, 0xc6, 0x15, 0x8f, 0xe4, 0x18, 0x4f, 0x3c, 0x92, 0x63, 0xbc, 0xf0,
-	0x48, 0x8e, 0xf1, 0xc6, 0x23, 0x39, 0xc6, 0x07, 0x8f, 0xe4, 0x18, 0x5f, 0x3c, 0x92, 0x63, 0xf8,
-	0xf0, 0x48, 0x8e, 0x71, 0xc2, 0x63, 0x39, 0x86, 0x0b, 0x8f, 0xe5, 0x18, 0x6e, 0x3c, 0x96, 0x63,
-	0x88, 0xe2, 0x84, 0x07, 0x51, 0x12, 0x1b, 0xd8, 0x2a, 0x63, 0x40, 0x00, 0x00, 0x00, 0xff, 0xff,
-	0x44, 0x46, 0xb6, 0x23, 0x36, 0x01, 0x00, 0x00,
+	0x42, 0x17, 0x16, 0x92, 0xe3, 0xe2, 0x0a, 0x4e, 0x2d, 0x2a, 0xcb, 0x4c, 0x4e, 0x0d, 0xf5, 0x74,
+	0x91, 0x60, 0x06, 0x1b, 0x83, 0x24, 0xa2, 0xe4, 0xc4, 0xc5, 0x09, 0xb3, 0xaf, 0x58, 0xc8, 0x94,
+	0x8b, 0x35, 0x38, 0x27, 0x33, 0x39, 0x55, 0x82, 0x51, 0x81, 0x59, 0x83, 0xdb, 0x48, 0x5e, 0x0f,
+	0xab, 0x97, 0xf4, 0x60, 0x1a, 0x82, 0x20, 0xaa, 0x9d, 0x9c, 0x2f, 0x3c, 0x94, 0x63, 0xb8, 0xf1,
+	0x50, 0x8e, 0xe1, 0xc3, 0x43, 0x39, 0xc6, 0x86, 0x47, 0x72, 0x8c, 0x2b, 0x1e, 0xc9, 0x31, 0x9e,
+	0x78, 0x24, 0xc7, 0x78, 0xe1, 0x91, 0x1c, 0xe3, 0x8d, 0x47, 0x72, 0x8c, 0x0f, 0x1e, 0xc9, 0x31,
+	0xbe, 0x78, 0x24, 0xc7, 0xf0, 0xe1, 0x91, 0x1c, 0xe3, 0x84, 0xc7, 0x72, 0x0c, 0x17, 0x1e, 0xcb,
+	0x31, 0xdc, 0x78, 0x2c, 0xc7, 0x10, 0xc5, 0x09, 0x0f, 0xc4, 0x24, 0x36, 0xb0, 0x5d, 0xc6, 0x80,
+	0x00, 0x00, 0x00, 0xff, 0xff, 0xad, 0xce, 0xd9, 0xb0, 0x58, 0x01, 0x00, 0x00,
 }
 
 func (this *Guardian) Equal(that interface{}) bool {
@@ -164,6 +173,9 @@ func (this *Guardian) Equal(that interface{}) bool {
 	if this.ActivationEpoch != that1.ActivationEpoch {
 		return false
 	}
+	if !bytes.Equal(this.ServiceUID, that1.ServiceUID) {
+		return false
+	}
 	return true
 }
 func (this *Guardians) Equal(that interface{}) bool {
@@ -185,11 +197,11 @@ func (this *Guardians) Equal(that interface{}) bool {
 	} else if this == nil {
 		return false
 	}
-	if len(this.Data) != len(that1.Data) {
+	if len(this.Slice) != len(that1.Slice) {
 		return false
 	}
-	for i := range this.Data {
-		if !this.Data[i].Equal(that1.Data[i]) {
+	for i := range this.Slice {
+		if !this.Slice[i].Equal(that1.Slice[i]) {
 			return false
 		}
 	}
@@ -199,10 +211,11 @@ func (this *Guardian) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 6)
+	s := make([]string, 0, 7)
 	s = append(s, "&guardians.Guardian{")
 	s = append(s, "Address: "+fmt.Sprintf("%#v", this.Address)+",\n")
 	s = append(s, "ActivationEpoch: "+fmt.Sprintf("%#v", this.ActivationEpoch)+",\n")
+	s = append(s, "ServiceUID: "+fmt.Sprintf("%#v", this.ServiceUID)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -212,8 +225,8 @@ func (this *Guardians) GoString() string {
 	}
 	s := make([]string, 0, 5)
 	s = append(s, "&guardians.Guardians{")
-	if this.Data != nil {
-		s = append(s, "Data: "+fmt.Sprintf("%#v", this.Data)+",\n")
+	if this.Slice != nil {
+		s = append(s, "Slice: "+fmt.Sprintf("%#v", this.Slice)+",\n")
 	}
 	s = append(s, "}")
 	return strings.Join(s, "")
@@ -246,6 +259,13 @@ func (m *Guardian) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.ServiceUID) > 0 {
+		i -= len(m.ServiceUID)
+		copy(dAtA[i:], m.ServiceUID)
+		i = encodeVarintGuardians(dAtA, i, uint64(len(m.ServiceUID)))
+		i--
+		dAtA[i] = 0x1a
+	}
 	if m.ActivationEpoch != 0 {
 		i = encodeVarintGuardians(dAtA, i, uint64(m.ActivationEpoch))
 		i--
@@ -281,10 +301,10 @@ func (m *Guardians) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.Data) > 0 {
-		for iNdEx := len(m.Data) - 1; iNdEx >= 0; iNdEx-- {
+	if len(m.Slice) > 0 {
+		for iNdEx := len(m.Slice) - 1; iNdEx >= 0; iNdEx-- {
 			{
-				size, err := m.Data[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				size, err := m.Slice[iNdEx].MarshalToSizedBuffer(dAtA[:i])
 				if err != nil {
 					return 0, err
 				}
@@ -322,6 +342,10 @@ func (m *Guardian) Size() (n int) {
 	if m.ActivationEpoch != 0 {
 		n += 1 + sovGuardians(uint64(m.ActivationEpoch))
 	}
+	l = len(m.ServiceUID)
+	if l > 0 {
+		n += 1 + l + sovGuardians(uint64(l))
+	}
 	return n
 }
 
@@ -331,8 +355,8 @@ func (m *Guardians) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if len(m.Data) > 0 {
-		for _, e := range m.Data {
+	if len(m.Slice) > 0 {
+		for _, e := range m.Slice {
 			l = e.Size()
 			n += 1 + l + sovGuardians(uint64(l))
 		}
@@ -353,6 +377,7 @@ func (this *Guardian) String() string {
 	s := strings.Join([]string{`&Guardian{`,
 		`Address:` + fmt.Sprintf("%v", this.Address) + `,`,
 		`ActivationEpoch:` + fmt.Sprintf("%v", this.ActivationEpoch) + `,`,
+		`ServiceUID:` + fmt.Sprintf("%v", this.ServiceUID) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -361,13 +386,13 @@ func (this *Guardians) String() string {
 	if this == nil {
 		return "nil"
 	}
-	repeatedStringForData := "[]*Guardian{"
-	for _, f := range this.Data {
-		repeatedStringForData += strings.Replace(f.String(), "Guardian", "Guardian", 1) + ","
+	repeatedStringForSlice := "[]*Guardian{"
+	for _, f := range this.Slice {
+		repeatedStringForSlice += strings.Replace(f.String(), "Guardian", "Guardian", 1) + ","
 	}
-	repeatedStringForData += "}"
+	repeatedStringForSlice += "}"
 	s := strings.Join([]string{`&Guardians{`,
-		`Data:` + repeatedStringForData + `,`,
+		`Slice:` + repeatedStringForSlice + `,`,
 		`}`,
 	}, "")
 	return s
@@ -462,6 +487,40 @@ func (m *Guardian) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
+		case 3:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ServiceUID", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowGuardians
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthGuardians
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthGuardians
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ServiceUID = append(m.ServiceUID[:0], dAtA[iNdEx:postIndex]...)
+			if m.ServiceUID == nil {
+				m.ServiceUID = []byte{}
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipGuardians(dAtA[iNdEx:])
@@ -517,7 +576,7 @@ func (m *Guardians) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Data", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field Slice", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -544,8 +603,8 @@ func (m *Guardians) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.Data = append(m.Data, &Guardian{})
-			if err := m.Data[len(m.Data)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.Slice = append(m.Slice, &Guardian{})
+			if err := m.Slice[len(m.Slice)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex

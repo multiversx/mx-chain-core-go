@@ -136,7 +136,7 @@ func TestTransaction_GetDataForSigningNilPubkeyConverterShouldErr(t *testing.T) 
 
 	tx := &transaction.Transaction{}
 
-	buff, err := tx.GetDataForSigning(nil, &mock.MarshalizerStub{})
+	buff, err := tx.GetDataForSigning(nil, &mock.MarshalizerStub{}, &mock.HasherMock{})
 
 	assert.Nil(t, buff)
 	assert.Equal(t, transaction.ErrNilEncoder, err)
@@ -147,10 +147,21 @@ func TestTransaction_GetDataForSigningNilMarshalizerShouldErr(t *testing.T) {
 
 	tx := &transaction.Transaction{}
 
-	buff, err := tx.GetDataForSigning(&mock.PubkeyConverterStub{}, nil)
+	buff, err := tx.GetDataForSigning(&mock.PubkeyConverterStub{}, nil, &mock.HasherMock{})
 
 	assert.Nil(t, buff)
 	assert.Equal(t, transaction.ErrNilMarshalizer, err)
+}
+
+func TestTransaction_GetDataForSigningNilHasherShouldErr(t *testing.T) {
+	t.Parallel()
+
+	tx := &transaction.Transaction{}
+
+	buff, err := tx.GetDataForSigning(&mock.PubkeyConverterStub{}, &mock.MarshalizerStub{}, nil)
+
+	assert.Nil(t, buff)
+	assert.Equal(t, transaction.ErrNilHasher, err)
 }
 
 func TestTransaction_GetDataForSigningMarshalizerErrShouldErr(t *testing.T) {
@@ -172,6 +183,7 @@ func TestTransaction_GetDataForSigningMarshalizerErrShouldErr(t *testing.T) {
 				return nil, expectedErr
 			},
 		},
+		&mock.HasherMock{},
 	)
 
 	assert.Nil(t, buff)
@@ -179,33 +191,107 @@ func TestTransaction_GetDataForSigningMarshalizerErrShouldErr(t *testing.T) {
 	assert.Equal(t, 2, numEncodeCalled)
 }
 
+func TestTransaction_HasOptionHashSignSet(t *testing.T) {
+	t.Parallel()
+
+	tx := &transaction.Transaction{Options: 0}
+	assert.False(t, tx.HasOptionHashSignSet())
+
+	tx.Options ^= transaction.MaskSignedWithHash
+	assert.True(t, tx.HasOptionHashSignSet())
+}
+
+func TestTransaction_HasOptionGuardianSet(t *testing.T) {
+	t.Parallel()
+
+	tx := &transaction.Transaction{Options: 0}
+	assert.False(t, tx.HasOptionGuardianSet())
+
+	tx.Options ^= transaction.MaskGuardedTransaction
+	assert.True(t, tx.HasOptionGuardianSet())
+}
+
 func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 	t.Parallel()
 
-	tx := &transaction.Transaction{}
+	t.Run("without hash sign option set", func(t *testing.T) {
+		t.Parallel()
 
-	numEncodeCalled := 0
-	marshalizerWasCalled := false
-	buff, err := tx.GetDataForSigning(
-		&mock.PubkeyConverterStub{
-			EncodeCalled: func(pkBytes []byte) string {
-				numEncodeCalled++
-				return ""
+		tx := &transaction.Transaction{}
+
+		numEncodeCalled := 0
+		marshalizerWasCalled := false
+		hasherWasCalled := false
+		buff, err := tx.GetDataForSigning(
+			&mock.PubkeyConverterStub{
+				EncodeCalled: func(pkBytes []byte) string {
+					numEncodeCalled++
+					return ""
+				},
 			},
-		},
-		&mock.MarshalizerStub{
-			MarshalCalled: func(obj interface{}) (bytes []byte, err error) {
-				marshalizerWasCalled = true
+			&mock.MarshalizerStub{
+				MarshalCalled: func(obj interface{}) (bytes []byte, err error) {
+					marshalizerWasCalled = true
 
-				return make([]byte, 0), nil
+					return make([]byte, 0), nil
+				},
 			},
-		},
-	)
+			&mock.HasherStub{
+				ComputeCalled: func(s string) []byte {
+					hasherWasCalled = true
 
-	assert.Equal(t, 0, len(buff))
-	assert.Nil(t, err)
-	assert.True(t, marshalizerWasCalled)
-	assert.Equal(t, 2, numEncodeCalled)
+					return make([]byte, 0)
+				},
+			},
+		)
+
+		assert.Equal(t, 0, len(buff))
+		assert.Nil(t, err)
+		assert.True(t, marshalizerWasCalled)
+		assert.False(t, hasherWasCalled)
+		assert.Equal(t, 2, numEncodeCalled)
+	})
+
+	t.Run("with hash sign option set", func(t *testing.T) {
+		t.Parallel()
+
+		tx := &transaction.Transaction{}
+		tx.Version = uint32(2)
+		tx.Options ^= transaction.MaskSignedWithHash
+
+		numEncodeCalled := 0
+		marshalizerWasCalled := false
+		hasherWasCalled := false
+		expectedHash := []byte("expectedHash")
+		buff, err := tx.GetDataForSigning(
+			&mock.PubkeyConverterStub{
+				EncodeCalled: func(pkBytes []byte) string {
+					numEncodeCalled++
+					return ""
+				},
+			},
+			&mock.MarshalizerStub{
+				MarshalCalled: func(obj interface{}) (bytes []byte, err error) {
+					marshalizerWasCalled = true
+
+					return make([]byte, 0), nil
+				},
+			},
+			&mock.HasherStub{
+				ComputeCalled: func(s string) []byte {
+					hasherWasCalled = true
+
+					return expectedHash
+				},
+			},
+		)
+
+		assert.Nil(t, err)
+		assert.True(t, marshalizerWasCalled)
+		assert.True(t, hasherWasCalled)
+		assert.Equal(t, expectedHash, buff)
+		assert.Equal(t, 2, numEncodeCalled)
+	})
 }
 
 func TestTransaction_CheckIntegrityShouldWork(t *testing.T) {
