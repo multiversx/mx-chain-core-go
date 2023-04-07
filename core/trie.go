@@ -67,7 +67,7 @@ func GetVersionForNewData(handler EnableEpochsHandler) TrieNodeVersion {
 
 // TrieData holds the data that will be inserted into the trie
 type TrieData struct {
-	Key     []byte
-	Value   []byte
-	Version TrieNodeVersion
+	Key               []byte
+	ValueWithMetadata []byte
+	Version           TrieNodeVersion
 }
