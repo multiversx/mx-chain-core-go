@@ -6,6 +6,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/marshal"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/clientServerSender"
+	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/common"
 	outportData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
@@ -13,7 +14,7 @@ import (
 type OutportDriverWebSocketSenderFactoryArgs struct {
 	WebSocketConfig          outportData.WebSocketConfig
 	Marshaller               marshal.Marshalizer
-	Uint64ByteSliceConverter websocketOutportDriver.Uint64ByteSliceConverter
+	Uint64ByteSliceConverter common.Uint64ByteSliceConverter
 	Log                      core.Logger
 	WithAcknowledge          bool
 	IsServer                 bool
@@ -22,7 +23,7 @@ type OutportDriverWebSocketSenderFactoryArgs struct {
 type outportDriverWebSocketSenderFactory struct {
 	webSocketConfig          outportData.WebSocketConfig
 	marshaller               marshal.Marshalizer
-	uint64ByteSliceConverter websocketOutportDriver.Uint64ByteSliceConverter
+	uint64ByteSliceConverter common.Uint64ByteSliceConverter
 	log                      core.Logger
 	withAcknowledge          bool
 }

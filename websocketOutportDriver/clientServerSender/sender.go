@@ -5,6 +5,7 @@ import (
 
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/clientServerSender/client"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/clientServerSender/server"
+	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/common"
 	outportSenderData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 	logger "github.com/multiversx/mx-chain-logger-go"
 )
@@ -20,12 +21,12 @@ type ArgsWSClientServerSender struct {
 	WithAcknowledge          bool
 	Url                      string
 	RetryDurationInSec       int
-	Uint64ByteSliceConverter server.Uint64ByteSliceConverter
+	Uint64ByteSliceConverter common.Uint64ByteSliceConverter
 }
 
 type sender struct {
 	messageSender            MessageSender
-	uint64ByteSliceConverter server.Uint64ByteSliceConverter
+	uint64ByteSliceConverter common.Uint64ByteSliceConverter
 	counter                  uint64
 	withAcknowledge          bool
 }

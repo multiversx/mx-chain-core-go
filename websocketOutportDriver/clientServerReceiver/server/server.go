@@ -14,7 +14,6 @@ import (
 	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/clientServerReceiver/payload"
-	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/clientServerSender/server"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/common"
 	outportData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
@@ -32,7 +31,7 @@ type wsServer struct {
 	log                      core.Logger
 	payloadParser            common.PayloadParser
 	payloadProcessor         common.PayloadProcessor
-	uint64ByteSliceConverter server.Uint64ByteSliceConverter
+	uint64ByteSliceConverter common.Uint64ByteSliceConverter
 	safeCloser               core.SafeCloser
 	server                   common.HttpServerHandler
 	listeners                map[string]common.MessagesListener

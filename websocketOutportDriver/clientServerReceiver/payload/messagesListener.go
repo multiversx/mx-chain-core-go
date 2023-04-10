@@ -8,7 +8,6 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/closing"
-	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/clientServerSender/server"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/common"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
@@ -20,7 +19,7 @@ type ArgsMessagesProcessor struct {
 	PayloadParser            common.PayloadParser
 	PayloadProcessor         common.PayloadProcessor
 	WsClient                 common.WSClient
-	Uint64ByteSliceConverter server.Uint64ByteSliceConverter
+	Uint64ByteSliceConverter common.Uint64ByteSliceConverter
 	RetryDurationInSec       uint32
 	BlockingAckOnError       bool
 }
@@ -31,7 +30,7 @@ type messagesListener struct {
 	payloadParser            common.PayloadParser
 	payloadProcessor         common.PayloadProcessor
 	wsClient                 common.WSClient
-	uint64ByteSliceConverter server.Uint64ByteSliceConverter
+	uint64ByteSliceConverter common.Uint64ByteSliceConverter
 	retryDuration            time.Duration
 	blockingAckOnError       bool
 }
