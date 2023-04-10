@@ -3,17 +3,16 @@ package clientServerSender
 import (
 	"sync/atomic"
 
+	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/clientServerSender/client"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/clientServerSender/server"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/common"
 	outportSenderData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
-	logger "github.com/multiversx/mx-chain-logger-go"
 )
 
 var (
 	prefixWithoutAck = []byte{0}
 	prefixWithAck    = []byte{1}
-	log              = logger.GetOrCreate("websocketOutportDriver/clientServerSender")
 )
 
 type ArgsWSClientServerSender struct {
@@ -22,6 +21,7 @@ type ArgsWSClientServerSender struct {
 	Url                      string
 	RetryDurationInSec       int
 	Uint64ByteSliceConverter common.Uint64ByteSliceConverter
+	Log                      core.Logger
 }
 
 type sender struct {
@@ -51,7 +51,7 @@ func createMessageSender(args ArgsWSClientServerSender) (MessageSender, error) {
 	if args.IsServer {
 		return server.NewWebSocketSender(server.WebSocketSenderArgs{
 			Uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
-			Log:                      log,
+			Log:                      args.Log,
 			URL:                      args.Url,
 			WithAcknowledge:          args.WithAcknowledge,
 		})
@@ -62,6 +62,7 @@ func createMessageSender(args ArgsWSClientServerSender) (MessageSender, error) {
 		RetryDurationInSec:       args.RetryDurationInSec,
 		URL:                      args.Url,
 		WithAcknowledge:          args.WithAcknowledge,
+		Log:                      args.Log,
 	})
 }
 

@@ -7,20 +7,19 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/common"
-	logger "github.com/multiversx/mx-chain-logger-go"
 )
-
-var log = logger.GetOrCreate("clientServerSender/connection")
 
 // WebSocketClientSenderArgs holds the arguments needed for creating a new instance of client
 type WebSocketClientSenderArgs struct {
 	Uint64ByteSliceConverter Uint64ByteSliceConverter
+	Log                      core.Logger
 	RetryDurationInSec       int
 	WithAcknowledge          bool
 	URL                      string
 }
 
 type client struct {
+	log                      core.Logger
 	uint64ByteSliceConverter Uint64ByteSliceConverter
 	wsConn                   WSConnClient
 	retryDuration            time.Duration
@@ -36,13 +35,14 @@ func NewClient(args WebSocketClientSenderArgs) (*client, error) {
 		url:                      args.URL,
 		wsConn:                   common.NewWSConnClient(),
 		withAcknowledge:          args.WithAcknowledge,
+		log:                      args.Log,
 	}, nil
 }
 
 func (c *client) Send(counter uint64, payload []byte) error {
 	err := c.writeMessage(payload)
 	if err != nil {
-		log.Warn("cannot write message", "error", err)
+		c.log.Warn("cannot write message", "error", err)
 	}
 
 	if !c.withAcknowledge {
@@ -56,18 +56,18 @@ func (c *client) waitForAckSignal(counter uint64) error {
 	for {
 		mType, message, err := c.wsConn.ReadMessage()
 		if err != nil {
-			log.Error("cannot read message", "error", err)
+			c.log.Error("cannot read message", "error", err)
 			break
 		}
 
 		if mType != websocket.BinaryMessage {
-			log.Warn("received message is not binary message", "message type", mType)
+			c.log.Warn("received message is not binary message", "message type", mType)
 			continue
 		}
 
 		receivedCounter, err := c.uint64ByteSliceConverter.ToUint64(message)
 		if err != nil {
-			log.Warn("cannot decode counter: bytes to uint64",
+			c.log.Warn("cannot decode counter: bytes to uint64",
 				"counter bytes", message,
 				"error", err,
 			)
@@ -91,7 +91,7 @@ func (c *client) writeMessage(payload []byte) error {
 			return nil
 		}
 
-		log.Warn("client.WriteMessage: connection problem", "error", err)
+		c.log.Warn("client.WriteMessage: connection problem", "error", err)
 
 		err = c.wsConn.OpenConnection(c.url)
 		if err != nil {
@@ -115,7 +115,7 @@ func (c *client) openConnection() error {
 		if err == nil {
 			return nil
 		} else {
-			log.Warn(fmt.Sprintf("c.openConnection(), retrying in %v...", c.retryDuration), "error", err)
+			c.log.Warn(fmt.Sprintf("c.openConnection(), retrying in %v...", c.retryDuration), "error", err)
 		}
 
 		timer.Reset(c.retryDuration)
@@ -131,7 +131,7 @@ func (c *client) openConnection() error {
 func (c *client) Close() error {
 	defer c.safeCloser.Close()
 
-	log.Info("closing all components...")
+	c.log.Info("closing all components...")
 
 	return c.wsConn.Close()
 }

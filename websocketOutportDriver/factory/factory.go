@@ -64,10 +64,8 @@ func (o *outportDriverWebSocketSenderFactory) Create() (websocketOutportDriver.D
 
 	return websocketOutportDriver.NewWebsocketOutportDriverNodePart(
 		websocketOutportDriver.WebsocketOutportDriverNodePartArgs{
-			Enabled:                  false,
 			Marshaller:               o.marshaller,
 			WebsocketSender:          webSocketSender,
-			WebSocketConfig:          outportData.WebSocketConfig{},
 			Uint64ByteSliceConverter: o.uint64ByteSliceConverter,
 			Log:                      o.log,
 		},

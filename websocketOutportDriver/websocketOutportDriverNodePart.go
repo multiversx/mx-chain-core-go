@@ -14,10 +14,8 @@ import (
 
 // WebsocketOutportDriverNodePartArgs holds the arguments needed for creating a new websocketOutportDriverNodePart
 type WebsocketOutportDriverNodePartArgs struct {
-	Enabled                  bool
 	Marshaller               marshal.Marshalizer
 	WebsocketSender          WebSocketSenderHandler
-	WebSocketConfig          outportSenderData.WebSocketConfig
 	Uint64ByteSliceConverter common.Uint64ByteSliceConverter
 	Log                      core.Logger
 }
@@ -97,17 +95,6 @@ func (o *websocketOutportDriverNodePart) GetMarshaller() marshal.Marshalizer {
 	return o.marshalizer
 }
 
-// Close will handle the closing of the outport driver web socket sender
-func (o *websocketOutportDriverNodePart) Close() error {
-	o.isClosed.SetValue(true)
-	return o.webSocketSender.Close()
-}
-
-// IsInterfaceNil returns true if there is no value under the interface
-func (o *websocketOutportDriverNodePart) IsInterfaceNil() bool {
-	return o == nil
-}
-
 func (o *websocketOutportDriverNodePart) handleAction(args interface{}, operation outportSenderData.OperationType) error {
 	if o.isClosed.IsSet() {
 		return outportSenderData.ErrWebSocketServerIsClosed
@@ -144,4 +131,15 @@ func (o *websocketOutportDriverNodePart) preparePayload(operation outportSenderD
 	payload = append(payload, data...)
 
 	return payload
+}
+
+// Close will handle the closing of the outport driver web socket sender
+func (o *websocketOutportDriverNodePart) Close() error {
+	o.isClosed.SetValue(true)
+	return o.webSocketSender.Close()
+}
+
+// IsInterfaceNil returns true if there is no value under the interface
+func (o *websocketOutportDriverNodePart) IsInterfaceNil() bool {
+	return o == nil
 }

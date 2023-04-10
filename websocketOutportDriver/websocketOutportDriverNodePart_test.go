@@ -18,11 +18,7 @@ var cannotSendOnRouteErr = errors.New("cannot send on route")
 
 func getMockArgs() WebsocketOutportDriverNodePartArgs {
 	return WebsocketOutportDriverNodePartArgs{
-		Enabled:    true,
-		Marshaller: &marshal.JsonMarshalizer{},
-		WebSocketConfig: data.WebSocketConfig{
-			URL: "localhost:5555",
-		},
+		Marshaller:               &marshal.JsonMarshalizer{},
 		WebsocketSender:          &mock.WebSocketSenderStub{},
 		Log:                      &coreMock.LoggerMock{},
 		Uint64ByteSliceConverter: uint64ByteSlice.NewBigEndianConverter(),

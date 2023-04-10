@@ -3,6 +3,7 @@ package clientServerSender
 import (
 	"testing"
 
+	"github.com/multiversx/mx-chain-core-go/core/mock"
 	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
 	outportData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 	"github.com/stretchr/testify/require"
@@ -16,6 +17,7 @@ func TestNewSenderSendAndClose(t *testing.T) {
 		Url:                      "localhost:22111",
 		Uint64ByteSliceConverter: uint64ByteSlice.NewBigEndianConverter(),
 		RetryDurationInSec:       5,
+		Log:                      &mock.LoggerMock{},
 	}
 
 	clientServerSender, err := NewClientServerSender(args)

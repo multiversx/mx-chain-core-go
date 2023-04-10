@@ -1,13 +1,11 @@
 package clientServerReceiver
 
 import (
+	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/clientServerReceiver/client"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/clientServerReceiver/server"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/common"
-	logger "github.com/multiversx/mx-chain-logger-go"
 )
-
-var log = logger.GetOrCreate("websocketOutportDriver/clientServerReceiver")
 
 type ArgsWsClientServerReceiver struct {
 	IsServer           bool
@@ -15,6 +13,7 @@ type ArgsWsClientServerReceiver struct {
 	RetryDurationInSec uint32
 	BlockingAckOnError bool
 	PayloadProcessor   common.PayloadProcessor
+	Log                core.Logger
 }
 
 type receiver struct {
@@ -47,7 +46,7 @@ func createWsMessageReceiver(args ArgsWsClientServerReceiver) (WsMessagesReceive
 			RetryDurationInSec: args.RetryDurationInSec,
 			BlockingAckOnError: args.BlockingAckOnError,
 			PayloadProcessor:   args.PayloadProcessor,
-			Log:                log,
+			Log:                args.Log,
 		})
 	}
 
@@ -56,6 +55,6 @@ func createWsMessageReceiver(args ArgsWsClientServerReceiver) (WsMessagesReceive
 		RetryDurationInSec: args.RetryDurationInSec,
 		BlockingAckOnError: args.BlockingAckOnError,
 		PayloadProcessor:   args.PayloadProcessor,
-		Log:                log,
+		Log:                args.Log,
 	})
 }
