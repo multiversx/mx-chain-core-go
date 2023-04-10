@@ -4,7 +4,6 @@ import (
 	"context"
 	"net/http"
 	"strings"
-	"sync"
 	"time"
 
 	"github.com/google/uuid"
@@ -27,14 +26,13 @@ type ArgsWsServer struct {
 }
 
 type wsServer struct {
-	mutex                    sync.Mutex
 	log                      core.Logger
 	payloadParser            common.PayloadParser
 	payloadProcessor         common.PayloadProcessor
 	uint64ByteSliceConverter common.Uint64ByteSliceConverter
 	safeCloser               core.SafeCloser
 	server                   common.HttpServerHandler
-	listeners                map[string]common.MessagesListener
+	listeners                common.ListenersHolder
 	retryDurationInSec       uint32
 	blockingAckOnError       bool
 }
@@ -53,6 +51,7 @@ func NewWsServer(args ArgsWsServer) (*wsServer, error) {
 		uint64ByteSliceConverter: uint64ByteSliceConverter,
 		retryDurationInSec:       args.RetryDurationInSec,
 		blockingAckOnError:       args.BlockingAckOnError,
+		listeners:                common.NewListenersHolder(),
 	}, nil
 }
 
@@ -120,16 +119,11 @@ func (s *wsServer) handleMessages(client common.WSClient) {
 		s.log.Error("wsServer.handleMessages: cannot create messages listener", "error", err, "clientID", client.GetID())
 	}
 
-	s.mutex.Lock()
-	s.listeners[client.GetID()] = listener
-	s.mutex.Unlock()
-
+	s.listeners.Add(client.GetID(), listener)
 	// this method is blocking
 	_ = listener.Listen()
 	// if method listen will end the client was disconnected should remove the listener from the list
-	s.mutex.Lock()
-	delete(s.listeners, client.GetID())
-	s.mutex.Unlock()
+	s.listeners.Remove(client.GetID())
 
 }
 
@@ -143,9 +137,7 @@ func (s *wsServer) Close() {
 		s.log.Error("cannot close the server", "error", err)
 	}
 
-	s.mutex.Lock()
-	defer s.mutex.Unlock()
-	for _, listener := range s.listeners {
+	for _, listener := range s.listeners.GetAll() {
 		listener.Close()
 	}
 }

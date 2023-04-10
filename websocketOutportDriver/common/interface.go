@@ -48,3 +48,10 @@ type Uint64ByteSliceConverter interface {
 	ToUint64([]byte) (uint64, error)
 	IsInterfaceNil() bool
 }
+
+// ListenersHolder will hold a map with all the MessagesListener
+type ListenersHolder interface {
+	Add(id string, listener MessagesListener)
+	Remove(id string)
+	GetAll() map[string]MessagesListener
+}
