@@ -11,6 +11,7 @@ import (
 
 var (
 	prefixWithoutAck = []byte{0}
+	prefixWithAck    = []byte{1}
 	log              = logger.GetOrCreate("websocketOutportDriver/clientServerSender")
 )
 
@@ -26,6 +27,7 @@ type sender struct {
 	messageSender            MessageSender
 	uint64ByteSliceConverter server.Uint64ByteSliceConverter
 	counter                  uint64
+	withAcknowledge          bool
 }
 
 func NewClientServerSender(args ArgsWSClientServerSender) (*sender, error) {
@@ -38,6 +40,7 @@ func NewClientServerSender(args ArgsWSClientServerSender) (*sender, error) {
 		counter:                  0,
 		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
 		messageSender:            messageSender,
+		withAcknowledge:          args.WithAcknowledge,
 	}
 
 	return wsSender, nil
@@ -66,6 +69,9 @@ func (s *sender) Send(args outportSenderData.WsSendArgs) error {
 	assignedCounter := atomic.AddUint64(&s.counter, 1)
 
 	ackData := prefixWithoutAck
+	if s.withAcknowledge {
+		ackData = prefixWithAck
+	}
 
 	newPayload := append(ackData, s.uint64ByteSliceConverter.ToByteSlice(assignedCounter)...)
 	newPayload = append(newPayload, args.Payload...)
