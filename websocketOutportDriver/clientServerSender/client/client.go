@@ -15,7 +15,7 @@ var log = logger.GetOrCreate("clientServerSender/connection")
 // WebSocketClientSenderArgs holds the arguments needed for creating a new instance of client
 type WebSocketClientSenderArgs struct {
 	Uint64ByteSliceConverter Uint64ByteSliceConverter
-	RetryDuration            time.Duration
+	RetryDurationInSec       int
 	WithAcknowledge          bool
 	URL                      string
 }
@@ -32,7 +32,7 @@ type client struct {
 func NewClient(args WebSocketClientSenderArgs) (*client, error) {
 	return &client{
 		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
-		retryDuration:            args.RetryDuration,
+		retryDuration:            time.Duration(args.RetryDurationInSec) * time.Second,
 		url:                      args.URL,
 		wsConn:                   common.NewWSConnClient(),
 		withAcknowledge:          args.WithAcknowledge,

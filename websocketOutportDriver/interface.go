@@ -24,7 +24,6 @@ type Driver interface {
 // WebSocketSenderHandler defines what the actions that a web socket sender should do
 type WebSocketSenderHandler interface {
 	Send(args outportSenderData.WsSendArgs) error
-	AddClient(wss outportSenderData.WSConn, remoteAddr string)
 	Close() error
 	IsInterfaceNil() bool
 }

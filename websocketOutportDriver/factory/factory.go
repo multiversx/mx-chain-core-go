@@ -1,14 +1,11 @@
 package factory
 
 import (
-	"net/http"
-
-	"github.com/gorilla/mux"
-	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/marshal"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver"
+	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/clientServerSender"
 	outportData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
@@ -19,6 +16,7 @@ type OutportDriverWebSocketSenderFactoryArgs struct {
 	Uint64ByteSliceConverter websocketOutportDriver.Uint64ByteSliceConverter
 	Log                      core.Logger
 	WithAcknowledge          bool
+	IsServer                 bool
 }
 
 type outportDriverWebSocketSenderFactory struct {
@@ -52,7 +50,13 @@ func NewOutportDriverWebSocketSenderFactory(args OutportDriverWebSocketSenderFac
 // Create will handle the creation of all the components needed to create an outport driver that sends data over
 // web socket and return it afterwards
 func (o *outportDriverWebSocketSenderFactory) Create() (websocketOutportDriver.Driver, error) {
-	webSocketSender, err := o.createWebSocketSender()
+	webSocketSender, err := clientServerSender.NewClientServerSender(clientServerSender.ArgsWSClientServerSender{
+		Url:                      o.webSocketConfig.URL,
+		IsServer:                 o.webSocketConfig.IsServer,
+		Uint64ByteSliceConverter: o.uint64ByteSliceConverter,
+		RetryDurationInSec:       o.webSocketConfig.RetryDurationInSec,
+		WithAcknowledge:          o.withAcknowledge,
+	})
 	if err != nil {
 		return nil, err
 	}
@@ -67,59 +71,4 @@ func (o *outportDriverWebSocketSenderFactory) Create() (websocketOutportDriver.D
 			Log:                      o.log,
 		},
 	)
-}
-
-func (o *outportDriverWebSocketSenderFactory) createWebSocketSender() (websocketOutportDriver.WebSocketSenderHandler, error) {
-	//router := mux.NewRouter()
-	//server := &http.Server{
-	//	Addr:    o.webSocketConfig.URL,
-	//	Handler: router,
-	//}
-
-	//webSocketSenderArgs := server.WebSocketSenderArgs{
-	//	Server:                   server,
-	//	Uint64ByteSliceConverter: o.uint64ByteSliceConverter,
-	//	WithAcknowledge:          o.withAcknowledge,
-	//	Log:                      o.log,
-	//}
-	//webSocketSender, err := server.NewWebSocketSender(webSocketSenderArgs)
-	//if err != nil {
-	//	return nil, err
-	//}
-	//
-	//err = o.registerRoute(router, webSocketSender, outportData.WSRoute)
-	//if err != nil {
-	//	return nil, err
-	//}
-
-	return nil, nil
-}
-
-func (o *outportDriverWebSocketSenderFactory) registerRoute(router *mux.Router, webSocketHandler websocketOutportDriver.WebSocketSenderHandler, path string) error {
-	var upgrader = websocket.Upgrader{
-		ReadBufferSize:  1024,
-		WriteBufferSize: 1024,
-	}
-
-	routeSendData := router.HandleFunc(path, func(w http.ResponseWriter, r *http.Request) {
-		o.log.Info("new connection", "route", path, "remote address", r.RemoteAddr)
-
-		upgrader.CheckOrigin = func(r *http.Request) bool { return true }
-
-		ws, errUpgrade := upgrader.Upgrade(w, r, nil)
-		if errUpgrade != nil {
-			o.log.Warn("could not update websocket connection", "remote address", r.RemoteAddr, "error", errUpgrade)
-			return
-		}
-
-		webSocketHandler.AddClient(ws, ws.RemoteAddr().String())
-	})
-
-	if routeSendData.GetError() != nil {
-		o.log.Error("sender router failed to handle send data",
-			"route", routeSendData.GetName(),
-			"error", routeSendData.GetError())
-	}
-
-	return nil
 }

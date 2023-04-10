@@ -2,7 +2,6 @@ package clientServerSender
 
 import (
 	"testing"
-	"time"
 
 	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
 	outportData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
@@ -16,14 +15,16 @@ func TestNewSenderSendAndClose(t *testing.T) {
 		IsServer:                 true,
 		Url:                      "localhost:22111",
 		Uint64ByteSliceConverter: uint64ByteSlice.NewBigEndianConverter(),
-		RetryDuration:            5 * time.Second,
+		RetryDurationInSec:       5,
 	}
 
 	clientServerSender, err := NewClientServerSender(args)
 	require.Nil(t, err)
 	require.NotNil(t, clientServerSender)
 
-	err = clientServerSender.SendMessage([]byte("message"))
+	err = clientServerSender.Send(outportData.WsSendArgs{
+		Payload: []byte("message"),
+	})
 	require.Equal(t, outportData.ErrNoClientToSendTo, err)
 
 	err = clientServerSender.Close()

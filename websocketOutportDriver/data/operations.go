@@ -7,8 +7,10 @@ const (
 
 // WebSocketConfig holds the configuration needed for instantiating a new web socket server
 type WebSocketConfig struct {
-	URL             string
-	WithAcknowledge bool
+	URL                string
+	WithAcknowledge    bool
+	IsServer           bool
+	RetryDurationInSec int
 }
 
 // OperationType defines the type to be used to group web socket operations

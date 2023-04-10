@@ -2,10 +2,10 @@ package clientServerSender
 
 import (
 	"sync/atomic"
-	"time"
 
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/clientServerSender/client"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/clientServerSender/server"
+	outportSenderData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 	logger "github.com/multiversx/mx-chain-logger-go"
 )
 
@@ -16,9 +16,10 @@ var (
 
 type ArgsWSClientServerSender struct {
 	IsServer                 bool
+	WithAcknowledge          bool
 	Url                      string
+	RetryDurationInSec       int
 	Uint64ByteSliceConverter server.Uint64ByteSliceConverter
-	RetryDuration            time.Duration
 }
 
 type sender struct {
@@ -42,34 +43,41 @@ func NewClientServerSender(args ArgsWSClientServerSender) (*sender, error) {
 	return wsSender, nil
 }
 
-func (s *sender) SendMessage(message []byte) error {
-	assignedCounter := atomic.AddUint64(&s.counter, 1)
-
-	ackData := prefixWithoutAck
-
-	newPayload := append(ackData, s.uint64ByteSliceConverter.ToByteSlice(assignedCounter)...)
-	newPayload = append(newPayload, message...)
-
-	return s.messageSender.Send(assignedCounter, message)
-}
-
-func (s *sender) Close() error {
-	return s.messageSender.Close()
-}
-
 func createMessageSender(args ArgsWSClientServerSender) (MessageSender, error) {
 	if args.IsServer {
 		return server.NewWebSocketSender(server.WebSocketSenderArgs{
 			Uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
 			Log:                      log,
 			URL:                      args.Url,
-			WithAcknowledge:          false,
+			WithAcknowledge:          args.WithAcknowledge,
 		})
 	}
 
 	return client.NewClient(client.WebSocketClientSenderArgs{
 		Uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
-		RetryDuration:            args.RetryDuration,
+		RetryDurationInSec:       args.RetryDurationInSec,
 		URL:                      args.Url,
+		WithAcknowledge:          args.WithAcknowledge,
 	})
+}
+
+// Send will send the provided payload from the args
+func (s *sender) Send(args outportSenderData.WsSendArgs) error {
+	assignedCounter := atomic.AddUint64(&s.counter, 1)
+
+	ackData := prefixWithoutAck
+
+	newPayload := append(ackData, s.uint64ByteSliceConverter.ToByteSlice(assignedCounter)...)
+	newPayload = append(newPayload, args.Payload...)
+
+	return s.messageSender.Send(assignedCounter, newPayload)
+}
+
+func (s *sender) Close() error {
+	return s.messageSender.Close()
+}
+
+// IsInterfaceNil returns true if there is no value under the interface
+func (s *sender) IsInterfaceNil() bool {
+	return s == nil
 }
