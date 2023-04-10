@@ -1,10 +1,12 @@
-package sender
+package common
 
-import "sync"
+import (
+	"sync"
+)
 
 type acknowledgesHolder struct {
 	acknowledges map[string]*websocketClientAcknowledgesHolder
-	mut          sync.Mutex
+	mut          sync.RWMutex
 }
 
 // NewAcknowledgesHolder returns a new instance of acknowledgesHolder
@@ -22,7 +24,7 @@ func (ah *acknowledgesHolder) AddEntry(remoteAddr string) {
 }
 
 // GetAcknowledgesOfAddress will return the acknowledges for the specified address, if any
-func (ah *acknowledgesHolder) GetAcknowledgesOfAddress(remoteAddr string) (*websocketClientAcknowledgesHolder, bool) {
+func (ah *acknowledgesHolder) GetAcknowledgesOfAddress(remoteAddr string) (AcknowledgesHandler, bool) {
 	ah.mut.Lock()
 	defer ah.mut.Unlock()
 
@@ -49,4 +51,13 @@ func (ah *acknowledgesHolder) AddReceivedAcknowledge(remoteAddr string, counter 
 
 	acks.Add(counter)
 	return true
+}
+
+// Exists will return true if the provided client ID was added in the acknowledges map
+func (ah *acknowledgesHolder) Exists(id string) bool {
+	ah.mut.RLock()
+	_, exists := ah.acknowledges[id]
+	ah.mut.RUnlock()
+
+	return exists
 }

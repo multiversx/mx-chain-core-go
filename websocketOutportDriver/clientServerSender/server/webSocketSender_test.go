@@ -1,4 +1,4 @@
-package sender
+package server
 
 import (
 	"errors"
@@ -9,23 +9,11 @@ import (
 	coreMock "github.com/multiversx/mx-chain-core-go/core/mock"
 	"github.com/multiversx/mx-chain-core-go/testscommon"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
-	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/mock"
 	"github.com/stretchr/testify/require"
 )
 
 func TestNewWebSocketSender(t *testing.T) {
 	t.Parallel()
-
-	t.Run("nil server", func(t *testing.T) {
-		t.Parallel()
-
-		args := getMockWebSocketSender()
-		args.Server = nil
-
-		wss, err := NewWebSocketSender(args)
-		require.Nil(t, wss)
-		require.Equal(t, data.ErrNilHttpServer, err)
-	})
 
 	t.Run("nil uint64 byte slice converter", func(t *testing.T) {
 		t.Parallel()
@@ -65,30 +53,21 @@ func TestNewWebSocketSender(t *testing.T) {
 func TestWebSocketSender_AddClient(t *testing.T) {
 	t.Parallel()
 
-	t.Run("nil client", func(t *testing.T) {
-		t.Parallel()
-
-		wss, _ := NewWebSocketSender(getMockWebSocketSender())
-
-		wss.AddClient(nil, "remote addr")
-		require.Equal(t, 0, len(wss.clientsHolder.GetAll()))
-	})
-
 	t.Run("should work - without acknowledge", func(t *testing.T) {
 		t.Parallel()
 
 		wss, _ := NewWebSocketSender(getMockWebSocketSender())
 
-		wss.AddClient(&testscommon.WebsocketConnectionStub{}, "remote addr")
+		wss.addClient(&testscommon.WebsocketConnectionStub{
+			GetIDCalled: func() string {
+				return "remote addr"
+			},
+		})
 
 		clients := wss.clientsHolder.GetAll()
 		require.NotNil(t, clients["remote addr"])
 
-		wss.acknowledges.mut.Lock()
-		acksForAddress := wss.acknowledges.acknowledges["remote addr"]
-		wss.acknowledges.mut.Unlock()
-
-		require.Nil(t, acksForAddress)
+		require.False(t, wss.acknowledges.Exists("remote addr"))
 	})
 
 	t.Run("should work - with acknowledge", func(t *testing.T) {
@@ -99,21 +78,20 @@ func TestWebSocketSender_AddClient(t *testing.T) {
 
 		wss, _ := NewWebSocketSender(args)
 
-		wss.AddClient(&testscommon.WebsocketConnectionStub{
+		wss.addClient(&testscommon.WebsocketConnectionStub{
 			ReadMessageCalled: func() (_ int, _ []byte, err error) {
 				err = errors.New("early exit - close the go routine")
 				return
 			},
-		}, "remote addr")
+			GetIDCalled: func() string {
+				return "remote addr"
+			},
+		})
 
 		clients := wss.clientsHolder.GetAll()
 		require.NotNil(t, clients["remote addr"])
 
-		wss.acknowledges.mut.Lock()
-		acksForAddress := wss.acknowledges.acknowledges["remote addr"]
-		wss.acknowledges.mut.Unlock()
-
-		require.NotNil(t, acksForAddress)
+		require.True(t, wss.acknowledges.Exists("remote addr"))
 	})
 }
 
@@ -125,9 +103,7 @@ func TestWebSocketSender_Send(t *testing.T) {
 
 		wss, _ := NewWebSocketSender(getMockWebSocketSender())
 
-		err := wss.Send(data.WsSendArgs{
-			Payload: []byte("payload"),
-		})
+		err := wss.Send(0, []byte("payload"))
 		require.Equal(t, data.ErrNoClientToSendTo, err)
 	})
 
@@ -136,16 +112,17 @@ func TestWebSocketSender_Send(t *testing.T) {
 
 		wss, _ := NewWebSocketSender(getMockWebSocketSender())
 
-		wss.AddClient(&testscommon.WebsocketConnectionStub{
+		_ = wss.clientsHolder.AddClient(&testscommon.WebsocketConnectionStub{
 			ReadMessageCalled: func() (_ int, _ []byte, err error) {
 				err = errors.New("early exit - close the go routine")
 				return
 			},
-		}, "remote addr")
-
-		err := wss.Send(data.WsSendArgs{
-			Payload: []byte("payload"),
+			GetIDCalled: func() string {
+				return "remove addr"
+			},
 		})
+
+		err := wss.Send(0, []byte("payload"))
 		require.NoError(t, err)
 	})
 
@@ -161,7 +138,7 @@ func TestWebSocketSender_Send(t *testing.T) {
 		chClientAck := make(chan bool)
 		wasMsgProcessed := false
 
-		wss.AddClient(&testscommon.WebsocketConnectionStub{
+		client1 := &testscommon.WebsocketConnectionStub{
 			ReadMessageCalled: func() (msgType int, payload []byte, err error) {
 				if wasMsgProcessed {
 					time.Sleep(100 * time.Millisecond)
@@ -187,11 +164,14 @@ func TestWebSocketSender_Send(t *testing.T) {
 
 				return nil
 			},
-		}, "remote addr")
+			GetIDCalled: func() string {
+				return "remote addr"
+			},
+		}
 
-		err := wss.Send(data.WsSendArgs{
-			Payload: []byte("payload"),
-		})
+		wss.addClient(client1)
+
+		err := wss.Send(0, []byte("payload"))
 		require.NoError(t, err)
 	})
 }
@@ -207,7 +187,6 @@ func TestWebSocketSender_Close(t *testing.T) {
 
 func getMockWebSocketSender() WebSocketSenderArgs {
 	return WebSocketSenderArgs{
-		Server:                   &mock.HttpServerStub{},
 		Uint64ByteSliceConverter: &testscommon.Uint64ByteSliceConverterStub{},
 		Log:                      coreMock.LoggerMock{},
 	}

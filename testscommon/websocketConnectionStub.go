@@ -5,6 +5,7 @@ type WebsocketConnectionStub struct {
 	OpenConnectionCalled func(url string) error
 	ReadMessageCalled    func() (messageType int, payload []byte, err error)
 	WriteMessageCalled   func(messageType int, data []byte) error
+	GetIDCalled          func() string
 	CloseCalled          func() error
 }
 
@@ -33,6 +34,14 @@ func (w *WebsocketConnectionStub) WriteMessage(messageType int, data []byte) err
 	}
 
 	return nil
+}
+
+// GetID -
+func (w *WebsocketConnectionStub) GetID() string {
+	if w.GetIDCalled != nil {
+		return w.GetIDCalled()
+	}
+	return ""
 }
 
 // Close -

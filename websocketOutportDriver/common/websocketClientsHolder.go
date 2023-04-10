@@ -1,4 +1,4 @@
-package sender
+package common
 
 import (
 	"sync"
@@ -7,36 +7,36 @@ import (
 )
 
 type websocketClientsHolder struct {
-	clients map[string]*webSocketClient
+	clients map[string]WSClient
 	mut     sync.RWMutex
 }
 
 // NewWebsocketClientsHolder will return a new instance of websocketClientsHolder
 func NewWebsocketClientsHolder() *websocketClientsHolder {
 	return &websocketClientsHolder{
-		clients: make(map[string]*webSocketClient),
+		clients: make(map[string]WSClient),
 	}
 }
 
 // AddClient will add the provided client to the internal members
-func (wch *websocketClientsHolder) AddClient(client *webSocketClient) error {
+func (wch *websocketClientsHolder) AddClient(client WSClient) error {
 	if client == nil {
 		return data.ErrNilWebSocketClient
 	}
 
 	wch.mut.Lock()
-	wch.clients[client.remoteAddr] = client
+	wch.clients[client.GetID()] = client
 	wch.mut.Unlock()
 
 	return nil
 }
 
 // GetAll will return all the clients
-func (wch *websocketClientsHolder) GetAll() map[string]*webSocketClient {
+func (wch *websocketClientsHolder) GetAll() map[string]WSClient {
 	wch.mut.RLock()
 	defer wch.mut.RUnlock()
 
-	clientsMap := make(map[string]*webSocketClient, len(wch.clients))
+	clientsMap := make(map[string]WSClient, len(wch.clients))
 	for remoteAddr, client := range wch.clients {
 		clientsMap[remoteAddr] = client
 	}
@@ -56,5 +56,5 @@ func (wch *websocketClientsHolder) CloseAndRemove(remoteAddr string) error {
 
 	delete(wch.clients, remoteAddr)
 
-	return client.conn.Close()
+	return client.Close()
 }

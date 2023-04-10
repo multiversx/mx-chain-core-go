@@ -10,7 +10,6 @@ import (
 	"github.com/multiversx/mx-chain-core-go/marshal"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver"
 	outportData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
-	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/sender"
 )
 
 // OutportDriverWebSocketSenderFactoryArgs holds the arguments needed for creating a outportDriverWebSocketSenderFactory
@@ -71,29 +70,29 @@ func (o *outportDriverWebSocketSenderFactory) Create() (websocketOutportDriver.D
 }
 
 func (o *outportDriverWebSocketSenderFactory) createWebSocketSender() (websocketOutportDriver.WebSocketSenderHandler, error) {
-	router := mux.NewRouter()
-	server := &http.Server{
-		Addr:    o.webSocketConfig.URL,
-		Handler: router,
-	}
+	//router := mux.NewRouter()
+	//server := &http.Server{
+	//	Addr:    o.webSocketConfig.URL,
+	//	Handler: router,
+	//}
 
-	webSocketSenderArgs := sender.WebSocketSenderArgs{
-		Server:                   server,
-		Uint64ByteSliceConverter: o.uint64ByteSliceConverter,
-		WithAcknowledge:          o.withAcknowledge,
-		Log:                      o.log,
-	}
-	webSocketSender, err := sender.NewWebSocketSender(webSocketSenderArgs)
-	if err != nil {
-		return nil, err
-	}
+	//webSocketSenderArgs := server.WebSocketSenderArgs{
+	//	Server:                   server,
+	//	Uint64ByteSliceConverter: o.uint64ByteSliceConverter,
+	//	WithAcknowledge:          o.withAcknowledge,
+	//	Log:                      o.log,
+	//}
+	//webSocketSender, err := server.NewWebSocketSender(webSocketSenderArgs)
+	//if err != nil {
+	//	return nil, err
+	//}
+	//
+	//err = o.registerRoute(router, webSocketSender, outportData.WSRoute)
+	//if err != nil {
+	//	return nil, err
+	//}
 
-	err = o.registerRoute(router, webSocketSender, outportData.WSRoute)
-	if err != nil {
-		return nil, err
-	}
-
-	return webSocketSender, nil
+	return nil, nil
 }
 
 func (o *outportDriverWebSocketSenderFactory) registerRoute(router *mux.Router, webSocketHandler websocketOutportDriver.WebSocketSenderHandler, path string) error {

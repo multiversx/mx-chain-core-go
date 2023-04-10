@@ -1,11 +1,22 @@
-package client
+package common
 
 import (
+	"context"
+	"io"
+
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
-// HandlerFunc defines the func responsible for handling received payload data from node
-type HandlerFunc func(data []byte) error
+type AcknowledgesHandler interface {
+	ProcessAcknowledged(counter uint64) bool
+}
+
+type WSClient interface {
+	io.Closer
+	WriteMessage(messageType int, data []byte) error
+	ReadMessage() (int, []byte, error)
+	GetID() string
+}
 
 // PayloadProcessor defines what a websocket payload processor should do
 type PayloadProcessor interface {
@@ -20,15 +31,13 @@ type PayloadParser interface {
 	IsInterfaceNil() bool
 }
 
-// WSConnClient extends the existing data.WSConn with an option to OpenConnection on demand
-type WSConnClient interface {
-	data.WSConn
-	OpenConnection(url string) error
-	IsInterfaceNil() bool
+// HttpServerHandler defines the minimum behaviour of a http server
+type HttpServerHandler interface {
+	ListenAndServe() error
+	Shutdown(ctx context.Context) error
 }
 
-// WSClient defines what a websocket client handler should do
-type WSClient interface {
-	Start()
+type MessagesListener interface {
+	Listen() bool
 	Close()
 }

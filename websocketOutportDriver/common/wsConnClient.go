@@ -1,19 +1,31 @@
-package client
+package common
 
 import (
 	"sync"
 
 	"github.com/gorilla/websocket"
+	logger "github.com/multiversx/mx-chain-logger-go"
 )
 
+var log = logger.GetOrCreate("common")
+
 type wsConnClient struct {
-	mut  sync.RWMutex
-	conn *websocket.Conn
+	mut      sync.RWMutex
+	conn     *websocket.Conn
+	clientID string
 }
 
 // NewWSConnClient creates a new wrapper over a websocket connection
 func NewWSConnClient() *wsConnClient {
 	return &wsConnClient{}
+}
+
+// NewWSConnClientWithConn creates a new wrapper over a provided websocket connection
+func NewWSConnClientWithConn(conn *websocket.Conn, clientID string) *wsConnClient {
+	return &wsConnClient{
+		conn:     conn,
+		clientID: clientID,
+	}
 }
 
 // OpenConnection will open a new client with a background context
@@ -56,6 +68,11 @@ func (wsc *wsConnClient) WriteMessage(messageType int, data []byte) error {
 	}
 
 	return wsc.conn.WriteMessage(messageType, data)
+}
+
+// GetID will return the uniq id of the client
+func (wsc *wsConnClient) GetID() string {
+	return wsc.clientID
 }
 
 // Close will try to cleanly close the connection, if possible

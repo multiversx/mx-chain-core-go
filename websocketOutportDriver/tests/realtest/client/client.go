@@ -56,7 +56,7 @@ func (tc *tempClient) Run(port int) {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 
-	urlReceiveData := url.URL{Scheme: "ws", Host: fmt.Sprintf("127.0.0.1:%d", port), Path: "/operations"}
+	urlReceiveData := url.URL{Scheme: "ws", Host: fmt.Sprintf("127.0.0.1:%d", port), Path: "/save"}
 	log.Info(tc.name+" -> connecting to", "url", urlReceiveData.String())
 	wsConnection, _, err := websocket.DefaultDialer.Dial(urlReceiveData.String(), nil)
 	if err != nil {

@@ -9,6 +9,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core/atomic"
+	"github.com/multiversx/mx-chain-core-go/core/mock"
 	"github.com/multiversx/mx-chain-core-go/testscommon"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 	"github.com/stretchr/testify/require"
@@ -23,6 +24,7 @@ func createArgs() ArgsWsClient {
 		PayloadParser:            &testscommon.PayloadParserStub{},
 		Uint64ByteSliceConverter: &testscommon.Uint64ByteSliceConverterStub{},
 		WSConnClient:             &testscommon.WebsocketConnectionStub{},
+		Log:                      &mock.LoggerMock{},
 	}
 }
 

@@ -1,4 +1,4 @@
-package sender
+package common
 
 import (
 	"testing"
@@ -29,7 +29,7 @@ func TestWebsocketClientsHolder_AddClient(t *testing.T) {
 	t.Run("should work", func(t *testing.T) {
 		t.Parallel()
 
-		cl := &webSocketClient{}
+		cl := &testscommon.WebsocketConnectionStub{}
 		wch := NewWebsocketClientsHolder()
 		err := wch.AddClient(cl)
 		require.NoError(t, err)
@@ -39,8 +39,16 @@ func TestWebsocketClientsHolder_AddClient(t *testing.T) {
 func TestWebsocketClientsHolder_GetAll(t *testing.T) {
 	t.Parallel()
 
-	cl0 := &webSocketClient{remoteAddr: "cl0"}
-	cl1 := &webSocketClient{remoteAddr: "cl1"}
+	cl0 := &testscommon.WebsocketConnectionStub{
+		GetIDCalled: func() string {
+			return "cl0"
+		},
+	}
+	cl1 := &testscommon.WebsocketConnectionStub{
+		GetIDCalled: func() string {
+			return "cl1"
+		},
+	}
 
 	wch := NewWebsocketClientsHolder()
 
@@ -69,12 +77,15 @@ func TestWebsocketClientsHolder_CloseAndRemove(t *testing.T) {
 
 		wch := NewWebsocketClientsHolder()
 		closeWasCalled := false
-		_ = wch.AddClient(&webSocketClient{remoteAddr: "cl", conn: &testscommon.WebsocketConnectionStub{
+		_ = wch.AddClient(&testscommon.WebsocketConnectionStub{
+			GetIDCalled: func() string {
+				return "cl"
+			},
 			CloseCalled: func() error {
 				closeWasCalled = true
 				return nil
 			},
-		}})
+		})
 
 		err := wch.CloseAndRemove("cl")
 		require.NoError(t, err)
