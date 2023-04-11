@@ -25,11 +25,11 @@ type WebSocketSenderArgs struct {
 }
 
 type webSocketSender struct {
+	withAcknowledge          bool
 	log                      core.Logger
 	uint64ByteSliceConverter Uint64ByteSliceConverter
 	clientsHolder            ClientsHandler
 	server                   common.HttpServerHandler
-	withAcknowledge          bool
 	acknowledges             ClientAcknowledgesHolder
 }
 
@@ -63,6 +63,8 @@ func (w *webSocketSender) initializeServer(wsURL string, wsPath string) {
 		Addr:    wsURL,
 		Handler: router,
 	}
+
+	w.log.Info("webSocketSender initializeServer(): initializing web-sockets server", "url", wsURL, "path", wsPath)
 
 	upgrader := websocket.Upgrader{
 		ReadBufferSize:  1024,
@@ -182,6 +184,8 @@ func (w *webSocketSender) sendData(
 func (w *webSocketSender) Close() error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
+
+	w.log.Info("webSocketSender.Close(): closing the web-sockets server")
 
 	err := w.server.Shutdown(ctx)
 	if err != nil {

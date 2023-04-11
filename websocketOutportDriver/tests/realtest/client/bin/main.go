@@ -10,7 +10,7 @@ import (
 
 var (
 	addr = flag.String("name", "client 0", "-")
-	port = flag.Int("port", 22111, "-")
+	port = flag.Int("port", 21112, "-")
 )
 
 func main() {

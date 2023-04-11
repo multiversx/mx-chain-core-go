@@ -17,7 +17,6 @@ type OutportDriverWebSocketSenderFactoryArgs struct {
 	Uint64ByteSliceConverter common.Uint64ByteSliceConverter
 	Log                      core.Logger
 	WithAcknowledge          bool
-	IsServer                 bool
 }
 
 type outportDriverWebSocketSenderFactory struct {
@@ -57,6 +56,7 @@ func (o *outportDriverWebSocketSenderFactory) Create() (websocketOutportDriver.D
 		Uint64ByteSliceConverter: o.uint64ByteSliceConverter,
 		RetryDurationInSec:       o.webSocketConfig.RetryDurationInSec,
 		WithAcknowledge:          o.withAcknowledge,
+		Log:                      o.log,
 	})
 	if err != nil {
 		return nil, err

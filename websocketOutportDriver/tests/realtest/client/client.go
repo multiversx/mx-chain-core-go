@@ -11,12 +11,12 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core/check"
-	"github.com/multiversx/mx-chain-core-go/core/mock"
 	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
 	"github.com/multiversx/mx-chain-core-go/marshal"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
+	logger "github.com/multiversx/mx-chain-logger-go"
 )
 
 // WSConn defines what a sender shall do
@@ -27,7 +27,7 @@ type WSConn interface {
 }
 
 var (
-	log                      = &mock.LoggerMock{}
+	log                      = logger.GetOrCreate("test-client")
 	errNilMarshaller         = errors.New("nil marshaller")
 	uint64ByteSliceConverter = uint64ByteSlice.NewBigEndianConverter()
 )
@@ -56,7 +56,7 @@ func (tc *tempClient) Run(port int) {
 	interrupt := make(chan os.Signal, 1)
 	signal.Notify(interrupt, os.Interrupt)
 
-	urlReceiveData := url.URL{Scheme: "ws", Host: fmt.Sprintf("127.0.0.1:%d", port), Path: "/save"}
+	urlReceiveData := url.URL{Scheme: "ws", Host: fmt.Sprintf("127.0.0.1:%d", port), Path: data.WSRoute}
 	log.Info(tc.name+" -> connecting to", "url", urlReceiveData.String())
 	wsConnection, _, err := websocket.DefaultDialer.Dial(urlReceiveData.String(), nil)
 	if err != nil {
@@ -127,12 +127,13 @@ func (tc *tempClient) verifyPayloadAndSendAckIfNeeded(payload []byte, ackHandler
 		"operation type", payloadData.OperationType,
 		"message length", len(payloadData.Payload),
 		"data", payloadData.Payload,
+		"with ack", payloadData.WithAcknowledge,
 	)
 
 	if payloadData.OperationType.Uint32() == data.OperationSaveBlock.Uint32() {
 		log.Debug(tc.name + " -> save block operation")
 		var argsBlock outport.OutportBlock
-		err = tc.marshaller.Unmarshal(&argsBlock, payload)
+		err = tc.marshaller.Unmarshal(&argsBlock, payloadData.Payload)
 		if err != nil {
 			log.Error(tc.name+" -> cannot unmarshal block", "error", err)
 		} else {

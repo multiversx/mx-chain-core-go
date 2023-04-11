@@ -4,15 +4,20 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/multiversx/mx-chain-core-go/core/mock"
+	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/data/block"
 	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
 	"github.com/multiversx/mx-chain-core-go/marshal"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/factory"
+	logger "github.com/multiversx/mx-chain-logger-go"
 )
 
-var jsonMarshaller = &marshal.JsonMarshalizer{}
+var (
+	jsonMarshaller = &marshal.JsonMarshalizer{}
+	log            = logger.GetOrCreate("test-server")
+)
 
 func main() {
 	server, err := createServer()
@@ -46,7 +51,19 @@ func main() {
 }
 
 func doAction(server Driver) {
-	err := server.SaveBlock(&outport.OutportBlock{BlockData: &outport.BlockData{HeaderHash: []byte("header hash")}})
+	metaHeader := &block.MetaBlock{
+		Nonce: 100,
+	}
+	metaHeaderBytes, _ := jsonMarshaller.Marshal(metaHeader)
+
+	err := server.SaveBlock(&outport.OutportBlock{
+		BlockData: &outport.BlockData{
+			HeaderType:  string(core.MetaHeader),
+			HeaderHash:  []byte("header hash"),
+			HeaderBytes: metaHeaderBytes,
+		},
+	},
+	)
 	if err != nil {
 		fmt.Println(err.Error())
 	}
@@ -71,10 +88,12 @@ func createServer() (Driver, error) {
 	wsFactory, err := factory.NewOutportDriverWebSocketSenderFactory(factory.OutportDriverWebSocketSenderFactoryArgs{
 		Marshaller: jsonMarshaller,
 		WebSocketConfig: data.WebSocketConfig{
-			URL: "127.0.0.1:21112",
+			URL:                "127.0.0.1:21112",
+			RetryDurationInSec: 5,
+			IsServer:           true,
 		},
 		Uint64ByteSliceConverter: uint64ByteSlice.NewBigEndianConverter(),
-		Log:                      &mock.LoggerMock{},
+		Log:                      log,
 		WithAcknowledge:          true,
 	})
 	if err != nil {

@@ -6,7 +6,10 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/core/check"
+	"github.com/multiversx/mx-chain-core-go/core/closing"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/common"
+	outportData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
 // WebSocketClientSenderArgs holds the arguments needed for creating a new instance of client
@@ -29,6 +32,13 @@ type client struct {
 }
 
 func NewClient(args WebSocketClientSenderArgs) (*client, error) {
+	if check.IfNil(args.Log) {
+		return nil, outportData.ErrNilLogger
+	}
+	if check.IfNil(args.Uint64ByteSliceConverter) {
+		return nil, outportData.ErrNilUint64ByteSliceConverter
+	}
+
 	return &client{
 		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
 		retryDuration:            time.Duration(args.RetryDurationInSec) * time.Second,
@@ -36,6 +46,7 @@ func NewClient(args WebSocketClientSenderArgs) (*client, error) {
 		wsConn:                   common.NewWSConnClient(),
 		withAcknowledge:          args.WithAcknowledge,
 		log:                      args.Log,
+		safeCloser:               closing.NewSafeChanCloser(),
 	}, nil
 }
 
