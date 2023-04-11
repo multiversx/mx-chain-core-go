@@ -44,7 +44,7 @@ func NewWsServer(args ArgsWsServer) (*wsServer, error) {
 		return nil, err
 	}
 
-	return &wsServer{
+	s := &wsServer{
 		log:                      args.Log,
 		payloadParser:            args.PayloadParser,
 		payloadProcessor:         args.PayloadProcessor,
@@ -52,7 +52,10 @@ func NewWsServer(args ArgsWsServer) (*wsServer, error) {
 		retryDurationInSec:       args.RetryDurationInSec,
 		blockingAckOnError:       args.BlockingAckOnError,
 		listeners:                common.NewListenersHolder(),
-	}, nil
+	}
+	s.initializeServer(args.URL, data.WSRoute)
+
+	return s, nil
 }
 
 // Start will start the web-sockets server
@@ -76,6 +79,8 @@ func (s *wsServer) initializeServer(wsURL string, wsPath string) {
 		ReadBufferSize:  1024,
 		WriteBufferSize: 1024,
 	}
+
+	s.log.Info("wsServer.initializeServer(): initializing web-sockets server", "url", wsURL, "path", wsPath)
 
 	addClientFunc := func(writer http.ResponseWriter, r *http.Request) {
 		// generate a unique client ID for the new client
@@ -117,12 +122,13 @@ func (s *wsServer) handleMessages(client common.WSConClient) {
 	})
 	if err != nil {
 		s.log.Error("wsServer.handleMessages: cannot create messages listener", "error", err, "clientID", client.GetID())
+		return
 	}
 
 	s.listeners.Add(client.GetID(), listener)
 	// this method is blocking
 	_ = listener.Listen()
-	// if method listen will end the client was disconnected should remove the listener from the list
+	// if method listen will end, the client was disconnected should remove the listener from the list
 	s.listeners.Remove(client.GetID())
 
 }

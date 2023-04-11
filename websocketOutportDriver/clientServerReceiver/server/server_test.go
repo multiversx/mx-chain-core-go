@@ -2,6 +2,7 @@ package server
 
 import (
 	"testing"
+	"time"
 
 	"github.com/multiversx/mx-chain-core-go/core/mock"
 	"github.com/multiversx/mx-chain-core-go/testscommon"
@@ -77,4 +78,55 @@ func TestNewWsServer(t *testing.T) {
 		require.Nil(t, ws)
 		require.Equal(t, err, data.ErrZeroValueRetryDuration)
 	})
+}
+
+func TestWsServer_StartAddTwoClientsAndStop(t *testing.T) {
+	args := createArgs()
+	args.URL = "127.0.0.1:21112"
+	serverR, _ := NewWsServer(args)
+
+	go func() {
+		serverR.Start()
+	}()
+
+	calledC1 := false
+	calledC2 := false
+	client1 := &testscommon.WebsocketConnectionStub{
+		GetIDCalled: func() string {
+			return "client1"
+		},
+		ReadMessageCalled: func() (messageType int, payload []byte, err error) {
+			time.Sleep(10 * time.Millisecond)
+			return 0, []byte("something"), nil
+		},
+		CloseCalled: func() error {
+			calledC1 = true
+			return nil
+		},
+	}
+	client2 := &testscommon.WebsocketConnectionStub{
+		GetIDCalled: func() string {
+			return "client2"
+		},
+		ReadMessageCalled: func() (messageType int, payload []byte, err error) {
+			time.Sleep(10 * time.Millisecond)
+			return 0, []byte("something"), nil
+		},
+		CloseCalled: func() error {
+			calledC2 = true
+			return nil
+		},
+	}
+
+	go func() {
+		serverR.handleMessages(client1)
+	}()
+	go func() {
+		serverR.handleMessages(client2)
+	}()
+
+	time.Sleep(time.Second)
+	serverR.Close()
+	require.True(t, calledC1)
+	require.True(t, calledC2)
 }
