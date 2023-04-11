@@ -63,6 +63,9 @@ func (c *clientSender) Send(counter uint64, payload []byte) error {
 }
 
 func (c *clientSender) waitForAckSignal(counter uint64) error {
+	timer := time.NewTimer(c.retryDuration)
+	defer timer.Stop()
+
 	for {
 		mType, message, err := c.wsConn.ReadMessage()
 		if err != nil {
@@ -87,6 +90,16 @@ func (c *clientSender) waitForAckSignal(counter uint64) error {
 		if receivedCounter == counter {
 			return nil
 		}
+
+		timer.Reset(c.retryDuration)
+		c.log.Warn("clientSender.waitForAckSignal: different counter",
+			"expected", counter, "actual", receivedCounter)
+
+		select {
+		case <-timer.C:
+		case <-c.safeCloser.ChanClose():
+			return nil
+		}
 	}
 	return nil
 }
@@ -101,12 +114,8 @@ func (c *clientSender) writeMessage(payload []byte) error {
 			return nil
 		}
 
-		c.log.Warn("client.WriteMessage: connection problem", "error", err)
-
-		err = c.wsConn.OpenConnection(c.url)
-		if err != nil {
-			timer.Reset(c.retryDuration)
-		}
+		c.log.Warn("client.writeMessage: connection problem", "error", err)
+		c.openConnection()
 
 		select {
 		case <-timer.C:
@@ -116,14 +125,14 @@ func (c *clientSender) writeMessage(payload []byte) error {
 	}
 }
 
-func (c *clientSender) openConnection() error {
+func (c *clientSender) openConnection() {
 	timer := time.NewTimer(c.retryDuration)
 	defer timer.Stop()
 
 	for {
 		err := c.wsConn.OpenConnection(c.url)
 		if err == nil {
-			return nil
+			return
 		} else {
 			c.log.Warn(fmt.Sprintf("c.openConnection(), retrying in %v...", c.retryDuration), "error", err)
 		}
@@ -133,7 +142,7 @@ func (c *clientSender) openConnection() error {
 		select {
 		case <-timer.C:
 		case <-c.safeCloser.ChanClose():
-			return nil
+			return
 		}
 	}
 }
@@ -142,8 +151,12 @@ func (c *clientSender) Close() error {
 	defer c.safeCloser.Close()
 
 	c.log.Info("closing all components...")
+	err := c.wsConn.Close()
+	if err != nil {
+		c.log.Warn("clientSender.Close()", "error", err)
+	}
 
-	return c.wsConn.Close()
+	return nil
 }
 
 func checkArgs(args ArgsWsClientSender) error {

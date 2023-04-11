@@ -17,6 +17,7 @@ type WSClient interface {
 	WriteMessage(messageType int, data []byte) error
 	ReadMessage() (int, []byte, error)
 	GetID() string
+	IsInterfaceNil() bool
 }
 
 // PayloadProcessor defines what a websocket payload processor should do
