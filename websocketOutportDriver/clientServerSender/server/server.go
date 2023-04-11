@@ -16,33 +16,36 @@ import (
 	outportData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
-// WebSocketSenderArgs holds the arguments needed for creating a new instance of webSocketSender
-type WebSocketSenderArgs struct {
-	Uint64ByteSliceConverter Uint64ByteSliceConverter
+// ArgsServerSender holds the arguments needed for creating a new instance of webSocketSender
+type ArgsServerSender struct {
+	Uint64ByteSliceConverter common.Uint64ByteSliceConverter
 	Log                      core.Logger
 	URL                      string
 	WithAcknowledge          bool
 }
 
-type webSocketSender struct {
+type serverSender struct {
 	withAcknowledge          bool
 	log                      core.Logger
-	uint64ByteSliceConverter Uint64ByteSliceConverter
+	uint64ByteSliceConverter common.Uint64ByteSliceConverter
 	clientsHolder            ClientsHandler
 	server                   common.HttpServerHandler
 	acknowledges             ClientAcknowledgesHolder
 }
 
-// NewWebSocketSender returns a new instance of webSocketSender
-func NewWebSocketSender(args WebSocketSenderArgs) (*webSocketSender, error) {
+// NewServerSender returns a new instance of serverSender
+func NewServerSender(args ArgsServerSender) (*serverSender, error) {
 	if check.IfNil(args.Uint64ByteSliceConverter) {
 		return nil, outportData.ErrNilUint64ByteSliceConverter
 	}
 	if check.IfNil(args.Log) {
 		return nil, outportData.ErrNilLogger
 	}
+	if len(args.URL) == 0 {
+		return nil, outportData.ErrEmptyUrl
+	}
 
-	ws := &webSocketSender{
+	ws := &serverSender{
 		log:                      args.Log,
 		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
 		clientsHolder:            common.NewWebsocketClientsHolder(),
@@ -57,7 +60,7 @@ func NewWebSocketSender(args WebSocketSenderArgs) (*webSocketSender, error) {
 	return ws, nil
 }
 
-func (w *webSocketSender) initializeServer(wsURL string, wsPath string) {
+func (w *serverSender) initializeServer(wsURL string, wsPath string) {
 	router := mux.NewRouter()
 	server := &http.Server{
 		Addr:    wsURL,
@@ -98,7 +101,7 @@ func (w *webSocketSender) initializeServer(wsURL string, wsPath string) {
 	w.server = server
 }
 
-func (w *webSocketSender) addClient(client common.WSClient) {
+func (w *serverSender) addClient(client common.WSClient) {
 	err := w.clientsHolder.AddClient(client)
 	if err != nil {
 		w.log.Warn("webSocketSender.handleNewClient cannot add client", "error", err, "id", client.GetID())
@@ -112,7 +115,7 @@ func (w *webSocketSender) addClient(client common.WSClient) {
 	go w.handleReceiveAck(client)
 }
 
-func (w *webSocketSender) start() {
+func (w *serverSender) start() {
 	err := w.server.ListenAndServe()
 	if err != nil && !strings.Contains(err.Error(), outportData.ErrServerIsClosed.Error()) {
 		w.log.Error("could not initialize webserver", "error", err)
@@ -122,11 +125,11 @@ func (w *webSocketSender) start() {
 }
 
 // Send will make the request accordingly to the received arguments
-func (w *webSocketSender) Send(counter uint64, payload []byte) error {
+func (w *serverSender) Send(counter uint64, payload []byte) error {
 	return w.sendDataToClients(counter, payload)
 }
 
-func (w *webSocketSender) sendDataToClients(
+func (w *serverSender) sendDataToClients(
 	counter uint64,
 	data []byte,
 ) error {
@@ -155,7 +158,7 @@ func (w *webSocketSender) sendDataToClients(
 	return nil
 }
 
-func (w *webSocketSender) sendData(
+func (w *serverSender) sendData(
 	counter uint64,
 	data []byte,
 	client common.WSClient,
@@ -181,7 +184,7 @@ func (w *webSocketSender) sendData(
 }
 
 // Close will close the server and the connections with the clients
-func (w *webSocketSender) Close() error {
+func (w *serverSender) Close() error {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 
@@ -201,6 +204,6 @@ func (w *webSocketSender) Close() error {
 }
 
 // IsInterfaceNil returns true if there is no value under the interface
-func (w *webSocketSender) IsInterfaceNil() bool {
+func (w *serverSender) IsInterfaceNil() bool {
 	return w == nil
 }

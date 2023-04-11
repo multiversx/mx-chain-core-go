@@ -9,37 +9,36 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/core/closing"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/common"
-	outportData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
+	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
-// WebSocketClientSenderArgs holds the arguments needed for creating a new instance of client
-type WebSocketClientSenderArgs struct {
-	Uint64ByteSliceConverter Uint64ByteSliceConverter
+// ArgsWsClientSender holds the arguments needed for creating a new instance of client
+type ArgsWsClientSender struct {
+	Uint64ByteSliceConverter common.Uint64ByteSliceConverter
 	Log                      core.Logger
 	RetryDurationInSec       int
 	WithAcknowledge          bool
 	URL                      string
 }
 
-type client struct {
+type clientSender struct {
 	log                      core.Logger
-	uint64ByteSliceConverter Uint64ByteSliceConverter
-	wsConn                   WSConnClient
+	uint64ByteSliceConverter common.Uint64ByteSliceConverter
+	wsConn                   common.WSClient
 	retryDuration            time.Duration
 	safeCloser               core.SafeCloser
 	url                      string
 	withAcknowledge          bool
 }
 
-func NewClient(args WebSocketClientSenderArgs) (*client, error) {
-	if check.IfNil(args.Log) {
-		return nil, outportData.ErrNilLogger
-	}
-	if check.IfNil(args.Uint64ByteSliceConverter) {
-		return nil, outportData.ErrNilUint64ByteSliceConverter
+// NewClientSender will create a new instance of *client
+func NewClientSender(args ArgsWsClientSender) (*clientSender, error) {
+	err := checkArgs(args)
+	if err != nil {
+		return nil, err
 	}
 
-	return &client{
+	return &clientSender{
 		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
 		retryDuration:            time.Duration(args.RetryDurationInSec) * time.Second,
 		url:                      args.URL,
@@ -50,7 +49,7 @@ func NewClient(args WebSocketClientSenderArgs) (*client, error) {
 	}, nil
 }
 
-func (c *client) Send(counter uint64, payload []byte) error {
+func (c *clientSender) Send(counter uint64, payload []byte) error {
 	err := c.writeMessage(payload)
 	if err != nil {
 		c.log.Warn("cannot write message", "error", err)
@@ -63,7 +62,7 @@ func (c *client) Send(counter uint64, payload []byte) error {
 	return c.waitForAckSignal(counter)
 }
 
-func (c *client) waitForAckSignal(counter uint64) error {
+func (c *clientSender) waitForAckSignal(counter uint64) error {
 	for {
 		mType, message, err := c.wsConn.ReadMessage()
 		if err != nil {
@@ -92,7 +91,7 @@ func (c *client) waitForAckSignal(counter uint64) error {
 	return nil
 }
 
-func (c *client) writeMessage(payload []byte) error {
+func (c *clientSender) writeMessage(payload []byte) error {
 	timer := time.NewTimer(c.retryDuration)
 	defer timer.Stop()
 
@@ -117,7 +116,7 @@ func (c *client) writeMessage(payload []byte) error {
 	}
 }
 
-func (c *client) openConnection() error {
+func (c *clientSender) openConnection() error {
 	timer := time.NewTimer(c.retryDuration)
 	defer timer.Stop()
 
@@ -139,10 +138,27 @@ func (c *client) openConnection() error {
 	}
 }
 
-func (c *client) Close() error {
+func (c *clientSender) Close() error {
 	defer c.safeCloser.Close()
 
 	c.log.Info("closing all components...")
 
 	return c.wsConn.Close()
+}
+
+func checkArgs(args ArgsWsClientSender) error {
+	if check.IfNil(args.Uint64ByteSliceConverter) {
+		return data.ErrNilUint64ByteSliceConverter
+	}
+	if len(args.URL) == 0 {
+		return data.ErrEmptyUrl
+	}
+	if args.RetryDurationInSec == 0 {
+		return data.ErrZeroValueRetryDuration
+	}
+	if check.IfNil(args.Log) {
+		return data.ErrNilLogger
+	}
+
+	return nil
 }

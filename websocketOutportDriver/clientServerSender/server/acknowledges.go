@@ -7,7 +7,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/common"
 )
 
-func (w *webSocketSender) handleReceiveAck(client common.WSClient) {
+func (w *serverSender) handleReceiveAck(client common.WSClient) {
 	for {
 		mType, message, err := client.ReadMessage()
 		if err != nil {
@@ -41,7 +41,7 @@ func (w *webSocketSender) handleReceiveAck(client common.WSClient) {
 	}
 }
 
-func (w *webSocketSender) waitForAck(remoteAddr string, counter uint64) {
+func (w *serverSender) waitForAck(remoteAddr string, counter uint64) {
 	for {
 		acksForAddress, ok := w.acknowledges.GetAcknowledgesOfAddress(remoteAddr)
 		if !ok {

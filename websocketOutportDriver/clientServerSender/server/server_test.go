@@ -21,7 +21,7 @@ func TestNewWebSocketSender(t *testing.T) {
 		args := getMockWebSocketSender()
 		args.Uint64ByteSliceConverter = nil
 
-		wss, err := NewWebSocketSender(args)
+		wss, err := NewServerSender(args)
 		require.Nil(t, wss)
 		require.Equal(t, data.ErrNilUint64ByteSliceConverter, err)
 	})
@@ -32,9 +32,21 @@ func TestNewWebSocketSender(t *testing.T) {
 		args := getMockWebSocketSender()
 		args.Log = nil
 
-		wss, err := NewWebSocketSender(args)
+		wss, err := NewServerSender(args)
 		require.Nil(t, wss)
 		require.Equal(t, data.ErrNilLogger, err)
+		require.True(t, wss.IsInterfaceNil())
+	})
+
+	t.Run("empty url", func(t *testing.T) {
+		t.Parallel()
+
+		args := getMockWebSocketSender()
+		args.URL = ""
+
+		wss, err := NewServerSender(args)
+		require.Nil(t, wss)
+		require.Equal(t, data.ErrEmptyUrl, err)
 		require.True(t, wss.IsInterfaceNil())
 	})
 
@@ -43,7 +55,7 @@ func TestNewWebSocketSender(t *testing.T) {
 
 		args := getMockWebSocketSender()
 
-		wss, err := NewWebSocketSender(args)
+		wss, err := NewServerSender(args)
 		require.NoError(t, err)
 		require.NotNil(t, wss)
 		require.False(t, wss.IsInterfaceNil())
@@ -56,7 +68,7 @@ func TestWebSocketSender_AddClient(t *testing.T) {
 	t.Run("should work - without acknowledge", func(t *testing.T) {
 		t.Parallel()
 
-		wss, _ := NewWebSocketSender(getMockWebSocketSender())
+		wss, _ := NewServerSender(getMockWebSocketSender())
 
 		wss.addClient(&testscommon.WebsocketConnectionStub{
 			GetIDCalled: func() string {
@@ -76,7 +88,7 @@ func TestWebSocketSender_AddClient(t *testing.T) {
 		args := getMockWebSocketSender()
 		args.WithAcknowledge = true
 
-		wss, _ := NewWebSocketSender(args)
+		wss, _ := NewServerSender(args)
 
 		wss.addClient(&testscommon.WebsocketConnectionStub{
 			ReadMessageCalled: func() (_ int, _ []byte, err error) {
@@ -101,7 +113,7 @@ func TestWebSocketSender_Send(t *testing.T) {
 	t.Run("should error because no clients exist", func(t *testing.T) {
 		t.Parallel()
 
-		wss, _ := NewWebSocketSender(getMockWebSocketSender())
+		wss, _ := NewServerSender(getMockWebSocketSender())
 
 		err := wss.Send(0, []byte("payload"))
 		require.Equal(t, data.ErrNoClientToSendTo, err)
@@ -110,7 +122,7 @@ func TestWebSocketSender_Send(t *testing.T) {
 	t.Run("should work - without acknowledge", func(t *testing.T) {
 		t.Parallel()
 
-		wss, _ := NewWebSocketSender(getMockWebSocketSender())
+		wss, _ := NewServerSender(getMockWebSocketSender())
 
 		_ = wss.clientsHolder.AddClient(&testscommon.WebsocketConnectionStub{
 			ReadMessageCalled: func() (_ int, _ []byte, err error) {
@@ -131,7 +143,7 @@ func TestWebSocketSender_Send(t *testing.T) {
 
 		args := getMockWebSocketSender()
 		args.WithAcknowledge = true
-		wss, _ := NewWebSocketSender(args)
+		wss, _ := NewServerSender(args)
 
 		var ack []byte
 
@@ -179,15 +191,16 @@ func TestWebSocketSender_Send(t *testing.T) {
 func TestWebSocketSender_Close(t *testing.T) {
 	t.Parallel()
 
-	wss, _ := NewWebSocketSender(getMockWebSocketSender())
+	wss, _ := NewServerSender(getMockWebSocketSender())
 
 	err := wss.Close()
 	require.NoError(t, err)
 }
 
-func getMockWebSocketSender() WebSocketSenderArgs {
-	return WebSocketSenderArgs{
+func getMockWebSocketSender() ArgsServerSender {
+	return ArgsServerSender{
 		Uint64ByteSliceConverter: &testscommon.Uint64ByteSliceConverterStub{},
 		Log:                      coreMock.LoggerMock{},
+		URL:                      "local",
 	}
 }

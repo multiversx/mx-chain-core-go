@@ -31,6 +31,7 @@ type sender struct {
 	withAcknowledge          bool
 }
 
+// NewClientServerSender will create a new instance of *sender
 func NewClientServerSender(args ArgsWSClientServerSender) (*sender, error) {
 	messageSender, err := createMessageSender(args)
 	if err != nil {
@@ -49,7 +50,7 @@ func NewClientServerSender(args ArgsWSClientServerSender) (*sender, error) {
 
 func createMessageSender(args ArgsWSClientServerSender) (MessageSender, error) {
 	if args.IsServer {
-		return server.NewWebSocketSender(server.WebSocketSenderArgs{
+		return server.NewServerSender(server.ArgsServerSender{
 			Uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
 			Log:                      args.Log,
 			URL:                      args.Url,
@@ -57,7 +58,7 @@ func createMessageSender(args ArgsWSClientServerSender) (MessageSender, error) {
 		})
 	}
 
-	return client.NewClient(client.WebSocketClientSenderArgs{
+	return client.NewClientSender(client.ArgsWsClientSender{
 		Uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
 		RetryDurationInSec:       args.RetryDurationInSec,
 		URL:                      args.Url,

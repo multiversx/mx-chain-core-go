@@ -4,13 +4,6 @@ import (
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/common"
 )
 
-// Uint64ByteSliceConverter converts byte slice to/from uint64
-type Uint64ByteSliceConverter interface {
-	ToByteSlice(uint64) []byte
-	ToUint64([]byte) (uint64, error)
-	IsInterfaceNil() bool
-}
-
 type ClientsHandler interface {
 	AddClient(client common.WSClient) error
 	GetAll() map[string]common.WSClient

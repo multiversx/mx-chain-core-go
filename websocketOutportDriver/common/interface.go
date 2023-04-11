@@ -13,6 +13,7 @@ type AcknowledgesHandler interface {
 
 type WSClient interface {
 	io.Closer
+	OpenConnection(url string) error
 	WriteMessage(messageType int, data []byte) error
 	ReadMessage() (int, []byte, error)
 	GetID() string
