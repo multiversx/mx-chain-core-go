@@ -67,14 +67,8 @@ func TestNewWsClient(t *testing.T) {
 
 func TestClientSender_SendNotConnectedToServer(t *testing.T) {
 	args := createArgs()
-	args.URL = "127.0.0.1:21112"
+	args.URL = "127.0.0.1:21113"
 	cSender, _ := NewClientSender(args)
-
-	go func() {
-		_ = cSender.Send(0, []byte("message"))
-	}()
-
-	time.Sleep(100 * time.Millisecond)
 
 	called := false
 	wg := sync.WaitGroup{}
@@ -89,6 +83,12 @@ func TestClientSender_SendNotConnectedToServer(t *testing.T) {
 			return nil
 		},
 	}
+
+	go func() {
+		_ = cSender.Send(0, []byte("message"))
+	}()
+
+	time.Sleep(100 * time.Millisecond)
 
 	wg.Wait()
 
