@@ -24,7 +24,7 @@ type ArgsWsClientSender struct {
 type clientSender struct {
 	log                      core.Logger
 	uint64ByteSliceConverter common.Uint64ByteSliceConverter
-	wsConn                   common.WSClient
+	wsConn                   common.WSConClient
 	retryDuration            time.Duration
 	safeCloser               core.SafeCloser
 	url                      string
@@ -49,6 +49,7 @@ func NewClientSender(args ArgsWsClientSender) (*clientSender, error) {
 	}, nil
 }
 
+// Send will send the provided payload
 func (c *clientSender) Send(counter uint64, payload []byte) error {
 	err := c.writeMessage(payload)
 	if err != nil {
@@ -147,6 +148,7 @@ func (c *clientSender) openConnection() {
 	}
 }
 
+// Close will close the web-sockets connection
 func (c *clientSender) Close() error {
 	defer c.safeCloser.Close()
 

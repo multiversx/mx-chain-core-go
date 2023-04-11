@@ -7,11 +7,13 @@ import (
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
+// AcknowledgesHandler defines what an acknowledges handler should be able to do
 type AcknowledgesHandler interface {
 	ProcessAcknowledged(counter uint64) bool
 }
 
-type WSClient interface {
+// WSConClient defines what a web-sockets connection client should be able to do
+type WSConClient interface {
 	io.Closer
 	OpenConnection(url string) error
 	WriteMessage(messageType int, data []byte) error
@@ -39,6 +41,7 @@ type HttpServerHandler interface {
 	Shutdown(ctx context.Context) error
 }
 
+// MessagesListener defines what a messages listener should be able to do
 type MessagesListener interface {
 	Listen() bool
 	Close()

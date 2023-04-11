@@ -22,6 +22,7 @@ type receiver struct {
 	receiver WsMessagesReceiver
 }
 
+// NewClientServerReceiver will create a new instance of receiver
 func NewClientServerReceiver(args ArgsWsClientServerReceiver) (*receiver, error) {
 	wsReceiver, err := createWsMessageReceiver(args)
 	if err != nil {

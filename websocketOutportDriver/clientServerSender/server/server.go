@@ -101,7 +101,7 @@ func (w *serverSender) initializeServer(wsURL string, wsPath string) {
 	w.server = server
 }
 
-func (w *serverSender) addClient(client common.WSClient) {
+func (w *serverSender) addClient(client common.WSConClient) {
 	err := w.clientsHolder.AddClient(client)
 	if err != nil {
 		w.log.Warn("webSocketSender.handleNewClient cannot add client", "error", err, "id", client.GetID())
@@ -161,7 +161,7 @@ func (w *serverSender) sendDataToClients(
 func (w *serverSender) sendData(
 	counter uint64,
 	data []byte,
-	client common.WSClient,
+	client common.WSConClient,
 ) error {
 	if len(data) == 0 {
 		return outportData.ErrEmptyDataToSend

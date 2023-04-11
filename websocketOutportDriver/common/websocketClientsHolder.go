@@ -7,19 +7,19 @@ import (
 )
 
 type websocketClientsHolder struct {
-	clients map[string]WSClient
+	clients map[string]WSConClient
 	mut     sync.RWMutex
 }
 
 // NewWebsocketClientsHolder will return a new instance of websocketClientsHolder
 func NewWebsocketClientsHolder() *websocketClientsHolder {
 	return &websocketClientsHolder{
-		clients: make(map[string]WSClient),
+		clients: make(map[string]WSConClient),
 	}
 }
 
 // AddClient will add the provided client to the internal members
-func (wch *websocketClientsHolder) AddClient(client WSClient) error {
+func (wch *websocketClientsHolder) AddClient(client WSConClient) error {
 	if client == nil {
 		return data.ErrNilWebSocketClient
 	}
@@ -32,11 +32,11 @@ func (wch *websocketClientsHolder) AddClient(client WSClient) error {
 }
 
 // GetAll will return all the clients
-func (wch *websocketClientsHolder) GetAll() map[string]WSClient {
+func (wch *websocketClientsHolder) GetAll() map[string]WSConClient {
 	wch.mut.RLock()
 	defer wch.mut.RUnlock()
 
-	clientsMap := make(map[string]WSClient, len(wch.clients))
+	clientsMap := make(map[string]WSConClient, len(wch.clients))
 	for remoteAddr, client := range wch.clients {
 		clientsMap[remoteAddr] = client
 	}

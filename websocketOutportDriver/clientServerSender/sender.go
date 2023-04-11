@@ -82,6 +82,7 @@ func (s *sender) Send(args outportSenderData.WsSendArgs) error {
 	return s.messageSender.Send(assignedCounter, newPayload)
 }
 
+// Close will close the message sender
 func (s *sender) Close() error {
 	return s.messageSender.Close()
 }

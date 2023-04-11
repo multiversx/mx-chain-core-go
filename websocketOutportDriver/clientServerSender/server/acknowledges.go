@@ -7,7 +7,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/common"
 )
 
-func (w *serverSender) handleReceiveAck(client common.WSClient) {
+func (w *serverSender) handleReceiveAck(client common.WSConClient) {
 	for {
 		mType, message, err := client.ReadMessage()
 		if err != nil {

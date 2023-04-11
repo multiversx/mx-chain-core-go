@@ -105,7 +105,7 @@ func (s *wsServer) initializeServer(wsURL string, wsPath string) {
 	s.server = httpServer
 }
 
-func (s *wsServer) handleMessages(client common.WSClient) {
+func (s *wsServer) handleMessages(client common.WSConClient) {
 	listener, err := payload.NewMessagesListener(payload.ArgsMessagesProcessor{
 		Log:                      s.log,
 		PayloadParser:            s.payloadParser,

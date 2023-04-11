@@ -19,7 +19,7 @@ type ArgsMessagesProcessor struct {
 	Log                      core.Logger
 	PayloadParser            common.PayloadParser
 	PayloadProcessor         common.PayloadProcessor
-	WsClient                 common.WSClient
+	WsClient                 common.WSConClient
 	Uint64ByteSliceConverter common.Uint64ByteSliceConverter
 	RetryDurationInSec       uint32
 	BlockingAckOnError       bool
@@ -30,12 +30,13 @@ type messagesListener struct {
 	log                      core.Logger
 	payloadParser            common.PayloadParser
 	payloadProcessor         common.PayloadProcessor
-	wsClient                 common.WSClient
+	wsClient                 common.WSConClient
 	uint64ByteSliceConverter common.Uint64ByteSliceConverter
 	retryDuration            time.Duration
 	blockingAckOnError       bool
 }
 
+// NewMessagesListener will create a new instance of messagesListener
 func NewMessagesListener(args ArgsMessagesProcessor) (*messagesListener, error) {
 	err := checkArgs(args)
 	if err != nil {

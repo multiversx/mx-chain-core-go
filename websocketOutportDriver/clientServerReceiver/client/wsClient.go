@@ -19,7 +19,7 @@ type client struct {
 	url                string
 	blockingAckOnError bool
 	retryDuration      time.Duration
-	wsConn             WSConnClient
+	wsConn             common.WSConClient
 	safeCloser         core.SafeCloser
 	messagesListener   common.MessagesListener
 	log                core.Logger
@@ -34,7 +34,7 @@ type ArgsWsClient struct {
 	PayloadProcessor         common.PayloadProcessor
 	PayloadParser            common.PayloadParser
 	Uint64ByteSliceConverter common.Uint64ByteSliceConverter
-	WSConnClient             WSConnClient
+	WSConnClient             common.WSConClient
 }
 
 // NewWsClientHandler will create a ws client to receive data from an observer/light client
