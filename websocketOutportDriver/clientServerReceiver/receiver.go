@@ -2,6 +2,8 @@ package clientServerReceiver
 
 import (
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
+	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/clientServerReceiver/client"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/clientServerReceiver/server"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/common"
@@ -31,30 +33,43 @@ func NewClientServerReceiver(args ArgsWsClientServerReceiver) (*receiver, error)
 	}, nil
 }
 
+// Start will start the web-sockets receiver
 func (r *receiver) Start() {
 	r.receiver.Start()
 }
 
+// Close will close the web-sockets receiver
 func (r *receiver) Close() {
 	r.receiver.Close()
 }
 
 func createWsMessageReceiver(args ArgsWsClientServerReceiver) (WsMessagesReceiver, error) {
+	uint64ByteSliceConverter := uint64ByteSlice.NewBigEndianConverter()
+	payloadParser, err := websocketOutportDriver.NewWebSocketPayloadParser(uint64ByteSliceConverter)
+	if err != nil {
+		return nil, err
+	}
+
 	if args.IsServer {
 		return server.NewWsServer(server.ArgsWsServer{
-			URL:                args.Url,
-			RetryDurationInSec: args.RetryDurationInSec,
-			BlockingAckOnError: args.BlockingAckOnError,
-			PayloadProcessor:   args.PayloadProcessor,
-			Log:                args.Log,
+			URL:                      args.Url,
+			RetryDurationInSec:       args.RetryDurationInSec,
+			BlockingAckOnError:       args.BlockingAckOnError,
+			PayloadProcessor:         args.PayloadProcessor,
+			Log:                      args.Log,
+			PayloadParser:            payloadParser,
+			Uint64ByteSliceConverter: uint64ByteSliceConverter,
 		})
 	}
 
-	return client.CreateWsClient(client.ArgsCreateWsClient{
-		Url:                args.Url,
-		RetryDurationInSec: args.RetryDurationInSec,
-		BlockingAckOnError: args.BlockingAckOnError,
-		PayloadProcessor:   args.PayloadProcessor,
-		Log:                args.Log,
+	return client.NewWsClientHandler(client.ArgsWsClient{
+		Url:                      args.Url,
+		RetryDurationInSec:       args.RetryDurationInSec,
+		BlockingAckOnError:       args.BlockingAckOnError,
+		Log:                      args.Log,
+		PayloadProcessor:         args.PayloadProcessor,
+		PayloadParser:            payloadParser,
+		Uint64ByteSliceConverter: uint64ByteSliceConverter,
+		WSConnClient:             common.NewWSConnClient(),
 	})
 }

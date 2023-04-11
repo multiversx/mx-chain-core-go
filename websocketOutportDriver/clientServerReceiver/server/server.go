@@ -10,19 +10,19 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
-	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
-	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/clientServerReceiver/payload"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/common"
 	outportData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
 type ArgsWsServer struct {
-	URL                string
-	RetryDurationInSec uint32
-	BlockingAckOnError bool
-	Log                core.Logger
-	PayloadProcessor   common.PayloadProcessor
+	URL                      string
+	RetryDurationInSec       uint32
+	BlockingAckOnError       bool
+	Log                      core.Logger
+	PayloadParser            common.PayloadParser
+	PayloadProcessor         common.PayloadProcessor
+	Uint64ByteSliceConverter common.Uint64ByteSliceConverter
 }
 
 type wsServer struct {
@@ -38,17 +38,11 @@ type wsServer struct {
 }
 
 func NewWsServer(args ArgsWsServer) (*wsServer, error) {
-	uint64ByteSliceConverter := uint64ByteSlice.NewBigEndianConverter()
-	payloadParser, err := websocketOutportDriver.NewWebSocketPayloadParser(uint64ByteSliceConverter)
-	if err != nil {
-		return nil, err
-	}
-
 	return &wsServer{
 		log:                      args.Log,
-		payloadParser:            payloadParser,
+		payloadParser:            args.PayloadParser,
 		payloadProcessor:         args.PayloadProcessor,
-		uint64ByteSliceConverter: uint64ByteSliceConverter,
+		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
 		retryDurationInSec:       args.RetryDurationInSec,
 		blockingAckOnError:       args.BlockingAckOnError,
 		listeners:                common.NewListenersHolder(),
