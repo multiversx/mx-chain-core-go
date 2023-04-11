@@ -71,22 +71,25 @@ func NewWsClientHandler(args ArgsWsClient) (*client, error) {
 
 func checkArgs(args ArgsWsClient) error {
 	if check.IfNil(args.PayloadProcessor) {
-		return errNilPayloadProcessor
+		return data.ErrNilPayloadProcessor
 	}
 	if check.IfNil(args.PayloadParser) {
-		return errNilPayloadParser
+		return data.ErrNilPayloadParser
 	}
 	if check.IfNil(args.WSConnClient) {
-		return errNilWsConnReceiver
+		return data.ErrNilWsConnReceiver
 	}
 	if check.IfNil(args.Uint64ByteSliceConverter) {
-		return errNilUint64ByteSliceConverter
+		return data.ErrNilUint64ByteSliceConverter
 	}
 	if len(args.Url) == 0 {
-		return errEmptyUrl
+		return data.ErrEmptyUrl
 	}
 	if args.RetryDurationInSec == 0 {
-		return errZeroValueRetryDuration
+		return data.ErrZeroValueRetryDuration
+	}
+	if check.IfNil(args.Log) {
+		return data.ErrNilLogger
 	}
 
 	return nil

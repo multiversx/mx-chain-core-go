@@ -10,9 +10,10 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/clientServerReceiver/payload"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/common"
-	outportData "github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
+	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
 )
 
 type ArgsWsServer struct {
@@ -38,6 +39,11 @@ type wsServer struct {
 }
 
 func NewWsServer(args ArgsWsServer) (*wsServer, error) {
+	err := checkArgs(args)
+	if err != nil {
+		return nil, err
+	}
+
 	return &wsServer{
 		log:                      args.Log,
 		payloadParser:            args.PayloadParser,
@@ -52,7 +58,7 @@ func NewWsServer(args ArgsWsServer) (*wsServer, error) {
 // Start will start the web-sockets server
 func (s *wsServer) Start() {
 	err := s.server.ListenAndServe()
-	if err != nil && !strings.Contains(err.Error(), outportData.ErrServerIsClosed.Error()) {
+	if err != nil && !strings.Contains(err.Error(), data.ErrServerIsClosed.Error()) {
 		s.log.Error("could not initialize webserver", "error", err)
 	}
 
@@ -134,4 +140,27 @@ func (s *wsServer) Close() {
 	for _, listener := range s.listeners.GetAll() {
 		listener.Close()
 	}
+}
+
+func checkArgs(args ArgsWsServer) error {
+	if check.IfNil(args.PayloadProcessor) {
+		return data.ErrNilPayloadProcessor
+	}
+	if check.IfNil(args.PayloadParser) {
+		return data.ErrNilPayloadParser
+	}
+	if check.IfNil(args.Uint64ByteSliceConverter) {
+		return data.ErrNilUint64ByteSliceConverter
+	}
+	if len(args.URL) == 0 {
+		return data.ErrEmptyUrl
+	}
+	if args.RetryDurationInSec == 0 {
+		return data.ErrZeroValueRetryDuration
+	}
+	if check.IfNil(args.Log) {
+		return data.ErrNilLogger
+	}
+
+	return nil
 }

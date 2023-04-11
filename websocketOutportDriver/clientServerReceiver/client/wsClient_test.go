@@ -43,7 +43,7 @@ func TestNewWsClientHandler(t *testing.T) {
 		args.PayloadParser = nil
 		ws, err := NewWsClientHandler(args)
 		require.Nil(t, ws)
-		require.Equal(t, err, errNilPayloadParser)
+		require.Equal(t, err, data.ErrNilPayloadParser)
 	})
 
 	t.Run("nil payload processor, should return error", func(t *testing.T) {
@@ -51,7 +51,7 @@ func TestNewWsClientHandler(t *testing.T) {
 		args.PayloadProcessor = nil
 		ws, err := NewWsClientHandler(args)
 		require.Nil(t, ws)
-		require.Equal(t, err, errNilPayloadProcessor)
+		require.Equal(t, err, data.ErrNilPayloadProcessor)
 	})
 
 	t.Run("nil ws conn, should return error", func(t *testing.T) {
@@ -59,7 +59,7 @@ func TestNewWsClientHandler(t *testing.T) {
 		args.WSConnClient = nil
 		ws, err := NewWsClientHandler(args)
 		require.Nil(t, ws)
-		require.Equal(t, err, errNilWsConnReceiver)
+		require.Equal(t, err, data.ErrNilWsConnReceiver)
 	})
 
 	t.Run("nil uint64 byte slice converter, should return error", func(t *testing.T) {
@@ -67,7 +67,14 @@ func TestNewWsClientHandler(t *testing.T) {
 		args.Uint64ByteSliceConverter = nil
 		ws, err := NewWsClientHandler(args)
 		require.Nil(t, ws)
-		require.Equal(t, err, errNilUint64ByteSliceConverter)
+		require.Equal(t, err, data.ErrNilUint64ByteSliceConverter)
+	})
+	t.Run("nil logger, should return error", func(t *testing.T) {
+		args := createArgs()
+		args.Log = nil
+		ws, err := NewWsClientHandler(args)
+		require.Nil(t, ws)
+		require.Equal(t, err, data.ErrNilLogger)
 	})
 
 	t.Run("empty url, should return error", func(t *testing.T) {
@@ -75,7 +82,7 @@ func TestNewWsClientHandler(t *testing.T) {
 		args.Url = ""
 		ws, err := NewWsClientHandler(args)
 		require.Nil(t, ws)
-		require.Equal(t, err, errEmptyUrl)
+		require.Equal(t, err, data.ErrEmptyUrl)
 	})
 
 	t.Run("zero value retry duration, should return error", func(t *testing.T) {
@@ -83,7 +90,7 @@ func TestNewWsClientHandler(t *testing.T) {
 		args.RetryDurationInSec = 0
 		ws, err := NewWsClientHandler(args)
 		require.Nil(t, ws)
-		require.Equal(t, err, errZeroValueRetryDuration)
+		require.Equal(t, err, data.ErrZeroValueRetryDuration)
 	})
 }
 

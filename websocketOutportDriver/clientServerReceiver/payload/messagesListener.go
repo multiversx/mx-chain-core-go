@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/core/closing"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/common"
 	"github.com/multiversx/mx-chain-core-go/websocketOutportDriver/data"
@@ -36,6 +37,11 @@ type messagesListener struct {
 }
 
 func NewMessagesListener(args ArgsMessagesProcessor) (*messagesListener, error) {
+	err := checkArgs(args)
+	if err != nil {
+		return nil, err
+	}
+
 	return &messagesListener{
 		log:                      args.Log,
 		payloadParser:            args.PayloadParser,
@@ -147,4 +153,27 @@ func (ml *messagesListener) Close() {
 	if err != nil {
 		ml.log.Error("cannot close the operations handler", "error", err)
 	}
+}
+
+func checkArgs(args ArgsMessagesProcessor) error {
+	if check.IfNil(args.PayloadProcessor) {
+		return data.ErrNilPayloadProcessor
+	}
+	if check.IfNil(args.PayloadParser) {
+		return data.ErrNilPayloadParser
+	}
+	if check.IfNil(args.Uint64ByteSliceConverter) {
+		return data.ErrNilUint64ByteSliceConverter
+	}
+	if args.RetryDurationInSec == 0 {
+		return data.ErrZeroValueRetryDuration
+	}
+	if check.IfNil(args.Log) {
+		return data.ErrNilLogger
+	}
+	if check.IfNilReflect(args.WsClient) {
+		return data.ErrNilWebSocketClient
+	}
+
+	return nil
 }

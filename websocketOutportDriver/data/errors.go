@@ -34,3 +34,18 @@ var ErrWebSocketClientNotFound = errors.New("websocket client not found")
 
 // ErrNilWebSocketClient signals that a nil websocket client has been provided
 var ErrNilWebSocketClient = errors.New("nil websocket client")
+
+// ErrNilPayloadProcessor signals that a nil payload processor has been provided
+var ErrNilPayloadProcessor = errors.New("nil payload processor provided")
+
+// ErrNilPayloadParser signals that a nil payload parser has been provided
+var ErrNilPayloadParser = errors.New("nil payload parser provided")
+
+// ErrNilWsConnReceiver signals that a nil ws connection has beed provided
+var ErrNilWsConnReceiver = errors.New("nil ws connection receiver provided")
+
+// ErrEmptyUrl signals that a nil websocket url has been provided
+var ErrEmptyUrl = errors.New("empty websocket url provided")
+
+// ErrZeroValueRetryDuration signals that a zero value for retry duration has been provided
+var ErrZeroValueRetryDuration = errors.New("zero value provided for retry duration")
