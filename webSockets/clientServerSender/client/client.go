@@ -3,6 +3,7 @@ package client
 import (
 	"fmt"
 	"net/url"
+	"strings"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -56,6 +57,7 @@ func (c *clientSender) Send(counter uint64, payload []byte) error {
 	err := c.writeMessage(payload)
 	if err != nil {
 		c.log.Warn("cannot write message", "error", err)
+		return err
 	}
 
 	if !c.withAcknowledge {
@@ -117,7 +119,17 @@ func (c *clientSender) writeMessage(payload []byte) error {
 			return nil
 		}
 
-		c.log.Warn("client.writeMessage: connection problem", "error", err)
+		_, isConnectionClosed := err.(*websocket.CloseError)
+		if !isConnectionClosed {
+			if strings.Contains(err.Error(), data.ClosedConnectionMessage) {
+				c.log.Info("connection closed by server")
+			} else {
+				c.log.Warn(fmt.Sprintf("client.writeMessage: connection problem retrying in %v", c.retryDuration), "error", err)
+				timer.Reset(c.retryDuration)
+				continue
+			}
+		}
+
 		c.openConnection()
 
 		select {

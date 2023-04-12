@@ -4,6 +4,7 @@ import "fmt"
 
 // LoggerMock -
 type LoggerMock struct {
+	WarnCalled func(message string, args ...interface{})
 }
 
 // Trace will print a trace log
@@ -23,6 +24,11 @@ func (c LoggerMock) Info(message string, args ...interface{}) {
 
 // Warn will print a warn log
 func (c LoggerMock) Warn(message string, args ...interface{}) {
+	if c.WarnCalled != nil {
+		c.WarnCalled(message, args)
+		return
+	}
+
 	fmt.Printf("[WARN] %s %v\n", message, getPrintableArgs(args))
 }
 

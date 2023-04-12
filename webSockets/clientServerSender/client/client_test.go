@@ -145,3 +145,32 @@ func TestClientSender_SendMessageAndWaitForAck(t *testing.T) {
 	require.Nil(t, err)
 	require.Equal(t, counter, newCounter)
 }
+
+func TestClientSender_SendMessageErrorShouldTryAgain(t *testing.T) {
+	args := createArgs()
+	args.Uint64ByteSliceConverter = uint64ByteSlice.NewBigEndianConverter()
+	args.URL = "127.0.0.1:21112"
+
+	counter := 0
+	called := false
+	args.Log = &mock.LoggerMock{
+		WarnCalled: func(message string, args ...interface{}) {
+			called = true
+			require.Equal(t, "client.writeMessage: connection problem retrying in 1s", message)
+		},
+	}
+	cSender, _ := NewClientSender(args)
+	cSender.wsConn = &testscommon.WebsocketConnectionStub{
+		WriteMessageCalled: func(messageType int, data []byte) error {
+			counter++
+			if counter == 1 {
+				return errors.New("websocket: close sent")
+			}
+			return nil
+		},
+	}
+
+	err := cSender.Send(0, []byte("something"))
+	require.Nil(t, err)
+	require.True(t, called)
+}

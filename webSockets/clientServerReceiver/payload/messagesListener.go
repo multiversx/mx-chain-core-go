@@ -13,8 +13,6 @@ import (
 	"github.com/multiversx/mx-chain-core-go/webSockets/data"
 )
 
-const closedConnection = "use of closed network connection"
-
 type ArgsMessagesProcessor struct {
 	Log                      core.Logger
 	PayloadParser            common.PayloadParser
@@ -66,7 +64,7 @@ func (ml *messagesListener) Listen() (closed bool) {
 
 		_, isConnectionClosed := err.(*websocket.CloseError)
 		if !isConnectionClosed {
-			if strings.Contains(err.Error(), closedConnection) {
+			if strings.Contains(err.Error(), data.ClosedConnectionMessage) {
 				ml.log.Info("connection closed by server")
 				return true
 			}
