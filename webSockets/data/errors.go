@@ -52,3 +52,6 @@ var ErrZeroValueRetryDuration = errors.New("zero value provided for retry durati
 
 // ErrConnectionAlreadyOpened signal that the web-sockets connection was already opened
 var ErrConnectionAlreadyOpened = errors.New("connection already opened")
+
+// ErrConnectionNotOpened signal that the web-sockets connection is not opened
+var ErrConnectionNotOpened = errors.New("connection not opened")

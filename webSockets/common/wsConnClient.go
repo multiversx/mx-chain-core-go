@@ -53,22 +53,22 @@ func (wsc *wsConnClient) ReadMessage() (messageType int, p []byte, err error) {
 	defer wsc.mut.RUnlock()
 
 	if wsc.conn == nil {
-		return 0, nil, errConnectionNotOpened
+		return 0, nil, data.ErrConnectionNotOpened
 	}
 
 	return wsc.conn.ReadMessage()
 }
 
 // WriteMessage calls the underlying write message ws connection func
-func (wsc *wsConnClient) WriteMessage(messageType int, data []byte) error {
+func (wsc *wsConnClient) WriteMessage(messageType int, payload []byte) error {
 	wsc.mut.RLock()
 	defer wsc.mut.RUnlock()
 
 	if wsc.conn == nil {
-		return errConnectionNotOpened
+		return data.ErrConnectionNotOpened
 	}
 
-	return wsc.conn.WriteMessage(messageType, data)
+	return wsc.conn.WriteMessage(messageType, payload)
 }
 
 // GetID will return the uniq id of the client
@@ -83,7 +83,7 @@ func (wsc *wsConnClient) Close() error {
 	defer wsc.mut.Unlock()
 
 	if wsc.conn == nil {
-		return errConnectionNotOpened
+		return data.ErrConnectionNotOpened
 	}
 
 	log.Debug("closing ws connection...")

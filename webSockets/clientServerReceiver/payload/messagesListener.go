@@ -1,7 +1,6 @@
 package payload
 
 import (
-	"fmt"
 	"strings"
 	"time"
 
@@ -68,11 +67,15 @@ func (ml *messagesListener) Listen() (closed bool) {
 				ml.log.Info("connection closed by server")
 				return true
 			}
+			if strings.Contains(err.Error(), data.ErrConnectionNotOpened.Error()) {
+				return
+			}
+
 			ml.log.Warn("c.listenOnWebSocket()-> connection problem, retrying", "error", err.Error())
 			return
 		}
 
-		ml.log.Warn(fmt.Sprintf("websocket terminated retrying in %v...", ml.retryDuration), "error", err.Error())
+		ml.log.Warn("websocket terminated", "error", err.Error())
 		return
 	}
 }
@@ -128,7 +131,9 @@ func (ml *messagesListener) waitForAckSignal(counter uint64) {
 			return
 		}
 
-		ml.log.Error("could not write acknowledge message", "error", err.Error(), "retrying in", ml.retryDuration)
+		if !strings.Contains(err.Error(), data.ErrConnectionNotOpened.Error()) {
+			ml.log.Error("could not write acknowledge message", "error", err.Error(), "retrying in", ml.retryDuration)
+		}
 
 		select {
 		case <-timer.C:

@@ -75,15 +75,15 @@ func TestWsConnClient_WorkingWithANonOpenedConnectionShouldNotPanic(t *testing.T
 	conClient := NewWSConnClient()
 	assert.NotPanics(t, func() {
 		err := conClient.Close()
-		assert.Equal(t, errConnectionNotOpened, err)
+		assert.Equal(t, data.ErrConnectionNotOpened, err)
 	})
 	assert.NotPanics(t, func() {
 		err := conClient.WriteMessage(websocket.TextMessage, []byte("TEST"))
-		assert.Equal(t, errConnectionNotOpened, err)
+		assert.Equal(t, data.ErrConnectionNotOpened, err)
 	})
 	assert.NotPanics(t, func() {
 		messageType, message, err := conClient.ReadMessage()
-		assert.Equal(t, errConnectionNotOpened, err)
+		assert.Equal(t, data.ErrConnectionNotOpened, err)
 		assert.Equal(t, 0, messageType)
 		assert.Nil(t, message)
 	})
@@ -102,15 +102,15 @@ func TestWsConnClient_WorkingWithAClosedConnectionShouldNotPanic(t *testing.T) {
 
 	assert.NotPanics(t, func() {
 		err := conClient.Close()
-		assert.Equal(t, errConnectionNotOpened, err)
+		assert.Equal(t, data.ErrConnectionNotOpened, err)
 	})
 	assert.NotPanics(t, func() {
 		err := conClient.WriteMessage(websocket.TextMessage, []byte("TEST"))
-		assert.Equal(t, errConnectionNotOpened, err)
+		assert.Equal(t, data.ErrConnectionNotOpened, err)
 	})
 	assert.NotPanics(t, func() {
 		messageType, message, err := conClient.ReadMessage()
-		assert.Equal(t, errConnectionNotOpened, err)
+		assert.Equal(t, data.ErrConnectionNotOpened, err)
 		assert.Equal(t, 0, messageType)
 		assert.Nil(t, message)
 	})
