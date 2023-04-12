@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"net/url"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -38,10 +39,11 @@ func NewClientSender(args ArgsWsClientSender) (*clientSender, error) {
 		return nil, err
 	}
 
+	urlSendData := url.URL{Scheme: "ws", Host: args.URL, Path: data.WSRoute}
 	return &clientSender{
 		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
 		retryDuration:            time.Duration(args.RetryDurationInSec) * time.Second,
-		url:                      args.URL,
+		url:                      urlSendData.String(),
 		wsConn:                   common.NewWSConnClient(),
 		withAcknowledge:          args.WithAcknowledge,
 		log:                      args.Log,
