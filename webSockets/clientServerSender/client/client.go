@@ -123,7 +123,10 @@ func (c *clientSender) writeMessage(payload []byte) error {
 		}
 
 		_, isConnectionClosed := err.(*websocket.CloseError)
-		if isConnectionClosed || strings.Contains(err.Error(), data.ClosedConnectionMessage) {
+		shouldOpenNewConnection := isConnectionClosed ||
+			strings.Contains(err.Error(), data.ClosedConnectionMessage) ||
+			strings.Contains(err.Error(), data.CloseSent)
+		if shouldOpenNewConnection {
 			// open a new connection
 			c.log.Warn("clientSender: the previous connection was closed -> trying to open a new connection")
 			c.wsConn = common.NewWSConnClient()
