@@ -7,6 +7,7 @@ import (
 	"testing"
 
 	"github.com/gorilla/websocket"
+	"github.com/multiversx/mx-chain-core-go/webSockets/data"
 	"github.com/multiversx/mx-chain-core-go/webSockets/mock"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -156,7 +157,7 @@ func TestWsConnClient_ReOpenAlreadyOpenedConnectionShouldError(t *testing.T) {
 	require.Nil(t, err)
 
 	err = conClient.OpenConnection(connectionURL)
-	assert.Equal(t, errConnectionAlreadyOpened, err)
+	assert.Equal(t, data.ErrConnectionAlreadyOpened, err)
 
 	_ = conClient.Close()
 }

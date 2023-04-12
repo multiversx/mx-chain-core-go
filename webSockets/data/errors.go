@@ -49,3 +49,6 @@ var ErrEmptyUrl = errors.New("empty websocket url provided")
 
 // ErrZeroValueRetryDuration signals that a zero value for retry duration has been provided
 var ErrZeroValueRetryDuration = errors.New("zero value provided for retry duration")
+
+// ErrConnectionAlreadyOpened signal that the web-sockets connection was already opened
+var ErrConnectionAlreadyOpened = errors.New("connection already opened")

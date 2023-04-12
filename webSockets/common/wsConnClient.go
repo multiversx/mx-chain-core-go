@@ -4,6 +4,7 @@ import (
 	"sync"
 
 	"github.com/gorilla/websocket"
+	"github.com/multiversx/mx-chain-core-go/webSockets/data"
 	logger "github.com/multiversx/mx-chain-logger-go"
 )
 
@@ -34,7 +35,7 @@ func (wsc *wsConnClient) OpenConnection(url string) error {
 	defer wsc.mut.Unlock()
 
 	if wsc.conn != nil {
-		return errConnectionAlreadyOpened
+		return data.ErrConnectionAlreadyOpened
 	}
 
 	var err error

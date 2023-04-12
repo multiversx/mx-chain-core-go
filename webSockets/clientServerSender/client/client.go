@@ -1,6 +1,7 @@
 package client
 
 import (
+	"errors"
 	"fmt"
 	"net/url"
 	"strings"
@@ -110,6 +111,8 @@ func (c *clientSender) waitForAckSignal(counter uint64) error {
 }
 
 func (c *clientSender) writeMessage(payload []byte) error {
+	c.openConnection()
+
 	timer := time.NewTimer(c.retryDuration)
 	defer timer.Stop()
 
@@ -120,17 +123,17 @@ func (c *clientSender) writeMessage(payload []byte) error {
 		}
 
 		_, isConnectionClosed := err.(*websocket.CloseError)
-		if !isConnectionClosed {
-			if strings.Contains(err.Error(), data.ClosedConnectionMessage) {
-				c.log.Info("connection closed by server")
-			} else {
-				c.log.Warn(fmt.Sprintf("client.writeMessage: connection problem retrying in %v", c.retryDuration), "error", err)
-				timer.Reset(c.retryDuration)
-				continue
-			}
+		if isConnectionClosed || strings.Contains(err.Error(), data.ClosedConnectionMessage) {
+			// open a new connection
+			c.log.Warn("clientSender: the previous connection was closed -> trying to open a new connection")
+			c.wsConn = common.NewWSConnClient()
+			c.openConnection()
+			continue
 		}
 
-		c.openConnection()
+		c.log.Warn(fmt.Sprintf("client.writeMessage: connection problem retrying in %v", c.retryDuration), "error", err)
+
+		timer.Reset(c.retryDuration)
 
 		select {
 		case <-timer.C:
@@ -146,7 +149,7 @@ func (c *clientSender) openConnection() {
 
 	for {
 		err := c.wsConn.OpenConnection(c.url)
-		if err == nil {
+		if err == nil || errors.Is(err, data.ErrConnectionAlreadyOpened) {
 			return
 		} else {
 			c.log.Warn(fmt.Sprintf("c.openConnection(), retrying in %v...", c.retryDuration), "error", err)

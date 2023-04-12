@@ -163,7 +163,7 @@ func TestClientSender_SendMessageErrorShouldTryAgain(t *testing.T) {
 	cSender.wsConn = &testscommon.WebsocketConnectionStub{
 		WriteMessageCalled: func(messageType int, data []byte) error {
 			counter++
-			if counter == 1 {
+			if counter < 2 {
 				return errors.New("websocket: close sent")
 			}
 			return nil
