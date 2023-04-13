@@ -34,9 +34,6 @@ const FileModeReadWrite = 0664
 // MetachainShardId will be used to identify a shard ID as metachain
 const MetachainShardId = uint32(0xFFFFFFFF)
 
-// SovereignChainShardId will be used to identify a shard ID as sovereign chain
-const SovereignChainShardId = uint32(0xFFFFFFFE)
-
 // AllShardId will be used to identify that a message is for all shards
 const AllShardId = uint32(0xFFFFFFF0)
 
