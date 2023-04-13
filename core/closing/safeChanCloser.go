@@ -5,7 +5,7 @@ import (
 )
 
 type safeChanCloser struct {
-	closeMut sync.Mutex
+	closeMut sync.RWMutex
 	chClose  chan struct{}
 }
 
@@ -21,6 +21,10 @@ func (closer *safeChanCloser) Close() {
 	closer.closeMut.Lock()
 	defer closer.closeMut.Unlock()
 
+	closer.closeUnprotected()
+}
+
+func (closer *safeChanCloser) closeUnprotected() {
 	select {
 	case <-closer.chClose:
 		return
@@ -31,7 +35,19 @@ func (closer *safeChanCloser) Close() {
 
 // ChanClose returns the closing channel
 func (closer *safeChanCloser) ChanClose() <-chan struct{} {
+	closer.closeMut.RLock()
+	defer closer.closeMut.RUnlock()
+
 	return closer.chClose
+}
+
+// Reset will close and then open again the channel
+func (closer *safeChanCloser) Reset() {
+	closer.closeMut.Lock()
+	defer closer.closeMut.Unlock()
+
+	closer.closeUnprotected()
+	closer.chClose = make(chan struct{})
 }
 
 // IsInterfaceNil returns true if there is no value under the interface
