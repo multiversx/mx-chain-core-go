@@ -115,6 +115,7 @@ type Queue interface {
 type SafeCloser interface {
 	Close()
 	ChanClose() <-chan struct{}
+	Reset()
 	IsInterfaceNil() bool
 }
 
