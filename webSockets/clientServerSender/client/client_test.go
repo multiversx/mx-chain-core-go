@@ -155,8 +155,10 @@ func TestClientSender_SendMessageErrorShouldTryAgain(t *testing.T) {
 	called := false
 	args.Log = &mock.LoggerMock{
 		WarnCalled: func(message string, args ...interface{}) {
-			called = true
-			require.Equal(t, "client.writeMessage: connection problem retrying in 1s", message)
+			if !called {
+				called = true
+				require.Equal(t, "clientSender: the previous connection was closed -> trying to open a new connection", message)
+			}
 		},
 	}
 	cSender, _ := NewClientSender(args)
@@ -170,7 +172,13 @@ func TestClientSender_SendMessageErrorShouldTryAgain(t *testing.T) {
 		},
 	}
 
-	err := cSender.Send(0, []byte("something"))
+	go func() {
+		err := cSender.Send(0, []byte("something"))
+		require.Nil(t, err)
+		require.True(t, called)
+	}()
+
+	time.Sleep(time.Second)
+	err := cSender.Close()
 	require.Nil(t, err)
-	require.True(t, called)
 }
