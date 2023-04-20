@@ -196,18 +196,23 @@ func (c *client) waitForAckSignal(counter uint64) {
 	}
 }
 
-// Close will close the underlying ws connection
-func (c *client) Close() {
+// Close will close the underlying ws connection. In case of error, returns the last known error
+func (c *client) Close() error {
 	defer c.safeCloser.Close()
+	var lastError error
 
 	log.Info("closing all components...")
 	err := c.wsConn.Close()
 	if err != nil {
 		log.Error("cannot close ws connection", "error", err)
+		lastError = err
 	}
 
 	err = c.payloadProcessor.Close()
 	if err != nil {
-		log.Error("cannot close the operations handler", "error", err)
+		log.Error("cannot close payload processor", "error", err)
+		lastError = err
 	}
+
+	return lastError
 }
