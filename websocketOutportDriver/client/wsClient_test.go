@@ -643,7 +643,11 @@ func TestClient_Close(t *testing.T) {
 	t.Run("should work", func(t *testing.T) {
 		args := createArgs()
 		wsClient, _ := NewWsClientHandler(args)
+
 		err := wsClient.Close()
+		require.Nil(t, err)
+
+		err = wsClient.Close()
 		require.Nil(t, err)
 	})
 
