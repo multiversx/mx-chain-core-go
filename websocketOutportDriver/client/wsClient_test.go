@@ -117,7 +117,7 @@ func TestClient_EmptyPayload(t *testing.T) {
 	go wsClient.Start()
 	time.Sleep(500 * time.Millisecond)
 
-	wsClient.Close()
+	_ = wsClient.Close()
 	time.Sleep(100 * time.Millisecond)
 	require.Equal(t, int64(5), readMsgCalledCt.Get())
 }
@@ -161,7 +161,7 @@ func TestClient_CannotExtractPayload(t *testing.T) {
 	go wsClient.Start()
 	time.Sleep(500 * time.Millisecond)
 
-	wsClient.Close()
+	_ = wsClient.Close()
 	time.Sleep(100 * time.Millisecond)
 	require.Equal(t, int64(5), readMsgCalledCt.Get())
 }
@@ -208,7 +208,7 @@ func TestClient_CannotWriteAckSignal(t *testing.T) {
 	go wsClient.Start()
 	time.Sleep(1500 * time.Millisecond)
 
-	wsClient.Close()
+	_ = wsClient.Close()
 	time.Sleep(100 * time.Millisecond)
 	require.Equal(t, int64(2), writeMsgCalledCt.Get())
 }
@@ -265,7 +265,7 @@ func TestClient_ErrorProcessingPayloadBlockingAckOnError(t *testing.T) {
 	go wsClient.Start()
 	time.Sleep(500 * time.Millisecond)
 
-	wsClient.Close()
+	_ = wsClient.Close()
 	time.Sleep(100 * time.Millisecond)
 	require.Equal(t, int64(0), writeMsgCalledCt.Get())
 	require.Equal(t, int64(5), readMsgCalledCt.Get())
@@ -323,7 +323,7 @@ func TestClient_ErrorProcessingPayloadNonBlockingAckOnError(t *testing.T) {
 	go wsClient.Start()
 	time.Sleep(500 * time.Millisecond)
 
-	wsClient.Close()
+	_ = wsClient.Close()
 	time.Sleep(100 * time.Millisecond)
 	require.Equal(t, int64(4), writeMsgCalledCt.Get())
 	require.Equal(t, int64(5), readMsgCalledCt.Get())
@@ -405,7 +405,7 @@ func TestClient_NormalFlowWithAck(t *testing.T) {
 	go wsClient.Start()
 	time.Sleep(500 * time.Millisecond)
 
-	wsClient.Close()
+	_ = wsClient.Close()
 	time.Sleep(100 * time.Millisecond)
 	require.Equal(t, int64(4), writeMsgCalledCt.Get())
 	require.Equal(t, int64(5), readMsgCalledCt.Get())
@@ -469,7 +469,7 @@ func TestClient_NormalFlowWithoutAck(t *testing.T) {
 	go wsClient.Start()
 	time.Sleep(500 * time.Millisecond)
 
-	wsClient.Close()
+	_ = wsClient.Close()
 	time.Sleep(100 * time.Millisecond)
 	require.Equal(t, int64(0), writeMsgCalledCt.Get())
 	require.Equal(t, int64(5), readMsgCalledCt.Get())
@@ -572,7 +572,7 @@ func TestClient_CloseErrorFromServerShouldRetryOpenConnection(t *testing.T) {
 	go wsClient.Start()
 	time.Sleep(1100 * time.Millisecond)
 
-	wsClient.Close()
+	_ = wsClient.Close()
 	time.Sleep(100 * time.Millisecond)
 
 	require.Equal(t, int64(3), readMsgCalledCt.Get())
@@ -632,4 +632,62 @@ func TestClient_StartWaitForServerConnection(t *testing.T) {
 	require.Equal(t, int64(5), readMsgCalledCt.Get())
 	require.Equal(t, int64(5), writeMsgCalledCt.Get())
 	require.Equal(t, int64(3), openConnectionCalledCt.Get())
+}
+
+func TestClient_Close(t *testing.T) {
+	t.Parallel()
+
+	expectedErr1 := errors.New("expected error 1")
+	expectedErr2 := errors.New("expected error 2")
+
+	t.Run("should work", func(t *testing.T) {
+		args := createArgs()
+		wsClient, _ := NewWsClientHandler(args)
+		err := wsClient.Close()
+		require.Nil(t, err)
+	})
+
+	t.Run("error closing ws conn", func(t *testing.T) {
+		args := createArgs()
+		args.WSConnClient = &testscommon.WebsocketConnectionStub{
+			CloseCalled: func() error {
+				return expectedErr1
+			},
+		}
+
+		wsClient, _ := NewWsClientHandler(args)
+		err := wsClient.Close()
+		require.Equal(t, expectedErr1, err)
+	})
+
+	t.Run("error closing payload processor", func(t *testing.T) {
+		args := createArgs()
+		args.PayloadProcessor = &testscommon.PayloadProcessorStub{
+			CloseCalled: func() error {
+				return expectedErr2
+			},
+		}
+
+		wsClient, _ := NewWsClientHandler(args)
+		err := wsClient.Close()
+		require.Equal(t, expectedErr2, err)
+	})
+
+	t.Run("error closing payload processor and ws conn", func(t *testing.T) {
+		args := createArgs()
+		args.WSConnClient = &testscommon.WebsocketConnectionStub{
+			CloseCalled: func() error {
+				return expectedErr1
+			},
+		}
+		args.PayloadProcessor = &testscommon.PayloadProcessorStub{
+			CloseCalled: func() error {
+				return expectedErr2
+			},
+		}
+
+		wsClient, _ := NewWsClientHandler(args)
+		err := wsClient.Close()
+		require.Equal(t, expectedErr2, err)
+	})
 }
