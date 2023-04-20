@@ -30,5 +30,5 @@ type WSConnClient interface {
 // WSClient defines what a websocket client handler should do
 type WSClient interface {
 	Start()
-	Close()
+	Close() error
 }
