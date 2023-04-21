@@ -265,9 +265,9 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 		expectedHash := []byte("expectedHash")
 		buff, err := tx.GetDataForSigning(
 			&mock.PubkeyConverterStub{
-				EncodeCalled: func(pkBytes []byte) string {
+				EncodeCalled: func(pkBytes []byte) (string, error) {
 					numEncodeCalled++
-					return ""
+					return "", nil
 				},
 			},
 			&mock.MarshalizerStub{

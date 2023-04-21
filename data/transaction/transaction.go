@@ -94,7 +94,12 @@ func (tx *Transaction) GetDataForSigning(encoder core.PubkeyConverter, marshalle
 	}
 
 	if len(tx.GuardianAddr) > 0 {
-		ftx.GuardianAddr = encoder.Encode(tx.GuardianAddr)
+		guardianAddr, errGuardian := encoder.Encode(tx.GuardianAddr)
+		if errGuardian != nil {
+			return nil, errGuardian
+		}
+
+		ftx.GuardianAddr = guardianAddr
 	}
 
 	ftxBytes, err := marshaller.Marshal(ftx)
