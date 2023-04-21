@@ -296,6 +296,32 @@ type TransactionHandlerWithGasUsedAndFee interface {
 	GetExecutionOrder() int
 }
 
+// Encoder represents a byte slice to string encoder
+type Encoder interface {
+	Encode(buff []byte) string
+	IsInterfaceNil() bool
+}
+
+// Marshaller is able to encode an object to its byte slice representation
+type Marshaller interface {
+	Marshal(obj interface{}) ([]byte, error)
+	IsInterfaceNil() bool
+}
+
+// Hasher provides hashing services
+type Hasher interface {
+	Compute(string) []byte
+	IsInterfaceNil() bool
+}
+
+// GuardedTransactionHandler defines functionality for the guarded transactions
+type GuardedTransactionHandler interface {
+	GetGuardianAddr() []byte
+	GetGuardianSignature() []byte
+	GetSignature() []byte
+	GetDataForSigning(encoder Encoder, marshaller Marshaller, hasher Hasher) ([]byte, error)
+}
+
 // LogHandler defines the type for a log resulted from executing a transaction or smart contract call
 type LogHandler interface {
 	// GetAddress returns the address of the sc that was originally called by the user
