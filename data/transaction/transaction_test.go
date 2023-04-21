@@ -347,3 +347,13 @@ func TestTransaction_CheckIntegrityShouldErr(t *testing.T) {
 	err = tx.CheckIntegrity()
 	assert.Equal(t, data.ErrInvalidUserNameLength, err)
 }
+
+func TestTransaction_ImplementsGuardedTransactionHandler(t *testing.T) {
+	t.Parallel()
+
+	var tx data.TransactionHandler
+	tx = &transaction.Transaction{}
+
+	_, ok := tx.(data.GuardedTransactionHandler)
+	assert.True(t, ok)
+}

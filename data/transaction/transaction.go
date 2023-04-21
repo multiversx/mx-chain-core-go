@@ -57,7 +57,7 @@ func TrimSliceHandler(in []data.TransactionHandler) []data.TransactionHandler {
 }
 
 // GetDataForSigning returns the serialized transaction having an empty signature field
-func (tx *Transaction) GetDataForSigning(encoder core.PubkeyConverter, marshaller data.Marshaller, hasher data.Hasher) ([]byte, error) {
+func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.Marshaller, hasher data.Hasher) ([]byte, error) {
 	if check.IfNil(encoder) {
 		return nil, ErrNilEncoder
 	}
