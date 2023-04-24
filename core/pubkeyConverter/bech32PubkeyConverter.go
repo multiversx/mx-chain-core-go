@@ -18,6 +18,7 @@ type config struct {
 }
 
 var bech32Config = config{
+	prefix:   "erd",
 	fromBits: byte(8),
 	toBits:   byte(5),
 	pad:      true,
@@ -25,28 +26,27 @@ var bech32Config = config{
 
 // bech32PubkeyConverter encodes or decodes provided public key as/from bech32 format
 type bech32PubkeyConverter struct {
-	prefix string
-	len    int
+	log core.Logger
+	len int
 }
 
 // NewBech32PubkeyConverter returns a bech32PubkeyConverter instance
-func NewBech32PubkeyConverter(addressLen int, prefix string) (*bech32PubkeyConverter, error) {
+func NewBech32PubkeyConverter(addressLen int, log core.Logger) (*bech32PubkeyConverter, error) {
 	if addressLen < 1 {
-		return nil, fmt.Errorf("%w when creating address converter, addressLen should have been greater than 0",
+		return nil, fmt.Errorf("%w when creating hex address converter, addressLen should have been greater than 0",
 			ErrInvalidAddressLength)
 	}
 	if addressLen%2 == 1 {
-		return nil, fmt.Errorf("%w when creating address converter, addressLen should have been an even number",
+		return nil, fmt.Errorf("%w when creating hex address converter, addressLen should have been an even number",
 			ErrInvalidAddressLength)
 	}
-	if !check.IfHrp(prefix) {
-		return nil, fmt.Errorf("%w when creating address converter, prefix should have been human readable",
-			ErrInvalidHrpPrefix)
+	if check.IfNil(log) {
+		return nil, core.ErrNilLogger
 	}
 
 	return &bech32PubkeyConverter{
-		prefix: prefix,
-		len:    addressLen,
+		log: log,
+		len: addressLen,
 	}, nil
 }
 
@@ -61,7 +61,7 @@ func (bpc *bech32PubkeyConverter) Decode(humanReadable string) ([]byte, error) {
 	if err != nil {
 		return nil, err
 	}
-	if decodedPrefix != bpc.prefix {
+	if decodedPrefix != bech32Config.prefix {
 		return nil, ErrInvalidErdAddress
 	}
 
@@ -80,52 +80,42 @@ func (bpc *bech32PubkeyConverter) Decode(humanReadable string) ([]byte, error) {
 }
 
 // Encode converts the provided bytes in a bech32 form
-func (bpc *bech32PubkeyConverter) Encode(pkBytes []byte) (string, error) {
+func (bpc *bech32PubkeyConverter) Encode(pkBytes []byte) string {
 	if len(pkBytes) != bpc.len {
-		return "", fmt.Errorf("%w when encoding address, expected length %d, received %d",
-			ErrWrongSize, bpc.len, len(pkBytes))
-	}
-
-	conv, err := bech32.ConvertBits(pkBytes, bech32Config.fromBits, bech32Config.toBits, bech32Config.pad)
-	if err != nil {
-		return "", fmt.Errorf("%w: %s", ErrConvertBits, err.Error())
-	}
-
-	encodedBytes, err := bech32.Encode(bpc.prefix, conv)
-	if err != nil {
-		return "", fmt.Errorf("%w: %s", ErrBech32ConvertError, err.Error())
-	}
-
-	return encodedBytes, nil
-}
-
-// SilentEncode converts the provided bytes in a bech32 form without returning any error
-func (bpc *bech32PubkeyConverter) SilentEncode(pkBytes []byte, log core.Logger) string {
-	encodedBytes, err := bpc.Encode(pkBytes)
-	if err != nil {
-		log.Warn("bech32PubkeyConverter.SilentEncode",
+		bpc.log.Debug("bech32PubkeyConverter.Encode PkBytesLength",
 			"hex buff", hex.EncodeToString(pkBytes),
-			"error", err,
-			"stack trace", string(debug.Stack()))
+			"error", ErrWrongSize,
+			"stack trace", string(debug.Stack()),
+		)
+
 		return ""
 	}
 
-	return encodedBytes
-}
+	//since the errors generated here are usually because of a bad config, they will be treated here
+	conv, err := bech32.ConvertBits(pkBytes, bech32Config.fromBits, bech32Config.toBits, bech32Config.pad)
+	if err != nil {
+		bpc.log.Warn("bech32PubkeyConverter.Encode ConvertBits",
+			"hex buff", hex.EncodeToString(pkBytes),
+			"error", err,
+			"stack trace", string(debug.Stack()),
+		)
 
-// EncodeSlice converts the provided bytes slice into a slice of bech32 addresses
-func (bpc *bech32PubkeyConverter) EncodeSlice(pkBytesSlice [][]byte) ([]string, error) {
-	encodedSlice := make([]string, 0, len(pkBytesSlice))
-
-	for _, item := range pkBytesSlice {
-		encoded, err := bpc.Encode(item)
-		if err != nil {
-			return nil, err
-		}
-		encodedSlice = append(encodedSlice, encoded)
+		return ""
 	}
 
-	return encodedSlice, nil
+	converted, err := bech32.Encode(bech32Config.prefix, conv)
+	if err != nil {
+		bpc.log.Warn("bech32PubkeyConverter.Encode Encode",
+			"hex buff", hex.EncodeToString(pkBytes),
+			"conv", hex.EncodeToString(conv),
+			"error", err,
+			"stack trace", string(debug.Stack()),
+		)
+
+		return ""
+	}
+
+	return converted
 }
 
 // IsInterfaceNil returns true if there is no value under the interface
