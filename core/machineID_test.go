@@ -13,6 +13,6 @@ func TestGetAnonymizedMachineID(t *testing.T) {
 	secondVariant := GetAnonymizedMachineID("second")
 
 	assert.NotEqual(t, firstVariant, secondVariant)
-	assert.Equal(t, maxMachineIDLen, len(firstVariant))
-	assert.Equal(t, maxMachineIDLen, len(secondVariant))
+	assert.Equal(t, MaxMachineIDLen, len(firstVariant))
+	assert.Equal(t, MaxMachineIDLen, len(secondVariant))
 }
