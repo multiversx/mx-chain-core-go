@@ -1,6 +1,7 @@
 package core
 
 import (
+	"bytes"
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
@@ -12,6 +13,8 @@ import (
 
 	"github.com/pelletier/go-toml"
 )
+
+const pemPkHeader = "PRIVATE KEY for "
 
 // ArgCreateFileArgument will hold the arguments for a new file creation method call
 type ArgCreateFileArgument struct {
@@ -176,14 +179,62 @@ func LoadSkPkFromPemFile(relativePath string, skIndex int) ([]byte, string, erro
 	}
 
 	blockType := blkRecovered.Type
-	header := "PRIVATE KEY for "
-	if strings.Index(blockType, header) != 0 {
-		return nil, "", fmt.Errorf("%w missing '%s' in block type", ErrPemFileIsInvalid, header)
+
+	if strings.Index(blockType, pemPkHeader) != 0 {
+		return nil, "", fmt.Errorf("%w missing '%s' in block type", ErrPemFileIsInvalid, pemPkHeader)
 	}
 
-	blockTypeString := blockType[len(header):]
+	blockTypeString := blockType[len(pemPkHeader):]
 
 	return blkRecovered.Bytes, blockTypeString, nil
+}
+
+// LoadAllKeysFromPemFile loads all the secret keys and existing public key bytes stored in the file
+func LoadAllKeysFromPemFile(relativePath string) ([][]byte, []string, error) {
+	file, err := OpenFile(relativePath)
+	if err != nil {
+		return nil, nil, err
+	}
+
+	defer func() {
+		_ = file.Close()
+	}()
+
+	buff, err := ioutil.ReadAll(file)
+	if err != nil {
+		return nil, nil, fmt.Errorf("%w while reading %s file", err, relativePath)
+	}
+	if len(buff) == 0 {
+		return nil, nil, fmt.Errorf("%w while reading %s file", ErrEmptyFile, relativePath)
+	}
+
+	var blkRecovered *pem.Block
+	privateKeys := make([][]byte, 0)
+	publicKeys := make([]string, 0)
+
+	for {
+		if len(buff) == 0 {
+			break
+		}
+
+		blkRecovered, buff = pem.Decode(buff)
+		if blkRecovered == nil {
+			return nil, nil, fmt.Errorf("%w while reading %s file, error decoding", ErrPemFileIsInvalid, relativePath)
+		}
+		buff = bytes.TrimSpace(buff)
+
+		blockType := blkRecovered.Type
+		if strings.Index(blockType, pemPkHeader) != 0 {
+			return nil, nil, fmt.Errorf("%w missing '%s' in block type", ErrPemFileIsInvalid, pemPkHeader)
+		}
+
+		blockTypeString := blockType[len(pemPkHeader):]
+
+		privateKeys = append(privateKeys, blkRecovered.Bytes)
+		publicKeys = append(publicKeys, blockTypeString)
+	}
+
+	return privateKeys, publicKeys, nil
 }
 
 // SaveSkToPemFile saves secret key bytes in the file
