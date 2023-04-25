@@ -13,5 +13,5 @@ import "block.proto";
 message SovereignChainHeader {
   Header  Header = 1;
   bytes   ValidatorStatsRootHash = 2;
-  repeated bytes MainChainShardHeaderHashes = 3;
+  repeated bytes ExtendedShardHeaderHashes = 3;
 }
