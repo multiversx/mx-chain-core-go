@@ -1,4 +1,4 @@
-package utils
+package receiver
 
 import (
 	"strings"
@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/webSockets"
 	"github.com/multiversx/mx-chain-core-go/webSockets/connection"
 	"github.com/multiversx/mx-chain-core-go/webSockets/data"
 )
@@ -19,7 +20,7 @@ type ArgsReceiver struct {
 }
 
 type receiver struct {
-	payloadHandler           PayloadHandler
+	payloadHandler           webSockets.PayloadHandler
 	uint64ByteSliceConverter connection.Uint64ByteSliceConverter
 	log                      core.Logger
 	safeCloser               core.SafeCloser
@@ -38,7 +39,7 @@ func NewReceiver(args ArgsReceiver) (*receiver, error) {
 }
 
 // SetPayloadHandler will set the payload handler
-func (r *receiver) SetPayloadHandler(handler PayloadHandler) {
+func (r *receiver) SetPayloadHandler(handler webSockets.PayloadHandler) {
 	r.payloadHandler = handler
 }
 

@@ -5,10 +5,10 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/marshal"
 	"github.com/multiversx/mx-chain-core-go/webSockets"
-	"github.com/multiversx/mx-chain-core-go/webSockets/clientSenderReceiver"
+	"github.com/multiversx/mx-chain-core-go/webSockets/client"
 	"github.com/multiversx/mx-chain-core-go/webSockets/connection"
 	outportData "github.com/multiversx/mx-chain-core-go/webSockets/data"
-	"github.com/multiversx/mx-chain-core-go/webSockets/serverSenderReceiver"
+	"github.com/multiversx/mx-chain-core-go/webSockets/server"
 )
 
 // ArgsWebSocketsDriverFactory holds the arguments needed for creating a webSocketsDriverFactory
@@ -56,7 +56,7 @@ func (o *webSocketsDriverFactory) Create() (webSockets.Driver, error) {
 	if o.webSocketConfig.IsServer {
 		host, err = o.createWebSocketsServer()
 	} else {
-		host, err = clientSenderReceiver.NewWebSocketsClient(clientSenderReceiver.ArgsWebSocketsClient{
+		host, err = client.NewWebSocketsClient(client.ArgsWebSocketsClient{
 			RetryDurationInSeconds:   o.webSocketConfig.RetryDurationInSec,
 			WithAcknowledge:          o.withAcknowledge,
 			URL:                      o.webSocketConfig.URL,
@@ -81,7 +81,7 @@ func (o *webSocketsDriverFactory) Create() (webSockets.Driver, error) {
 }
 
 func (o *webSocketsDriverFactory) createWebSocketsServer() (webSockets.HostWebSockets, error) {
-	host, err := serverSenderReceiver.NewWebSocketsServer(serverSenderReceiver.ArgsWebSocketsServer{
+	host, err := server.NewWebSocketsServer(server.ArgsWebSocketsServer{
 		RetryDurationInSeconds:   o.webSocketConfig.RetryDurationInSec,
 		WithAcknowledge:          o.withAcknowledge,
 		URL:                      o.webSocketConfig.URL,

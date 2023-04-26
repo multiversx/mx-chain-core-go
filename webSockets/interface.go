@@ -4,7 +4,6 @@ import (
 	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/marshal"
 	outportSenderData "github.com/multiversx/mx-chain-core-go/webSockets/data"
-	"github.com/multiversx/mx-chain-core-go/webSockets/utils"
 )
 
 // Driver is an interface for saving node specific data to other storage.
@@ -32,8 +31,13 @@ type WebSocketSenderHandler interface {
 // HostWebSockets -
 type HostWebSockets interface {
 	Send(args outportSenderData.WsSendArgs) error
-	RegisterPayloadHandler(handler utils.PayloadHandler)
+	RegisterPayloadHandler(handler PayloadHandler)
 	Listen()
 	Close() error
 	IsInterfaceNil() bool
+}
+
+type PayloadHandler interface {
+	HandlePayload(payload []byte) (*outportSenderData.PayloadData, error)
+	Close() error
 }

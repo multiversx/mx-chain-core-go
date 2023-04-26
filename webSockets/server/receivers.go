@@ -1,6 +1,8 @@
-package utils
+package server
 
-import "sync"
+import (
+	"sync"
+)
 
 type receiversHolder struct {
 	mutex     sync.RWMutex

@@ -1,4 +1,4 @@
-package serverSenderReceiver
+package server
 
 import (
 	"net/http"
@@ -9,9 +9,11 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/webSockets"
 	"github.com/multiversx/mx-chain-core-go/webSockets/connection"
 	"github.com/multiversx/mx-chain-core-go/webSockets/data"
-	"github.com/multiversx/mx-chain-core-go/webSockets/utils"
+	"github.com/multiversx/mx-chain-core-go/webSockets/receiver"
+	"github.com/multiversx/mx-chain-core-go/webSockets/sender"
 )
 
 type ArgsWebSocketsServer struct {
@@ -30,14 +32,14 @@ type server struct {
 	retryDuration            time.Duration
 	safeCloser               core.SafeCloser
 	log                      core.Logger
-	sender                   utils.Sender
+	sender                   Sender
 	server                   connection.HttpServerHandler
 	receivers                ReceiversHolder
 	connectionHandler        func(connection connection.WSConClient)
 }
 
 func NewWebSocketsServer(args ArgsWebSocketsServer) (*server, error) {
-	sender, err := utils.NewSender(utils.ArgsSender{
+	sender, err := sender.NewSender(sender.ArgsSender{
 		WithAcknowledge:          args.WithAcknowledge,
 		RetryDurationInSeconds:   args.RetryDurationInSeconds,
 		Uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
@@ -49,7 +51,7 @@ func NewWebSocketsServer(args ArgsWebSocketsServer) (*server, error) {
 
 	s := &server{
 		sender:             sender,
-		receivers:          utils.NewReceiversHolder(),
+		receivers:          NewReceiversHolder(),
 		blockingAckOnError: args.BlockingAckOnError,
 		log:                args.Log,
 		retryDuration:      time.Duration(args.RetryDurationInSeconds) * time.Second,
@@ -109,9 +111,9 @@ func (s *server) Send(args data.WsSendArgs) error {
 	return s.sender.Send(args.Payload)
 }
 
-func (s *server) RegisterPayloadHandler(handler utils.PayloadHandler) {
+func (s *server) RegisterPayloadHandler(handler webSockets.PayloadHandler) {
 	s.connectionHandler = func(connection connection.WSConClient) {
-		receiver, err := utils.NewReceiver(utils.ArgsReceiver{
+		receiver, err := receiver.NewReceiver(receiver.ArgsReceiver{
 			Uint64ByteSliceConverter: s.uint64ByteSliceConverter,
 			Log:                      s.log,
 			RetryDurationInSec:       int(s.retryDuration.Seconds()),

@@ -1,4 +1,4 @@
-package utils
+package payload
 
 import (
 	"github.com/multiversx/mx-chain-core-go/core"

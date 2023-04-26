@@ -1,4 +1,4 @@
-package clientSenderReceiver
+package client
 
 import (
 	"errors"
@@ -9,9 +9,11 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/closing"
+	"github.com/multiversx/mx-chain-core-go/webSockets"
 	"github.com/multiversx/mx-chain-core-go/webSockets/connection"
 	"github.com/multiversx/mx-chain-core-go/webSockets/data"
-	"github.com/multiversx/mx-chain-core-go/webSockets/utils"
+	"github.com/multiversx/mx-chain-core-go/webSockets/receiver"
+	"github.com/multiversx/mx-chain-core-go/webSockets/sender"
 )
 
 // ArgsWebSocketsClient  holds the arguments needed for creating a client
@@ -30,13 +32,13 @@ type client struct {
 	safeCloser    core.SafeCloser
 	log           core.Logger
 	wsConn        connection.WSConClient
-	sender        utils.Sender
-	receiver      utils.Receiver
+	sender        Sender
+	receiver      Receiver
 }
 
 // NewWebSocketsClient will create a new instance of websockets client
 func NewWebSocketsClient(args ArgsWebSocketsClient) (*client, error) {
-	sender, err := utils.NewSender(utils.ArgsSender{
+	webSocketsSender, err := sender.NewSender(sender.ArgsSender{
 		WithAcknowledge:          args.WithAcknowledge,
 		RetryDurationInSeconds:   args.RetryDurationInSeconds,
 		Uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
@@ -46,7 +48,7 @@ func NewWebSocketsClient(args ArgsWebSocketsClient) (*client, error) {
 		return nil, err
 	}
 
-	receiver, err := utils.NewReceiver(utils.ArgsReceiver{
+	webSocketsReceiver, err := receiver.NewReceiver(receiver.ArgsReceiver{
 		Uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
 		Log:                      args.Log,
 		RetryDurationInSec:       args.RetryDurationInSeconds,
@@ -55,11 +57,11 @@ func NewWebSocketsClient(args ArgsWebSocketsClient) (*client, error) {
 
 	return &client{
 		url:           args.URL,
-		sender:        sender,
+		sender:        webSocketsSender,
 		wsConn:        connection.NewWSConnClient(),
 		retryDuration: time.Duration(args.RetryDurationInSeconds) * time.Second,
 		safeCloser:    closing.NewSafeChanCloser(),
-		receiver:      receiver,
+		receiver:      webSocketsReceiver,
 	}, nil
 }
 
@@ -103,7 +105,7 @@ func (c *client) Send(args data.WsSendArgs) error {
 }
 
 // RegisterPayloadHandler register the payload handler
-func (c *client) RegisterPayloadHandler(handler utils.PayloadHandler) {
+func (c *client) RegisterPayloadHandler(handler webSockets.PayloadHandler) {
 	c.receiver.SetPayloadHandler(handler)
 }
 
