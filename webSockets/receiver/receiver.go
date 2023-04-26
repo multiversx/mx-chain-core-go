@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/core/closing"
 	"github.com/multiversx/mx-chain-core-go/webSockets"
 	"github.com/multiversx/mx-chain-core-go/webSockets/connection"
 	"github.com/multiversx/mx-chain-core-go/webSockets/data"
@@ -35,6 +36,7 @@ func NewReceiver(args ArgsReceiver) (*receiver, error) {
 		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
 		retryDuration:            time.Duration(args.RetryDurationInSec) * time.Second,
 		blockingAckOnError:       args.BlockingAckOnError,
+		safeCloser:               closing.NewSafeChanCloser(),
 	}, nil
 }
 
@@ -65,12 +67,14 @@ func (r *receiver) Listen(connection connection.WSConClient) (closed bool) {
 				return
 			}
 
-			r.log.Warn("c.listenOnWebSocket()-> connection problem, retrying", "error", err.Error())
-			return
+			r.log.Warn("r.Listen()-> connection problem", "error", err.Error())
 		}
 
-		r.log.Warn("websocket terminated", "error", err.Error())
-		return
+		select {
+		case <-r.safeCloser.ChanClose():
+			return
+		case <-timer.C:
+		}
 	}
 }
 

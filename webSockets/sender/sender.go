@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/core/closing"
 	"github.com/multiversx/mx-chain-core-go/webSockets/connection"
 	outportData "github.com/multiversx/mx-chain-core-go/webSockets/data"
 )
@@ -36,6 +37,7 @@ type sender struct {
 func NewSender(args ArgsSender) (*sender, error) {
 	return &sender{
 		counter:                  0,
+		safeCloser:               closing.NewSafeChanCloser(),
 		connections:              connection.NewWebsocketClientsHolder(),
 		log:                      args.Log,
 		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,

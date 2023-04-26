@@ -1,6 +1,7 @@
 package server
 
 import (
+	"context"
 	"net/http"
 	"strings"
 	"time"
@@ -9,6 +10,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/webSockets"
 	"github.com/multiversx/mx-chain-core-go/webSockets/connection"
 	"github.com/multiversx/mx-chain-core-go/webSockets/data"
@@ -27,19 +29,21 @@ type ArgsWebSocketsServer struct {
 
 type server struct {
 	blockingAckOnError       bool
-	url                      string
+	connectionHandler        func(connection connection.WSConClient)
 	uint64ByteSliceConverter connection.Uint64ByteSliceConverter
 	retryDuration            time.Duration
-	safeCloser               core.SafeCloser
 	log                      core.Logger
+	httpServer               connection.HttpServerHandler
 	sender                   Sender
-	server                   connection.HttpServerHandler
 	receivers                ReceiversHolder
-	connectionHandler        func(connection connection.WSConClient)
 }
 
 func NewWebSocketsServer(args ArgsWebSocketsServer) (*server, error) {
-	sender, err := sender.NewSender(sender.ArgsSender{
+	if err := checkArgs(args); err != nil {
+		return nil, err
+	}
+
+	webSocketsSender, err := sender.NewSender(sender.ArgsSender{
 		WithAcknowledge:          args.WithAcknowledge,
 		RetryDurationInSeconds:   args.RetryDurationInSeconds,
 		Uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
@@ -49,18 +53,18 @@ func NewWebSocketsServer(args ArgsWebSocketsServer) (*server, error) {
 		return nil, err
 	}
 
-	s := &server{
-		sender:             sender,
+	wsServer := &server{
+		sender:             webSocketsSender,
 		receivers:          NewReceiversHolder(),
 		blockingAckOnError: args.BlockingAckOnError,
 		log:                args.Log,
 		retryDuration:      time.Duration(args.RetryDurationInSeconds) * time.Second,
 	}
-	s.connectionHandler = s.defaultConnectionHandler
+	wsServer.connectionHandler = wsServer.defaultConnectionHandler
 
-	s.initializeServer(args.URL, data.WSRoute)
+	wsServer.initializeServer(args.URL, data.WSRoute)
 
-	return &server{}, nil
+	return wsServer, nil
 }
 
 func (s *server) defaultConnectionHandler(conn connection.WSConClient) {
@@ -104,7 +108,7 @@ func (s *server) initializeServer(wsURL string, wsPath string) {
 			"error", routeSendData.GetError())
 	}
 
-	s.server = httpServer
+	s.httpServer = httpServer
 }
 
 func (s *server) Send(args data.WsSendArgs) error {
@@ -113,7 +117,7 @@ func (s *server) Send(args data.WsSendArgs) error {
 
 func (s *server) RegisterPayloadHandler(handler webSockets.PayloadHandler) {
 	s.connectionHandler = func(connection connection.WSConClient) {
-		receiver, err := receiver.NewReceiver(receiver.ArgsReceiver{
+		webSocketsReceiver, err := receiver.NewReceiver(receiver.ArgsReceiver{
 			Uint64ByteSliceConverter: s.uint64ByteSliceConverter,
 			Log:                      s.log,
 			RetryDurationInSec:       int(s.retryDuration.Seconds()),
@@ -122,12 +126,12 @@ func (s *server) RegisterPayloadHandler(handler webSockets.PayloadHandler) {
 		if err != nil {
 			s.log.Warn("s.connectionHandler cannot create receiver", "error", err)
 		}
-		receiver.SetPayloadHandler(handler)
+		webSocketsReceiver.SetPayloadHandler(handler)
 
 		go func() {
-			s.receivers.AddReceiver(connection.GetID(), receiver)
+			s.receivers.AddReceiver(connection.GetID(), webSocketsReceiver)
 			// this method is blocking
-			_ = receiver.Listen(connection)
+			_ = webSocketsReceiver.Listen(connection)
 			// if method listen will end, the client was disconnected should remove the listener from the list
 			s.receivers.RemoveReceiver(connection.GetID())
 		}()
@@ -135,7 +139,7 @@ func (s *server) RegisterPayloadHandler(handler webSockets.PayloadHandler) {
 }
 
 func (s *server) Listen() {
-	err := s.server.ListenAndServe()
+	err := s.httpServer.ListenAndServe()
 	if err != nil && !strings.Contains(err.Error(), data.ErrServerIsClosed.Error()) {
 		s.log.Error("could not initialize webserver", "error", err)
 	}
@@ -144,20 +148,39 @@ func (s *server) Listen() {
 }
 
 func (s *server) Close() error {
-	defer s.safeCloser.Close()
+	err := s.httpServer.Shutdown(context.Background())
+	if err != nil {
+		s.log.Warn("server.Close() cannot close http server", "error", err)
+	}
 
-	err := s.sender.Close()
+	err = s.sender.Close()
 	if err != nil {
 		s.log.Warn("server.Close() cannot close the sender", "error", err)
 	}
 
-	for _, receiver := range s.receivers.GetAll() {
-		err = receiver.Close()
+	for _, webSocketsReceiver := range s.receivers.GetAll() {
+		err = webSocketsReceiver.Close()
 		if err != nil {
 			s.log.Warn("server.Close() cannot close receiver", "error", err)
 		}
 	}
 
+	return nil
+}
+
+func checkArgs(args ArgsWebSocketsServer) error {
+	if check.IfNil(args.Log) {
+		return core.ErrNilLogger
+	}
+	if check.IfNil(args.Uint64ByteSliceConverter) {
+		return data.ErrNilUint64ByteSliceConverter
+	}
+	if args.URL == "" {
+		return data.ErrEmptyUrl
+	}
+	if args.RetryDurationInSeconds == 0 {
+		return data.ErrZeroValueRetryDuration
+	}
 	return nil
 }
 
