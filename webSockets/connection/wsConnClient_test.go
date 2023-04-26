@@ -1,4 +1,4 @@
-package common
+package connection
 
 import (
 	"net/http/httptest"

@@ -1,4 +1,4 @@
-package common
+package connection
 
 import (
 	"context"
@@ -6,11 +6,6 @@ import (
 
 	"github.com/multiversx/mx-chain-core-go/webSockets/data"
 )
-
-// AcknowledgesHandler defines what an acknowledges handler should be able to do
-type AcknowledgesHandler interface {
-	ProcessAcknowledged(counter uint64) bool
-}
 
 // WSConClient defines what a web-sockets connection client should be able to do
 type WSConClient interface {
@@ -41,22 +36,9 @@ type HttpServerHandler interface {
 	Shutdown(ctx context.Context) error
 }
 
-// MessagesListener defines what a messages listener should be able to do
-type MessagesListener interface {
-	Listen() bool
-	Close()
-}
-
 // Uint64ByteSliceConverter converts byte slice to/from uint64
 type Uint64ByteSliceConverter interface {
 	ToByteSlice(uint64) []byte
 	ToUint64([]byte) (uint64, error)
 	IsInterfaceNil() bool
-}
-
-// ListenersHolder will hold a map with all the MessagesListener
-type ListenersHolder interface {
-	Add(id string, listener MessagesListener)
-	Remove(id string)
-	GetAll() map[string]MessagesListener
 }

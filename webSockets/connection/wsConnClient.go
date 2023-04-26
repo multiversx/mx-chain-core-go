@@ -1,4 +1,4 @@
-package common
+package connection
 
 import (
 	"sync"
@@ -8,7 +8,7 @@ import (
 	logger "github.com/multiversx/mx-chain-logger-go"
 )
 
-var log = logger.GetOrCreate("common")
+var log = logger.GetOrCreate("connection")
 
 type wsConnClient struct {
 	mut      sync.RWMutex

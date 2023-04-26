@@ -8,7 +8,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/marshal"
-	"github.com/multiversx/mx-chain-core-go/webSockets/common"
+	"github.com/multiversx/mx-chain-core-go/webSockets/connection"
 	outportSenderData "github.com/multiversx/mx-chain-core-go/webSockets/data"
 )
 
@@ -16,14 +16,14 @@ import (
 type ArgsWebSocketsDriver struct {
 	Marshaller               marshal.Marshalizer
 	WebsocketSender          WebSocketSenderHandler
-	Uint64ByteSliceConverter common.Uint64ByteSliceConverter
+	Uint64ByteSliceConverter connection.Uint64ByteSliceConverter
 	Log                      core.Logger
 }
 
 type webSocketsDriver struct {
 	marshalizer              marshal.Marshalizer
 	log                      core.Logger
-	uint64ByteSliceConverter common.Uint64ByteSliceConverter
+	uint64ByteSliceConverter connection.Uint64ByteSliceConverter
 	webSocketSender          WebSocketSenderHandler
 	isClosed                 atomic.Flag
 }

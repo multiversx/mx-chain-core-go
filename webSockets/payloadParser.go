@@ -5,7 +5,7 @@ import (
 	"fmt"
 
 	"github.com/multiversx/mx-chain-core-go/core/check"
-	"github.com/multiversx/mx-chain-core-go/webSockets/common"
+	"github.com/multiversx/mx-chain-core-go/webSockets/connection"
 	"github.com/multiversx/mx-chain-core-go/webSockets/data"
 )
 
@@ -20,11 +20,11 @@ var (
 )
 
 type websocketPayloadParser struct {
-	uint64ByteSliceConverter common.Uint64ByteSliceConverter
+	uint64ByteSliceConverter connection.Uint64ByteSliceConverter
 }
 
 // NewWebSocketPayloadParser returns a new instance of websocketPayloadParser
-func NewWebSocketPayloadParser(uint64ByteSliceConverter common.Uint64ByteSliceConverter) (*websocketPayloadParser, error) {
+func NewWebSocketPayloadParser(uint64ByteSliceConverter connection.Uint64ByteSliceConverter) (*websocketPayloadParser, error) {
 	if check.IfNil(uint64ByteSliceConverter) {
 		return nil, data.ErrNilUint64ByteSliceConverter
 	}

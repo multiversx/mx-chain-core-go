@@ -5,16 +5,17 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/marshal"
 	"github.com/multiversx/mx-chain-core-go/webSockets"
-	"github.com/multiversx/mx-chain-core-go/webSockets/clientServerSender"
-	"github.com/multiversx/mx-chain-core-go/webSockets/common"
+	"github.com/multiversx/mx-chain-core-go/webSockets/clientSenderReceiver"
+	"github.com/multiversx/mx-chain-core-go/webSockets/connection"
 	outportData "github.com/multiversx/mx-chain-core-go/webSockets/data"
+	"github.com/multiversx/mx-chain-core-go/webSockets/serverSenderReceiver"
 )
 
 // ArgsWebSocketsDriverFactory holds the arguments needed for creating a webSocketsDriverFactory
 type ArgsWebSocketsDriverFactory struct {
 	WebSocketConfig          outportData.WebSocketConfig
 	Marshaller               marshal.Marshalizer
-	Uint64ByteSliceConverter common.Uint64ByteSliceConverter
+	Uint64ByteSliceConverter connection.Uint64ByteSliceConverter
 	Log                      core.Logger
 	WithAcknowledge          bool
 }
@@ -22,7 +23,7 @@ type ArgsWebSocketsDriverFactory struct {
 type webSocketsDriverFactory struct {
 	webSocketConfig          outportData.WebSocketConfig
 	marshaller               marshal.Marshalizer
-	uint64ByteSliceConverter common.Uint64ByteSliceConverter
+	uint64ByteSliceConverter connection.Uint64ByteSliceConverter
 	log                      core.Logger
 	withAcknowledge          bool
 }
@@ -50,14 +51,21 @@ func NewWebSocketsDriverFactory(args ArgsWebSocketsDriverFactory) (*webSocketsDr
 // Create will handle the creation of all the components needed to create an outport driver that sends data over
 // web socket and return it afterwards
 func (o *webSocketsDriverFactory) Create() (webSockets.Driver, error) {
-	webSocketSender, err := clientServerSender.NewClientServerSender(clientServerSender.ArgsWSClientServerSender{
-		Url:                      o.webSocketConfig.URL,
-		IsServer:                 o.webSocketConfig.IsServer,
-		Uint64ByteSliceConverter: o.uint64ByteSliceConverter,
-		RetryDurationInSec:       o.webSocketConfig.RetryDurationInSec,
-		WithAcknowledge:          o.withAcknowledge,
-		Log:                      o.log,
-	})
+	var host webSockets.HostWebSockets
+	var err error
+	if o.webSocketConfig.IsServer {
+		host, err = o.createWebSocketsServer()
+	} else {
+		host, err = clientSenderReceiver.NewWebSocketsClient(clientSenderReceiver.ArgsWebSocketsClient{
+			RetryDurationInSeconds:   o.webSocketConfig.RetryDurationInSec,
+			WithAcknowledge:          o.withAcknowledge,
+			URL:                      o.webSocketConfig.URL,
+			Uint64ByteSliceConverter: o.uint64ByteSliceConverter,
+			Log:                      o.log,
+			BlockingAckOnError:       false,
+		})
+	}
+
 	if err != nil {
 		return nil, err
 	}
@@ -65,9 +73,29 @@ func (o *webSocketsDriverFactory) Create() (webSockets.Driver, error) {
 	return webSockets.NewWebsocketsDriver(
 		webSockets.ArgsWebSocketsDriver{
 			Marshaller:               o.marshaller,
-			WebsocketSender:          webSocketSender,
+			WebsocketSender:          host,
 			Uint64ByteSliceConverter: o.uint64ByteSliceConverter,
 			Log:                      o.log,
 		},
 	)
+}
+
+func (o *webSocketsDriverFactory) createWebSocketsServer() (webSockets.HostWebSockets, error) {
+	host, err := serverSenderReceiver.NewWebSocketsServer(serverSenderReceiver.ArgsWebSocketsServer{
+		RetryDurationInSeconds:   o.webSocketConfig.RetryDurationInSec,
+		WithAcknowledge:          o.withAcknowledge,
+		URL:                      o.webSocketConfig.URL,
+		Uint64ByteSliceConverter: o.uint64ByteSliceConverter,
+		Log:                      o.log,
+		BlockingAckOnError:       false,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	go func() {
+		host.Listen()
+	}()
+
+	return host, nil
 }
