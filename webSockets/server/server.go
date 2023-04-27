@@ -18,6 +18,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/webSockets/sender"
 )
 
+// ArgsWebSocketsServer holds all the components needed to create a server
 type ArgsWebSocketsServer struct {
 	RetryDurationInSeconds   int
 	BlockingAckOnError       bool
@@ -38,6 +39,7 @@ type server struct {
 	receivers                ReceiversHolder
 }
 
+//NewWebSocketsServer will create a new instance of server
 func NewWebSocketsServer(args ArgsWebSocketsServer) (*server, error) {
 	if err := checkArgs(args); err != nil {
 		return nil, err
@@ -112,10 +114,12 @@ func (s *server) initializeServer(wsURL string, wsPath string) {
 	s.httpServer = httpServer
 }
 
+// Send will send the provided payload from args
 func (s *server) Send(args data.WsSendArgs) error {
 	return s.sender.Send(args.Payload)
 }
 
+// RegisterPayloadHandler will register the provided payload handler
 func (s *server) RegisterPayloadHandler(handler webSockets.PayloadHandler) {
 	s.connectionHandler = func(connection connection.WSConClient) {
 		webSocketsReceiver, err := receiver.NewReceiver(receiver.ArgsReceiver{
@@ -139,6 +143,7 @@ func (s *server) RegisterPayloadHandler(handler webSockets.PayloadHandler) {
 	}
 }
 
+// Listen will start the server
 func (s *server) Listen() {
 	err := s.httpServer.ListenAndServe()
 	if err != nil && !strings.Contains(err.Error(), data.ErrServerIsClosed.Error()) {
@@ -148,6 +153,7 @@ func (s *server) Listen() {
 	s.log.Info("server was closed")
 }
 
+// Close will close the server
 func (s *server) Close() error {
 	err := s.httpServer.Shutdown(context.Background())
 	if err != nil {

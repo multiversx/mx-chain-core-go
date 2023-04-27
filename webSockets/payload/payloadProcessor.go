@@ -6,6 +6,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/webSockets/data"
 )
 
+// ArgsPayloadProcessor holds the components needed in order to create a payloadProcessor
 type ArgsPayloadProcessor struct {
 	Log           core.Logger
 	PayloadParser connection.PayloadParser
