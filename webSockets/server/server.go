@@ -54,11 +54,12 @@ func NewWebSocketsServer(args ArgsWebSocketsServer) (*server, error) {
 	}
 
 	wsServer := &server{
-		sender:             webSocketsSender,
-		receivers:          NewReceiversHolder(),
-		blockingAckOnError: args.BlockingAckOnError,
-		log:                args.Log,
-		retryDuration:      time.Duration(args.RetryDurationInSeconds) * time.Second,
+		sender:                   webSocketsSender,
+		receivers:                NewReceiversHolder(),
+		blockingAckOnError:       args.BlockingAckOnError,
+		log:                      args.Log,
+		retryDuration:            time.Duration(args.RetryDurationInSeconds) * time.Second,
+		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
 	}
 	wsServer.connectionHandler = wsServer.defaultConnectionHandler
 

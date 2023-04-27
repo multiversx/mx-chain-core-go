@@ -7,6 +7,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/core/closing"
 	"github.com/multiversx/mx-chain-core-go/webSockets/connection"
 	outportData "github.com/multiversx/mx-chain-core-go/webSockets/data"
@@ -35,6 +36,10 @@ type sender struct {
 }
 
 func NewSender(args ArgsSender) (*sender, error) {
+	if err := checkArgs(args); err != nil {
+		return nil, err
+	}
+
 	return &sender{
 		counter:                  0,
 		safeCloser:               closing.NewSafeChanCloser(),
@@ -74,12 +79,13 @@ func (s *sender) send(payload []byte, assignedCounter uint64) error {
 	}
 
 	numSent := 0
-	var err error
+	var lastError error
 
 	for _, client := range clients {
-		err = s.sendPayload(payload, assignedCounter, client)
+		err := s.sendPayload(payload, assignedCounter, client)
 		if err != nil {
-			s.log.Error("couldn't send data to client", "error", err)
+			s.log.Error("sender.send(): couldn't send data to client", "id", client.GetID(), "error", err)
+			lastError = err
 			continue
 		}
 
@@ -87,7 +93,7 @@ func (s *sender) send(payload []byte, assignedCounter uint64) error {
 	}
 
 	if numSent == 0 {
-		return fmt.Errorf("data wasn't sent to any client. last known error: %w", err)
+		return fmt.Errorf("data wasn't sent to any client. last known error: %w", lastError)
 	}
 
 	return nil
@@ -97,8 +103,7 @@ func (s *sender) send(payload []byte, assignedCounter uint64) error {
 func (s *sender) sendPayload(payload []byte, assignedCounter uint64, connection connection.WSConClient) error {
 	errSend := connection.WriteMessage(websocket.BinaryMessage, payload)
 	if errSend != nil {
-		s.log.Warn("could not send data to client", "remote addr", connection.GetID(), "error", errSend)
-		return fmt.Errorf("%w while writing message to client %s", errSend, connection.GetID())
+		return errSend
 	}
 
 	if !s.withAcknowledge {
@@ -136,7 +141,6 @@ func (s *sender) waitForAck(connection connection.WSConClient, assignedCounter u
 				"counter bytes", message,
 				"error", err,
 			)
-			continue
 		}
 
 		if receivedCounter == assignedCounter {
@@ -167,5 +171,18 @@ func (s *sender) Close() error {
 		}
 	}
 
+	return nil
+}
+
+func checkArgs(args ArgsSender) error {
+	if check.IfNil(args.Log) {
+		return core.ErrNilLogger
+	}
+	if check.IfNil(args.Uint64ByteSliceConverter) {
+		return outportData.ErrNilUint64ByteSliceConverter
+	}
+	if args.RetryDurationInSeconds == 0 {
+		return outportData.ErrZeroValueRetryDuration
+	}
 	return nil
 }

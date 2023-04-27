@@ -6,6 +6,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/core/closing"
 	"github.com/multiversx/mx-chain-core-go/webSockets"
 	"github.com/multiversx/mx-chain-core-go/webSockets/connection"
@@ -31,12 +32,17 @@ type receiver struct {
 
 // NewReceiver will create a new instance of receiver
 func NewReceiver(args ArgsReceiver) (*receiver, error) {
+	if err := checkArgs(args); err != nil {
+		return nil, err
+	}
+
 	return &receiver{
 		log:                      args.Log,
 		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
 		retryDuration:            time.Duration(args.RetryDurationInSec) * time.Second,
 		blockingAckOnError:       args.BlockingAckOnError,
 		safeCloser:               closing.NewSafeChanCloser(),
+		payloadHandler:           webSockets.NewNilPayloadHandler(),
 	}, nil
 }
 
@@ -67,6 +73,7 @@ func (r *receiver) Listen(connection connection.WSConClient) (closed bool) {
 				return
 			}
 
+			timer.Reset(r.retryDuration)
 			r.log.Warn("r.Listen()-> connection problem", "error", err.Error())
 		}
 
@@ -98,14 +105,10 @@ func (r *receiver) sendAckIfNeeded(connection connection.WSConClient, payloadDat
 		return
 	}
 
-	r.waitForAckSignal(connection, payloadData.Counter)
-}
-
-func (r *receiver) waitForAckSignal(connection connection.WSConClient, counter uint64) {
 	timer := time.NewTimer(r.retryDuration)
 	defer timer.Stop()
 
-	counterBytes := r.uint64ByteSliceConverter.ToByteSlice(counter)
+	counterBytes := r.uint64ByteSliceConverter.ToByteSlice(payloadData.Counter)
 	for {
 		timer.Reset(r.retryDuration)
 
@@ -117,6 +120,8 @@ func (r *receiver) waitForAckSignal(connection connection.WSConClient, counter u
 		if !strings.Contains(err.Error(), data.ErrConnectionNotOpened.Error()) {
 			r.log.Error("could not write acknowledge message", "error", err.Error(), "retrying in", r.retryDuration)
 		}
+
+		r.log.Warn("r.sendAckIfNeeded(): cannot write ack", "error", err)
 
 		select {
 		case <-timer.C:
@@ -135,5 +140,18 @@ func (r *receiver) Close() error {
 		r.log.Error("cannot close the operations handler", "error", err)
 	}
 
+	return nil
+}
+
+func checkArgs(args ArgsReceiver) error {
+	if check.IfNil(args.Log) {
+		return core.ErrNilLogger
+	}
+	if check.IfNil(args.Uint64ByteSliceConverter) {
+		return data.ErrNilUint64ByteSliceConverter
+	}
+	if args.RetryDurationInSec == 0 {
+		return data.ErrZeroValueRetryDuration
+	}
 	return nil
 }
