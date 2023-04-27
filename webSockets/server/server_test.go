@@ -3,6 +3,7 @@ package server
 import (
 	"errors"
 	"sync"
+	"sync/atomic"
 	"testing"
 
 	"github.com/multiversx/mx-chain-core-go/core/mock"
@@ -63,18 +64,18 @@ func TestServer_ListenAndClose(t *testing.T) {
 	args.URL = "localhost:9211"
 	wsServer, _ := NewWebSocketsServer(args)
 
-	called := false
+	count := uint64(0)
 	wg := sync.WaitGroup{}
 	wg.Add(1)
 	go func() {
 		wsServer.Listen()
 		wg.Done()
-		called = true
+		atomic.AddUint64(&count, 1)
 	}()
 
 	_ = wsServer.Close()
 	wg.Wait()
-	require.True(t, called)
+	require.Equal(t, uint64(1), atomic.LoadUint64(&count))
 }
 
 func TestServer_ListenAndRegisterPayloadHandlerAndClose(t *testing.T) {

@@ -3,6 +3,7 @@ package receiver
 import (
 	"errors"
 	"sync"
+	"sync/atomic"
 	"testing"
 	"time"
 
@@ -64,17 +65,17 @@ func TestReceiver_ListenAndClose(t *testing.T) {
 	webSocketsReceiver, err := NewReceiver(args)
 	require.Nil(t, err)
 
-	count := 0
+	count := uint64(0)
 	conn := &testscommon.WebsocketConnectionStub{
 		ReadMessageCalled: func() (messageType int, payload []byte, err error) {
 			time.Sleep(time.Second)
-			if count == 1 {
+			if atomic.LoadUint64(&count) == 1 {
 				return 0, nil, errors.New("closed")
 			}
 			return 0, nil, nil
 		},
 		CloseCalled: func() error {
-			count++
+			atomic.AddUint64(&count, 1)
 			return nil
 		},
 	}
@@ -84,14 +85,14 @@ func TestReceiver_ListenAndClose(t *testing.T) {
 	go func() {
 		webSocketsReceiver.Listen(conn)
 		wg.Done()
-		count++
+		atomic.AddUint64(&count, 1)
 	}()
 
 	_ = webSocketsReceiver.Close()
 	_ = conn.Close()
 	wg.Wait()
 
-	require.Equal(t, 2, count)
+	require.Equal(t, uint64(2), atomic.LoadUint64(&count))
 }
 
 func TestReceiver_ListenAndSendAck(t *testing.T) {
