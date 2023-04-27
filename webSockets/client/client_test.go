@@ -1,10 +1,11 @@
-package server
+package client
 
 import (
 	"errors"
 	"sync"
 	"sync/atomic"
 	"testing"
+	"time"
 
 	"github.com/multiversx/mx-chain-core-go/core/mock"
 	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
@@ -13,8 +14,8 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func createArgs() ArgsWebSocketsServer {
-	return ArgsWebSocketsServer{
+func createArgs() ArgsWebSocketsClient {
+	return ArgsWebSocketsClient{
 		RetryDurationInSeconds:   1,
 		BlockingAckOnError:       false,
 		WithAcknowledge:          false,
@@ -29,7 +30,7 @@ func TestNewWebSocketsServer(t *testing.T) {
 
 	t.Run("should work", func(t *testing.T) {
 		args := createArgs()
-		ws, err := NewWebSocketsServer(args)
+		ws, err := NewWebSocketsClient(args)
 		require.NotNil(t, ws)
 		require.Nil(t, err)
 		require.False(t, ws.IsInterfaceNil())
@@ -38,7 +39,7 @@ func TestNewWebSocketsServer(t *testing.T) {
 	t.Run("empty url, should return error", func(t *testing.T) {
 		args := createArgs()
 		args.URL = ""
-		ws, err := NewWebSocketsServer(args)
+		ws, err := NewWebSocketsClient(args)
 		require.Nil(t, ws)
 		require.Equal(t, err, data.ErrEmptyUrl)
 	})
@@ -46,7 +47,7 @@ func TestNewWebSocketsServer(t *testing.T) {
 	t.Run("nil uint64 byte slice converter, should return error", func(t *testing.T) {
 		args := createArgs()
 		args.Uint64ByteSliceConverter = nil
-		ws, err := NewWebSocketsServer(args)
+		ws, err := NewWebSocketsClient(args)
 		require.Nil(t, ws)
 		require.Equal(t, err, data.ErrNilUint64ByteSliceConverter)
 	})
@@ -54,50 +55,66 @@ func TestNewWebSocketsServer(t *testing.T) {
 	t.Run("zero retry duration in seconds, should return error", func(t *testing.T) {
 		args := createArgs()
 		args.RetryDurationInSeconds = 0
-		ws, err := NewWebSocketsServer(args)
+		ws, err := NewWebSocketsClient(args)
 		require.Nil(t, ws)
 		require.Equal(t, err, data.ErrZeroValueRetryDuration)
 	})
 }
 
-func TestServer_ListenAndClose(t *testing.T) {
+func TestClient_SendAndClose(t *testing.T) {
 	args := createArgs()
-	args.URL = "localhost:9211"
-	wsServer, _ := NewWebSocketsServer(args)
+	ws, err := NewWebSocketsClient(args)
+	require.Nil(t, err)
+
+	ws.wsConn = &testscommon.WebsocketConnectionStub{
+		WriteMessageCalled: func(messageType int, _ []byte) error {
+			return errors.New(data.ClosedConnectionMessage)
+		},
+	}
 
 	count := uint64(0)
-	wg := sync.WaitGroup{}
+
+	wg := &sync.WaitGroup{}
 	wg.Add(1)
 	go func() {
-		wsServer.Listen()
-		wg.Done()
+		err = ws.Send(data.WsSendArgs{
+			Payload: []byte("send"),
+		})
+		require.Nil(t, err)
 		atomic.AddUint64(&count, 1)
+		wg.Done()
 	}()
 
-	_ = wsServer.Close()
+	_ = ws.Close()
 	wg.Wait()
 	require.Equal(t, uint64(1), atomic.LoadUint64(&count))
 }
 
-func TestServer_ListenAndRegisterPayloadHandlerAndClose(t *testing.T) {
+func TestClient_Send(t *testing.T) {
 	args := createArgs()
-	args.URL = "localhost:9211"
-	wsServer, _ := NewWebSocketsServer(args)
+	ws, err := NewWebSocketsClient(args)
+	require.Nil(t, err)
 
-	wg := sync.WaitGroup{}
+	ws.wsConn = &testscommon.WebsocketConnectionStub{
+		WriteMessageCalled: func(messageType int, _ []byte) error {
+			return errors.New("local error")
+		},
+	}
+
+	count := uint64(0)
+	wg := &sync.WaitGroup{}
 	wg.Add(1)
+
 	go func() {
-		wsServer.Listen()
+		err = ws.Send(data.WsSendArgs{Payload: []byte("test")})
+		require.Nil(t, err)
+		atomic.AddUint64(&count, 1)
 		wg.Done()
 	}()
 
-	wsServer.RegisterPayloadHandler(&testscommon.PayloadHandlerStub{})
-	wsServer.connectionHandler(&testscommon.WebsocketConnectionStub{
-		ReadMessageCalled: func() (messageType int, payload []byte, err error) {
-			return 0, nil, errors.New("local error")
-		},
-	})
-
-	_ = wsServer.Close()
+	time.Sleep(2 * time.Second)
+	_ = ws.Close()
 	wg.Wait()
+
+	require.Equal(t, uint64(1), atomic.LoadUint64(&count))
 }

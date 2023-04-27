@@ -8,6 +8,7 @@ import (
 
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/core/closing"
 	"github.com/multiversx/mx-chain-core-go/webSockets"
 	"github.com/multiversx/mx-chain-core-go/webSockets/connection"
@@ -38,6 +39,10 @@ type client struct {
 
 // NewWebSocketsClient will create a new instance of websockets client
 func NewWebSocketsClient(args ArgsWebSocketsClient) (*client, error) {
+	if err := checkArgs(args); err != nil {
+		return nil, err
+	}
+
 	webSocketsSender, err := sender.NewSender(sender.ArgsSender{
 		WithAcknowledge:          args.WithAcknowledge,
 		RetryDurationInSeconds:   args.RetryDurationInSeconds,
@@ -54,6 +59,9 @@ func NewWebSocketsClient(args ArgsWebSocketsClient) (*client, error) {
 		RetryDurationInSec:       args.RetryDurationInSeconds,
 		BlockingAckOnError:       args.BlockingAckOnError,
 	})
+	if err != nil {
+		return nil, err
+	}
 
 	return &client{
 		url:           args.URL,
@@ -62,12 +70,17 @@ func NewWebSocketsClient(args ArgsWebSocketsClient) (*client, error) {
 		retryDuration: time.Duration(args.RetryDurationInSeconds) * time.Second,
 		safeCloser:    closing.NewSafeChanCloser(),
 		receiver:      webSocketsReceiver,
+		log:           args.Log,
 	}, nil
 }
 
 // Send will send the provided payload from args
 func (c *client) Send(args data.WsSendArgs) error {
-	c.openConnection()
+	closed := c.openConnection()
+	if closed {
+		return nil
+	}
+
 	_ = c.sender.AddConnection(c.wsConn)
 
 	timer := time.NewTimer(c.retryDuration)
@@ -86,7 +99,10 @@ func (c *client) Send(args data.WsSendArgs) error {
 			// open a new connection
 			c.log.Warn("clientSender: the previous connection was closed -> trying to open a new connection")
 			c.wsConn = connection.NewWSConnClient()
-			c.openConnection()
+			closed = c.openConnection()
+			if closed {
+				return nil
+			}
 			// the old connection will be rewritten in the internal map
 			_ = c.sender.AddConnection(c.wsConn)
 			continue
@@ -130,7 +146,7 @@ func (c *client) Listen() {
 	}
 }
 
-func (c *client) openConnection() {
+func (c *client) openConnection() (closed bool) {
 	timer := time.NewTimer(c.retryDuration)
 	defer timer.Stop()
 
@@ -147,7 +163,7 @@ func (c *client) openConnection() {
 		select {
 		case <-timer.C:
 		case <-c.safeCloser.ChanClose():
-			return
+			return true
 		}
 	}
 }
@@ -176,4 +192,20 @@ func (c *client) Close() error {
 // IsInterfaceNil returns true if there is no value under the interface
 func (c *client) IsInterfaceNil() bool {
 	return c == nil
+}
+
+func checkArgs(args ArgsWebSocketsClient) error {
+	if check.IfNil(args.Log) {
+		return core.ErrNilLogger
+	}
+	if check.IfNil(args.Uint64ByteSliceConverter) {
+		return data.ErrNilUint64ByteSliceConverter
+	}
+	if args.URL == "" {
+		return data.ErrEmptyUrl
+	}
+	if args.RetryDurationInSeconds == 0 {
+		return data.ErrZeroValueRetryDuration
+	}
+	return nil
 }
