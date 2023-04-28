@@ -56,7 +56,13 @@ func (r *receiver) Listen(connection connection.WSConClient) (closed bool) {
 	timer := time.NewTimer(r.retryDuration)
 	defer timer.Stop()
 
-	for {
+	isClosed := false
+	connection.SetCloseHandler(func(code int, text string) error {
+		isClosed = true
+		return nil
+	})
+
+	for !isClosed {
 		_, message, err := connection.ReadMessage()
 		if err == nil {
 			r.verifyPayloadAndSendAckIfNeeded(connection, message)
@@ -66,13 +72,12 @@ func (r *receiver) Listen(connection connection.WSConClient) (closed bool) {
 		_, isConnectionClosed := err.(*websocket.CloseError)
 		if !isConnectionClosed {
 			if strings.Contains(err.Error(), data.ClosedConnectionMessage) {
-				r.log.Info("connection closed by server")
+				r.log.Info("connection closed")
 				return true
 			}
 			if strings.Contains(err.Error(), data.ErrConnectionNotOpened.Error()) {
 				return
 			}
-
 			timer.Reset(r.retryDuration)
 			r.log.Warn("r.Listen()-> connection problem", "error", err.Error())
 		}
@@ -83,6 +88,7 @@ func (r *receiver) Listen(connection connection.WSConClient) (closed bool) {
 		case <-timer.C:
 		}
 	}
+	return isClosed
 }
 
 func (r *receiver) verifyPayloadAndSendAckIfNeeded(connection connection.WSConClient, payload []byte) {

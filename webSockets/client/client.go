@@ -3,6 +3,7 @@ package client
 import (
 	"errors"
 	"fmt"
+	"net/url"
 	"strings"
 	"time"
 
@@ -63,8 +64,9 @@ func NewWebSocketsClient(args ArgsWebSocketsClient) (*client, error) {
 		return nil, err
 	}
 
+	urlReceiveData := url.URL{Scheme: "ws", Host: args.URL, Path: data.WSRoute}
 	return &client{
-		url:           args.URL,
+		url:           urlReceiveData.String(),
 		sender:        webSocketsSender,
 		wsConn:        connection.NewWSConnClient(),
 		retryDuration: time.Duration(args.RetryDurationInSeconds) * time.Second,
@@ -172,7 +174,7 @@ func (c *client) openConnection() (closed bool) {
 func (c *client) Close() error {
 	defer c.safeCloser.Close()
 
-	c.log.Info("closing all components...")
+	c.log.Info("closing client...")
 	if c.sender != nil {
 		err := c.sender.Close()
 		if err != nil {

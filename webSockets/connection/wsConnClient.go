@@ -94,6 +94,7 @@ func (wsc *wsConnClient) Close() error {
 	if err != nil {
 		log.Error("cannot send close message", "error", err)
 	}
+	wsc.conn.CloseHandler()
 
 	err = wsc.conn.Close()
 	if err != nil {
@@ -102,6 +103,15 @@ func (wsc *wsConnClient) Close() error {
 
 	wsc.conn = nil
 	return nil
+}
+
+// SetCloseHandler will set the close handler
+func (wsc *wsConnClient) SetCloseHandler(closeHandler func(code int, text string) error) {
+	// critical section
+	wsc.mut.Lock()
+	defer wsc.mut.Unlock()
+
+	wsc.conn.SetCloseHandler(closeHandler)
 }
 
 // IsInterfaceNil -

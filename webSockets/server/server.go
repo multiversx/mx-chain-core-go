@@ -137,6 +137,7 @@ func (s *server) RegisterPayloadHandler(handler webSockets.PayloadHandler) {
 			s.receivers.AddReceiver(connection.GetID(), webSocketsReceiver)
 			// this method is blocking
 			_ = webSocketsReceiver.Listen(connection)
+			s.log.Info("connection closed", "client id", connection.GetID())
 			// if method listen will end, the client was disconnected should remove the listener from the list
 			s.receivers.RemoveReceiver(connection.GetID())
 		}()

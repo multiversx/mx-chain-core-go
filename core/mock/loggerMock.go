@@ -5,6 +5,7 @@ import "fmt"
 // LoggerMock -
 type LoggerMock struct {
 	WarnCalled func(message string, args ...interface{})
+	InfoCalled func(message string, args ...interface{})
 }
 
 // Trace will print a trace log
@@ -19,6 +20,10 @@ func (c LoggerMock) Debug(message string, args ...interface{}) {
 
 // Info will print an info log
 func (c LoggerMock) Info(message string, args ...interface{}) {
+	if c.InfoCalled != nil {
+		c.InfoCalled(message, args)
+	}
+
 	fmt.Printf("[INFO] %s %v\n", message, getPrintableArgs(args))
 }
 
