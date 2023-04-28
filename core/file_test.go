@@ -15,7 +15,7 @@ import (
 )
 
 type TestStruct struct {
-	a, b int
+	A, B int
 }
 
 func TestOpenFile_NoExistingFileShouldErr(t *testing.T) {
@@ -104,25 +104,24 @@ func TestSaveTomlFile(t *testing.T) {
 		fileName := dir + "/testFile1"
 
 		err := core.SaveTomlFile(cfg, fileName)
-		if _, errF := os.Stat(fileName); errF == nil {
-			_ = os.Remove(fileName)
-		}
-
 		require.Nil(t, err)
 	})
 
 	t.Run("should work", func(t *testing.T) {
 		t.Parallel()
 
-		cfg := &TestStruct{}
-		fileName := "testFile2"
+		cfg := &TestStruct{A: 10, B: 20}
+		dir := t.TempDir()
+		fileName := dir + "/testFile1"
 
 		err := core.SaveTomlFile(cfg, fileName)
-		if _, errF := os.Stat(fileName); errF == nil {
-			_ = os.Remove(fileName)
-		}
+		require.Nil(t, err)
 
-		assert.Nil(t, err)
+		newCfg := &TestStruct{}
+		err = core.LoadTomlFile(newCfg, fileName)
+		require.Nil(t, err)
+
+		require.Equal(t, cfg, newCfg)
 	})
 }
 
@@ -134,7 +133,6 @@ func TestLoadJSonFile_NoExistingFileShouldErr(t *testing.T) {
 	err := core.LoadJsonFile(cfg, "file")
 
 	assert.Error(t, err)
-
 }
 
 func TestLoadJSonFile_FileExitsShouldPass(t *testing.T) {
@@ -146,7 +144,7 @@ func TestLoadJSonFile_FileExitsShouldPass(t *testing.T) {
 	file, err := os.Create(fileName)
 	assert.Nil(t, err)
 
-	data, _ := json.MarshalIndent(TestStruct{a: 0, b: 0}, "", " ")
+	data, _ := json.MarshalIndent(TestStruct{A: 0, B: 0}, "", " ")
 
 	_ = ioutil.WriteFile(fileName, data, 0644)
 
