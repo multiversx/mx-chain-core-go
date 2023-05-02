@@ -2,6 +2,7 @@ package receiver
 
 import (
 	"strings"
+	"sync"
 	"time"
 
 	"github.com/gorilla/websocket"
@@ -9,50 +10,77 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/core/closing"
 	"github.com/multiversx/mx-chain-core-go/webSockets"
-	"github.com/multiversx/mx-chain-core-go/webSockets/connection"
 	"github.com/multiversx/mx-chain-core-go/webSockets/data"
 )
 
 // ArgsReceiver holds the arguments that are needed for a receiver
 type ArgsReceiver struct {
-	Uint64ByteSliceConverter connection.Uint64ByteSliceConverter
+	Uint64ByteSliceConverter webSockets.Uint64ByteSliceConverter
 	Log                      core.Logger
 	RetryDurationInSec       int
 	BlockingAckOnError       bool
 }
 
 type receiver struct {
-	payloadHandler           webSockets.PayloadHandler
-	uint64ByteSliceConverter connection.Uint64ByteSliceConverter
-	log                      core.Logger
-	safeCloser               core.SafeCloser
-	retryDuration            time.Duration
-	blockingAckOnError       bool
+	payloadParser      webSockets.PayloadParser
+	payloadHandler     webSockets.PayloadHandler
+	log                core.Logger
+	safeCloser         core.SafeCloser
+	retryDuration      time.Duration
+	blockingAckOnError bool
+	mutex              sync.RWMutex
 }
 
 // NewReceiver will create a new instance of receiver
 func NewReceiver(args ArgsReceiver) (*receiver, error) {
-	if err := checkArgs(args); err != nil {
+	err := checkArgs(args)
+	if err != nil {
+		return nil, err
+	}
+
+	payloadParser, err := webSockets.NewWebSocketPayloadParser(args.Uint64ByteSliceConverter)
+	if err != nil {
 		return nil, err
 	}
 
 	return &receiver{
-		log:                      args.Log,
-		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
-		retryDuration:            time.Duration(args.RetryDurationInSec) * time.Second,
-		blockingAckOnError:       args.BlockingAckOnError,
-		safeCloser:               closing.NewSafeChanCloser(),
-		payloadHandler:           webSockets.NewNilPayloadHandler(),
+		log:                args.Log,
+		retryDuration:      time.Duration(args.RetryDurationInSec) * time.Second,
+		blockingAckOnError: args.BlockingAckOnError,
+		safeCloser:         closing.NewSafeChanCloser(),
+		payloadHandler:     webSockets.NewNilPayloadHandler(),
+		payloadParser:      payloadParser,
 	}, nil
 }
 
+func checkArgs(args ArgsReceiver) error {
+	if check.IfNil(args.Log) {
+		return core.ErrNilLogger
+	}
+	if check.IfNil(args.Uint64ByteSliceConverter) {
+		return data.ErrNilUint64ByteSliceConverter
+	}
+	if args.RetryDurationInSec == 0 {
+		return data.ErrZeroValueRetryDuration
+	}
+	return nil
+}
+
 // SetPayloadHandler will set the payload handler
-func (r *receiver) SetPayloadHandler(handler webSockets.PayloadHandler) {
+func (r *receiver) SetPayloadHandler(handler webSockets.PayloadHandler) error {
+	if check.IfNilReflect(handler) {
+		return data.ErrNilPayloadProcessor
+	}
+
+	r.mutex.Lock()
+	defer r.mutex.Unlock()
+
 	r.payloadHandler = handler
+	return nil
 }
 
 // Listen will listen for messages from the provided connection
-func (r *receiver) Listen(connection connection.WSConClient) (closed bool) {
+func (r *receiver) Listen(connection webSockets.WSConClient) (closed bool) {
 	timer := time.NewTimer(r.retryDuration)
 	defer timer.Stop()
 
@@ -63,19 +91,9 @@ func (r *receiver) Listen(connection connection.WSConClient) (closed bool) {
 			continue
 		}
 
-		_, isConnectionClosed := err.(*websocket.CloseError)
-		if !isConnectionClosed {
-			if strings.Contains(err.Error(), data.ClosedConnectionMessage) {
-				r.log.Info("connection closed by server")
-				return true
-			}
-			if strings.Contains(err.Error(), data.ErrConnectionNotOpened.Error()) {
-				return
-			}
-
-			timer.Reset(r.retryDuration)
-			r.log.Warn("r.Listen()-> connection problem", "error", err.Error())
-		}
+		// TODO will handle the error in the PR with the integration tests
+		timer.Reset(r.retryDuration)
+		r.log.Warn("r.Listen()-> connection problem", "error", err.Error())
 
 		select {
 		case <-r.safeCloser.ChanClose():
@@ -85,22 +103,28 @@ func (r *receiver) Listen(connection connection.WSConClient) (closed bool) {
 	}
 }
 
-func (r *receiver) verifyPayloadAndSendAckIfNeeded(connection connection.WSConClient, payload []byte) {
+func (r *receiver) verifyPayloadAndSendAckIfNeeded(connection webSockets.WSConClient, payload []byte) {
 	if len(payload) == 0 {
-		r.log.Error("empty payload")
+		r.log.Debug("r.verifyPayloadAndSendAckIfNeeded(): empty payload")
 		return
 	}
 
-	payloadData, err := r.payloadHandler.HandlePayload(payload)
-	r.log.LogIfError(err)
+	payloadData, err := r.payloadParser.ExtractPayloadData(payload)
+	if err != nil {
+		r.log.Warn("r.verifyPayloadAndSendAckIfNeeded: cannot extract payload data", "error", err.Error())
+		return
+	}
+
+	err = r.payloadHandler.ProcessPayload(payloadData.Payload)
 	if err != nil && r.blockingAckOnError {
+		r.log.Debug("r.payloadHandler.ProcessPayload: cannot handler payload", "error", err)
 		return
 	}
 
 	r.sendAckIfNeeded(connection, payloadData)
 }
 
-func (r *receiver) sendAckIfNeeded(connection connection.WSConClient, payloadData *data.PayloadData) {
+func (r *receiver) sendAckIfNeeded(connection webSockets.WSConClient, payloadData *data.PayloadData) {
 	if !payloadData.WithAcknowledge {
 		return
 	}
@@ -108,7 +132,7 @@ func (r *receiver) sendAckIfNeeded(connection connection.WSConClient, payloadDat
 	timer := time.NewTimer(r.retryDuration)
 	defer timer.Stop()
 
-	counterBytes := r.uint64ByteSliceConverter.ToByteSlice(payloadData.Counter)
+	counterBytes := r.payloadParser.EncodeUint64(payloadData.Counter)
 	for {
 		timer.Reset(r.retryDuration)
 
@@ -121,7 +145,7 @@ func (r *receiver) sendAckIfNeeded(connection connection.WSConClient, payloadDat
 			r.log.Error("could not write acknowledge message", "error", err.Error(), "retrying in", r.retryDuration)
 		}
 
-		r.log.Warn("r.sendAckIfNeeded(): cannot write ack", "error", err)
+		r.log.Debug("r.sendAckIfNeeded(): cannot write ack", "error", err)
 
 		select {
 		case <-timer.C:
@@ -140,18 +164,5 @@ func (r *receiver) Close() error {
 		r.log.Error("cannot close the operations handler", "error", err)
 	}
 
-	return nil
-}
-
-func checkArgs(args ArgsReceiver) error {
-	if check.IfNil(args.Log) {
-		return core.ErrNilLogger
-	}
-	if check.IfNil(args.Uint64ByteSliceConverter) {
-		return data.ErrNilUint64ByteSliceConverter
-	}
-	if args.RetryDurationInSec == 0 {
-		return data.ErrZeroValueRetryDuration
-	}
 	return nil
 }

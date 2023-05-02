@@ -1,4 +1,4 @@
-package testscommon
+package uint64Converter
 
 // Uint64ByteSliceConverterStub -
 type Uint64ByteSliceConverterStub struct {

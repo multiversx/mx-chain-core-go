@@ -6,7 +6,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/google/uuid"
 	"github.com/gorilla/mux"
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
@@ -24,17 +23,17 @@ type ArgsWebSocketsServer struct {
 	BlockingAckOnError       bool
 	WithAcknowledge          bool
 	URL                      string
-	Uint64ByteSliceConverter connection.Uint64ByteSliceConverter
+	Uint64ByteSliceConverter webSockets.Uint64ByteSliceConverter
 	Log                      core.Logger
 }
 
 type server struct {
 	blockingAckOnError       bool
-	connectionHandler        func(connection connection.WSConClient)
-	uint64ByteSliceConverter connection.Uint64ByteSliceConverter
+	connectionHandler        func(connection webSockets.WSConClient)
+	uint64ByteSliceConverter webSockets.Uint64ByteSliceConverter
 	retryDuration            time.Duration
 	log                      core.Logger
-	httpServer               connection.HttpServerHandler
+	httpServer               webSockets.HttpServerHandler
 	sender                   Sender
 	receivers                ReceiversHolder
 }
@@ -70,7 +69,23 @@ func NewWebSocketsServer(args ArgsWebSocketsServer) (*server, error) {
 	return wsServer, nil
 }
 
-func (s *server) defaultConnectionHandler(conn connection.WSConClient) {
+func checkArgs(args ArgsWebSocketsServer) error {
+	if check.IfNil(args.Log) {
+		return core.ErrNilLogger
+	}
+	if check.IfNil(args.Uint64ByteSliceConverter) {
+		return data.ErrNilUint64ByteSliceConverter
+	}
+	if args.URL == "" {
+		return data.ErrEmptyUrl
+	}
+	if args.RetryDurationInSeconds == 0 {
+		return data.ErrZeroValueRetryDuration
+	}
+	return nil
+}
+
+func (s *server) defaultConnectionHandler(conn webSockets.WSConClient) {
 	_ = s.sender.AddConnection(conn)
 }
 
@@ -89,9 +104,7 @@ func (s *server) initializeServer(wsURL string, wsPath string) {
 	s.log.Info("wsServer.initializeServer(): initializing web-sockets server", "url", wsURL, "path", wsPath)
 
 	addClientFunc := func(writer http.ResponseWriter, r *http.Request) {
-		// generate a unique client ID for the new client
-		clientID := uuid.New().String()
-		s.log.Info("new connection", "route", wsPath, "remote address", r.RemoteAddr, "id", clientID)
+		s.log.Info("new connection", "route", wsPath, "remote address", r.RemoteAddr)
 
 		upgrader.CheckOrigin = func(r *http.Request) bool { return true }
 
@@ -100,7 +113,7 @@ func (s *server) initializeServer(wsURL string, wsPath string) {
 			s.log.Warn("could not update websocket connection", "remote address", r.RemoteAddr, "error", errUpgrade)
 			return
 		}
-		client := connection.NewWSConnClientWithConn(ws, clientID)
+		client := connection.NewWSConnClientWithConn(ws)
 		s.connectionHandler(client)
 	}
 
@@ -119,9 +132,22 @@ func (s *server) Send(args data.WsSendArgs) error {
 	return s.sender.Send(args.Payload)
 }
 
-// RegisterPayloadHandler will register the provided payload handler
-func (s *server) RegisterPayloadHandler(handler webSockets.PayloadHandler) {
-	s.connectionHandler = func(connection connection.WSConClient) {
+// Start will start the websockets server
+func (s *server) Start() {
+	err := s.httpServer.ListenAndServe()
+	shouldLogError := err != nil && !strings.Contains(err.Error(), data.ErrServerIsClosed.Error())
+	if shouldLogError {
+		s.log.Error("could not initialize webserver", "error", err)
+		return
+	}
+
+	s.log.Info("server was closed")
+}
+
+// SetPayloadHandler will set the provided payload handler
+func (s *server) SetPayloadHandler(handler webSockets.PayloadHandler) error {
+	// TODO refactor this part
+	s.connectionHandler = func(connection webSockets.WSConClient) {
 		webSocketsReceiver, err := receiver.NewReceiver(receiver.ArgsReceiver{
 			Uint64ByteSliceConverter: s.uint64ByteSliceConverter,
 			Log:                      s.log,
@@ -131,7 +157,10 @@ func (s *server) RegisterPayloadHandler(handler webSockets.PayloadHandler) {
 		if err != nil {
 			s.log.Warn("s.connectionHandler cannot create receiver", "error", err)
 		}
-		webSocketsReceiver.SetPayloadHandler(handler)
+		err = webSocketsReceiver.SetPayloadHandler(handler)
+		if err != nil {
+			s.log.Warn("s.SetPayloadHandler cannot set payload handler", "error", err)
+		}
 
 		go func() {
 			s.receivers.AddReceiver(connection.GetID(), webSocketsReceiver)
@@ -141,16 +170,13 @@ func (s *server) RegisterPayloadHandler(handler webSockets.PayloadHandler) {
 			s.receivers.RemoveReceiver(connection.GetID())
 		}()
 	}
+
+	return nil
 }
 
 // Listen will start the server
 func (s *server) Listen() {
-	err := s.httpServer.ListenAndServe()
-	if err != nil && !strings.Contains(err.Error(), data.ErrServerIsClosed.Error()) {
-		s.log.Error("could not initialize webserver", "error", err)
-	}
 
-	s.log.Info("server was closed")
 }
 
 // Close will close the server
@@ -175,22 +201,7 @@ func (s *server) Close() error {
 	return nil
 }
 
-func checkArgs(args ArgsWebSocketsServer) error {
-	if check.IfNil(args.Log) {
-		return core.ErrNilLogger
-	}
-	if check.IfNil(args.Uint64ByteSliceConverter) {
-		return data.ErrNilUint64ByteSliceConverter
-	}
-	if args.URL == "" {
-		return data.ErrEmptyUrl
-	}
-	if args.RetryDurationInSeconds == 0 {
-		return data.ErrZeroValueRetryDuration
-	}
-	return nil
-}
-
+// IsInterfaceNil returns true if there is no value under the interface
 func (s *server) IsInterfaceNil() bool {
 	return s == nil
 }

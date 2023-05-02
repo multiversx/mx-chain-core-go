@@ -1,6 +1,7 @@
 package connection
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/gorilla/websocket"
@@ -22,11 +23,13 @@ func NewWSConnClient() *wsConnClient {
 }
 
 // NewWSConnClientWithConn creates a new wrapper over a provided websocket connection
-func NewWSConnClientWithConn(conn *websocket.Conn, clientID string) *wsConnClient {
-	return &wsConnClient{
-		conn:     conn,
-		clientID: clientID,
+func NewWSConnClientWithConn(conn *websocket.Conn) *wsConnClient {
+	wsc := &wsConnClient{
+		conn: conn,
 	}
+	wsc.clientID = fmt.Sprintf("%p", wsc)
+
+	return wsc
 }
 
 // OpenConnection will open a new client with a background context

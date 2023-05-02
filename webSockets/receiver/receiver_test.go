@@ -12,6 +12,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core/mock"
 	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
 	"github.com/multiversx/mx-chain-core-go/testscommon"
+	"github.com/multiversx/mx-chain-core-go/webSockets"
 	"github.com/multiversx/mx-chain-core-go/webSockets/data"
 	"github.com/stretchr/testify/require"
 )
@@ -100,12 +101,9 @@ func TestReceiver_ListenAndSendAck(t *testing.T) {
 	webSocketsReceiver, err := NewReceiver(args)
 	require.Nil(t, err)
 
-	webSocketsReceiver.SetPayloadHandler(&testscommon.PayloadHandlerStub{
-		HandlePayloadCalled: func(payload []byte) (*data.PayloadData, error) {
-			return &data.PayloadData{
-				WithAcknowledge: true,
-				Counter:         10,
-			}, nil
+	_ = webSocketsReceiver.SetPayloadHandler(&testscommon.PayloadHandlerStub{
+		ProcessPayloadCalled: func(payload []byte) error {
+			return nil
 		},
 	})
 
@@ -113,6 +111,7 @@ func TestReceiver_ListenAndSendAck(t *testing.T) {
 	wg.Add(1)
 
 	count := 0
+	payloadConverter, _ := webSockets.NewWebSocketPayloadParser(args.Uint64ByteSliceConverter)
 	conn := &testscommon.WebsocketConnectionStub{
 		ReadMessageCalled: func() (messageType int, payload []byte, err error) {
 			time.Sleep(500 * time.Millisecond)
@@ -121,7 +120,9 @@ func TestReceiver_ListenAndSendAck(t *testing.T) {
 				return 0, nil, errors.New("closed")
 			}
 			count++
-			return websocket.BinaryMessage, []byte("something"), nil
+			preparedPayload := payloadConverter.ExtendPayloadWithOperationType([]byte("something"), data.OperationSaveAccounts)
+			preparedPayload = payloadConverter.ExtendPayloadWithCounter(preparedPayload, 10, true)
+			return websocket.BinaryMessage, preparedPayload, nil
 		},
 		CloseCalled: func() error {
 			return nil

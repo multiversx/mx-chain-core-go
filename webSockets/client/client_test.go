@@ -66,23 +66,25 @@ func TestClient_SendAndClose(t *testing.T) {
 	ws, err := NewWebSocketsClient(args)
 	require.Nil(t, err)
 
-	ws.wsConn = &testscommon.WebsocketConnectionStub{
+	mockConn := &testscommon.WebsocketConnectionStub{
 		WriteMessageCalled: func(messageType int, _ []byte) error {
 			return errors.New(data.ClosedConnectionMessage)
 		},
 	}
+	ws.wsConn = mockConn
+	_ = ws.sender.AddConnection(mockConn)
 
 	count := uint64(0)
 
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 	go func() {
+		defer wg.Done()
 		err = ws.Send(data.WsSendArgs{
 			Payload: []byte("send"),
 		})
-		require.Nil(t, err)
+		require.Equal(t, "data wasn't sent to any client. last known error: use of closed network connection", err.Error())
 		atomic.AddUint64(&count, 1)
-		wg.Done()
 	}()
 
 	_ = ws.Close()
@@ -95,21 +97,24 @@ func TestClient_Send(t *testing.T) {
 	ws, err := NewWebSocketsClient(args)
 	require.Nil(t, err)
 
-	ws.wsConn = &testscommon.WebsocketConnectionStub{
+	mockConn := &testscommon.WebsocketConnectionStub{
 		WriteMessageCalled: func(messageType int, _ []byte) error {
 			return errors.New("local error")
 		},
 	}
+
+	ws.wsConn = mockConn
+	_ = ws.sender.AddConnection(mockConn)
 
 	count := uint64(0)
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 
 	go func() {
+		defer wg.Done()
 		err = ws.Send(data.WsSendArgs{Payload: []byte("test")})
-		require.Nil(t, err)
+		require.Equal(t, "data wasn't sent to any client. last known error: local error", err.Error())
 		atomic.AddUint64(&count, 1)
-		wg.Done()
 	}()
 
 	time.Sleep(2 * time.Second)
