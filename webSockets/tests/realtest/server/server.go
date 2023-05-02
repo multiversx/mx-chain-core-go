@@ -85,7 +85,7 @@ func doAction(server Driver) {
 }
 
 func createServer() (Driver, error) {
-	wsFactory, err := factory.NewWebSocketsDriverFactory(factory.ArgsWebSocketsDriverFactory{
+	return factory.NewWebSocketsDriver(factory.ArgsWebSocketsDriverFactory{
 		Marshaller: jsonMarshaller,
 		WebSocketConfig: data.WebSocketConfig{
 			URL:                "127.0.0.1:21112",
@@ -96,9 +96,4 @@ func createServer() (Driver, error) {
 		Log:                      log,
 		WithAcknowledge:          true,
 	})
-	if err != nil {
-		return nil, err
-	}
-
-	return wsFactory.Create()
 }

@@ -8,7 +8,6 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/marshal"
-	"github.com/multiversx/mx-chain-core-go/webSockets/connection"
 	outportSenderData "github.com/multiversx/mx-chain-core-go/webSockets/data"
 )
 
@@ -16,16 +15,16 @@ import (
 type ArgsWebSocketsDriver struct {
 	Marshaller               marshal.Marshalizer
 	WebsocketSender          WebSocketSenderHandler
-	Uint64ByteSliceConverter connection.Uint64ByteSliceConverter
+	Uint64ByteSliceConverter Uint64ByteSliceConverter
 	Log                      core.Logger
 }
 
 type webSocketsDriver struct {
-	marshalizer              marshal.Marshalizer
-	log                      core.Logger
-	uint64ByteSliceConverter connection.Uint64ByteSliceConverter
-	webSocketSender          WebSocketSenderHandler
-	isClosed                 atomic.Flag
+	marshalizer      marshal.Marshalizer
+	log              core.Logger
+	payloadConverter PayloadParser
+	webSocketSender  WebSocketSenderHandler
+	isClosed         atomic.Flag
 }
 
 // NewWebsocketsDriver will create a new instance of webSocketsDriver
@@ -46,12 +45,17 @@ func NewWebsocketsDriver(args ArgsWebSocketsDriver) (*webSocketsDriver, error) {
 	isClosedFlag := atomic.Flag{}
 	isClosedFlag.SetValue(false)
 
+	payloadConverter, err := NewWebSocketPayloadParser(args.Uint64ByteSliceConverter)
+	if err != nil {
+		return nil, err
+	}
+
 	return &webSocketsDriver{
-		marshalizer:              args.Marshaller,
-		webSocketSender:          args.WebsocketSender,
-		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
-		log:                      args.Log,
-		isClosed:                 isClosedFlag,
+		marshalizer:      args.Marshaller,
+		webSocketSender:  args.WebsocketSender,
+		payloadConverter: payloadConverter,
+		log:              args.Log,
+		isClosed:         isClosedFlag,
 	}, nil
 }
 
@@ -106,8 +110,7 @@ func (o *webSocketsDriver) handleAction(args interface{}, operation outportSende
 		return fmt.Errorf("%w while marshaling block for operation %s", err, operation.String())
 	}
 
-	payload := o.preparePayload(operation, marshaledBlock)
-
+	payload := o.payloadConverter.ExtendPayloadWithOperationType(marshaledBlock, operation)
 	err = o.webSocketSender.Send(outportSenderData.WsSendArgs{
 		Payload: payload,
 	})
@@ -117,20 +120,6 @@ func (o *webSocketsDriver) handleAction(args interface{}, operation outportSende
 	}
 
 	return nil
-}
-
-func (o *webSocketsDriver) preparePayload(operation outportSenderData.OperationType, data []byte) []byte {
-	opBytes := o.uint64ByteSliceConverter.ToByteSlice(uint64(operation.Uint32()))
-	opBytes = opBytes[uint32NumBytes:]
-
-	messageLength := uint64(len(data))
-	messageLengthBytes := o.uint64ByteSliceConverter.ToByteSlice(messageLength)
-	messageLengthBytes = messageLengthBytes[uint32NumBytes:]
-
-	payload := append(opBytes, messageLengthBytes...)
-	payload = append(payload, data...)
-
-	return payload
 }
 
 // Close will handle the closing of the outport driver web socket sender

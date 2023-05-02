@@ -1,19 +1,17 @@
 package testscommon
 
-import outportSenderData "github.com/multiversx/mx-chain-core-go/webSockets/data"
-
 // PayloadHandlerStub -
 type PayloadHandlerStub struct {
-	HandlePayloadCalled func(payload []byte) (*outportSenderData.PayloadData, error)
-	CloseCalled         func() error
+	ProcessPayloadCalled func(payload []byte) error
+	CloseCalled          func() error
 }
 
-// HandlePayload -
-func (ph *PayloadHandlerStub) HandlePayload(payload []byte) (*outportSenderData.PayloadData, error) {
-	if ph.HandlePayloadCalled != nil {
-		return ph.HandlePayloadCalled(payload)
+// ProcessPayload -
+func (ph *PayloadHandlerStub) ProcessPayload(payload []byte) error {
+	if ph.ProcessPayloadCalled != nil {
+		return ph.ProcessPayloadCalled(payload)
 	}
-	return nil, nil
+	return nil
 }
 
 // Close -

@@ -1,6 +1,9 @@
 package webSockets
 
 import (
+	"context"
+	"io"
+
 	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/marshal"
 	outportSenderData "github.com/multiversx/mx-chain-core-go/webSockets/data"
@@ -31,13 +34,47 @@ type WebSocketSenderHandler interface {
 // HostWebSockets -
 type HostWebSockets interface {
 	Send(args outportSenderData.WsSendArgs) error
-	RegisterPayloadHandler(handler PayloadHandler)
+	SetPayloadHandler(handler PayloadHandler) error
+	Start()
 	Listen()
 	Close() error
 	IsInterfaceNil() bool
 }
 
 type PayloadHandler interface {
-	HandlePayload(payload []byte) (*outportSenderData.PayloadData, error)
+	ProcessPayload(payload []byte) error
 	Close() error
+}
+
+// PayloadParser defines what a websocket payload parser should do
+type PayloadParser interface {
+	ExtractPayloadData(payload []byte) (*outportSenderData.PayloadData, error)
+	ExtendPayloadWithCounter(payload []byte, counter uint64, withAcknowledge bool) []byte
+	ExtendPayloadWithOperationType(payload []byte, operation outportSenderData.OperationType) []byte
+	EncodeUint64(counter uint64) []byte
+	DecodeCounter(payload []byte) (uint64, error)
+	IsInterfaceNil() bool
+}
+
+// WSConClient defines what a web-sockets connection client should be able to do
+type WSConClient interface {
+	io.Closer
+	OpenConnection(url string) error
+	WriteMessage(messageType int, data []byte) error
+	ReadMessage() (int, []byte, error)
+	GetID() string
+	IsInterfaceNil() bool
+}
+
+// HttpServerHandler defines the minimum behaviour of a http server
+type HttpServerHandler interface {
+	ListenAndServe() error
+	Shutdown(ctx context.Context) error
+}
+
+// Uint64ByteSliceConverter converts byte slice to/from uint64
+type Uint64ByteSliceConverter interface {
+	ToByteSlice(uint64) []byte
+	ToUint64([]byte) (uint64, error)
+	IsInterfaceNil() bool
 }

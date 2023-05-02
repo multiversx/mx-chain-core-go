@@ -69,7 +69,7 @@ func TestServer_ListenAndClose(t *testing.T) {
 	wg := sync.WaitGroup{}
 	wg.Add(1)
 	go func() {
-		wsServer.Listen()
+		wsServer.Start()
 		wg.Done()
 		atomic.AddUint64(&count, 1)
 	}()
@@ -87,11 +87,11 @@ func TestServer_ListenAndRegisterPayloadHandlerAndClose(t *testing.T) {
 	wg := sync.WaitGroup{}
 	wg.Add(1)
 	go func() {
-		wsServer.Listen()
+		wsServer.Start()
 		wg.Done()
 	}()
 
-	wsServer.RegisterPayloadHandler(&testscommon.PayloadHandlerStub{})
+	_ = wsServer.SetPayloadHandler(&testscommon.PayloadHandlerStub{})
 	wsServer.connectionHandler(&testscommon.WebsocketConnectionStub{
 		ReadMessageCalled: func() (messageType int, payload []byte, err error) {
 			return 0, nil, errors.New("local error")

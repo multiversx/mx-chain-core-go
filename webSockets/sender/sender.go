@@ -9,62 +9,57 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/core/closing"
+	"github.com/multiversx/mx-chain-core-go/webSockets"
 	"github.com/multiversx/mx-chain-core-go/webSockets/connection"
 	outportData "github.com/multiversx/mx-chain-core-go/webSockets/data"
 )
 
-var (
-	prefixWithoutAck = []byte{0}
-	prefixWithAck    = []byte{1}
-)
-
+// ArgsSender holds the arguments needed for creating a web-sockets sender
 type ArgsSender struct {
 	WithAcknowledge          bool
 	RetryDurationInSeconds   int
-	Uint64ByteSliceConverter connection.Uint64ByteSliceConverter
+	Uint64ByteSliceConverter webSockets.Uint64ByteSliceConverter
 	Log                      core.Logger
 }
 
 type sender struct {
-	counter                  uint64
-	withAcknowledge          bool
-	connections              ConnectionsHandler
-	uint64ByteSliceConverter connection.Uint64ByteSliceConverter
-	log                      core.Logger
-	safeCloser               core.SafeCloser
-	retryDuration            time.Duration
+	counter         uint64
+	withAcknowledge bool
+	connections     ConnectionsHandler
+	payloadParser   webSockets.PayloadParser
+	log             core.Logger
+	safeCloser      core.SafeCloser
+	retryDuration   time.Duration
 }
 
 func NewSender(args ArgsSender) (*sender, error) {
-	if err := checkArgs(args); err != nil {
+	err := checkArgs(args)
+	if err != nil {
+		return nil, err
+	}
+	payloadConverter, err := webSockets.NewWebSocketPayloadParser(args.Uint64ByteSliceConverter)
+	if err != nil {
 		return nil, err
 	}
 
 	return &sender{
-		counter:                  0,
-		safeCloser:               closing.NewSafeChanCloser(),
-		connections:              connection.NewWebsocketClientsHolder(),
-		log:                      args.Log,
-		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
-		withAcknowledge:          args.WithAcknowledge,
-		retryDuration:            time.Duration(args.RetryDurationInSeconds) * time.Second,
+		counter:         0,
+		safeCloser:      closing.NewSafeChanCloser(),
+		connections:     connection.NewWebsocketClientsHolder(),
+		log:             args.Log,
+		payloadParser:   payloadConverter,
+		withAcknowledge: args.WithAcknowledge,
+		retryDuration:   time.Duration(args.RetryDurationInSeconds) * time.Second,
 	}, nil
 }
 
-func (s *sender) AddConnection(client connection.WSConClient) error {
+func (s *sender) AddConnection(client webSockets.WSConClient) error {
 	return s.connections.AddClient(client)
 }
 
 func (s *sender) Send(payload []byte) error {
 	assignedCounter := atomic.AddUint64(&s.counter, 1)
-
-	ackData := prefixWithoutAck
-	if s.withAcknowledge {
-		ackData = prefixWithAck
-	}
-
-	newPayload := append(ackData, s.uint64ByteSliceConverter.ToByteSlice(assignedCounter)...)
-	newPayload = append(newPayload, payload...)
+	newPayload := s.payloadParser.ExtendPayloadWithCounter(payload, assignedCounter, s.withAcknowledge)
 
 	return s.send(newPayload, assignedCounter)
 }
@@ -84,7 +79,7 @@ func (s *sender) send(payload []byte, assignedCounter uint64) error {
 	for _, client := range clients {
 		err := s.sendPayload(payload, assignedCounter, client)
 		if err != nil {
-			s.log.Error("sender.send(): couldn't send data to client", "id", client.GetID(), "error", err)
+			s.log.Debug("sender.send(): couldn't send data to client", "id", client.GetID(), "error", err)
 			lastError = err
 			continue
 		}
@@ -100,7 +95,7 @@ func (s *sender) send(payload []byte, assignedCounter uint64) error {
 
 }
 
-func (s *sender) sendPayload(payload []byte, assignedCounter uint64, connection connection.WSConClient) error {
+func (s *sender) sendPayload(payload []byte, assignedCounter uint64, connection webSockets.WSConClient) error {
 	errSend := connection.WriteMessage(websocket.BinaryMessage, payload)
 	if errSend != nil {
 		return errSend
@@ -113,14 +108,14 @@ func (s *sender) sendPayload(payload []byte, assignedCounter uint64, connection 
 	return s.waitForAck(connection, assignedCounter)
 }
 
-func (s *sender) waitForAck(connection connection.WSConClient, assignedCounter uint64) error {
+func (s *sender) waitForAck(connection webSockets.WSConClient, assignedCounter uint64) error {
 	timer := time.NewTimer(s.retryDuration)
 	defer timer.Stop()
 
 	for {
 		mType, message, err := connection.ReadMessage()
 		if err != nil {
-			s.log.Error("cannot read message", "id", connection.GetID(), "error", err)
+			s.log.Debug("s.waitForAck(): cannot read message", "id", connection.GetID(), "error", err)
 
 			err = s.connections.CloseAndRemove(connection.GetID())
 			s.log.LogIfError(err)
@@ -128,13 +123,13 @@ func (s *sender) waitForAck(connection connection.WSConClient, assignedCounter u
 		}
 
 		if mType != websocket.BinaryMessage {
-			s.log.Warn("received message is not binary message", "id", connection.GetID(), "message type", mType)
+			s.log.Debug("received message is not binary message", "id", connection.GetID(), "message type", mType)
 			continue
 		}
 
 		s.log.Trace("received ack", "remote addr", connection.GetID(), "message", message)
 
-		receivedCounter, err := s.uint64ByteSliceConverter.ToUint64(message)
+		receivedCounter, err := s.payloadParser.DecodeCounter(message)
 		if err != nil {
 			s.log.Warn("cannot decode counter: bytes to uint64",
 				"id", connection.GetID(),
@@ -148,7 +143,7 @@ func (s *sender) waitForAck(connection connection.WSConClient, assignedCounter u
 		}
 
 		timer.Reset(s.retryDuration)
-		s.log.Warn("s.waitForAck invalid counter", "expected", assignedCounter, "received", receivedCounter, "id", connection.GetID())
+		s.log.Debug("s.waitForAck invalid counter", "expected", assignedCounter, "received", receivedCounter, "id", connection.GetID())
 
 		select {
 		case <-timer.C:

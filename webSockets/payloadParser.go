@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/multiversx/mx-chain-core-go/core/check"
-	"github.com/multiversx/mx-chain-core-go/webSockets/connection"
 	"github.com/multiversx/mx-chain-core-go/webSockets/data"
 )
 
@@ -17,19 +16,22 @@ const (
 
 var (
 	minBytesForCorrectPayload = withAcknowledgeNumBytes + uint64NumBytes + uint32NumBytes + uint32NumBytes
+
+	prefixWithoutAck = []byte{0}
+	prefixWithAck    = []byte{1}
 )
 
-type websocketPayloadParser struct {
-	uint64ByteSliceConverter connection.Uint64ByteSliceConverter
+type webSocketsPayloadConverter struct {
+	uint64ByteSliceConverter Uint64ByteSliceConverter
 }
 
 // NewWebSocketPayloadParser returns a new instance of websocketPayloadParser
-func NewWebSocketPayloadParser(uint64ByteSliceConverter connection.Uint64ByteSliceConverter) (*websocketPayloadParser, error) {
+func NewWebSocketPayloadParser(uint64ByteSliceConverter Uint64ByteSliceConverter) (*webSocketsPayloadConverter, error) {
 	if check.IfNil(uint64ByteSliceConverter) {
 		return nil, data.ErrNilUint64ByteSliceConverter
 	}
 
-	return &websocketPayloadParser{
+	return &webSocketsPayloadConverter{
 		uint64ByteSliceConverter: uint64ByteSliceConverter,
 	}, nil
 }
@@ -41,7 +43,7 @@ func NewWebSocketPayloadParser(uint64ByteSliceConverter connection.Uint64ByteSli
 // next 4 bytes - operation type (uint32 big endian)
 // next 4 bytes - message length (uint32 big endian)
 // next X bytes - the actual data to parse
-func (wpp *websocketPayloadParser) ExtractPayloadData(payload []byte) (*data.PayloadData, error) {
+func (wpc *webSocketsPayloadConverter) ExtractPayloadData(payload []byte) (*data.PayloadData, error) {
 	if len(payload) < minBytesForCorrectPayload {
 		return nil, fmt.Errorf("invalid payload. minimum required length is %d bytes, but only provided %d",
 			minBytesForCorrectPayload,
@@ -59,7 +61,7 @@ func (wpp *websocketPayloadParser) ExtractPayloadData(payload []byte) (*data.Pay
 	payload = payload[withAcknowledgeNumBytes:]
 
 	counterBytes := payload[:uint64NumBytes]
-	payloadData.Counter, err = wpp.uint64ByteSliceConverter.ToUint64(counterBytes)
+	payloadData.Counter, err = wpc.uint64ByteSliceConverter.ToUint64(counterBytes)
 	if err != nil {
 		return nil, fmt.Errorf("%w while extracting the counter from the payload", err)
 	}
@@ -67,7 +69,7 @@ func (wpp *websocketPayloadParser) ExtractPayloadData(payload []byte) (*data.Pay
 
 	operationTypeBytes := payload[:uint32NumBytes]
 	var operationTypeUint64 uint64
-	operationTypeUint64, err = wpp.uint64ByteSliceConverter.ToUint64(padUint32ByteSlice(operationTypeBytes))
+	operationTypeUint64, err = wpc.uint64ByteSliceConverter.ToUint64(padUint32ByteSlice(operationTypeBytes))
 	if err != nil {
 		return nil, fmt.Errorf("%w while extracting the counter from the payload", err)
 	}
@@ -75,7 +77,7 @@ func (wpp *websocketPayloadParser) ExtractPayloadData(payload []byte) (*data.Pay
 	payload = payload[uint32NumBytes:]
 
 	var messageLen uint64
-	messageLen, err = wpp.uint64ByteSliceConverter.ToUint64(padUint32ByteSlice(payload[:uint32NumBytes]))
+	messageLen, err = wpc.uint64ByteSliceConverter.ToUint64(padUint32ByteSlice(payload[:uint32NumBytes]))
 	if err != nil {
 		return nil, fmt.Errorf("%w while extracting the message length", err)
 	}
@@ -91,12 +93,49 @@ func (wpp *websocketPayloadParser) ExtractPayloadData(payload []byte) (*data.Pay
 	return payloadData, nil
 }
 
+// ExtendPayloadWithCounter will put in the provided payload the provided counter if needed
+func (wpc *webSocketsPayloadConverter) ExtendPayloadWithCounter(payload []byte, counter uint64, withAcknowledge bool) []byte {
+	ackData := prefixWithoutAck
+	if withAcknowledge {
+		ackData = prefixWithAck
+	}
+
+	newPayload := append(ackData, wpc.EncodeUint64(counter)...)
+	newPayload = append(newPayload, payload...)
+	return newPayload
+}
+
+// ExtendPayloadWithOperationType will extend the provided payload with the provided operation type
+func (wpc *webSocketsPayloadConverter) ExtendPayloadWithOperationType(payload []byte, operation data.OperationType) []byte {
+	opBytes := wpc.EncodeUint64(uint64(operation.Uint32()))
+	opBytes = opBytes[uint32NumBytes:]
+
+	messageLength := uint64(len(payload))
+	messageLengthBytes := wpc.uint64ByteSliceConverter.ToByteSlice(messageLength)
+	messageLengthBytes = messageLengthBytes[uint32NumBytes:]
+
+	newPayload := append(opBytes, messageLengthBytes...)
+	newPayload = append(newPayload, payload...)
+
+	return newPayload
+}
+
+// EncodeUint64 will encode the provided counter in a byte array
+func (wpc *webSocketsPayloadConverter) EncodeUint64(counter uint64) []byte {
+	return wpc.uint64ByteSliceConverter.ToByteSlice(counter)
+}
+
+// DecodeCounter will decode the provided payload in a uint64 value
+func (wpc *webSocketsPayloadConverter) DecodeCounter(payload []byte) (uint64, error) {
+	return wpc.uint64ByteSliceConverter.ToUint64(payload)
+}
+
 func padUint32ByteSlice(initial []byte) []byte {
 	padding := bytes.Repeat([]byte{0}, 4)
 	return append(padding, initial...)
 }
 
 // IsInterfaceNil -
-func (wpp *websocketPayloadParser) IsInterfaceNil() bool {
-	return wpp == nil
+func (wpc *webSocketsPayloadConverter) IsInterfaceNil() bool {
+	return wpc == nil
 }
