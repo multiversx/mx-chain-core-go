@@ -36,6 +36,7 @@ type server struct {
 	httpServer               webSockets.HttpServerHandler
 	sender                   Sender
 	receivers                ReceiversHolder
+	payloadHandler           webSockets.PayloadHandler
 }
 
 //NewWebSocketsServer will create a new instance of server
@@ -61,6 +62,7 @@ func NewWebSocketsServer(args ArgsWebSocketsServer) (*server, error) {
 		log:                      args.Log,
 		retryDuration:            time.Duration(args.RetryDurationInSeconds) * time.Second,
 		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
+		payloadHandler:           webSockets.NewNilPayloadHandler(),
 	}
 	wsServer.connectionHandler = wsServer.defaultConnectionHandler
 
@@ -146,7 +148,12 @@ func (s *server) Start() {
 
 // SetPayloadHandler will set the provided payload handler
 func (s *server) SetPayloadHandler(handler webSockets.PayloadHandler) error {
-	// TODO refactor this part
+	s.payloadHandler = handler
+	return nil
+}
+
+// Listen will switch the server in listen mode and the server will start to listen from messages from the new connections
+func (s *server) Listen() {
 	s.connectionHandler = func(connection webSockets.WSConClient) {
 		webSocketsReceiver, err := receiver.NewReceiver(receiver.ArgsReceiver{
 			Uint64ByteSliceConverter: s.uint64ByteSliceConverter,
@@ -157,7 +164,7 @@ func (s *server) SetPayloadHandler(handler webSockets.PayloadHandler) error {
 		if err != nil {
 			s.log.Warn("s.connectionHandler cannot create receiver", "error", err)
 		}
-		err = webSocketsReceiver.SetPayloadHandler(handler)
+		err = webSocketsReceiver.SetPayloadHandler(s.payloadHandler)
 		if err != nil {
 			s.log.Warn("s.SetPayloadHandler cannot set payload handler", "error", err)
 		}
@@ -170,12 +177,6 @@ func (s *server) SetPayloadHandler(handler webSockets.PayloadHandler) error {
 			s.receivers.RemoveReceiver(connection.GetID())
 		}()
 	}
-
-	return nil
-}
-
-// Listen will start the server
-func (s *server) Listen() {
 
 }
 
