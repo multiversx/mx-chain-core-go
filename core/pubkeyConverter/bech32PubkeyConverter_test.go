@@ -84,7 +84,7 @@ func TestBech32PubkeyConverter_SilentEncodeShouldWork(t *testing.T) {
 	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, core.DefaultAddressPrefix)
 
 	buff := []byte("12345678901234567890123456789012")
-	str := bpc.SilentEncode(buff, &mock.LoggerMock{})
+	str := bpc.SilentEncode(buff, &mock.LoggerStub{})
 
 	assert.Equal(t, 0, strings.Index(str, pubkeyConverter.Prefix))
 }
@@ -96,7 +96,7 @@ func TestBech32PubkeyConverter_SilentEncodeShouldNotWork(t *testing.T) {
 	bpc, _ := pubkeyConverter.NewBech32PubkeyConverter(addressLen, core.DefaultAddressPrefix)
 
 	buff := []byte("1234")
-	str := bpc.SilentEncode(buff, &mock.LoggerMock{})
+	str := bpc.SilentEncode(buff, &mock.LoggerStub{})
 
 	assert.Equal(t, "", str)
 }

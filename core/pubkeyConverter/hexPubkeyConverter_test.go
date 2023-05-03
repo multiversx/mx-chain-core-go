@@ -81,7 +81,7 @@ func TestHexPubkeyConverter_SilentEncodeShouldWork(t *testing.T) {
 	addressLen := 4
 	hpc, _ := pubkeyConverter.NewHexPubkeyConverter(addressLen)
 
-	str := hpc.SilentEncode([]byte{170, 255}, &mock.LoggerMock{})
+	str := hpc.SilentEncode([]byte{170, 255}, &mock.LoggerStub{})
 	assert.Equal(t, "aaff", str)
 }
 
