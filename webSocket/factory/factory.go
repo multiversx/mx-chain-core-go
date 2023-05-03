@@ -78,9 +78,5 @@ func createWebSocketServer(args ArgsWebSocketDriverFactory) (webSocket.HostWebSo
 		return nil, err
 	}
 
-	go func() {
-		host.Listen()
-	}()
-
 	return host, nil
 }

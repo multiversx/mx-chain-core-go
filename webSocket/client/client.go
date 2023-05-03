@@ -12,8 +12,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/webSocket"
 	"github.com/multiversx/mx-chain-core-go/webSocket/connection"
 	"github.com/multiversx/mx-chain-core-go/webSocket/data"
-	"github.com/multiversx/mx-chain-core-go/webSocket/receiver"
-	"github.com/multiversx/mx-chain-core-go/webSocket/sender"
+	"github.com/multiversx/mx-chain-core-go/webSocket/transceiver"
 )
 
 // ArgsWebSocketClient holds the arguments needed for creating a client
@@ -32,8 +31,7 @@ type client struct {
 	safeCloser    core.SafeCloser
 	log           core.Logger
 	wsConn        webSocket.WSConClient
-	sender        Sender
-	receiver      Receiver
+	transceiver   Receiver
 }
 
 // NewWebSocketClient will create a new instance of WebSocket client
@@ -43,30 +41,13 @@ func NewWebSocketClient(args ArgsWebSocketClient) (*client, error) {
 		return nil, err
 	}
 
-	argsSender := sender.ArgsSender{
-		WithAcknowledge:        args.WithAcknowledge,
-		RetryDurationInSeconds: args.RetryDurationInSeconds,
-		PayloadConverter:       args.PayloadConverter,
-		Log:                    args.Log,
-	}
-	webSocketSender, err := sender.NewSender(argsSender)
-	if err != nil {
-		return nil, err
-	}
-
-	argsReceiver := receiver.ArgsReceiver{
+	argsTransceiver := transceiver.ArgsTransceiver{
 		PayloadConverter:   args.PayloadConverter,
 		Log:                args.Log,
 		RetryDurationInSec: args.RetryDurationInSeconds,
 		BlockingAckOnError: args.BlockingAckOnError,
 	}
-	webSocketReceiver, err := receiver.NewReceiver(argsReceiver)
-	if err != nil {
-		return nil, err
-	}
-
-	conn := connection.NewWSConnClient()
-	err = webSocketSender.AddConnection(conn)
+	wsTransceiver, err := transceiver.NewReceiver(argsTransceiver)
 	if err != nil {
 		return nil, err
 	}
@@ -74,11 +55,10 @@ func NewWebSocketClient(args ArgsWebSocketClient) (*client, error) {
 	wsUrl := url.URL{Scheme: "ws", Host: args.URL, Path: data.WSRoute}
 	return &client{
 		url:           wsUrl.String(),
-		sender:        webSocketSender,
-		wsConn:        conn,
+		wsConn:        connection.NewWSConnClient(),
 		retryDuration: time.Duration(args.RetryDurationInSeconds) * time.Second,
 		safeCloser:    closing.NewSafeChanCloser(),
-		receiver:      webSocketReceiver,
+		transceiver:   wsTransceiver,
 		log:           args.Log,
 	}, nil
 }
@@ -99,7 +79,7 @@ func checkArgs(args ArgsWebSocketClient) error {
 	return nil
 }
 
-// Start will start the WebSocket client (will initialize a connection with the ws server)
+// Start will start the WebSocket client (will initialize a connection with the ws server) and listen for messages
 func (c *client) Start() {
 	go func() {
 		timer := time.NewTimer(c.retryDuration)
@@ -120,29 +100,28 @@ func (c *client) Start() {
 			}
 		}
 	}()
+
+	go func() {
+		for {
+			_ = c.transceiver.Listen(c.wsConn)
+
+			select {
+			default:
+			case <-c.safeCloser.ChanClose():
+				return
+			}
+		}
+	}()
 }
 
 // Send will send the provided payload from args
 func (c *client) Send(args data.WsSendArgs) error {
-	return c.sender.Send(args)
+	return c.transceiver.Send(args, c.wsConn)
 }
 
 // SetPayloadHandler set the payload handler
 func (c *client) SetPayloadHandler(handler webSocket.PayloadHandler) error {
-	return c.receiver.SetPayloadHandler(handler)
-}
-
-// Listen will listen from messages
-func (c *client) Listen() {
-	for {
-		_ = c.receiver.Listen(c.wsConn)
-
-		select {
-		default:
-		case <-c.safeCloser.ChanClose():
-			return
-		}
-	}
+	return c.transceiver.SetPayloadHandler(handler)
 }
 
 // Close will close the component
@@ -150,17 +129,9 @@ func (c *client) Close() error {
 	defer c.safeCloser.Close()
 
 	c.log.Info("closing all components...")
-	if c.sender != nil {
-		err := c.sender.Close()
-		if err != nil {
-			c.log.Warn("client.Close() sender", "error", err)
-		}
-	}
-	if c.receiver != nil {
-		err := c.receiver.Close()
-		if err != nil {
-			c.log.Warn("client.Close() receiver", "error", err)
-		}
+	err := c.transceiver.Close()
+	if err != nil {
+		c.log.Warn("client.Close() sender", "error", err)
 	}
 
 	return nil

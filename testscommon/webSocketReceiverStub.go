@@ -2,10 +2,16 @@ package testscommon
 
 import (
 	"github.com/multiversx/mx-chain-core-go/webSocket"
+	"github.com/multiversx/mx-chain-core-go/webSocket/data"
 )
 
 // WebSocketReceiverStub -
 type WebSocketReceiverStub struct {
+}
+
+// Send -
+func (w WebSocketReceiverStub) Send(_ data.WsSendArgs, _ webSocket.WSConClient) error {
+	return nil
 }
 
 // Close -

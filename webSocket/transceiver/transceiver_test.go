@@ -1,4 +1,4 @@
-package receiver
+package transceiver
 
 import (
 	"errors"
@@ -17,12 +17,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-func createArgs() ArgsReceiver {
+func createArgs() ArgsTransceiver {
 	payloadConverter, _ := webSocket.NewWebSocketPayloadConverter(uint64ByteSlice.NewBigEndianConverter())
-	return ArgsReceiver{
+	return ArgsTransceiver{
 		BlockingAckOnError: false,
 		PayloadConverter:   payloadConverter,
-		Log:                &mock.LoggerStub{},
+		Log:                &mock.LoggerMock{},
 		RetryDurationInSec: 1,
 	}
 }

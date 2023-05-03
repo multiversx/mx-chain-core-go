@@ -22,7 +22,7 @@ func createArgs() ArgsWebSocketServer {
 		WithAcknowledge:        false,
 		URL:                    "url",
 		PayloadConverter:       payloadConverter,
-		Log:                    &mock.LoggerStub{},
+		Log:                    &mock.LoggerMock{},
 	}
 }
 

@@ -23,7 +23,7 @@ func createArgs() ArgsWebSocketClient {
 		WithAcknowledge:        false,
 		URL:                    "url",
 		PayloadConverter:       payloadConverter,
-		Log:                    &mock.LoggerStub{},
+		Log:                    &mock.LoggerMock{},
 	}
 }
 
@@ -74,7 +74,6 @@ func TestClient_SendAndClose(t *testing.T) {
 		},
 	}
 	ws.wsConn = mockConn
-	_ = ws.sender.AddConnection(mockConn)
 
 	count := uint64(0)
 
@@ -85,7 +84,7 @@ func TestClient_SendAndClose(t *testing.T) {
 		err = ws.Send(data.WsSendArgs{
 			Payload: []byte("send"),
 		})
-		require.Equal(t, "data wasn't sent to any client. last known error: use of closed network connection", err.Error())
+		require.Equal(t, "use of closed network connection", err.Error())
 		atomic.AddUint64(&count, 1)
 	}()
 
@@ -106,7 +105,6 @@ func TestClient_Send(t *testing.T) {
 	}
 
 	ws.wsConn = mockConn
-	_ = ws.sender.AddConnection(mockConn)
 
 	count := uint64(0)
 	wg := &sync.WaitGroup{}
@@ -115,7 +113,7 @@ func TestClient_Send(t *testing.T) {
 	go func() {
 		defer wg.Done()
 		err = ws.Send(data.WsSendArgs{Payload: []byte("test")})
-		require.Equal(t, "data wasn't sent to any client. last known error: local error", err.Error())
+		require.Equal(t, "local error", err.Error())
 		atomic.AddUint64(&count, 1)
 	}()
 
