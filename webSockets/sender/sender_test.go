@@ -9,15 +9,17 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core/mock"
 	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
 	"github.com/multiversx/mx-chain-core-go/testscommon"
+	"github.com/multiversx/mx-chain-core-go/webSockets"
 	"github.com/multiversx/mx-chain-core-go/webSockets/data"
 	"github.com/stretchr/testify/require"
 )
 
 func createArgs() ArgsSender {
+	payloadConverter, _ := webSockets.NewWebSocketPayloadConverter(uint64ByteSlice.NewBigEndianConverter())
 	return ArgsSender{
-		Uint64ByteSliceConverter: uint64ByteSlice.NewBigEndianConverter(),
-		Log:                      &mock.LoggerMock{},
-		RetryDurationInSeconds:   1,
+		PayloadConverter:       payloadConverter,
+		Log:                    &mock.LoggerMock{},
+		RetryDurationInSeconds: 1,
 	}
 }
 
@@ -39,12 +41,12 @@ func TestNewSender(t *testing.T) {
 		require.Equal(t, err, core.ErrNilLogger)
 	})
 
-	t.Run("nil uint64 byte slice converter, should return error", func(t *testing.T) {
+	t.Run("nil payload converter should return error", func(t *testing.T) {
 		args := createArgs()
-		args.Uint64ByteSliceConverter = nil
+		args.PayloadConverter = nil
 		ws, err := NewSender(args)
 		require.Nil(t, ws)
-		require.Equal(t, err, data.ErrNilUint64ByteSliceConverter)
+		require.Equal(t, err, data.ErrNilPayloadConverter)
 	})
 
 	t.Run("zero retry duration in seconds, should return error", func(t *testing.T) {
@@ -74,7 +76,7 @@ func TestSender_AddConnectionSendAndClose(t *testing.T) {
 		},
 		ReadMessageCalled: func() (messageType int, payload []byte, err error) {
 			if readAck {
-				counterBytes := args.Uint64ByteSliceConverter.ToByteSlice(1)
+				counterBytes := args.PayloadConverter.EncodeUint64(1)
 				return websocket.BinaryMessage, counterBytes, nil
 			}
 
@@ -91,7 +93,9 @@ func TestSender_AddConnectionSendAndClose(t *testing.T) {
 	err := webSocketsSender.AddConnection(conn1)
 	require.Nil(t, err)
 
-	err = webSocketsSender.Send([]byte("something"))
+	err = webSocketsSender.Send(data.WsSendArgs{
+		Payload: []byte("something"),
+	})
 	require.Nil(t, err)
 	require.True(t, write)
 	require.True(t, readAck)
@@ -126,7 +130,9 @@ func TestSender_AddConnectionSendAndWaitForAckClose(t *testing.T) {
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 	go func() {
-		err = webSocketsSender.Send([]byte("something"))
+		err = webSocketsSender.Send(data.WsSendArgs{
+			Payload: []byte("something"),
+		})
 		require.Nil(t, err)
 		called = true
 		wg.Done()

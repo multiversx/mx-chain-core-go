@@ -6,6 +6,11 @@ type PayloadHandlerStub struct {
 	CloseCalled          func() error
 }
 
+// IsInterfaceNil -
+func (ph *PayloadHandlerStub) IsInterfaceNil() bool {
+	return ph == nil
+}
+
 // ProcessPayload -
 func (ph *PayloadHandlerStub) ProcessPayload(payload []byte) error {
 	if ph.ProcessPayloadCalled != nil {

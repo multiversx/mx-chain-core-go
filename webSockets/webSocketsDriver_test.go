@@ -7,7 +7,6 @@ import (
 	coreMock "github.com/multiversx/mx-chain-core-go/core/mock"
 	"github.com/multiversx/mx-chain-core-go/data/block"
 	"github.com/multiversx/mx-chain-core-go/data/outport"
-	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
 	"github.com/multiversx/mx-chain-core-go/marshal"
 	"github.com/multiversx/mx-chain-core-go/webSockets/data"
 	"github.com/multiversx/mx-chain-core-go/webSockets/mock"
@@ -18,10 +17,9 @@ var cannotSendOnRouteErr = errors.New("cannot send on route")
 
 func getMockArgs() ArgsWebSocketsDriver {
 	return ArgsWebSocketsDriver{
-		Marshaller:               &marshal.JsonMarshalizer{},
-		WebsocketSender:          &mock.WebSocketSenderStub{},
-		Log:                      &coreMock.LoggerMock{},
-		Uint64ByteSliceConverter: uint64ByteSlice.NewBigEndianConverter(),
+		Marshaller:      &marshal.JsonMarshalizer{},
+		WebsocketSender: &mock.WebSocketSenderStub{},
+		Log:             &coreMock.LoggerMock{},
 	}
 }
 
@@ -37,28 +35,6 @@ func TestNewWebsocketOutportDriverNodePart(t *testing.T) {
 		o, err := NewWebsocketsDriver(args)
 		require.Nil(t, o)
 		require.Equal(t, data.ErrNilMarshaller, err)
-	})
-
-	t.Run("nil uint64 byte slice converter", func(t *testing.T) {
-		t.Parallel()
-
-		args := getMockArgs()
-		args.Uint64ByteSliceConverter = nil
-
-		o, err := NewWebsocketsDriver(args)
-		require.Nil(t, o)
-		require.Equal(t, data.ErrNilUint64ByteSliceConverter, err)
-	})
-
-	t.Run("nil uint64 byte slice converter", func(t *testing.T) {
-		t.Parallel()
-
-		args := getMockArgs()
-		args.Uint64ByteSliceConverter = nil
-
-		o, err := NewWebsocketsDriver(args)
-		require.Nil(t, o)
-		require.Equal(t, data.ErrNilUint64ByteSliceConverter, err)
 	})
 
 	t.Run("nil logger", func(t *testing.T) {
@@ -322,16 +298,7 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 
 	mockArgs.WebsocketSender = &mock.WebSocketSenderStub{
 		SendOnRouteCalled: func(args data.WsSendArgs) error {
-			expectedOpBytes := []byte{0, 0, 0, 0}
-
-			messageLength := uint64(len(marshaledData))
-			messageLengthBytes := mockArgs.Uint64ByteSliceConverter.ToByteSlice(messageLength)
-			expectedLengthBytes := messageLengthBytes[uint32NumBytes:]
-
-			expectedPayload := append(expectedOpBytes, expectedLengthBytes...)
-			expectedPayload = append(expectedPayload, marshaledData...)
-
-			require.Equal(t, expectedPayload, args.Payload)
+			require.Equal(t, marshaledData, args.Payload)
 
 			return nil
 		},

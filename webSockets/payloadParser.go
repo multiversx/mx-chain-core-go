@@ -25,8 +25,8 @@ type webSocketsPayloadConverter struct {
 	uint64ByteSliceConverter Uint64ByteSliceConverter
 }
 
-// NewWebSocketPayloadParser returns a new instance of websocketPayloadParser
-func NewWebSocketPayloadParser(uint64ByteSliceConverter Uint64ByteSliceConverter) (*webSocketsPayloadConverter, error) {
+// NewWebSocketPayloadConverter returns a new instance of websocketPayloadParser
+func NewWebSocketPayloadConverter(uint64ByteSliceConverter Uint64ByteSliceConverter) (*webSocketsPayloadConverter, error) {
 	if check.IfNil(uint64ByteSliceConverter) {
 		return nil, data.ErrNilUint64ByteSliceConverter
 	}
@@ -93,31 +93,26 @@ func (wpc *webSocketsPayloadConverter) ExtractPayloadData(payload []byte) (*data
 	return payloadData, nil
 }
 
-// ExtendPayloadWithCounter will put in the provided payload the provided counter if needed
-func (wpc *webSocketsPayloadConverter) ExtendPayloadWithCounter(payload []byte, counter uint64, withAcknowledge bool) []byte {
+// ConstructPayloadData will construct the payload data
+func (wpc *webSocketsPayloadConverter) ConstructPayloadData(args data.WsSendArgs, counter uint64, withAcknowledge bool) []byte {
+	opBytes := wpc.EncodeUint64(uint64(args.OpType.Uint32()))
+	opBytes = opBytes[uint32NumBytes:]
+
+	messageLength := uint64(len(args.Payload))
+	messageLengthBytes := wpc.uint64ByteSliceConverter.ToByteSlice(messageLength)
+	messageLengthBytes = messageLengthBytes[uint32NumBytes:]
+
+	newPayload := append(opBytes, messageLengthBytes...)
+	newPayload = append(newPayload, args.Payload...)
+
 	ackData := prefixWithoutAck
 	if withAcknowledge {
 		ackData = prefixWithAck
 	}
 
-	newPayload := append(ackData, wpc.EncodeUint64(counter)...)
-	newPayload = append(newPayload, payload...)
-	return newPayload
-}
-
-// ExtendPayloadWithOperationType will extend the provided payload with the provided operation type
-func (wpc *webSocketsPayloadConverter) ExtendPayloadWithOperationType(payload []byte, operation data.OperationType) []byte {
-	opBytes := wpc.EncodeUint64(uint64(operation.Uint32()))
-	opBytes = opBytes[uint32NumBytes:]
-
-	messageLength := uint64(len(payload))
-	messageLengthBytes := wpc.uint64ByteSliceConverter.ToByteSlice(messageLength)
-	messageLengthBytes = messageLengthBytes[uint32NumBytes:]
-
-	newPayload := append(opBytes, messageLengthBytes...)
-	newPayload = append(newPayload, payload...)
-
-	return newPayload
+	payloadWithCounter := append(ackData, wpc.EncodeUint64(counter)...)
+	payloadWithCounter = append(payloadWithCounter, newPayload...)
+	return payloadWithCounter
 }
 
 // EncodeUint64 will encode the provided counter in a byte array

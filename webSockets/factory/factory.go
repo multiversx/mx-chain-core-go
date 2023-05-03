@@ -36,33 +36,43 @@ func NewWebSocketsDriver(args ArgsWebSocketsDriverFactory) (webSockets.Driver, e
 
 	return webSockets.NewWebsocketsDriver(
 		webSockets.ArgsWebSocketsDriver{
-			Marshaller:               args.Marshaller,
-			WebsocketSender:          host,
-			Uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
-			Log:                      args.Log,
+			Marshaller:      args.Marshaller,
+			WebsocketSender: host,
+			Log:             args.Log,
 		},
 	)
 }
 
+// TODO merge the ArgsWebSocketsClient and ArgsWebSocketsServer as they look the same and remove the duplicated arguments build
 func createWebSocketsClient(args ArgsWebSocketsDriverFactory) (webSockets.HostWebSockets, error) {
+	payloadConverter, err := webSockets.NewWebSocketPayloadConverter(args.Uint64ByteSliceConverter)
+	if err != nil {
+		return nil, err
+	}
+
 	return client.NewWebSocketsClient(client.ArgsWebSocketsClient{
-		RetryDurationInSeconds:   args.WebSocketConfig.RetryDurationInSec,
-		WithAcknowledge:          args.WithAcknowledge,
-		URL:                      args.WebSocketConfig.URL,
-		Uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
-		Log:                      args.Log,
-		BlockingAckOnError:       false,
+		RetryDurationInSeconds: args.WebSocketConfig.RetryDurationInSec,
+		WithAcknowledge:        args.WithAcknowledge,
+		URL:                    args.WebSocketConfig.URL,
+		PayloadConverter:       payloadConverter,
+		Log:                    args.Log,
+		BlockingAckOnError:     false,
 	})
 }
 
 func createWebSocketsServer(args ArgsWebSocketsDriverFactory) (webSockets.HostWebSockets, error) {
+	payloadConverter, err := webSockets.NewWebSocketPayloadConverter(args.Uint64ByteSliceConverter)
+	if err != nil {
+		return nil, err
+	}
+
 	host, err := server.NewWebSocketsServer(server.ArgsWebSocketsServer{
-		RetryDurationInSeconds:   args.WebSocketConfig.RetryDurationInSec,
-		WithAcknowledge:          args.WithAcknowledge,
-		URL:                      args.WebSocketConfig.URL,
-		Uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
-		Log:                      args.Log,
-		BlockingAckOnError:       false,
+		RetryDurationInSeconds: args.WebSocketConfig.RetryDurationInSec,
+		WithAcknowledge:        args.WithAcknowledge,
+		URL:                    args.WebSocketConfig.URL,
+		PayloadConverter:       payloadConverter,
+		Log:                    args.Log,
+		BlockingAckOnError:     false,
 	})
 	if err != nil {
 		return nil, err

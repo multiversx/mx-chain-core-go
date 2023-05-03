@@ -15,14 +15,14 @@ import (
 
 // ArgsReceiver holds the arguments that are needed for a receiver
 type ArgsReceiver struct {
-	Uint64ByteSliceConverter webSockets.Uint64ByteSliceConverter
-	Log                      core.Logger
-	RetryDurationInSec       int
-	BlockingAckOnError       bool
+	PayloadConverter   webSockets.PayloadConverter
+	Log                core.Logger
+	RetryDurationInSec int
+	BlockingAckOnError bool
 }
 
 type receiver struct {
-	payloadParser      webSockets.PayloadParser
+	payloadParser      webSockets.PayloadConverter
 	payloadHandler     webSockets.PayloadHandler
 	log                core.Logger
 	safeCloser         core.SafeCloser
@@ -38,18 +38,13 @@ func NewReceiver(args ArgsReceiver) (*receiver, error) {
 		return nil, err
 	}
 
-	payloadParser, err := webSockets.NewWebSocketPayloadParser(args.Uint64ByteSliceConverter)
-	if err != nil {
-		return nil, err
-	}
-
 	return &receiver{
 		log:                args.Log,
 		retryDuration:      time.Duration(args.RetryDurationInSec) * time.Second,
 		blockingAckOnError: args.BlockingAckOnError,
 		safeCloser:         closing.NewSafeChanCloser(),
 		payloadHandler:     webSockets.NewNilPayloadHandler(),
-		payloadParser:      payloadParser,
+		payloadParser:      args.PayloadConverter,
 	}, nil
 }
 
@@ -57,8 +52,8 @@ func checkArgs(args ArgsReceiver) error {
 	if check.IfNil(args.Log) {
 		return core.ErrNilLogger
 	}
-	if check.IfNil(args.Uint64ByteSliceConverter) {
-		return data.ErrNilUint64ByteSliceConverter
+	if check.IfNil(args.PayloadConverter) {
+		return data.ErrNilPayloadConverter
 	}
 	if args.RetryDurationInSec == 0 {
 		return data.ErrZeroValueRetryDuration
@@ -68,7 +63,7 @@ func checkArgs(args ArgsReceiver) error {
 
 // SetPayloadHandler will set the payload handler
 func (r *receiver) SetPayloadHandler(handler webSockets.PayloadHandler) error {
-	if check.IfNilReflect(handler) {
+	if check.IfNil(handler) {
 		return data.ErrNilPayloadProcessor
 	}
 
