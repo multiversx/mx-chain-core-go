@@ -4,9 +4,11 @@ import (
 	"strings"
 	"sync"
 	"testing"
+	"time"
 
 	"github.com/multiversx/mx-chain-core-go/core/mock"
 	"github.com/multiversx/mx-chain-core-go/testscommon"
+	"github.com/multiversx/mx-chain-core-go/webSockets"
 	"github.com/multiversx/mx-chain-core-go/webSockets/data"
 	"github.com/stretchr/testify/require"
 )
@@ -16,20 +18,24 @@ func TestStartServerAdd2ClientsAndSendData(t *testing.T) {
 	wsServer, err := createServer(url, &mock.LoggerMock{})
 	require.Nil(t, err)
 
+	payloadConverter, _ := webSockets.NewWebSocketPayloadParser(uint64Converter)
+
 	wg := &sync.WaitGroup{}
 
-	wg.Add(3)
+	wg.Add(4)
 
-	wsServer.RegisterPayloadHandler(&testscommon.PayloadHandlerStub{
-		HandlePayloadCalled: func(payload []byte) (*data.PayloadData, error) {
-			payloadData := extractPayload(payload)
-			require.Equal(t, uint64(1), payloadData.Counter)
-			require.True(t, payloadData.WithAcknowledge)
-
+	_ = wsServer.SetPayloadHandler(&testscommon.PayloadHandlerStub{
+		ProcessPayloadCalled: func(payload []byte) error {
+			require.Equal(t, []byte("test"), payload)
 			wg.Done()
-			return payloadData, nil
+			return nil
 		},
 	})
+
+	go func() {
+		wsServer.Start()
+		wg.Done()
+	}()
 
 	go func() {
 		wsServer.Listen()
@@ -39,16 +45,25 @@ func TestStartServerAdd2ClientsAndSendData(t *testing.T) {
 	wsClient1, err := createClient(url)
 	require.Nil(t, err)
 
+	wsClient1.Start()
+	time.Sleep(time.Second)
+
+	payload := []byte("test")
+	newPayload := payloadConverter.ExtendPayloadWithOperationType(payload, data.OperationSaveBlock)
+
 	err = wsClient1.Send(data.WsSendArgs{
-		Payload: []byte(""),
+		Payload: newPayload,
 	})
 	require.Nil(t, err)
 
 	wsClient2, err := createClient(url)
 	require.Nil(t, err)
 
+	wsClient2.Start()
+	time.Sleep(time.Second)
+
 	err = wsClient2.Send(data.WsSendArgs{
-		Payload: []byte(""),
+		Payload: newPayload,
 	})
 	require.Nil(t, err)
 
@@ -61,8 +76,9 @@ func TestStartServerAdd2ClientsAndSendData(t *testing.T) {
 func TestStartServerAddClientAndCloseClientAndServerShouldReceiveClose(t *testing.T) {
 	url := "localhost:8833"
 
+	payloadConverter, _ := webSockets.NewWebSocketPayloadParser(uint64Converter)
 	wg1, wg2 := &sync.WaitGroup{}, &sync.WaitGroup{}
-	wg1.Add(2)
+	wg1.Add(3)
 	wg2.Add(1)
 	serverReceivedCloseMessage := false
 	log := &mock.LoggerMock{
@@ -77,17 +93,18 @@ func TestStartServerAddClientAndCloseClientAndServerShouldReceiveClose(t *testin
 	wsServer, err := createServer(url, log)
 	require.Nil(t, err)
 
-	wsServer.RegisterPayloadHandler(&testscommon.PayloadHandlerStub{
-		HandlePayloadCalled: func(payload []byte) (*data.PayloadData, error) {
-			payloadData := extractPayload(payload)
-			require.Equal(t, uint64(1), payloadData.Counter)
-			require.True(t, payloadData.WithAcknowledge)
-
+	_ = wsServer.SetPayloadHandler(&testscommon.PayloadHandlerStub{
+		ProcessPayloadCalled: func(payload []byte) error {
+			require.Equal(t, []byte("text"), payload)
 			wg1.Done()
-			return payloadData, nil
+			return nil
 		},
 	})
 
+	go func() {
+		wsServer.Start()
+		wg1.Done()
+	}()
 	go func() {
 		wsServer.Listen()
 		wg1.Done()
@@ -95,8 +112,12 @@ func TestStartServerAddClientAndCloseClientAndServerShouldReceiveClose(t *testin
 
 	wsClient1, err := createClient(url)
 	require.Nil(t, err)
+	wsClient1.Start()
+	time.Sleep(time.Second)
+
+	payload := payloadConverter.ExtendPayloadWithOperationType([]byte("text"), data.OperationSaveBlock)
 	err = wsClient1.Send(data.WsSendArgs{
-		Payload: []byte(""),
+		Payload: payload,
 	})
 	err = wsClient1.Close()
 	require.Nil(t, err)
