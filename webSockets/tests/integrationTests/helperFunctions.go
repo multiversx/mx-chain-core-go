@@ -12,25 +12,27 @@ import (
 const retryDurationInSeconds = 1
 
 var (
-	uint64Converter = uint64ByteSlice.NewBigEndianConverter()
+	uint64Converter     = uint64ByteSlice.NewBigEndianConverter()
+	payloadConverter, _ = webSockets.NewWebSocketPayloadConverter(uint64Converter)
 )
 
 func createClient(url string) (webSockets.HostWebSockets, error) {
+
 	return client.NewWebSocketsClient(client.ArgsWebSocketsClient{
-		RetryDurationInSeconds:   retryDurationInSeconds,
-		WithAcknowledge:          true,
-		URL:                      url,
-		Uint64ByteSliceConverter: uint64Converter,
-		Log:                      &mock.LoggerMock{},
+		RetryDurationInSeconds: retryDurationInSeconds,
+		WithAcknowledge:        true,
+		URL:                    url,
+		PayloadConverter:       payloadConverter,
+		Log:                    &mock.LoggerMock{},
 	})
 }
 
 func createServer(url string, log core.Logger) (webSockets.HostWebSockets, error) {
 	return server.NewWebSocketsServer(server.ArgsWebSocketsServer{
-		RetryDurationInSeconds:   retryDurationInSeconds,
-		WithAcknowledge:          true,
-		URL:                      url,
-		Uint64ByteSliceConverter: uint64Converter,
-		Log:                      log,
+		RetryDurationInSeconds: retryDurationInSeconds,
+		WithAcknowledge:        true,
+		URL:                    url,
+		PayloadConverter:       payloadConverter,
+		Log:                    log,
 	})
 }
