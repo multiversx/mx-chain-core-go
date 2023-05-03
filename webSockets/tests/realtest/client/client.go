@@ -115,7 +115,7 @@ func (tc *tempClient) verifyPayloadAndSendAckIfNeeded(payload []byte, ackHandler
 		return
 	}
 
-	payloadParser, _ := webSockets.NewWebSocketPayloadParser(uint64ByteSliceConverter)
+	payloadParser, _ := webSockets.NewWebSocketPayloadConverter(uint64ByteSliceConverter)
 	payloadData, err := payloadParser.ExtractPayloadData(payload)
 	if err != nil {
 		log.Error(tc.name + " -> error while extracting payload data: " + err.Error())

@@ -16,17 +16,17 @@ import (
 
 // ArgsSender holds the arguments needed for creating a web-sockets sender
 type ArgsSender struct {
-	WithAcknowledge          bool
-	RetryDurationInSeconds   int
-	Uint64ByteSliceConverter webSockets.Uint64ByteSliceConverter
-	Log                      core.Logger
+	WithAcknowledge        bool
+	RetryDurationInSeconds int
+	PayloadConverter       webSockets.PayloadConverter
+	Log                    core.Logger
 }
 
 type sender struct {
 	counter         uint64
 	withAcknowledge bool
 	connections     ConnectionsHandler
-	payloadParser   webSockets.PayloadParser
+	payloadParser   webSockets.PayloadConverter
 	log             core.Logger
 	safeCloser      core.SafeCloser
 	retryDuration   time.Duration
@@ -37,29 +37,27 @@ func NewSender(args ArgsSender) (*sender, error) {
 	if err != nil {
 		return nil, err
 	}
-	payloadConverter, err := webSockets.NewWebSocketPayloadParser(args.Uint64ByteSliceConverter)
-	if err != nil {
-		return nil, err
-	}
 
 	return &sender{
 		counter:         0,
 		safeCloser:      closing.NewSafeChanCloser(),
 		connections:     connection.NewWebsocketClientsHolder(),
 		log:             args.Log,
-		payloadParser:   payloadConverter,
+		payloadParser:   args.PayloadConverter,
 		withAcknowledge: args.WithAcknowledge,
 		retryDuration:   time.Duration(args.RetryDurationInSeconds) * time.Second,
 	}, nil
 }
 
+// AddConnection will add in the connections map the provided connection
 func (s *sender) AddConnection(client webSockets.WSConClient) error {
 	return s.connections.AddClient(client)
 }
 
-func (s *sender) Send(payload []byte) error {
+// Send will prepare and send the provided WsSendArgs
+func (s *sender) Send(args outportData.WsSendArgs) error {
 	assignedCounter := atomic.AddUint64(&s.counter, 1)
-	newPayload := s.payloadParser.ExtendPayloadWithCounter(payload, assignedCounter, s.withAcknowledge)
+	newPayload := s.payloadParser.ConstructPayloadData(args, assignedCounter, s.withAcknowledge)
 
 	return s.send(newPayload, assignedCounter)
 }
@@ -173,8 +171,8 @@ func checkArgs(args ArgsSender) error {
 	if check.IfNil(args.Log) {
 		return core.ErrNilLogger
 	}
-	if check.IfNil(args.Uint64ByteSliceConverter) {
-		return outportData.ErrNilUint64ByteSliceConverter
+	if check.IfNil(args.PayloadConverter) {
+		return outportData.ErrNilPayloadConverter
 	}
 	if args.RetryDurationInSeconds == 0 {
 		return outportData.ErrZeroValueRetryDuration

@@ -8,11 +8,16 @@ func NewNilPayloadHandler() PayloadHandler {
 }
 
 // ProcessPayload will do nothing
-func (n nilPayloadHandler) ProcessPayload(_ []byte) error {
+func (n *nilPayloadHandler) ProcessPayload(_ []byte) error {
 	return nil
 }
 
 // Close will do nothing
-func (n nilPayloadHandler) Close() error {
+func (n *nilPayloadHandler) Close() error {
 	return nil
+}
+
+// IsInterfaceNil returns true if there is no value under the interface
+func (n *nilPayloadHandler) IsInterfaceNil() bool {
+	return n == nil
 }

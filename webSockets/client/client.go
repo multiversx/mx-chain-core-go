@@ -18,12 +18,12 @@ import (
 
 // ArgsWebSocketsClient holds the arguments needed for creating a client
 type ArgsWebSocketsClient struct {
-	RetryDurationInSeconds   int
-	WithAcknowledge          bool
-	BlockingAckOnError       bool
-	URL                      string
-	Uint64ByteSliceConverter webSockets.Uint64ByteSliceConverter
-	Log                      core.Logger
+	RetryDurationInSeconds int
+	WithAcknowledge        bool
+	BlockingAckOnError     bool
+	URL                    string
+	PayloadConverter       webSockets.PayloadConverter
+	Log                    core.Logger
 }
 
 type client struct {
@@ -44,10 +44,10 @@ func NewWebSocketsClient(args ArgsWebSocketsClient) (*client, error) {
 	}
 
 	argsSender := sender.ArgsSender{
-		WithAcknowledge:          args.WithAcknowledge,
-		RetryDurationInSeconds:   args.RetryDurationInSeconds,
-		Uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
-		Log:                      args.Log,
+		WithAcknowledge:        args.WithAcknowledge,
+		RetryDurationInSeconds: args.RetryDurationInSeconds,
+		PayloadConverter:       args.PayloadConverter,
+		Log:                    args.Log,
 	}
 	webSocketsSender, err := sender.NewSender(argsSender)
 	if err != nil {
@@ -55,10 +55,10 @@ func NewWebSocketsClient(args ArgsWebSocketsClient) (*client, error) {
 	}
 
 	argsReceiver := receiver.ArgsReceiver{
-		Uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
-		Log:                      args.Log,
-		RetryDurationInSec:       args.RetryDurationInSeconds,
-		BlockingAckOnError:       args.BlockingAckOnError,
+		PayloadConverter:   args.PayloadConverter,
+		Log:                args.Log,
+		RetryDurationInSec: args.RetryDurationInSeconds,
+		BlockingAckOnError: args.BlockingAckOnError,
 	}
 	webSocketsReceiver, err := receiver.NewReceiver(argsReceiver)
 	if err != nil {
@@ -87,8 +87,8 @@ func checkArgs(args ArgsWebSocketsClient) error {
 	if check.IfNil(args.Log) {
 		return core.ErrNilLogger
 	}
-	if check.IfNil(args.Uint64ByteSliceConverter) {
-		return data.ErrNilUint64ByteSliceConverter
+	if check.IfNil(args.PayloadConverter) {
+		return data.ErrNilPayloadConverter
 	}
 	if args.URL == "" {
 		return data.ErrEmptyUrl
@@ -124,7 +124,7 @@ func (c *client) Start() {
 
 // Send will send the provided payload from args
 func (c *client) Send(args data.WsSendArgs) error {
-	return c.sender.Send(args.Payload)
+	return c.sender.Send(args)
 }
 
 // SetPayloadHandler set the payload handler
@@ -134,16 +134,11 @@ func (c *client) SetPayloadHandler(handler webSockets.PayloadHandler) error {
 
 // Listen will listen from messages
 func (c *client) Listen() {
-	timer := time.NewTimer(c.retryDuration)
-	defer timer.Stop()
-
 	for {
 		_ = c.receiver.Listen(c.wsConn)
 
-		timer.Reset(c.retryDuration)
-
 		select {
-		case <-timer.C:
+		default:
 		case <-c.safeCloser.ChanClose():
 			return
 		}

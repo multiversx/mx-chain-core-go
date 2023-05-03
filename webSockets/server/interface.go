@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/multiversx/mx-chain-core-go/webSockets"
+	"github.com/multiversx/mx-chain-core-go/webSockets/data"
 )
 
 // ReceiversHolder defines what a receivers holder should be able to do
@@ -21,6 +22,6 @@ type Receiver interface {
 // Sender defines what a web-sockets sender should be able to do
 type Sender interface {
 	AddConnection(client webSockets.WSConClient) error
-	Send(payload []byte) error
+	Send(args data.WsSendArgs) error
 	Close() error
 }

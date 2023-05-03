@@ -44,13 +44,13 @@ type HostWebSockets interface {
 type PayloadHandler interface {
 	ProcessPayload(payload []byte) error
 	Close() error
+	IsInterfaceNil() bool
 }
 
-// PayloadParser defines what a websocket payload parser should do
-type PayloadParser interface {
+// PayloadConverter defines what a websocket payload converter should do
+type PayloadConverter interface {
 	ExtractPayloadData(payload []byte) (*outportSenderData.PayloadData, error)
-	ExtendPayloadWithCounter(payload []byte, counter uint64, withAcknowledge bool) []byte
-	ExtendPayloadWithOperationType(payload []byte, operation outportSenderData.OperationType) []byte
+	ConstructPayloadData(args outportSenderData.WsSendArgs, counter uint64, withAcknowledge bool) []byte
 	EncodeUint64(counter uint64) []byte
 	DecodeCounter(payload []byte) (uint64, error)
 	IsInterfaceNil() bool

@@ -19,24 +19,24 @@ import (
 
 // ArgsWebSocketsServer holds all the components needed to create a server
 type ArgsWebSocketsServer struct {
-	RetryDurationInSeconds   int
-	BlockingAckOnError       bool
-	WithAcknowledge          bool
-	URL                      string
-	Uint64ByteSliceConverter webSockets.Uint64ByteSliceConverter
-	Log                      core.Logger
+	RetryDurationInSeconds int
+	BlockingAckOnError     bool
+	WithAcknowledge        bool
+	URL                    string
+	PayloadConverter       webSockets.PayloadConverter
+	Log                    core.Logger
 }
 
 type server struct {
-	blockingAckOnError       bool
-	connectionHandler        func(connection webSockets.WSConClient)
-	uint64ByteSliceConverter webSockets.Uint64ByteSliceConverter
-	retryDuration            time.Duration
-	log                      core.Logger
-	httpServer               webSockets.HttpServerHandler
-	sender                   Sender
-	receivers                ReceiversHolder
-	payloadHandler           webSockets.PayloadHandler
+	blockingAckOnError bool
+	connectionHandler  func(connection webSockets.WSConClient)
+	payloadConverter   webSockets.PayloadConverter
+	retryDuration      time.Duration
+	log                core.Logger
+	httpServer         webSockets.HttpServerHandler
+	sender             Sender
+	receivers          ReceiversHolder
+	payloadHandler     webSockets.PayloadHandler
 }
 
 //NewWebSocketsServer will create a new instance of server
@@ -46,23 +46,23 @@ func NewWebSocketsServer(args ArgsWebSocketsServer) (*server, error) {
 	}
 
 	webSocketsSender, err := sender.NewSender(sender.ArgsSender{
-		WithAcknowledge:          args.WithAcknowledge,
-		RetryDurationInSeconds:   args.RetryDurationInSeconds,
-		Uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
-		Log:                      args.Log,
+		WithAcknowledge:        args.WithAcknowledge,
+		RetryDurationInSeconds: args.RetryDurationInSeconds,
+		PayloadConverter:       args.PayloadConverter,
+		Log:                    args.Log,
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	wsServer := &server{
-		sender:                   webSocketsSender,
-		receivers:                NewReceiversHolder(),
-		blockingAckOnError:       args.BlockingAckOnError,
-		log:                      args.Log,
-		retryDuration:            time.Duration(args.RetryDurationInSeconds) * time.Second,
-		uint64ByteSliceConverter: args.Uint64ByteSliceConverter,
-		payloadHandler:           webSockets.NewNilPayloadHandler(),
+		sender:             webSocketsSender,
+		receivers:          NewReceiversHolder(),
+		blockingAckOnError: args.BlockingAckOnError,
+		log:                args.Log,
+		retryDuration:      time.Duration(args.RetryDurationInSeconds) * time.Second,
+		payloadConverter:   args.PayloadConverter,
+		payloadHandler:     webSockets.NewNilPayloadHandler(),
 	}
 	wsServer.connectionHandler = wsServer.defaultConnectionHandler
 
@@ -75,8 +75,8 @@ func checkArgs(args ArgsWebSocketsServer) error {
 	if check.IfNil(args.Log) {
 		return core.ErrNilLogger
 	}
-	if check.IfNil(args.Uint64ByteSliceConverter) {
-		return data.ErrNilUint64ByteSliceConverter
+	if check.IfNil(args.PayloadConverter) {
+		return data.ErrNilPayloadConverter
 	}
 	if args.URL == "" {
 		return data.ErrEmptyUrl
@@ -131,7 +131,7 @@ func (s *server) initializeServer(wsURL string, wsPath string) {
 
 // Send will send the provided payload from args
 func (s *server) Send(args data.WsSendArgs) error {
-	return s.sender.Send(args.Payload)
+	return s.sender.Send(args)
 }
 
 // Start will start the websockets server
@@ -154,12 +154,13 @@ func (s *server) SetPayloadHandler(handler webSockets.PayloadHandler) error {
 
 // Listen will switch the server in listen mode and the server will start to listen from messages from the new connections
 func (s *server) Listen() {
+	// TODO refactor this method
 	s.connectionHandler = func(connection webSockets.WSConClient) {
 		webSocketsReceiver, err := receiver.NewReceiver(receiver.ArgsReceiver{
-			Uint64ByteSliceConverter: s.uint64ByteSliceConverter,
-			Log:                      s.log,
-			RetryDurationInSec:       int(s.retryDuration.Seconds()),
-			BlockingAckOnError:       s.blockingAckOnError,
+			PayloadConverter:   s.payloadConverter,
+			Log:                s.log,
+			RetryDurationInSec: int(s.retryDuration.Seconds()),
+			BlockingAckOnError: s.blockingAckOnError,
 		})
 		if err != nil {
 			s.log.Warn("s.connectionHandler cannot create receiver", "error", err)

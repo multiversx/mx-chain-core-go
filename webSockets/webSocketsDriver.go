@@ -13,16 +13,15 @@ import (
 
 // ArgsWebSocketsDriver holds the arguments needed for creating a new webSocketsDriver
 type ArgsWebSocketsDriver struct {
-	Marshaller               marshal.Marshalizer
-	WebsocketSender          WebSocketSenderHandler
-	Uint64ByteSliceConverter Uint64ByteSliceConverter
-	Log                      core.Logger
+	Marshaller      marshal.Marshalizer
+	WebsocketSender WebSocketSenderHandler
+	Log             core.Logger
 }
 
 type webSocketsDriver struct {
 	marshalizer      marshal.Marshalizer
 	log              core.Logger
-	payloadConverter PayloadParser
+	payloadConverter PayloadConverter
 	webSocketSender  WebSocketSenderHandler
 	isClosed         atomic.Flag
 }
@@ -35,9 +34,6 @@ func NewWebsocketsDriver(args ArgsWebSocketsDriver) (*webSocketsDriver, error) {
 	if check.IfNil(args.WebsocketSender) {
 		return nil, outportSenderData.ErrNilWebSocketSender
 	}
-	if check.IfNil(args.Uint64ByteSliceConverter) {
-		return nil, outportSenderData.ErrNilUint64ByteSliceConverter
-	}
 	if check.IfNil(args.Log) {
 		return nil, outportSenderData.ErrNilLogger
 	}
@@ -45,17 +41,11 @@ func NewWebsocketsDriver(args ArgsWebSocketsDriver) (*webSocketsDriver, error) {
 	isClosedFlag := atomic.Flag{}
 	isClosedFlag.SetValue(false)
 
-	payloadConverter, err := NewWebSocketPayloadParser(args.Uint64ByteSliceConverter)
-	if err != nil {
-		return nil, err
-	}
-
 	return &webSocketsDriver{
-		marshalizer:      args.Marshaller,
-		webSocketSender:  args.WebsocketSender,
-		payloadConverter: payloadConverter,
-		log:              args.Log,
-		isClosed:         isClosedFlag,
+		marshalizer:     args.Marshaller,
+		webSocketSender: args.WebsocketSender,
+		log:             args.Log,
+		isClosed:        isClosedFlag,
 	}, nil
 }
 
@@ -104,15 +94,15 @@ func (o *webSocketsDriver) handleAction(args interface{}, operation outportSende
 		return outportSenderData.ErrWebSocketServerIsClosed
 	}
 
-	marshaledBlock, err := o.marshalizer.Marshal(args)
+	marshalledPayload, err := o.marshalizer.Marshal(args)
 	if err != nil {
 		o.log.Error("cannot marshal block", "operation", operation.String(), "error", err)
 		return fmt.Errorf("%w while marshaling block for operation %s", err, operation.String())
 	}
 
-	payload := o.payloadConverter.ExtendPayloadWithOperationType(marshaledBlock, operation)
 	err = o.webSocketSender.Send(outportSenderData.WsSendArgs{
-		Payload: payload,
+		Payload: marshalledPayload,
+		OpType:  operation,
 	})
 	if err != nil {
 		o.log.Error("cannot send on route", "operation", operation.String(), "error", err)

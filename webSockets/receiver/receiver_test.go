@@ -18,11 +18,12 @@ import (
 )
 
 func createArgs() ArgsReceiver {
+	payloadConverter, _ := webSockets.NewWebSocketPayloadConverter(uint64ByteSlice.NewBigEndianConverter())
 	return ArgsReceiver{
-		BlockingAckOnError:       false,
-		Uint64ByteSliceConverter: uint64ByteSlice.NewBigEndianConverter(),
-		Log:                      &mock.LoggerMock{},
-		RetryDurationInSec:       1,
+		BlockingAckOnError: false,
+		PayloadConverter:   payloadConverter,
+		Log:                &mock.LoggerMock{},
+		RetryDurationInSec: 1,
 	}
 }
 
@@ -44,12 +45,12 @@ func TestNewReceiver(t *testing.T) {
 		require.Equal(t, err, core.ErrNilLogger)
 	})
 
-	t.Run("nil uint64 byte slice converter, should return error", func(t *testing.T) {
+	t.Run("nil payload converter, should return error", func(t *testing.T) {
 		args := createArgs()
-		args.Uint64ByteSliceConverter = nil
+		args.PayloadConverter = nil
 		ws, err := NewReceiver(args)
 		require.Nil(t, ws)
-		require.Equal(t, err, data.ErrNilUint64ByteSliceConverter)
+		require.Equal(t, err, data.ErrNilPayloadConverter)
 	})
 
 	t.Run("zero retry duration in seconds, should return error", func(t *testing.T) {
@@ -111,7 +112,6 @@ func TestReceiver_ListenAndSendAck(t *testing.T) {
 	wg.Add(1)
 
 	count := 0
-	payloadConverter, _ := webSockets.NewWebSocketPayloadParser(args.Uint64ByteSliceConverter)
 	conn := &testscommon.WebsocketConnectionStub{
 		ReadMessageCalled: func() (messageType int, payload []byte, err error) {
 			time.Sleep(500 * time.Millisecond)
@@ -120,8 +120,10 @@ func TestReceiver_ListenAndSendAck(t *testing.T) {
 				return 0, nil, errors.New("closed")
 			}
 			count++
-			preparedPayload := payloadConverter.ExtendPayloadWithOperationType([]byte("something"), data.OperationSaveAccounts)
-			preparedPayload = payloadConverter.ExtendPayloadWithCounter(preparedPayload, 10, true)
+			preparedPayload := args.PayloadConverter.ConstructPayloadData(data.WsSendArgs{
+				Payload: []byte("something"),
+				OpType:  data.OperationSaveAccounts,
+			}, 10, true)
 			return websocket.BinaryMessage, preparedPayload, nil
 		},
 		CloseCalled: func() error {

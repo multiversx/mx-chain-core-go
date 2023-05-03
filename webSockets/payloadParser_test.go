@@ -19,13 +19,13 @@ func TestNewWebSocketPayloadParser(t *testing.T) {
 	t.Parallel()
 
 	t.Run("nil uint64 byte slice converter", func(t *testing.T) {
-		wpp, err := NewWebSocketPayloadParser(nil)
+		wpp, err := NewWebSocketPayloadConverter(nil)
 		require.Equal(t, data.ErrNilUint64ByteSliceConverter, err)
 		require.Nil(t, wpp)
 	})
 
 	t.Run("constructor should work", func(t *testing.T) {
-		wpp, err := NewWebSocketPayloadParser(uint64ByteSliceConv)
+		wpp, err := NewWebSocketPayloadConverter(uint64ByteSliceConv)
 		require.NoError(t, err)
 		require.False(t, check.IfNil(wpp))
 	})
@@ -41,7 +41,7 @@ func TestWebsocketPayloadParser_ExtractPayloadData(t *testing.T) {
 }
 
 func testExtractPayloadDataInvalidLength(t *testing.T) {
-	parser, _ := NewWebSocketPayloadParser(uint64ByteSliceConv)
+	parser, _ := NewWebSocketPayloadConverter(uint64ByteSliceConv)
 	res, err := parser.ExtractPayloadData([]byte("invalid"))
 	require.Nil(t, res)
 	require.Error(t, err)
@@ -55,7 +55,7 @@ func testExtractPayloadDataInvalidCounterByteSlice(t *testing.T) {
 			return 0, localErr
 		},
 	}
-	parser, _ := NewWebSocketPayloadParser(uint64ConvStub)
+	parser, _ := NewWebSocketPayloadConverter(uint64ConvStub)
 	res, err := parser.ExtractPayloadData(bytes.Repeat([]byte{0}, minBytesForCorrectPayload))
 	require.Nil(t, res)
 	require.Error(t, err)
@@ -75,7 +75,7 @@ func testExtractPayloadDataInvalidOperationTypeByteSlice(t *testing.T) {
 			return 0, nil
 		},
 	}
-	parser, _ := NewWebSocketPayloadParser(uint64ConvStub)
+	parser, _ := NewWebSocketPayloadConverter(uint64ConvStub)
 	res, err := parser.ExtractPayloadData(bytes.Repeat([]byte{0}, minBytesForCorrectPayload))
 	require.Nil(t, res)
 	require.Error(t, err)
@@ -95,7 +95,7 @@ func testExtractPayloadDataInvalidMessageCounterByteSlice(t *testing.T) {
 			return 0, nil
 		},
 	}
-	parser, _ := NewWebSocketPayloadParser(uint64ConvStub)
+	parser, _ := NewWebSocketPayloadConverter(uint64ConvStub)
 	res, err := parser.ExtractPayloadData(bytes.Repeat([]byte{0}, minBytesForCorrectPayload))
 	require.Nil(t, res)
 	require.Error(t, err)
@@ -108,7 +108,7 @@ func testExtractPayloadDataMessageCounterDoesNotMatchActualPayloadSize(t *testin
 			return 0, nil
 		},
 	}
-	parser, _ := NewWebSocketPayloadParser(uint64ConvStub)
+	parser, _ := NewWebSocketPayloadConverter(uint64ConvStub)
 	res, err := parser.ExtractPayloadData(bytes.Repeat([]byte{0}, minBytesForCorrectPayload+2))
 	require.Nil(t, res)
 	require.Error(t, err)
@@ -116,7 +116,7 @@ func testExtractPayloadDataMessageCounterDoesNotMatchActualPayloadSize(t *testin
 }
 
 func testExtractPayloadDataShouldWork(t *testing.T) {
-	parser, _ := NewWebSocketPayloadParser(uint64ByteSliceConv)
+	parser, _ := NewWebSocketPayloadConverter(uint64ByteSliceConv)
 
 	expectedCounter := uint64(9)
 	expectedOperation := data.OperationSaveAccounts
@@ -146,4 +146,26 @@ func testExtractPayloadDataShouldWork(t *testing.T) {
 	require.Equal(t, expectedCounter, res.Counter)
 	require.Equal(t, expectedOperation, res.OperationType)
 	require.Equal(t, expectedPayload, res.Payload)
+}
+
+func TestConstructPayloadDataAndExtract(t *testing.T) {
+	t.Parallel()
+
+	converter, err := NewWebSocketPayloadConverter(uint64ByteSlice.NewBigEndianConverter())
+	require.Nil(t, err)
+
+	payload := converter.ConstructPayloadData(data.WsSendArgs{
+		Payload: []byte("something"),
+		OpType:  data.OperationSaveBlock,
+	}, 100, true)
+
+	payloadData, err := converter.ExtractPayloadData(payload)
+	require.Nil(t, err)
+
+	require.Equal(t, &data.PayloadData{
+		WithAcknowledge: true,
+		Counter:         100,
+		OperationType:   data.OperationSaveBlock,
+		Payload:         []byte("something"),
+	}, payloadData)
 }

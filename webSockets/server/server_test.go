@@ -9,18 +9,20 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core/mock"
 	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
 	"github.com/multiversx/mx-chain-core-go/testscommon"
+	"github.com/multiversx/mx-chain-core-go/webSockets"
 	"github.com/multiversx/mx-chain-core-go/webSockets/data"
 	"github.com/stretchr/testify/require"
 )
 
 func createArgs() ArgsWebSocketsServer {
+	payloadConverter, _ := webSockets.NewWebSocketPayloadConverter(uint64ByteSlice.NewBigEndianConverter())
 	return ArgsWebSocketsServer{
-		RetryDurationInSeconds:   1,
-		BlockingAckOnError:       false,
-		WithAcknowledge:          false,
-		URL:                      "url",
-		Uint64ByteSliceConverter: uint64ByteSlice.NewBigEndianConverter(),
-		Log:                      &mock.LoggerMock{},
+		RetryDurationInSeconds: 1,
+		BlockingAckOnError:     false,
+		WithAcknowledge:        false,
+		URL:                    "url",
+		PayloadConverter:       payloadConverter,
+		Log:                    &mock.LoggerMock{},
 	}
 }
 
@@ -43,12 +45,12 @@ func TestNewWebSocketsServer(t *testing.T) {
 		require.Equal(t, err, data.ErrEmptyUrl)
 	})
 
-	t.Run("nil uint64 byte slice converter, should return error", func(t *testing.T) {
+	t.Run("nil payload converter, should return error", func(t *testing.T) {
 		args := createArgs()
-		args.Uint64ByteSliceConverter = nil
+		args.PayloadConverter = nil
 		ws, err := NewWebSocketsServer(args)
 		require.Nil(t, ws)
-		require.Equal(t, err, data.ErrNilUint64ByteSliceConverter)
+		require.Equal(t, err, data.ErrNilPayloadConverter)
 	})
 
 	t.Run("zero retry duration in seconds, should return error", func(t *testing.T) {

@@ -2,9 +2,6 @@ package data
 
 import "errors"
 
-// ErrNilHttpServer signals that a nil http server has been provided
-var ErrNilHttpServer = errors.New("nil http server")
-
 // ErrNilUint64ByteSliceConverter signals that a nil uint64 byte slice converter has been provided
 var ErrNilUint64ByteSliceConverter = errors.New("nil uint64 byte slice converter")
 
@@ -38,11 +35,8 @@ var ErrNilWebSocketClient = errors.New("nil websocket client")
 // ErrNilPayloadProcessor signals that a nil payload processor has been provided
 var ErrNilPayloadProcessor = errors.New("nil payload processor provided")
 
-// ErrNilPayloadParser signals that a nil payload parser has been provided
-var ErrNilPayloadParser = errors.New("nil payload parser provided")
-
-// ErrNilWsConnReceiver signals that a nil ws connection has beed provided
-var ErrNilWsConnReceiver = errors.New("nil ws connection receiver provided")
+// ErrNilPayloadConverter signals that a nil payload converter has been provided
+var ErrNilPayloadConverter = errors.New("nil payload converter provided")
 
 // ErrEmptyUrl signals that a nil websocket url has been provided
 var ErrEmptyUrl = errors.New("empty websocket url provided")
