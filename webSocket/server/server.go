@@ -174,7 +174,7 @@ func (s *server) Listen() {
 			s.receivers.AddReceiver(connection.GetID(), webSocketsReceiver)
 			// this method is blocking
 			_ = webSocketsReceiver.Listen(connection)
-			// if method listen will end, the client was disconnected 'and we should remove the listener from the list
+			// if method listen will end, the client was disconnected, and we should remove the listener from the list
 			s.receivers.RemoveReceiver(connection.GetID())
 		}()
 	}
