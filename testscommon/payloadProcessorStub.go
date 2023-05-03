@@ -1,7 +1,7 @@
 package testscommon
 
 import (
-	"github.com/multiversx/mx-chain-core-go/webSockets/data"
+	"github.com/multiversx/mx-chain-core-go/webSocket/data"
 )
 
 // PayloadProcessorStub -

@@ -18,12 +18,12 @@ func TestDumpGoRoutinesToLogShouldNotPanic(t *testing.T) {
 		}
 	}()
 
-	DumpGoRoutinesToLog(0, &mock.LoggerMock{})
+	DumpGoRoutinesToLog(0, &mock.LoggerStub{})
 }
 
 func TestGetRunningGoRoutines(t *testing.T) {
 	t.Parallel()
 
-	res := GetRunningGoRoutines(&mock.LoggerMock{})
+	res := GetRunningGoRoutines(&mock.LoggerStub{})
 	require.NotNil(t, res)
 }

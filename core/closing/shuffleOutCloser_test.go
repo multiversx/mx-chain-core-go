@@ -19,7 +19,7 @@ func TestNewShuffleOutCloser_InvalidMinWaitShouldErr(t *testing.T) {
 		minDuration-1,
 		minDuration,
 		make(chan endProcess.ArgEndProcess),
-		&mock.LoggerMock{},
+		&mock.LoggerStub{},
 	)
 
 	assert.True(t, check.IfNil(soc))
@@ -33,7 +33,7 @@ func TestNewShuffleOutCloser_InvalidMaxWaitShouldErr(t *testing.T) {
 		minDuration,
 		minDuration-1,
 		make(chan endProcess.ArgEndProcess),
-		&mock.LoggerMock{},
+		&mock.LoggerStub{},
 	)
 
 	assert.True(t, check.IfNil(soc))
@@ -47,7 +47,7 @@ func TestNewShuffleOutCloser_NilChannelShouldErr(t *testing.T) {
 		minDuration,
 		minDuration,
 		nil,
-		&mock.LoggerMock{},
+		&mock.LoggerStub{},
 	)
 
 	assert.True(t, check.IfNil(soc))
@@ -75,7 +75,7 @@ func TestNewShuffleOutCloser_MinWaitDurationLargerThanMaxShouldErr(t *testing.T)
 		minDuration+1,
 		minDuration,
 		make(chan endProcess.ArgEndProcess),
-		&mock.LoggerMock{},
+		&mock.LoggerStub{},
 	)
 
 	assert.True(t, check.IfNil(soc))
@@ -89,7 +89,7 @@ func TestNewShuffleOutCloser_ShouldWork(t *testing.T) {
 		minDuration,
 		minDuration,
 		make(chan endProcess.ArgEndProcess),
-		&mock.LoggerMock{},
+		&mock.LoggerStub{},
 	)
 
 	assert.False(t, check.IfNil(soc))
@@ -104,7 +104,7 @@ func TestShuffleOutCloser_EndOfProcessingHandlerShouldWork(t *testing.T) {
 		minDuration,
 		minDuration,
 		ch,
-		&mock.LoggerMock{},
+		&mock.LoggerStub{},
 	)
 
 	event := endProcess.ArgEndProcess{
@@ -133,7 +133,7 @@ func TestShuffleOutCloser_CloseAfterStartShouldWork(t *testing.T) {
 		minDuration,
 		minDuration,
 		ch,
-		&mock.LoggerMock{},
+		&mock.LoggerStub{},
 	)
 
 	event := endProcess.ArgEndProcess{
@@ -164,7 +164,7 @@ func TestShuffleOutCloser_CloseBeforeStartShouldWork(t *testing.T) {
 		minDuration,
 		minDuration,
 		ch,
-		&mock.LoggerMock{},
+		&mock.LoggerStub{},
 	)
 
 	err := soc.Close()

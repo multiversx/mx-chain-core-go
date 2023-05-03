@@ -14,7 +14,7 @@ import (
 func TestNewWatchdog_NilAlarmSchedulerShouldErr(t *testing.T) {
 	t.Parallel()
 
-	w, err := watchdog.NewWatchdog(nil, make(chan endProcess.ArgEndProcess, 1), &mock.LoggerMock{})
+	w, err := watchdog.NewWatchdog(nil, make(chan endProcess.ArgEndProcess, 1), &mock.LoggerStub{})
 	assert.True(t, check.IfNil(w))
 	assert.Equal(t, watchdog.ErrNilAlarmScheduler, err)
 }
@@ -22,7 +22,7 @@ func TestNewWatchdog_NilAlarmSchedulerShouldErr(t *testing.T) {
 func TestNewWatchdog_NilChanShouldErr(t *testing.T) {
 	t.Parallel()
 
-	w, err := watchdog.NewWatchdog(&mock.AlarmSchedulerStub{}, nil, &mock.LoggerMock{})
+	w, err := watchdog.NewWatchdog(&mock.AlarmSchedulerStub{}, nil, &mock.LoggerStub{})
 	assert.True(t, check.IfNil(w))
 	assert.Equal(t, watchdog.ErrNilEndProcessChan, err)
 }
@@ -36,7 +36,7 @@ func TestWatchdog_Set(t *testing.T) {
 			addCalled = true
 		},
 	}
-	w, _ := watchdog.NewWatchdog(alarmScheduler, make(chan endProcess.ArgEndProcess, 1), &mock.LoggerMock{})
+	w, _ := watchdog.NewWatchdog(alarmScheduler, make(chan endProcess.ArgEndProcess, 1), &mock.LoggerStub{})
 
 	w.Set(func(alarmID string) {}, time.Second, "alarm")
 
@@ -55,7 +55,7 @@ func TestWatchdog_SetDefault(t *testing.T) {
 			addCalled = true
 		},
 	}
-	w, _ := watchdog.NewWatchdog(alarmScheduler, channel, &mock.LoggerMock{})
+	w, _ := watchdog.NewWatchdog(alarmScheduler, channel, &mock.LoggerStub{})
 
 	w.SetDefault(time.Second, alarm)
 
@@ -77,7 +77,7 @@ func TestWatchdog_Stop(t *testing.T) {
 			stopCalled = true
 		},
 	}
-	w, _ := watchdog.NewWatchdog(alarmScheduler, make(chan endProcess.ArgEndProcess, 1), &mock.LoggerMock{})
+	w, _ := watchdog.NewWatchdog(alarmScheduler, make(chan endProcess.ArgEndProcess, 1), &mock.LoggerStub{})
 
 	w.Stop("alarm")
 
@@ -93,7 +93,7 @@ func TestWatchdog_Reset(t *testing.T) {
 			resetCalled = true
 		},
 	}
-	w, _ := watchdog.NewWatchdog(alarmScheduler, make(chan endProcess.ArgEndProcess, 1), &mock.LoggerMock{})
+	w, _ := watchdog.NewWatchdog(alarmScheduler, make(chan endProcess.ArgEndProcess, 1), &mock.LoggerStub{})
 
 	w.Reset("alarm")
 
