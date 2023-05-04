@@ -28,6 +28,7 @@ type ArgsWebSocketServer struct {
 
 type server struct {
 	blockingAckOnError  bool
+	withAcknowledge     bool
 	payloadConverter    webSocket.PayloadConverter
 	retryDuration       time.Duration
 	log                 core.Logger
@@ -49,6 +50,7 @@ func NewWebSocketServer(args ArgsWebSocketServer) (*server, error) {
 		retryDuration:       time.Duration(args.RetryDurationInSeconds) * time.Second,
 		payloadConverter:    args.PayloadConverter,
 		payloadHandler:      webSocket.NewNilPayloadHandler(),
+		withAcknowledge:     args.WithAcknowledge,
 	}
 
 	wsServer.initializeServer(args.URL, data.WSRoute)
@@ -73,11 +75,12 @@ func checkArgs(args ArgsWebSocketServer) error {
 }
 
 func (s *server) connectionHandler(connection webSocket.WSConClient) {
-	webSocketTransceiver, err := transceiver.NewReceiver(transceiver.ArgsTransceiver{
+	webSocketTransceiver, err := transceiver.NewTransceiver(transceiver.ArgsTransceiver{
 		PayloadConverter:   s.payloadConverter,
 		Log:                s.log,
 		RetryDurationInSec: int(s.retryDuration.Seconds()),
 		BlockingAckOnError: s.blockingAckOnError,
+		WithAcknowledge:    s.withAcknowledge,
 	})
 	if err != nil {
 		s.log.Warn("s.connectionHandler cannot create transceiver", "error", err)

@@ -46,8 +46,9 @@ func NewWebSocketClient(args ArgsWebSocketClient) (*client, error) {
 		Log:                args.Log,
 		RetryDurationInSec: args.RetryDurationInSeconds,
 		BlockingAckOnError: args.BlockingAckOnError,
+		WithAcknowledge:    args.WithAcknowledge,
 	}
-	wsTransceiver, err := transceiver.NewReceiver(argsTransceiver)
+	wsTransceiver, err := transceiver.NewTransceiver(argsTransceiver)
 	if err != nil {
 		return nil, err
 	}

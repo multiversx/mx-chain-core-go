@@ -24,6 +24,7 @@ func createArgs() ArgsTransceiver {
 		PayloadConverter:   payloadConverter,
 		Log:                &mock.LoggerMock{},
 		RetryDurationInSec: 1,
+		WithAcknowledge:    false,
 	}
 }
 
@@ -32,7 +33,7 @@ func TestNewReceiver(t *testing.T) {
 
 	t.Run("should work", func(t *testing.T) {
 		args := createArgs()
-		ws, err := NewReceiver(args)
+		ws, err := NewTransceiver(args)
 		require.NotNil(t, ws)
 		require.Nil(t, err)
 	})
@@ -40,7 +41,7 @@ func TestNewReceiver(t *testing.T) {
 	t.Run("empty logger, should return error", func(t *testing.T) {
 		args := createArgs()
 		args.Log = nil
-		ws, err := NewReceiver(args)
+		ws, err := NewTransceiver(args)
 		require.Nil(t, ws)
 		require.Equal(t, core.ErrNilLogger, err)
 	})
@@ -48,7 +49,7 @@ func TestNewReceiver(t *testing.T) {
 	t.Run("nil payload converter, should return error", func(t *testing.T) {
 		args := createArgs()
 		args.PayloadConverter = nil
-		ws, err := NewReceiver(args)
+		ws, err := NewTransceiver(args)
 		require.Nil(t, ws)
 		require.Equal(t, data.ErrNilPayloadConverter, err)
 	})
@@ -56,7 +57,7 @@ func TestNewReceiver(t *testing.T) {
 	t.Run("zero retry duration in seconds, should return error", func(t *testing.T) {
 		args := createArgs()
 		args.RetryDurationInSec = 0
-		ws, err := NewReceiver(args)
+		ws, err := NewTransceiver(args)
 		require.Nil(t, ws)
 		require.Equal(t, data.ErrZeroValueRetryDuration, err)
 	})
@@ -64,7 +65,7 @@ func TestNewReceiver(t *testing.T) {
 
 func TestReceiver_ListenAndClose(t *testing.T) {
 	args := createArgs()
-	webSocketsReceiver, err := NewReceiver(args)
+	webSocketsReceiver, err := NewTransceiver(args)
 	require.Nil(t, err)
 
 	count := uint64(0)
@@ -99,7 +100,7 @@ func TestReceiver_ListenAndClose(t *testing.T) {
 
 func TestReceiver_ListenAndSendAck(t *testing.T) {
 	args := createArgs()
-	webSocketsReceiver, err := NewReceiver(args)
+	webSocketsReceiver, err := NewTransceiver(args)
 	require.Nil(t, err)
 
 	_ = webSocketsReceiver.SetPayloadHandler(&testscommon.PayloadHandlerStub{
@@ -109,7 +110,7 @@ func TestReceiver_ListenAndSendAck(t *testing.T) {
 	})
 
 	wg := &sync.WaitGroup{}
-	wg.Add(1)
+	wg.Add(2)
 
 	count := 0
 	conn := &testscommon.WebsocketConnectionStub{
@@ -147,4 +148,77 @@ func TestReceiver_ListenAndSendAck(t *testing.T) {
 	_ = conn.Close()
 
 	require.Equal(t, 2, count)
+}
+
+func TestSender_AddConnectionSendAndClose(t *testing.T) {
+	args := createArgs()
+	args.WithAcknowledge = true
+	webSocketTransceiver, _ := NewTransceiver(args)
+
+	write := false
+	readAck := false
+	conn1 := &testscommon.WebsocketConnectionStub{
+		GetIDCalled: func() string {
+			return "conn1"
+		},
+		WriteMessageCalled: func(messageType int, data []byte) error {
+			write = true
+			return nil
+		},
+		ReadMessageCalled: func() (messageType int, payload []byte, err error) {
+			if readAck {
+				counterBytes := args.PayloadConverter.EncodeUint64(1)
+				return websocket.BinaryMessage, counterBytes, nil
+			}
+
+			readAck = true
+			return websocket.BinaryMessage, []byte("0"), nil
+
+		},
+	}
+
+	err := webSocketTransceiver.Send(data.WsSendArgs{
+		Payload: []byte("something"),
+	}, conn1)
+	require.Nil(t, err)
+	require.True(t, write)
+	require.True(t, readAck)
+
+	err = webSocketTransceiver.Close()
+	require.Nil(t, err)
+}
+
+func TestSender_AddConnectionSendAndWaitForAckClose(t *testing.T) {
+	args := createArgs()
+	args.WithAcknowledge = true
+	webSocketTransceiver, _ := NewTransceiver(args)
+
+	conn1 := &testscommon.WebsocketConnectionStub{
+		GetIDCalled: func() string {
+			return "conn1"
+		},
+		ReadMessageCalled: func() (messageType int, payload []byte, err error) {
+			return websocket.BinaryMessage, []byte("0"), nil
+
+		},
+		CloseCalled: func() error {
+			return nil
+		},
+	}
+
+	called := false
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		err := webSocketTransceiver.Send(data.WsSendArgs{
+			Payload: []byte("something"),
+		}, conn1)
+		require.Nil(t, err)
+		called = true
+		wg.Done()
+	}()
+
+	_ = webSocketTransceiver.Close()
+	wg.Wait()
+	require.True(t, called)
 }

@@ -20,6 +20,7 @@ type ArgsTransceiver struct {
 	Log                core.Logger
 	RetryDurationInSec int
 	BlockingAckOnError bool
+	WithAcknowledge    bool
 }
 
 type wsTransceiver struct {
@@ -34,8 +35,8 @@ type wsTransceiver struct {
 	withAcknowledge    bool
 }
 
-// NewReceiver will create a new instance of transceiver
-func NewReceiver(args ArgsTransceiver) (*wsTransceiver, error) {
+// NewTransceiver will create a new instance of transceiver
+func NewTransceiver(args ArgsTransceiver) (*wsTransceiver, error) {
 	err := checkArgs(args)
 	if err != nil {
 		return nil, err
@@ -48,6 +49,7 @@ func NewReceiver(args ArgsTransceiver) (*wsTransceiver, error) {
 		safeCloser:         closing.NewSafeChanCloser(),
 		payloadHandler:     webSocket.NewNilPayloadHandler(),
 		payloadParser:      args.PayloadConverter,
+		withAcknowledge:    args.WithAcknowledge,
 	}, nil
 }
 
