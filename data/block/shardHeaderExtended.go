@@ -1,4 +1,4 @@
-//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf --gogoslick_out=$GOPATH/src/github.com/multiversx/mx-chain-core-go/data/block shardHeaderExtended.proto
+//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf --gogoslick_out=. shardHeaderExtended.proto
 package block
 
 import (
@@ -888,20 +888,4 @@ func (she *ShardHeaderExtended) SetIncomingMiniBlockHandlers(miniBlockHandlers [
 	she.IncomingMiniBlocks = incomingMiniBlocks
 
 	return nil
-}
-
-// GetIncomingLogHandlers gets the incoming logs as an array of log handlers
-func (she *ShardHeaderExtended) GetIncomingLogHandlers() []data.LogHandler {
-	if she == nil {
-		return nil
-	}
-
-	logs := she.GetIncomingLogs()
-	logHandlers := make([]data.LogHandler, len(logs))
-
-	for i := range logs {
-		logHandlers[i] = logs[i]
-	}
-
-	return logHandlers
 }

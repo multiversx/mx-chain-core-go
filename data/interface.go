@@ -417,6 +417,5 @@ type UserAccountHandler interface {
 type ShardHeaderExtendedHandler interface {
 	ShardHeaderHandler
 	GetIncomingMiniBlockHandlers() []MiniBlockHandler
-	GetIncomingLogHandlers() []LogHandler
 	SetIncomingMiniBlockHandlers(miniBlockHandlers []MiniBlockHandler) error
 }

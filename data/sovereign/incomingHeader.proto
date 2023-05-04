@@ -3,15 +3,15 @@ syntax = "proto3";
 
 package proto;
 
-option go_package = "block";
+option go_package = "sovereign";
 option (gogoproto.stable_marshaler_all) = true;
 
-import "block.proto";
-import "blockV2.proto";
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "github.com/multiversx/mx-chain-core-go/data/block/blockV2.proto";
+import "github.com/multiversx/mx-chain-core-go/data/transaction/log.proto";
 
 // ShardHeaderExtended extends the HeaderV2 structure with extra fields needed by sovereign chain
-message ShardHeaderExtended {
-  HeaderV2           Header             = 1 [(gogoproto.jsontag) = "header"];
-  repeated MiniBlock IncomingMiniBlocks = 2 [(gogoproto.jsontag) = "incomingMiniBlocks,omitempty"];
+message IncomingHeader {
+  HeaderV2     Header       = 1 [(gogoproto.jsontag) = "header"];
+  repeated Log IncomingLogs = 2 [(gogoproto.jsontag) = "incomingLogs,omitempty"];
 }
