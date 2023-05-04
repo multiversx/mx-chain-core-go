@@ -43,6 +43,11 @@ func (e *GetNodeFromDBErrWithKey) GetIdentifier() string {
 	return e.dbIdentifier
 }
 
+// IsInterfaceNil returns true if there is no value under the interface
+func (e *GetNodeFromDBErrWithKey) IsInterfaceNil() bool {
+	return e == nil
+}
+
 // GetNodeFromDBErrorString represents the string which is returned when a getting node from DB returns an error
 const GetNodeFromDBErrorString = "getNodeFromDB error"
 

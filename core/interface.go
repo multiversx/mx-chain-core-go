@@ -134,4 +134,5 @@ type GetNodeFromDbErrHandler interface {
 	Error() string
 	GetKey() []byte
 	GetIdentifier() string
+	IsInterfaceNil() bool
 }
