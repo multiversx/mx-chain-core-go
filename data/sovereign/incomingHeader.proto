@@ -11,8 +11,7 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "github.com/multiversx/mx-chain-core-go/data/block/blockV2.proto";
 import "github.com/multiversx/mx-chain-core-go/data/transaction/log.proto";
 
-// ShardHeaderExtended extends the HeaderV2 structure with extra fields needed by sovereign chain
 message IncomingHeader {
-  HeaderV2     Header       = 1 [(gogoproto.jsontag) = "header"];
-  repeated Log IncomingLogs = 2 [(gogoproto.jsontag) = "incomingLogs,omitempty"];
+  HeaderV2       Header         = 1 [(gogoproto.jsontag) = "header"];
+  repeated Event IncomingEvents = 2 [(gogoproto.jsontag) = "incomingEvents,omitempty"];
 }

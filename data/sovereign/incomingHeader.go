@@ -4,17 +4,17 @@ package sovereign
 
 import "github.com/multiversx/mx-chain-core-go/data"
 
-// GetIncomingLogHandlers returns the incoming logs as an array of log handlers
-func (ih *IncomingHeader) GetIncomingLogHandlers() []data.LogHandler {
+// GetIncomingEventHandlers returns the incoming events as an array of event handlers
+func (ih *IncomingHeader) GetIncomingEventHandlers() []data.EventHandler {
 	if ih == nil {
 		return nil
 	}
 
-	logs := ih.GetIncomingLogs()
-	logHandlers := make([]data.LogHandler, len(logs))
+	events := ih.GetIncomingEvents()
+	logHandlers := make([]data.EventHandler, len(events))
 
-	for i := range logs {
-		logHandlers[i] = logs[i]
+	for i := range events {
+		logHandlers[i] = events[i]
 	}
 
 	return logHandlers
