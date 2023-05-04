@@ -129,13 +129,22 @@ func (c *client) SetPayloadHandler(handler webSocket.PayloadHandler) error {
 func (c *client) Close() error {
 	defer c.safeCloser.Close()
 
+	var lastErr error
+
 	c.log.Info("closing client...")
 	err := c.transceiver.Close()
 	if err != nil {
-		c.log.Warn("client.Close() sender", "error", err)
+		c.log.Warn("client.Close() transceiver", "error", err)
+		lastErr = err
 	}
 
-	return nil
+	err = c.wsConn.Close()
+	if err != nil {
+		c.log.Warn("client.Close() cannot close connection", "error", err)
+		lastErr = err
+	}
+
+	return lastErr
 }
 
 // IsInterfaceNil returns true if there is no value under the interface

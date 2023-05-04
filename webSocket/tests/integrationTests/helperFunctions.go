@@ -4,21 +4,21 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/mock"
 	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
-	"github.com/multiversx/mx-chain-core-go/webSockets"
-	"github.com/multiversx/mx-chain-core-go/webSockets/client"
-	"github.com/multiversx/mx-chain-core-go/webSockets/server"
+	"github.com/multiversx/mx-chain-core-go/webSocket"
+	"github.com/multiversx/mx-chain-core-go/webSocket/client"
+	"github.com/multiversx/mx-chain-core-go/webSocket/server"
 )
 
 const retryDurationInSeconds = 1
 
 var (
 	uint64Converter     = uint64ByteSlice.NewBigEndianConverter()
-	payloadConverter, _ = webSockets.NewWebSocketPayloadConverter(uint64Converter)
+	payloadConverter, _ = webSocket.NewWebSocketPayloadConverter(uint64Converter)
 )
 
-func createClient(url string) (webSockets.HostWebSockets, error) {
+func createClient(url string) (webSocket.HostWebSocket, error) {
 
-	return client.NewWebSocketsClient(client.ArgsWebSocketsClient{
+	return client.NewWebSocketClient(client.ArgsWebSocketClient{
 		RetryDurationInSeconds: retryDurationInSeconds,
 		WithAcknowledge:        true,
 		URL:                    url,
@@ -27,8 +27,8 @@ func createClient(url string) (webSockets.HostWebSockets, error) {
 	})
 }
 
-func createServer(url string, log core.Logger) (webSockets.HostWebSockets, error) {
-	return server.NewWebSocketsServer(server.ArgsWebSocketsServer{
+func createServer(url string, log core.Logger) (webSocket.HostWebSocket, error) {
+	return server.NewWebSocketServer(server.ArgsWebSocketServer{
 		RetryDurationInSeconds: retryDurationInSeconds,
 		WithAcknowledge:        true,
 		URL:                    url,

@@ -52,26 +52,35 @@ func (wsc *wsConnClient) OpenConnection(url string) error {
 
 // ReadMessage calls the underlying reading message ws connection func
 func (wsc *wsConnClient) ReadMessage() (messageType int, p []byte, err error) {
-	wsc.mut.RLock()
-	defer wsc.mut.RUnlock()
-
-	if wsc.conn == nil {
-		return 0, nil, data.ErrConnectionNotOpen
+	conn, err := wsc.getConn()
+	if err != nil {
+		return 0, nil, err
 	}
 
-	return wsc.conn.ReadMessage()
+	return conn.ReadMessage()
 }
 
 // WriteMessage calls the underlying write message ws connection func
 func (wsc *wsConnClient) WriteMessage(messageType int, payload []byte) error {
+	conn, err := wsc.getConn()
+	if err != nil {
+		return err
+	}
+
+	return conn.WriteMessage(messageType, payload)
+}
+
+func (wsc *wsConnClient) getConn() (*websocket.Conn, error) {
 	wsc.mut.RLock()
 	defer wsc.mut.RUnlock()
 
 	if wsc.conn == nil {
-		return data.ErrConnectionNotOpen
+		return nil, data.ErrConnectionNotOpen
 	}
 
-	return wsc.conn.WriteMessage(messageType, payload)
+	conn := wsc.conn
+
+	return conn, nil
 }
 
 // GetID will return the unique id of the client

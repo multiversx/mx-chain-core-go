@@ -84,6 +84,7 @@ func (s *server) connectionHandler(connection webSocket.WSConClient) {
 	})
 	if err != nil {
 		s.log.Warn("s.connectionHandler cannot create transceiver", "error", err)
+		return
 	}
 	err = webSocketTransceiver.SetPayloadHandler(s.payloadHandler)
 	if err != nil {
