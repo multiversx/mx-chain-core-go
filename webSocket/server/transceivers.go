@@ -6,48 +6,48 @@ import (
 	"github.com/multiversx/mx-chain-core-go/webSocket"
 )
 
-type TupleTransceiverAndConn struct {
-	Transceiver Transceiver
-	Conn        webSocket.WSConClient
+type tupleTransceiverAndConn struct {
+	transceiver Transceiver
+	conn        webSocket.WSConClient
 }
 
 type transceiversAndConnHolder struct {
 	mutex              sync.RWMutex
-	transceiverAndConn map[string]TupleTransceiverAndConn
+	transceiverAndConn map[string]tupleTransceiverAndConn
 }
 
 // NewTransceiversAndConnHolder will create a new instance of transceiversHolder
-func NewTransceiversAndConnHolder() *transceiversAndConnHolder {
+func newTransceiversAndConnHolder() *transceiversAndConnHolder {
 	return &transceiversAndConnHolder{
-		transceiverAndConn: map[string]TupleTransceiverAndConn{},
+		transceiverAndConn: map[string]tupleTransceiverAndConn{},
 	}
 }
 
-// AddTransceiverAndConn will add the provided transceiver in the internal map
-func (th *transceiversAndConnHolder) AddTransceiverAndConn(transceiver Transceiver, conn webSocket.WSConClient) {
+// addTransceiverAndConn will add the provided transceiver in the internal map
+func (th *transceiversAndConnHolder) addTransceiverAndConn(transceiver Transceiver, conn webSocket.WSConClient) {
 	th.mutex.Lock()
 	defer th.mutex.Unlock()
 
-	th.transceiverAndConn[conn.GetID()] = TupleTransceiverAndConn{
-		Transceiver: transceiver,
-		Conn:        conn,
+	th.transceiverAndConn[conn.GetID()] = tupleTransceiverAndConn{
+		transceiver: transceiver,
+		conn:        conn,
 	}
 }
 
-// Remove will remove the provided transceiver from the internal map
-func (th *transceiversAndConnHolder) Remove(id string) {
+// remove will remove the provided transceiver from the internal map
+func (th *transceiversAndConnHolder) remove(id string) {
 	th.mutex.Lock()
 	defer th.mutex.Unlock()
 
 	delete(th.transceiverAndConn, id)
 }
 
-// GetAll will return a map with all the stored transceivers
-func (th *transceiversAndConnHolder) GetAll() map[string]TupleTransceiverAndConn {
+// getAll will return a map with all the stored transceivers
+func (th *transceiversAndConnHolder) getAll() map[string]tupleTransceiverAndConn {
 	th.mutex.RLock()
 	defer th.mutex.RUnlock()
 
-	transceiversAndConn := make(map[string]TupleTransceiverAndConn)
+	transceiversAndConn := make(map[string]tupleTransceiverAndConn)
 	for id, tuple := range th.transceiverAndConn {
 		transceiversAndConn[id] = tuple
 	}

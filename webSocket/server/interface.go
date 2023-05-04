@@ -5,11 +5,10 @@ import (
 	"github.com/multiversx/mx-chain-core-go/webSocket/data"
 )
 
-// TransceiversAndConnHolder defines what a transceivers holder should be able to do
-type TransceiversAndConnHolder interface {
-	AddTransceiverAndConn(transceiver Transceiver, conn webSocket.WSConClient)
-	Remove(id string)
-	GetAll() map[string]TupleTransceiverAndConn
+type transceiversAndConnHandler interface {
+	addTransceiverAndConn(transceiver Transceiver, conn webSocket.WSConClient)
+	remove(id string)
+	getAll() map[string]tupleTransceiverAndConn
 }
 
 // Transceiver defines what a WebSocket transceiver should be able to do

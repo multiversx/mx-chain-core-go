@@ -223,8 +223,8 @@ func (wt *wsTransceiver) Close() error {
 
 	err := wt.payloadHandler.Close()
 	if err != nil {
-		wt.log.Error("cannot close the operations handler", "error", err)
+		wt.log.Debug("cannot close the operations handler", "error", err)
 	}
 
-	return nil
+	return err
 }

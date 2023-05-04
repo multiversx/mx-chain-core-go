@@ -33,7 +33,7 @@ type server struct {
 	retryDuration       time.Duration
 	log                 core.Logger
 	httpServer          webSocket.HttpServerHandler
-	transceiversAndConn TransceiversAndConnHolder
+	transceiversAndConn transceiversAndConnHandler
 	payloadHandler      webSocket.PayloadHandler
 }
 
@@ -44,7 +44,7 @@ func NewWebSocketServer(args ArgsWebSocketServer) (*server, error) {
 	}
 
 	wsServer := &server{
-		transceiversAndConn: NewTransceiversAndConnHolder(),
+		transceiversAndConn: newTransceiversAndConnHolder(),
 		blockingAckOnError:  args.BlockingAckOnError,
 		log:                 args.Log,
 		retryDuration:       time.Duration(args.RetryDurationInSeconds) * time.Second,
@@ -91,11 +91,11 @@ func (s *server) connectionHandler(connection webSocket.WSConClient) {
 	}
 
 	go func() {
-		s.transceiversAndConn.AddTransceiverAndConn(webSocketTransceiver, connection)
+		s.transceiversAndConn.addTransceiverAndConn(webSocketTransceiver, connection)
 		// this method is blocking
 		_ = webSocketTransceiver.Listen(connection)
 		// if method listen will end, the client was disconnected, and we should remove the listener from the list
-		s.transceiversAndConn.Remove(connection.GetID())
+		s.transceiversAndConn.remove(connection.GetID())
 	}()
 }
 
@@ -139,10 +139,10 @@ func (s *server) initializeServer(wsURL string, wsPath string) {
 
 // Send will send the provided payload from args
 func (s *server) Send(args data.WsSendArgs) error {
-	for _, tuple := range s.transceiversAndConn.GetAll() {
-		err := tuple.Transceiver.Send(args, tuple.Conn)
+	for _, tuple := range s.transceiversAndConn.getAll() {
+		err := tuple.transceiver.Send(args, tuple.conn)
 		if err != nil {
-			s.log.Debug("s.Send() cannot send message", "id", tuple.Conn.GetID(), "error", err.Error())
+			s.log.Debug("s.Send() cannot send message", "id", tuple.conn.GetID(), "error", err.Error())
 		}
 	}
 
@@ -171,23 +171,28 @@ func (s *server) SetPayloadHandler(handler webSocket.PayloadHandler) error {
 
 // Close will close the server
 func (s *server) Close() error {
+	var lastError error
+
 	err := s.httpServer.Shutdown(context.Background())
 	if err != nil {
-		s.log.Warn("server.Close() cannot close http server", "error", err)
+		s.log.Debug("server.Close() cannot close http server", "error", err)
+		lastError = err
 	}
 
-	for _, tuple := range s.transceiversAndConn.GetAll() {
-		err = tuple.Transceiver.Close()
+	for _, tuple := range s.transceiversAndConn.getAll() {
+		err = tuple.transceiver.Close()
 		if err != nil {
-			s.log.Warn("server.Close() cannot close transceiver", "error", err)
+			s.log.Debug("server.Close() cannot close transceiver", "error", err)
+			lastError = err
 		}
-		err = tuple.Conn.Close()
+		err = tuple.conn.Close()
 		if err != nil {
-			s.log.Warn("server.Close() cannot close connection", "id", tuple.Conn.GetID(), "error", err.Error())
+			s.log.Debug("server.Close() cannot close connection", "id", tuple.conn.GetID(), "error", err.Error())
+			lastError = err
 		}
 	}
 
-	return nil
+	return lastError
 }
 
 // IsInterfaceNil returns true if there is no value under the interface
