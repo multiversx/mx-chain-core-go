@@ -218,7 +218,11 @@ func TestSender_AddConnectionSendAndWaitForAckClose(t *testing.T) {
 		called = true
 		wg.Done()
 	}()
+
 	time.Sleep(100 * time.Millisecond)
+	go func() {
+		webSocketTransceiver.Listen(conn1)
+	}()
 
 	_ = webSocketTransceiver.Close()
 	wg.Wait()
