@@ -107,9 +107,9 @@ func (c *client) Start() {
 			_ = c.transceiver.Listen(c.wsConn)
 
 			select {
-			default:
 			case <-c.safeCloser.ChanClose():
 				return
+			default:
 			}
 		}
 	}()
