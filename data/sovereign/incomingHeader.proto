@@ -1,4 +1,5 @@
-// This file holds the data structures related with the functionality of an extended shard header needed by sovereign chain
+// This file holds data structures related to incoming headers from one chain(local/main/test/etc.) to a sovereign chain.
+// This incoming header will be received from a notifier. In the future, this will also hold a proof of the incoming operations
 syntax = "proto3";
 
 package proto;
