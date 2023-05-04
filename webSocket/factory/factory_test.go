@@ -20,7 +20,7 @@ func createArgs() ArgsWebSocketDriverFactory {
 		},
 		Marshaller:               &mock.MarshalizerMock{},
 		Uint64ByteSliceConverter: uint64ByteSlice.NewBigEndianConverter(),
-		Log:                      &mock.LoggerStub{},
+		Log:                      &mock.LoggerMock{},
 		WithAcknowledge:          false,
 	}
 }

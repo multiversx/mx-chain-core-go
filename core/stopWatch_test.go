@@ -10,7 +10,7 @@ import (
 
 const identifier = "identifier"
 
-var log = &mock.LoggerStub{}
+var log = &mock.LoggerMock{}
 
 func TestStopWatch_Start(t *testing.T) {
 	t.Parallel()

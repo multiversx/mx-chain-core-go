@@ -1,73 +1,58 @@
 package mock
 
-import "fmt"
-
 // LoggerStub -
 type LoggerStub struct {
-	WarnCalled func(message string, args ...interface{})
-	InfoCalled func(message string, args ...interface{})
+	TraceCalled      func(message string, args ...interface{})
+	DebugCalled      func(message string, args ...interface{})
+	InfoCalled       func(message string, args ...interface{})
+	WarnCalled       func(message string, args ...interface{})
+	ErrorCalled      func(message string, args ...interface{})
+	LogIfErrorCalled func(err error, args ...interface{})
 }
 
-// Trace will print a trace log
-func (c LoggerStub) Trace(message string, args ...interface{}) {
-	fmt.Printf("[TRACE] %s %v\n", message, getPrintableArgs(args))
-}
-
-// Debug will print a debug log
-func (c LoggerStub) Debug(message string, args ...interface{}) {
-	fmt.Printf("[DEBUG] %s %v\n", message, getPrintableArgs(args))
-}
-
-// Info will print an info log
-func (c LoggerStub) Info(message string, args ...interface{}) {
-	if c.InfoCalled != nil {
-		c.InfoCalled(message, args)
-	}
-
-	fmt.Printf("[INFO] %s %v\n", message, getPrintableArgs(args))
-}
-
-// Warn will print a warn log
-func (c LoggerStub) Warn(message string, args ...interface{}) {
-	if c.WarnCalled != nil {
-		c.WarnCalled(message, args)
-		return
-	}
-
-	fmt.Printf("[WARN] %s %v\n", message, getPrintableArgs(args))
-}
-
-// Error will print an error log
-func (c LoggerStub) Error(message string, args ...interface{}) {
-	fmt.Printf("[ERROR] %s %v\n", message, getPrintableArgs(args))
-}
-
-// LogIfError will print an error if it is not nil
-func (c LoggerStub) LogIfError(err error, args ...interface{}) {
-	if err != nil {
-		fmt.Printf("[ERROR] %s %v\n", err.Error(), getPrintableArgs(args))
+// Trace -
+func (l *LoggerStub) Trace(message string, args ...interface{}) {
+	if l.TraceCalled != nil {
+		l.TraceCalled(message, args)
 	}
 }
 
-func getPrintableArgs(args ...interface{}) string {
-	if len(args)%2 != 0 {
-		return fmt.Sprintf("%v", args)
+// Debug -
+func (l *LoggerStub) Debug(message string, args ...interface{}) {
+	if l.DebugCalled != nil {
+		l.DebugCalled(message, args)
 	}
-
-	printableArgs := ""
-
-	for idx, arg := range args {
-		if idx%2 == 0 {
-			printableArgs += fmt.Sprintf("%s = ", arg)
-			continue
-		}
-		printableArgs += fmt.Sprintf("%v ", arg)
-	}
-
-	return printableArgs
 }
 
-// IsInterfaceNil returns false as the struct doesn't use pointer receivers
-func (c LoggerStub) IsInterfaceNil() bool {
+// Info -
+func (l *LoggerStub) Info(message string, args ...interface{}) {
+	if l.InfoCalled != nil {
+		l.InfoCalled(message, args)
+	}
+}
+
+// Warn -
+func (l *LoggerStub) Warn(message string, args ...interface{}) {
+	if l.WarnCalled != nil {
+		l.WarnCalled(message, args)
+	}
+}
+
+// Error -
+func (l *LoggerStub) Error(message string, args ...interface{}) {
+	if l.ErrorCalled != nil {
+		l.ErrorCalled(message, args)
+	}
+}
+
+// LogIfError -
+func (l *LoggerStub) LogIfError(err error, args ...interface{}) {
+	if l.LogIfErrorCalled != nil {
+		l.LogIfErrorCalled(err, args)
+	}
+}
+
+// IsInterfaceNil -
+func (l *LoggerStub) IsInterfaceNil() bool {
 	return false
 }

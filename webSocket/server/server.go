@@ -13,8 +13,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/webSocket"
 	"github.com/multiversx/mx-chain-core-go/webSocket/connection"
 	"github.com/multiversx/mx-chain-core-go/webSocket/data"
-	"github.com/multiversx/mx-chain-core-go/webSocket/receiver"
-	"github.com/multiversx/mx-chain-core-go/webSocket/sender"
+	"github.com/multiversx/mx-chain-core-go/webSocket/transceiver"
 )
 
 // ArgsWebSocketServer holds all the components needed to create a server
@@ -28,15 +27,14 @@ type ArgsWebSocketServer struct {
 }
 
 type server struct {
-	blockingAckOnError bool
-	connectionHandler  func(connection webSocket.WSConClient)
-	payloadConverter   webSocket.PayloadConverter
-	retryDuration      time.Duration
-	log                core.Logger
-	httpServer         webSocket.HttpServerHandler
-	sender             Sender
-	receivers          ReceiversHolder
-	payloadHandler     webSocket.PayloadHandler
+	blockingAckOnError  bool
+	withAcknowledge     bool
+	payloadConverter    webSocket.PayloadConverter
+	retryDuration       time.Duration
+	log                 core.Logger
+	httpServer          webSocket.HttpServerHandler
+	transceiversAndConn transceiversAndConnHandler
+	payloadHandler      webSocket.PayloadHandler
 }
 
 //NewWebSocketServer will create a new instance of server
@@ -45,26 +43,15 @@ func NewWebSocketServer(args ArgsWebSocketServer) (*server, error) {
 		return nil, err
 	}
 
-	webSocketSender, err := sender.NewSender(sender.ArgsSender{
-		WithAcknowledge:        args.WithAcknowledge,
-		RetryDurationInSeconds: args.RetryDurationInSeconds,
-		PayloadConverter:       args.PayloadConverter,
-		Log:                    args.Log,
-	})
-	if err != nil {
-		return nil, err
-	}
-
 	wsServer := &server{
-		sender:             webSocketSender,
-		receivers:          NewReceiversHolder(),
-		blockingAckOnError: args.BlockingAckOnError,
-		log:                args.Log,
-		retryDuration:      time.Duration(args.RetryDurationInSeconds) * time.Second,
-		payloadConverter:   args.PayloadConverter,
-		payloadHandler:     webSocket.NewNilPayloadHandler(),
+		transceiversAndConn: newTransceiversAndConnHolder(),
+		blockingAckOnError:  args.BlockingAckOnError,
+		log:                 args.Log,
+		retryDuration:       time.Duration(args.RetryDurationInSeconds) * time.Second,
+		payloadConverter:    args.PayloadConverter,
+		payloadHandler:      webSocket.NewNilPayloadHandler(),
+		withAcknowledge:     args.WithAcknowledge,
 	}
-	wsServer.connectionHandler = wsServer.defaultConnectionHandler
 
 	wsServer.initializeServer(args.URL, data.WSRoute)
 
@@ -87,8 +74,30 @@ func checkArgs(args ArgsWebSocketServer) error {
 	return nil
 }
 
-func (s *server) defaultConnectionHandler(conn webSocket.WSConClient) {
-	_ = s.sender.AddConnection(conn)
+func (s *server) connectionHandler(connection webSocket.WSConClient) {
+	webSocketTransceiver, err := transceiver.NewTransceiver(transceiver.ArgsTransceiver{
+		PayloadConverter:   s.payloadConverter,
+		Log:                s.log,
+		RetryDurationInSec: int(s.retryDuration.Seconds()),
+		BlockingAckOnError: s.blockingAckOnError,
+		WithAcknowledge:    s.withAcknowledge,
+	})
+	if err != nil {
+		s.log.Warn("s.connectionHandler cannot create transceiver", "error", err)
+	}
+	err = webSocketTransceiver.SetPayloadHandler(s.payloadHandler)
+	if err != nil {
+		s.log.Warn("s.SetPayloadHandler cannot set payload handler", "error", err)
+	}
+
+	go func() {
+		s.transceiversAndConn.addTransceiverAndConn(webSocketTransceiver, connection)
+		// this method is blocking
+		_ = webSocketTransceiver.Listen(connection)
+		s.log.Info("connection closed", "client id", connection.GetID())
+		// if method listen will end, the client was disconnected, and we should remove the listener from the list
+		s.transceiversAndConn.remove(connection.GetID())
+	}()
 }
 
 func (s *server) initializeServer(wsURL string, wsPath string) {
@@ -131,19 +140,28 @@ func (s *server) initializeServer(wsURL string, wsPath string) {
 
 // Send will send the provided payload from args
 func (s *server) Send(args data.WsSendArgs) error {
-	return s.sender.Send(args)
+	for _, tuple := range s.transceiversAndConn.getAll() {
+		err := tuple.transceiver.Send(args, tuple.conn)
+		if err != nil {
+			s.log.Debug("s.Send() cannot send message", "id", tuple.conn.GetID(), "error", err.Error())
+		}
+	}
+
+	return nil
 }
 
 // Start will start the websockets server
 func (s *server) Start() {
-	err := s.httpServer.ListenAndServe()
-	shouldLogError := err != nil && !strings.Contains(err.Error(), data.ErrServerIsClosed.Error())
-	if shouldLogError {
-		s.log.Error("could not initialize webserver", "error", err)
-		return
-	}
+	go func() {
+		err := s.httpServer.ListenAndServe()
+		shouldLogError := err != nil && !strings.Contains(err.Error(), data.ErrServerIsClosed.Error())
+		if shouldLogError {
+			s.log.Error("could not initialize webserver", "error", err)
+			return
+		}
 
-	s.log.Info("server was closed")
+		s.log.Info("server was closed")
+	}()
 }
 
 // SetPayloadHandler will set the provided payload handler
@@ -152,56 +170,30 @@ func (s *server) SetPayloadHandler(handler webSocket.PayloadHandler) error {
 	return nil
 }
 
-// Listen will switch the server in listen mode and the server will start to listen from messages from the new connections
-func (s *server) Listen() {
-	// TODO refactor this method
-	s.connectionHandler = func(connection webSocket.WSConClient) {
-		webSocketsReceiver, err := receiver.NewReceiver(receiver.ArgsReceiver{
-			PayloadConverter:   s.payloadConverter,
-			Log:                s.log,
-			RetryDurationInSec: int(s.retryDuration.Seconds()),
-			BlockingAckOnError: s.blockingAckOnError,
-		})
-		if err != nil {
-			s.log.Warn("s.connectionHandler cannot create receiver", "error", err)
-		}
-		err = webSocketsReceiver.SetPayloadHandler(s.payloadHandler)
-		if err != nil {
-			s.log.Warn("s.SetPayloadHandler cannot set payload handler", "error", err)
-		}
-
-		go func() {
-			s.receivers.AddReceiver(connection.GetID(), webSocketsReceiver)
-			// this method is blocking
-			_ = webSocketsReceiver.Listen(connection)
-			s.log.Info("connection closed", "client id", connection.GetID())
-			// if method listen will end, the client was disconnected, and we should remove the listener from the list
-			s.receivers.RemoveReceiver(connection.GetID())
-		}()
-	}
-
-}
-
 // Close will close the server
 func (s *server) Close() error {
+	var lastError error
+
 	err := s.httpServer.Shutdown(context.Background())
 	if err != nil {
-		s.log.Warn("server.Close() cannot close http server", "error", err)
+		s.log.Debug("server.Close() cannot close http server", "error", err)
+		lastError = err
 	}
 
-	err = s.sender.Close()
-	if err != nil {
-		s.log.Warn("server.Close() cannot close the sender", "error", err)
-	}
-
-	for _, webSocketsReceiver := range s.receivers.GetAll() {
-		err = webSocketsReceiver.Close()
+	for _, tuple := range s.transceiversAndConn.getAll() {
+		err = tuple.transceiver.Close()
 		if err != nil {
-			s.log.Warn("server.Close() cannot close receiver", "error", err)
+			s.log.Debug("server.Close() cannot close transceiver", "error", err)
+			lastError = err
+		}
+		err = tuple.conn.Close()
+		if err != nil {
+			s.log.Debug("server.Close() cannot close connection", "id", tuple.conn.GetID(), "error", err.Error())
+			lastError = err
 		}
 	}
 
-	return nil
+	return lastError
 }
 
 // IsInterfaceNil returns true if there is no value under the interface

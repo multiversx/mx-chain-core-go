@@ -36,7 +36,6 @@ type HostWebSocket interface {
 	Send(args outportSenderData.WsSendArgs) error
 	SetPayloadHandler(handler PayloadHandler) error
 	Start()
-	Listen()
 	Close() error
 	IsInterfaceNil() bool
 }

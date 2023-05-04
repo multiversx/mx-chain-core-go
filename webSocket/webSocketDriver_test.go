@@ -19,7 +19,7 @@ func getMockArgs() ArgsWebSocketDriver {
 	return ArgsWebSocketDriver{
 		Marshaller:      &marshal.JsonMarshalizer{},
 		WebsocketSender: &mock.WebSocketSenderStub{},
-		Log:             &coreMock.LoggerStub{},
+		Log:             &coreMock.LoggerMock{},
 	}
 }
 
