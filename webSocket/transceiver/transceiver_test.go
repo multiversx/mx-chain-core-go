@@ -198,6 +198,7 @@ func TestSender_AddConnectionSendAndWaitForAckClose(t *testing.T) {
 			return "conn1"
 		},
 		ReadMessageCalled: func() (messageType int, payload []byte, err error) {
+			time.Sleep(50 * time.Millisecond)
 			return websocket.BinaryMessage, []byte("0"), nil
 
 		},
@@ -217,6 +218,7 @@ func TestSender_AddConnectionSendAndWaitForAckClose(t *testing.T) {
 		called = true
 		wg.Done()
 	}()
+	time.Sleep(100 * time.Millisecond)
 
 	_ = webSocketTransceiver.Close()
 	wg.Wait()

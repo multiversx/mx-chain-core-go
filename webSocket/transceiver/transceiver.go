@@ -177,13 +177,17 @@ func (wt *wsTransceiver) sendPayload(payload []byte, assignedCounter uint64, con
 }
 
 func (wt *wsTransceiver) waitForAck(assignedCounter uint64, connection webSocket.WSConClient) error {
-	timer := time.NewTimer(wt.retryDuration)
-	defer timer.Stop()
-
 	for {
+		select {
+		case <-wt.safeCloser.ChanClose():
+			return nil
+		default:
+		}
+
 		mType, message, err := connection.ReadMessage()
 		if err != nil {
 			wt.log.Debug("s.waitForAck(): cannot read message", "id", connection.GetID(), "error", err)
+			continue
 		}
 
 		if mType != websocket.BinaryMessage {
@@ -200,20 +204,16 @@ func (wt *wsTransceiver) waitForAck(assignedCounter uint64, connection webSocket
 				"counter bytes", message,
 				"error", err,
 			)
+			continue
 		}
 
-		if receivedCounter == assignedCounter {
-			return nil
+		if receivedCounter != assignedCounter {
+			wt.log.Debug("s.waitForAck invalid counter", "expected", assignedCounter, "received", receivedCounter, "id", connection.GetID())
+			continue
 		}
 
-		timer.Reset(wt.retryDuration)
-		wt.log.Debug("s.waitForAck invalid counter", "expected", assignedCounter, "received", receivedCounter, "id", connection.GetID())
+		return nil
 
-		select {
-		case <-timer.C:
-		case <-wt.safeCloser.ChanClose():
-			return nil
-		}
 	}
 }
 
