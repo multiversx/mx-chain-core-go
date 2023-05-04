@@ -59,7 +59,6 @@ type PayloadConverter interface {
 // WSConClient defines what a web-sockets connection client should be able to do
 type WSConClient interface {
 	io.Closer
-	SetCloseHandler(func(code int, text string) error)
 	OpenConnection(url string) error
 	WriteMessage(messageType int, data []byte) error
 	ReadMessage() (int, []byte, error)

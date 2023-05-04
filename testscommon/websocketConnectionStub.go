@@ -2,12 +2,11 @@ package testscommon
 
 // WebsocketConnectionStub -
 type WebsocketConnectionStub struct {
-	OpenConnectionCalled  func(url string) error
-	ReadMessageCalled     func() (messageType int, payload []byte, err error)
-	WriteMessageCalled    func(messageType int, data []byte) error
-	SetCloseHandlerCalled func(closeHandler func(code int, text string) error)
-	GetIDCalled           func() string
-	CloseCalled           func() error
+	OpenConnectionCalled func(url string) error
+	ReadMessageCalled    func() (messageType int, payload []byte, err error)
+	WriteMessageCalled   func(messageType int, data []byte) error
+	GetIDCalled          func() string
+	CloseCalled          func() error
 }
 
 // OpenConnection -
@@ -52,14 +51,6 @@ func (w *WebsocketConnectionStub) Close() error {
 	}
 
 	return nil
-}
-
-// SetCloseHandler -
-func (w *WebsocketConnectionStub) SetCloseHandler(closeHandler func(code int, text string) error) {
-	if w.SetCloseHandlerCalled != nil {
-		w.SetCloseHandlerCalled(closeHandler)
-	}
-	return
 }
 
 // IsInterfaceNil -

@@ -117,15 +117,6 @@ func (wsc *wsConnClient) Close() error {
 	return nil
 }
 
-// SetCloseHandler will set the close handler
-func (wsc *wsConnClient) SetCloseHandler(closeHandler func(code int, text string) error) {
-	// critical section
-	wsc.mut.Lock()
-	defer wsc.mut.Unlock()
-
-	wsc.conn.SetCloseHandler(closeHandler)
-}
-
 // IsInterfaceNil -
 func (wsc *wsConnClient) IsInterfaceNil() bool {
 	return wsc == nil
