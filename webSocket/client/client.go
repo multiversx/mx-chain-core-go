@@ -107,7 +107,7 @@ func (c *client) Start() {
 		for {
 			closed := c.transceiver.Listen(c.wsConn)
 			if closed {
-				err := c.wsConn.CloseWithoutMessageToServer()
+				err := c.wsConn.Close()
 				c.log.LogIfError(err, "received close from server: initialized close()", "close error", err)
 			}
 

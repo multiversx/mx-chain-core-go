@@ -218,7 +218,7 @@ func TestSender_AddConnectionSendAndWaitForAckClose(t *testing.T) {
 		err := webSocketTransceiver.Send(data.WsSendArgs{
 			Payload: []byte("something"),
 		}, conn1)
-		require.Nil(t, err)
+		require.Equal(t, data.ErrExpectedAckWasNotReceivedOnClose, err)
 		called = true
 		wg.Done()
 	}()
@@ -241,7 +241,8 @@ func TestWsTransceiverWaitForAck(t *testing.T) {
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 	go func() {
-		webSocketTransceiver.waitForAck()
+		err := webSocketTransceiver.waitForAck()
+		require.Equal(t, data.ErrExpectedAckWasNotReceivedOnClose, err)
 		wg.Done()
 	}()
 

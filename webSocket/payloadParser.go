@@ -8,6 +8,8 @@ import (
 	"github.com/multiversx/mx-chain-core-go/webSocket/data"
 )
 
+// TODO refactor this structure in the next PR and add a proto structure that will contains all the information
+
 const (
 	prefixAckMessageLen     = 5
 	withAcknowledgeNumBytes = 1

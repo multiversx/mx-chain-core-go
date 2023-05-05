@@ -90,15 +90,6 @@ func (wsc *wsConnClient) GetID() string {
 
 // Close will try to cleanly close the connection, if possible
 func (wsc *wsConnClient) Close() error {
-	return wsc.close(true)
-}
-
-// CloseWithoutMessageToServer will try to cleanly close the connection, without sending a close message
-func (wsc *wsConnClient) CloseWithoutMessageToServer() error {
-	return wsc.close(false)
-}
-
-func (wsc *wsConnClient) close(withMessageToServer bool) error {
 	// critical section
 	wsc.mut.Lock()
 	defer wsc.mut.Unlock()
@@ -109,18 +100,16 @@ func (wsc *wsConnClient) close(withMessageToServer bool) error {
 
 	log.Debug("closing ws connection...")
 
-	if withMessageToServer {
-		//Cleanly close the connection by sending a close message and then
-		//waiting (with timeout) for the server to close the connection.
-		err := wsc.conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
-		if err != nil {
-			log.Error("cannot send close message", "error", err)
-		}
+	//Cleanly close the connection by sending a close message and then
+	//waiting (with timeout) for the server to close the connection.
+	err := wsc.conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
+	if err != nil {
+		log.Trace("cannot send close message", "error", err)
 	}
 
 	wsc.conn.CloseHandler()
 
-	err := wsc.conn.Close()
+	err = wsc.conn.Close()
 	if err != nil {
 		return err
 	}

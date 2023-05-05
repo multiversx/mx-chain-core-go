@@ -147,14 +147,17 @@ func (wt *wsTransceiver) handleAckMessage(payload []byte) {
 
 	wt.log.Trace("wt.handleAckMessage: received ack", "counter", counter)
 	expectedCounter := atomic.LoadUint64(&wt.counter)
-	if expectedCounter == counter {
-		wt.ackChan <- struct{}{}
+	if expectedCounter != counter {
+		wt.log.Debug("wsTransceiver.handleAckMessage invalid counter received", "expected", expectedCounter, "received", counter)
 		return
 	}
 
-	wt.log.Debug("wsTransceiver.handleAckMessage invalid counter received", "expected", expectedCounter, "received", counter)
-
-	return
+	select {
+	case wt.ackChan <- struct{}{}:
+		return
+	case <-wt.safeCloser.ChanClose():
+		return
+	}
 }
 
 func (wt *wsTransceiver) sendAckIfNeeded(connection webSocket.WSConClient, payloadData *data.PayloadData) {
@@ -206,17 +209,15 @@ func (wt *wsTransceiver) sendPayload(payload []byte, connection webSocket.WSConC
 		return nil
 	}
 
-	wt.waitForAck()
-	return nil
+	return wt.waitForAck()
 }
 
-func (wt *wsTransceiver) waitForAck() {
-	// wait for ack
+func (wt *wsTransceiver) waitForAck() error {
 	select {
 	case <-wt.ackChan:
-		return
+		return nil
 	case <-wt.safeCloser.ChanClose():
-		return
+		return data.ErrExpectedAckWasNotReceivedOnClose
 	}
 }
 

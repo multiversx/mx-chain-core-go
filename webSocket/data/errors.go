@@ -40,3 +40,6 @@ var ErrConnectionNotOpen = errors.New("connection not open")
 
 // ErrInvalidPayloadForAckMessage signal that an invalid payload for ack message has been provided
 var ErrInvalidPayloadForAckMessage = errors.New("invalid payload for ack message")
+
+// ErrExpectedAckWasNotReceivedOnClose signals that the acknowledgment message was not received at close
+var ErrExpectedAckWasNotReceivedOnClose = errors.New("expected ack message was not received on close")
