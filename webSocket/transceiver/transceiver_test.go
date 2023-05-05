@@ -168,7 +168,7 @@ func TestSender_AddConnectionSendAndClose(t *testing.T) {
 		ReadMessageCalled: func() (messageType int, payload []byte, err error) {
 			if readAck {
 				counterBytes := args.PayloadConverter.EncodeUint64(1)
-				return websocket.BinaryMessage, counterBytes, nil
+				return websocket.TextMessage, counterBytes, nil
 			}
 
 			readAck = true
@@ -176,6 +176,10 @@ func TestSender_AddConnectionSendAndClose(t *testing.T) {
 
 		},
 	}
+
+	go func() {
+		webSocketTransceiver.Listen(conn1)
+	}()
 
 	err := webSocketTransceiver.Send(data.WsSendArgs{
 		Payload: []byte("something"),
@@ -227,4 +231,23 @@ func TestSender_AddConnectionSendAndWaitForAckClose(t *testing.T) {
 	_ = webSocketTransceiver.Close()
 	wg.Wait()
 	require.True(t, called)
+}
+
+func TestWsTransceiverWaitForAck(t *testing.T) {
+	args := createArgs()
+	args.WithAcknowledge = true
+	webSocketTransceiver, _ := NewTransceiver(args)
+
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+	go func() {
+		webSocketTransceiver.waitForAck()
+		wg.Done()
+	}()
+
+	time.Sleep(time.Second)
+	err := webSocketTransceiver.Close()
+	require.Nil(t, err)
+
+	wg.Wait()
 }

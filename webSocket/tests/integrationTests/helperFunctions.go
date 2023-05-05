@@ -2,7 +2,6 @@ package integrationTests
 
 import (
 	"github.com/multiversx/mx-chain-core-go/core"
-	"github.com/multiversx/mx-chain-core-go/core/mock"
 	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
 	"github.com/multiversx/mx-chain-core-go/webSocket"
 	"github.com/multiversx/mx-chain-core-go/webSocket/client"
@@ -16,14 +15,14 @@ var (
 	payloadConverter, _ = webSocket.NewWebSocketPayloadConverter(uint64Converter)
 )
 
-func createClient(url string) (webSocket.HostWebSocket, error) {
+func createClient(url string, log core.Logger) (webSocket.HostWebSocket, error) {
 
 	return client.NewWebSocketClient(client.ArgsWebSocketClient{
 		RetryDurationInSeconds: retryDurationInSeconds,
 		WithAcknowledge:        true,
 		URL:                    url,
 		PayloadConverter:       payloadConverter,
-		Log:                    &mock.LoggerMock{},
+		Log:                    log,
 	})
 }
 

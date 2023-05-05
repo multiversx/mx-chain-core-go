@@ -82,7 +82,7 @@ func (wt *wsTransceiver) SetPayloadHandler(handler webSocket.PayloadHandler) err
 }
 
 // Listen will listen for messages from the provided connection
-func (wt *wsTransceiver) Listen(connection webSocket.WSConClient) bool {
+func (wt *wsTransceiver) Listen(connection webSocket.WSConClient) (closed bool) {
 	timer := time.NewTimer(wt.retryDuration)
 	defer timer.Stop()
 
@@ -106,7 +106,7 @@ func (wt *wsTransceiver) Listen(connection webSocket.WSConClient) bool {
 
 		select {
 		case <-wt.safeCloser.ChanClose():
-			return false
+			return
 		case <-timer.C:
 		}
 	}
@@ -142,6 +142,7 @@ func (wt *wsTransceiver) handleAckMessage(payload []byte) {
 	counter, err := wt.payloadParser.DecodeUint64(payload)
 	if err != nil {
 		wt.log.Debug("wsTransceiver.handleAckMessage cannot decode the ack message", "error", err)
+		return
 	}
 
 	wt.log.Trace("wt.handleAckMessage: received ack", "counter", counter)
@@ -211,13 +212,11 @@ func (wt *wsTransceiver) sendPayload(payload []byte, connection webSocket.WSConC
 
 func (wt *wsTransceiver) waitForAck() {
 	// wait for ack
-	for {
-		select {
-		case <-wt.ackChan:
-			return
-		case <-wt.safeCloser.ChanClose():
-			return
-		}
+	select {
+	case <-wt.ackChan:
+		return
+	case <-wt.safeCloser.ChanClose():
+		return
 	}
 }
 

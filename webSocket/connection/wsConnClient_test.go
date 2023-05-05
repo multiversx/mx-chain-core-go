@@ -161,3 +161,23 @@ func TestWsConnClient_ReOpenAlreadyOpenedConnectionShouldError(t *testing.T) {
 
 	_ = conClient.Close()
 }
+
+func TestWsConnClient_CloseWithoutMessageToServer(t *testing.T) {
+	t.Parallel()
+
+	testServer := mock.NewHttpTestEchoHandler()
+	defer testServer.Close()
+
+	conClient := NewWSConnClient()
+	connectionURL := createConnectionURLForTestServer(testServer)
+	err := conClient.OpenConnection(connectionURL)
+	require.Nil(t, err)
+
+	err = conClient.CloseWithoutMessageToServer()
+	require.Nil(t, err)
+
+	err = conClient.OpenConnection(connectionURL)
+	require.Nil(t, err)
+
+	_ = conClient.Close()
+}

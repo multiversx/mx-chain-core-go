@@ -85,7 +85,6 @@ func (c *client) Start() {
 	go func() {
 		timer := time.NewTimer(c.retryDuration)
 		defer timer.Stop()
-
 		for {
 			err := c.wsConn.OpenConnection(c.url)
 			if err != nil && !errors.Is(err, data.ErrConnectionAlreadyOpen) {
@@ -103,13 +102,21 @@ func (c *client) Start() {
 	}()
 
 	go func() {
+		timer := time.NewTimer(c.retryDuration)
+		defer timer.Stop()
 		for {
-			_ = c.transceiver.Listen(c.wsConn)
+			closed := c.transceiver.Listen(c.wsConn)
+			if closed {
+				err := c.wsConn.CloseWithoutMessageToServer()
+				c.log.LogIfError(err, "received close from server: initialized close()", "close error", err)
+			}
+
+			timer.Reset(c.retryDuration)
 
 			select {
 			case <-c.safeCloser.ChanClose():
 				return
-			default:
+			case <-timer.C:
 			}
 		}
 	}()

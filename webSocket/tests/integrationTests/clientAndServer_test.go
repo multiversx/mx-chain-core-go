@@ -1,6 +1,7 @@
 package integrationTests
 
 import (
+	"fmt"
 	"strings"
 	"sync"
 	"testing"
@@ -31,7 +32,7 @@ func TestStartServerAddClientAndSendData(t *testing.T) {
 
 	wsServer.Start()
 
-	wsClient1, err := createClient(url)
+	wsClient1, err := createClient(url, &mock.LoggerMock{})
 	require.Nil(t, err)
 
 	wsClient1.Start()
@@ -82,7 +83,7 @@ func TestStartServerAddClientAndCloseClientAndServerShouldReceiveClose(t *testin
 
 	wsServer.Start()
 
-	wsClient1, err := createClient(url)
+	wsClient1, err := createClient(url, &mock.LoggerMock{})
 	require.Nil(t, err)
 	wsClient1.Start()
 	time.Sleep(time.Second)
@@ -105,4 +106,84 @@ func TestStartServerAddClientAndCloseClientAndServerShouldReceiveClose(t *testin
 	require.True(t, serverReceivedCloseMessage)
 }
 
-// TODO add a scenario where server will be closed first
+func TestStartServerStartClientCloseServer(t *testing.T) {
+	url := "localhost:8833"
+	wsServer, err := createServer(url, &mock.LoggerMock{})
+	require.Nil(t, err)
+
+	var sentMessages []string
+	var receivedMessages []string
+
+	wg := &sync.WaitGroup{}
+	wg.Add(1)
+
+	numMessagesReceived := 0
+	payloadHandler := &testscommon.PayloadHandlerStub{
+		ProcessPayloadCalled: func(payload []byte) error {
+			receivedMessages = append(receivedMessages, string(payload))
+			numMessagesReceived++
+			if numMessagesReceived == 200 {
+				wg.Done()
+			}
+			return nil
+		},
+	}
+	_ = wsServer.SetPayloadHandler(payloadHandler)
+
+	wsServer.Start()
+
+	wsClient1, err := createClient(url, &mock.LoggerMock{})
+	require.Nil(t, err)
+	wsClient1.Start()
+
+	for idx := 0; idx < 100; idx++ {
+		message := fmt.Sprintf("%d", idx)
+		for {
+			err = wsClient1.Send(data.WsSendArgs{
+				Payload: []byte(message),
+				OpType:  data.OperationSaveBlock,
+			})
+			if err == nil {
+				sentMessages = append(sentMessages, message)
+				break
+			} else {
+				time.Sleep(300 * time.Millisecond)
+			}
+		}
+	}
+
+	err = wsServer.Close()
+	require.Nil(t, err)
+
+	time.Sleep(5 * time.Second)
+	// start the server again
+	wsServer, err = createServer(url, &mock.LoggerMock{})
+	_ = wsServer.SetPayloadHandler(payloadHandler)
+	require.Nil(t, err)
+	wsServer.Start()
+
+	for idx := 100; idx < 200; idx++ {
+		message := fmt.Sprintf("%d", idx)
+		for {
+			err = wsClient1.Send(data.WsSendArgs{
+				Payload: []byte(message),
+				OpType:  data.OperationSaveBlock,
+			})
+			if err == nil {
+				sentMessages = append(sentMessages, message)
+				break
+			} else {
+				time.Sleep(300 * time.Millisecond)
+			}
+		}
+	}
+
+	wg.Wait()
+	err = wsClient1.Close()
+	require.Nil(t, err)
+	err = wsServer.Close()
+	require.Nil(t, err)
+
+	require.Equal(t, 200, numMessagesReceived)
+	require.Equal(t, sentMessages, receivedMessages)
+}

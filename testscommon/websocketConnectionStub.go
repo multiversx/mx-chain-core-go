@@ -2,11 +2,20 @@ package testscommon
 
 // WebsocketConnectionStub -
 type WebsocketConnectionStub struct {
-	OpenConnectionCalled func(url string) error
-	ReadMessageCalled    func() (messageType int, payload []byte, err error)
-	WriteMessageCalled   func(messageType int, data []byte) error
-	GetIDCalled          func() string
-	CloseCalled          func() error
+	OpenConnectionCalled              func(url string) error
+	ReadMessageCalled                 func() (messageType int, payload []byte, err error)
+	WriteMessageCalled                func(messageType int, data []byte) error
+	GetIDCalled                       func() string
+	CloseCalled                       func() error
+	CloseWithoutMessageToServerCalled func() error
+}
+
+// CloseWithoutMessageToServer -
+func (w *WebsocketConnectionStub) CloseWithoutMessageToServer() error {
+	if w.CloseWithoutMessageToServerCalled != nil {
+		return w.CloseWithoutMessageToServerCalled()
+	}
+	return nil
 }
 
 // OpenConnection -
