@@ -87,9 +87,9 @@ func (wt *wsTransceiver) Listen(connection webSocket.WSConClient) (closed bool) 
 	defer timer.Stop()
 
 	for {
-		msgType, message, err := connection.ReadMessage()
+		_, message, err := connection.ReadMessage()
 		if err == nil {
-			wt.verifyPayloadAndSendAckIfNeeded(connection, message, msgType)
+			wt.verifyPayloadAndSendAckIfNeeded(connection, message)
 			continue
 		}
 
@@ -112,8 +112,8 @@ func (wt *wsTransceiver) Listen(connection webSocket.WSConClient) (closed bool) 
 	}
 }
 
-func (wt *wsTransceiver) verifyPayloadAndSendAckIfNeeded(connection webSocket.WSConClient, payload []byte, msgType int) {
-	if msgType == websocket.TextMessage {
+func (wt *wsTransceiver) verifyPayloadAndSendAckIfNeeded(connection webSocket.WSConClient, payload []byte) {
+	if wt.payloadParser.IsAckPayload(payload) {
 		wt.handleAckMessage(payload)
 		return
 	}
@@ -139,7 +139,7 @@ func (wt *wsTransceiver) verifyPayloadAndSendAckIfNeeded(connection webSocket.WS
 }
 
 func (wt *wsTransceiver) handleAckMessage(payload []byte) {
-	counter, err := wt.payloadParser.DecodeUint64(payload)
+	counter, err := wt.payloadParser.ExtractUint64FromAckMessage(payload)
 	if err != nil {
 		wt.log.Debug("wsTransceiver.handleAckMessage cannot decode the ack message", "error", err)
 		return
@@ -165,11 +165,11 @@ func (wt *wsTransceiver) sendAckIfNeeded(connection webSocket.WSConClient, paylo
 	timer := time.NewTimer(wt.retryDuration)
 	defer timer.Stop()
 
-	counterBytes := wt.payloadParser.EncodeUint64(payloadData.Counter)
+	counterBytes := wt.payloadParser.PrepareUint64Ack(payloadData.Counter)
 	for {
 		timer.Reset(wt.retryDuration)
 
-		err := connection.WriteMessage(websocket.TextMessage, counterBytes)
+		err := connection.WriteMessage(websocket.BinaryMessage, counterBytes)
 		if err == nil {
 			return
 		}

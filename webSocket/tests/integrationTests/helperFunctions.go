@@ -16,7 +16,6 @@ var (
 )
 
 func createClient(url string, log core.Logger) (webSocket.HostWebSocket, error) {
-
 	return client.NewWebSocketClient(client.ArgsWebSocketClient{
 		RetryDurationInSeconds: retryDurationInSeconds,
 		WithAcknowledge:        true,

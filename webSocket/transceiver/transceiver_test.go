@@ -167,7 +167,7 @@ func TestSender_AddConnectionSendAndClose(t *testing.T) {
 		},
 		ReadMessageCalled: func() (messageType int, payload []byte, err error) {
 			if readAck {
-				counterBytes := args.PayloadConverter.EncodeUint64(1)
+				counterBytes := args.PayloadConverter.PrepareUint64Ack(1)
 				return websocket.TextMessage, counterBytes, nil
 			}
 

@@ -32,13 +32,13 @@ func TestStartServerAddClientAndSendData(t *testing.T) {
 
 	wsServer.Start()
 
-	wsClient1, err := createClient(url, &mock.LoggerMock{})
+	wsClient, err := createClient(url, &mock.LoggerMock{})
 	require.Nil(t, err)
 
-	wsClient1.Start()
+	wsClient.Start()
 
 	for {
-		err = wsClient1.Send(data.WsSendArgs{
+		err = wsClient.Send(data.WsSendArgs{
 			Payload: []byte("test"),
 			OpType:  data.OperationSaveBlock,
 		})
@@ -49,7 +49,7 @@ func TestStartServerAddClientAndSendData(t *testing.T) {
 	}
 	require.Nil(t, err)
 
-	_ = wsClient1.Close()
+	_ = wsClient.Close()
 	_ = wsServer.Close()
 	wg.Wait()
 }
@@ -83,13 +83,13 @@ func TestStartServerAddClientAndCloseClientAndServerShouldReceiveClose(t *testin
 
 	wsServer.Start()
 
-	wsClient1, err := createClient(url, &mock.LoggerMock{})
+	wsClient, err := createClient(url, &mock.LoggerMock{})
 	require.Nil(t, err)
-	wsClient1.Start()
+	wsClient.Start()
 	time.Sleep(time.Second)
 
 	for {
-		err = wsClient1.Send(data.WsSendArgs{
+		err = wsClient.Send(data.WsSendArgs{
 			Payload: []byte("test"),
 			OpType:  data.OperationSaveBlock,
 		})
@@ -98,7 +98,7 @@ func TestStartServerAddClientAndCloseClientAndServerShouldReceiveClose(t *testin
 		}
 	}
 
-	err = wsClient1.Close()
+	err = wsClient.Close()
 	require.Nil(t, err)
 	wg2.Wait()
 	_ = wsServer.Close()
@@ -132,14 +132,14 @@ func TestStartServerStartClientCloseServer(t *testing.T) {
 
 	wsServer.Start()
 
-	wsClient1, err := createClient(url, &mock.LoggerMock{})
+	wsClient, err := createClient(url, &mock.LoggerMock{})
 	require.Nil(t, err)
-	wsClient1.Start()
+	wsClient.Start()
 
 	for idx := 0; idx < 100; idx++ {
 		message := fmt.Sprintf("%d", idx)
 		for {
-			err = wsClient1.Send(data.WsSendArgs{
+			err = wsClient.Send(data.WsSendArgs{
 				Payload: []byte(message),
 				OpType:  data.OperationSaveBlock,
 			})
@@ -165,7 +165,7 @@ func TestStartServerStartClientCloseServer(t *testing.T) {
 	for idx := 100; idx < 200; idx++ {
 		message := fmt.Sprintf("%d", idx)
 		for {
-			err = wsClient1.Send(data.WsSendArgs{
+			err = wsClient.Send(data.WsSendArgs{
 				Payload: []byte(message),
 				OpType:  data.OperationSaveBlock,
 			})
@@ -179,7 +179,7 @@ func TestStartServerStartClientCloseServer(t *testing.T) {
 	}
 
 	wg.Wait()
-	err = wsClient1.Close()
+	err = wsClient.Close()
 	require.Nil(t, err)
 	err = wsServer.Close()
 	require.Nil(t, err)
