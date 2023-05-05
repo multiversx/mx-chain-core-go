@@ -1,6 +1,7 @@
 package factory
 
 import (
+	"errors"
 	"fmt"
 	"testing"
 
@@ -17,11 +18,11 @@ func createArgs() ArgsWebSocketDriverFactory {
 			WithAcknowledge:    false,
 			IsServer:           false,
 			RetryDurationInSec: 1,
+			BlockingAckOnError: false,
 		},
 		Marshaller:               &mock.MarshalizerMock{},
 		Uint64ByteSliceConverter: uint64ByteSlice.NewBigEndianConverter(),
 		Log:                      &mock.LoggerMock{},
-		WithAcknowledge:          false,
 	}
 }
 
@@ -35,7 +36,7 @@ func TestNewWebSocketDriver(t *testing.T) {
 	require.Equal(t, "*webSocket.webSocketDriver", fmt.Sprintf("%T", driver))
 
 	err = driver.Close()
-	require.Nil(t, err)
+	require.Equal(t, errors.New("connection not open"), err)
 }
 
 func TestCreateClient(t *testing.T) {

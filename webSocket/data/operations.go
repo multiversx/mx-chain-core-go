@@ -11,6 +11,7 @@ type WebSocketConfig struct {
 	WithAcknowledge    bool
 	IsServer           bool
 	RetryDurationInSec int
+	BlockingAckOnError bool
 }
 
 // OperationType defines the type to be used to group web socket operations

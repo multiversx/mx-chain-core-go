@@ -52,26 +52,35 @@ func (wsc *wsConnClient) OpenConnection(url string) error {
 
 // ReadMessage calls the underlying reading message ws connection func
 func (wsc *wsConnClient) ReadMessage() (messageType int, p []byte, err error) {
-	wsc.mut.RLock()
-	defer wsc.mut.RUnlock()
-
-	if wsc.conn == nil {
-		return 0, nil, data.ErrConnectionNotOpen
+	conn, err := wsc.getConn()
+	if err != nil {
+		return 0, nil, err
 	}
 
-	return wsc.conn.ReadMessage()
+	return conn.ReadMessage()
 }
 
 // WriteMessage calls the underlying write message ws connection func
 func (wsc *wsConnClient) WriteMessage(messageType int, payload []byte) error {
+	conn, err := wsc.getConn()
+	if err != nil {
+		return err
+	}
+
+	return conn.WriteMessage(messageType, payload)
+}
+
+func (wsc *wsConnClient) getConn() (*websocket.Conn, error) {
 	wsc.mut.RLock()
 	defer wsc.mut.RUnlock()
 
 	if wsc.conn == nil {
-		return data.ErrConnectionNotOpen
+		return nil, data.ErrConnectionNotOpen
 	}
 
-	return wsc.conn.WriteMessage(messageType, payload)
+	conn := wsc.conn
+
+	return conn, nil
 }
 
 // GetID will return the unique id of the client
@@ -95,8 +104,10 @@ func (wsc *wsConnClient) Close() error {
 	//waiting (with timeout) for the server to close the connection.
 	err := wsc.conn.WriteMessage(websocket.CloseMessage, websocket.FormatCloseMessage(websocket.CloseNormalClosure, ""))
 	if err != nil {
-		log.Error("cannot send close message", "error", err)
+		log.Trace("cannot send close message", "error", err)
 	}
+
+	wsc.conn.CloseHandler()
 
 	err = wsc.conn.Close()
 	if err != nil {

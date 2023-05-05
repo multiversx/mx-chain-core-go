@@ -91,9 +91,9 @@ func createServer() (Driver, error) {
 			URL:                "127.0.0.1:21112",
 			RetryDurationInSec: 5,
 			IsServer:           true,
+			WithAcknowledge:    true,
 		},
 		Uint64ByteSliceConverter: uint64ByteSlice.NewBigEndianConverter(),
 		Log:                      log,
-		WithAcknowledge:          true,
 	})
 }

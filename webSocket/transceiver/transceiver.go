@@ -30,6 +30,7 @@ type wsTransceiver struct {
 	safeCloser         core.SafeCloser
 	retryDuration      time.Duration
 	mutex              sync.RWMutex
+	ackChan            chan struct{}
 	counter            uint64
 	blockingAckOnError bool
 	withAcknowledge    bool
@@ -50,6 +51,7 @@ func NewTransceiver(args ArgsTransceiver) (*wsTransceiver, error) {
 		payloadHandler:     webSocket.NewNilPayloadHandler(),
 		payloadParser:      args.PayloadConverter,
 		withAcknowledge:    args.WithAcknowledge,
+		ackChan:            make(chan struct{}),
 	}, nil
 }
 
@@ -91,9 +93,16 @@ func (wt *wsTransceiver) Listen(connection webSocket.WSConClient) (closed bool) 
 			continue
 		}
 
-		// TODO will handle the error in the PR with the integration tests
+		_, isConnectionClosed := err.(*websocket.CloseError)
+		if !strings.Contains(err.Error(), data.ClosedConnectionMessage) && !isConnectionClosed {
+			wt.log.Warn("wt.Listen()-> connection problem", "error", err.Error())
+		}
+		if isConnectionClosed {
+			wt.log.Info("received connection close")
+			return true
+		}
+
 		timer.Reset(wt.retryDuration)
-		wt.log.Warn("wt.Listen()-> connection problem", "error", err.Error())
 
 		select {
 		case <-wt.safeCloser.ChanClose():
@@ -104,6 +113,11 @@ func (wt *wsTransceiver) Listen(connection webSocket.WSConClient) (closed bool) 
 }
 
 func (wt *wsTransceiver) verifyPayloadAndSendAckIfNeeded(connection webSocket.WSConClient, payload []byte) {
+	if wt.payloadParser.IsAckPayload(payload) {
+		wt.handleAckMessage(payload)
+		return
+	}
+
 	if len(payload) == 0 {
 		wt.log.Debug("wt.verifyPayloadAndSendAckIfNeeded(): empty payload")
 		return
@@ -115,13 +129,35 @@ func (wt *wsTransceiver) verifyPayloadAndSendAckIfNeeded(connection webSocket.WS
 		return
 	}
 
-	err = wt.payloadHandler.ProcessPayload(payloadData.Payload)
+	err = wt.payloadHandler.ProcessPayload(payloadData)
 	if err != nil && wt.blockingAckOnError {
 		wt.log.Debug("wt.payloadHandler.ProcessPayload: cannot handler payload", "error", err)
 		return
 	}
 
 	wt.sendAckIfNeeded(connection, payloadData)
+}
+
+func (wt *wsTransceiver) handleAckMessage(payload []byte) {
+	counter, err := wt.payloadParser.ExtractUint64FromAckMessage(payload)
+	if err != nil {
+		wt.log.Debug("wsTransceiver.handleAckMessage cannot decode the ack message", "error", err)
+		return
+	}
+
+	wt.log.Trace("wt.handleAckMessage: received ack", "counter", counter)
+	expectedCounter := atomic.LoadUint64(&wt.counter)
+	if expectedCounter != counter {
+		wt.log.Debug("wsTransceiver.handleAckMessage invalid counter received", "expected", expectedCounter, "received", counter)
+		return
+	}
+
+	select {
+	case wt.ackChan <- struct{}{}:
+		return
+	case <-wt.safeCloser.ChanClose():
+		return
+	}
 }
 
 func (wt *wsTransceiver) sendAckIfNeeded(connection webSocket.WSConClient, payloadData *data.PayloadData) {
@@ -132,7 +168,7 @@ func (wt *wsTransceiver) sendAckIfNeeded(connection webSocket.WSConClient, paylo
 	timer := time.NewTimer(wt.retryDuration)
 	defer timer.Stop()
 
-	counterBytes := wt.payloadParser.EncodeUint64(payloadData.Counter)
+	counterBytes := wt.payloadParser.PrepareUint64Ack(payloadData.Counter)
 	for {
 		timer.Reset(wt.retryDuration)
 
@@ -160,10 +196,10 @@ func (wt *wsTransceiver) Send(args data.WsSendArgs, connection webSocket.WSConCl
 	assignedCounter := atomic.AddUint64(&wt.counter, 1)
 	newPayload := wt.payloadParser.ConstructPayloadData(args, assignedCounter, wt.withAcknowledge)
 
-	return wt.sendPayload(newPayload, assignedCounter, connection)
+	return wt.sendPayload(newPayload, connection)
 }
 
-func (wt *wsTransceiver) sendPayload(payload []byte, assignedCounter uint64, connection webSocket.WSConClient) error {
+func (wt *wsTransceiver) sendPayload(payload []byte, connection webSocket.WSConClient) error {
 	errSend := connection.WriteMessage(websocket.BinaryMessage, payload)
 	if errSend != nil {
 		return errSend
@@ -173,47 +209,15 @@ func (wt *wsTransceiver) sendPayload(payload []byte, assignedCounter uint64, con
 		return nil
 	}
 
-	return wt.waitForAck(assignedCounter, connection)
+	return wt.waitForAck()
 }
 
-func (wt *wsTransceiver) waitForAck(assignedCounter uint64, connection webSocket.WSConClient) error {
-	for {
-		select {
-		case <-wt.safeCloser.ChanClose():
-			return nil
-		default:
-		}
-
-		mType, message, err := connection.ReadMessage()
-		if err != nil {
-			wt.log.Debug("s.waitForAck(): cannot read message", "id", connection.GetID(), "error", err)
-			continue
-		}
-
-		if mType != websocket.BinaryMessage {
-			wt.log.Debug("received message is not binary message", "id", connection.GetID(), "message type", mType)
-			continue
-		}
-
-		wt.log.Trace("received ack", "remote addr", connection.GetID(), "message", message)
-
-		receivedCounter, err := wt.payloadParser.DecodeUint64(message)
-		if err != nil {
-			wt.log.Warn("cannot decode counter: bytes to uint64",
-				"id", connection.GetID(),
-				"counter bytes", message,
-				"error", err,
-			)
-			continue
-		}
-
-		if receivedCounter != assignedCounter {
-			wt.log.Debug("s.waitForAck invalid counter", "expected", assignedCounter, "received", receivedCounter, "id", connection.GetID())
-			continue
-		}
-
+func (wt *wsTransceiver) waitForAck() error {
+	select {
+	case <-wt.ackChan:
 		return nil
-
+	case <-wt.safeCloser.ChanClose():
+		return data.ErrExpectedAckWasNotReceivedOnClose
 	}
 }
 

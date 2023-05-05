@@ -42,7 +42,7 @@ type HostWebSocket interface {
 
 // PayloadHandler defines what a payload handler should be able to do
 type PayloadHandler interface {
-	ProcessPayload(payload []byte) error
+	ProcessPayload(payload *outportSenderData.PayloadData) error
 	Close() error
 	IsInterfaceNil() bool
 }
@@ -51,8 +51,9 @@ type PayloadHandler interface {
 type PayloadConverter interface {
 	ExtractPayloadData(payload []byte) (*outportSenderData.PayloadData, error)
 	ConstructPayloadData(args outportSenderData.WsSendArgs, counter uint64, withAcknowledge bool) []byte
-	EncodeUint64(counter uint64) []byte
-	DecodeUint64(payload []byte) (uint64, error)
+	PrepareUint64Ack(counter uint64) []byte
+	IsAckPayload(payload []byte) bool
+	ExtractUint64FromAckMessage(payload []byte) (uint64, error)
 	IsInterfaceNil() bool
 }
 

@@ -8,7 +8,10 @@ import (
 	"github.com/multiversx/mx-chain-core-go/webSocket/data"
 )
 
+// TODO refactor this structure in the next PR and add a proto structure that will contains all the information
+
 const (
+	prefixAckMessageLen     = 5
 	withAcknowledgeNumBytes = 1
 	uint64NumBytes          = 8
 	uint32NumBytes          = 4
@@ -17,8 +20,9 @@ const (
 var (
 	minBytesForCorrectPayload = withAcknowledgeNumBytes + uint64NumBytes + uint32NumBytes + uint32NumBytes
 
-	prefixWithoutAck = []byte{0}
-	prefixWithAck    = []byte{1}
+	prefixPayloadWithoutAck = []byte{0}
+	prefixPayloadWithAck    = []byte{1}
+	prefixAckMessage        = []byte("#ack_")
 )
 
 type webSocketsPayloadConverter struct {
@@ -95,7 +99,7 @@ func (wpc *webSocketsPayloadConverter) ExtractPayloadData(payload []byte) (*data
 
 // ConstructPayloadData will construct the payload data
 func (wpc *webSocketsPayloadConverter) ConstructPayloadData(args data.WsSendArgs, counter uint64, withAcknowledge bool) []byte {
-	opBytes := wpc.EncodeUint64(uint64(args.OpType.Uint32()))
+	opBytes := wpc.encodeUint64(uint64(args.OpType.Uint32()))
 	opBytes = opBytes[uint32NumBytes:]
 
 	messageLength := uint64(len(args.Payload))
@@ -105,24 +109,48 @@ func (wpc *webSocketsPayloadConverter) ConstructPayloadData(args data.WsSendArgs
 	newPayload := append(opBytes, messageLengthBytes...)
 	newPayload = append(newPayload, args.Payload...)
 
-	ackData := prefixWithoutAck
+	ackData := prefixPayloadWithoutAck
 	if withAcknowledge {
-		ackData = prefixWithAck
+		ackData = prefixPayloadWithAck
 	}
 
-	payloadWithCounter := append(ackData, wpc.EncodeUint64(counter)...)
+	payloadWithCounter := append(ackData, wpc.encodeUint64(counter)...)
 	payloadWithCounter = append(payloadWithCounter, newPayload...)
 	return payloadWithCounter
 }
 
 // EncodeUint64 will encode the provided counter in a byte array
-func (wpc *webSocketsPayloadConverter) EncodeUint64(counter uint64) []byte {
+func (wpc *webSocketsPayloadConverter) encodeUint64(counter uint64) []byte {
 	return wpc.uint64ByteSliceConverter.ToByteSlice(counter)
 }
 
-// DecodeCounter will decode the provided payload in a uint64 value
-func (wpc *webSocketsPayloadConverter) DecodeUint64(payload []byte) (uint64, error) {
-	return wpc.uint64ByteSliceConverter.ToUint64(payload)
+// PrepareUint64Ack will prepare the provided uint64 value in a ack message
+func (wpc *webSocketsPayloadConverter) PrepareUint64Ack(counter uint64) []byte {
+	counterBytes := wpc.encodeUint64(counter)
+
+	return append(prefixAckMessage, counterBytes...)
+}
+
+// IsAckPayload will return true if the provided payload contains an ack message
+func (wpc *webSocketsPayloadConverter) IsAckPayload(payload []byte) bool {
+	if len(payload) < prefixAckMessageLen+1 {
+		return false
+	}
+
+	prefixAckMessageFromPayload := payload[:prefixAckMessageLen]
+
+	return bytes.Equal(prefixAckMessageFromPayload, prefixAckMessage)
+}
+
+// ExtractUint64FromAckMessage will decode the provided payload in an uint64 value
+func (wpc *webSocketsPayloadConverter) ExtractUint64FromAckMessage(payload []byte) (uint64, error) {
+	if len(payload) < prefixAckMessageLen+1 {
+		return 0, data.ErrInvalidPayloadForAckMessage
+	}
+
+	counterBytes := payload[prefixAckMessageLen:]
+
+	return wpc.uint64ByteSliceConverter.ToUint64(counterBytes)
 }
 
 func padUint32ByteSlice(initial []byte) []byte {

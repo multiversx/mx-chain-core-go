@@ -85,7 +85,6 @@ func (c *client) Start() {
 	go func() {
 		timer := time.NewTimer(c.retryDuration)
 		defer timer.Stop()
-
 		for {
 			err := c.wsConn.OpenConnection(c.url)
 			if err != nil && !errors.Is(err, data.ErrConnectionAlreadyOpen) {
@@ -103,13 +102,21 @@ func (c *client) Start() {
 	}()
 
 	go func() {
+		timer := time.NewTimer(c.retryDuration)
+		defer timer.Stop()
 		for {
-			_ = c.transceiver.Listen(c.wsConn)
+			closed := c.transceiver.Listen(c.wsConn)
+			if closed {
+				err := c.wsConn.Close()
+				c.log.LogIfError(err, "received close from server: initialized close()", "close error", err)
+			}
+
+			timer.Reset(c.retryDuration)
 
 			select {
 			case <-c.safeCloser.ChanClose():
 				return
-			default:
+			case <-timer.C:
 			}
 		}
 	}()
@@ -129,13 +136,22 @@ func (c *client) SetPayloadHandler(handler webSocket.PayloadHandler) error {
 func (c *client) Close() error {
 	defer c.safeCloser.Close()
 
-	c.log.Info("closing all components...")
+	var lastErr error
+
+	c.log.Info("closing client...")
 	err := c.transceiver.Close()
 	if err != nil {
-		c.log.Warn("client.Close() sender", "error", err)
+		c.log.Warn("client.Close() transceiver", "error", err)
+		lastErr = err
 	}
 
-	return nil
+	err = c.wsConn.Close()
+	if err != nil {
+		c.log.Warn("client.Close() cannot close connection", "error", err)
+		lastErr = err
+	}
+
+	return lastErr
 }
 
 // IsInterfaceNil returns true if there is no value under the interface

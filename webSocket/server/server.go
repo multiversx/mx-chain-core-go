@@ -84,6 +84,7 @@ func (s *server) connectionHandler(connection webSocket.WSConClient) {
 	})
 	if err != nil {
 		s.log.Warn("s.connectionHandler cannot create transceiver", "error", err)
+		return
 	}
 	err = webSocketTransceiver.SetPayloadHandler(s.payloadHandler)
 	if err != nil {
@@ -94,6 +95,7 @@ func (s *server) connectionHandler(connection webSocket.WSConClient) {
 		s.transceiversAndConn.addTransceiverAndConn(webSocketTransceiver, connection)
 		// this method is blocking
 		_ = webSocketTransceiver.Listen(connection)
+		s.log.Info("connection closed", "client id", connection.GetID())
 		// if method listen will end, the client was disconnected, and we should remove the listener from the list
 		s.transceiversAndConn.remove(connection.GetID())
 	}()

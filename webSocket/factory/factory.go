@@ -15,7 +15,6 @@ type ArgsWebSocketDriverFactory struct {
 	Marshaller               marshal.Marshalizer
 	Uint64ByteSliceConverter webSocket.Uint64ByteSliceConverter
 	Log                      core.Logger
-	WithAcknowledge          bool
 }
 
 // NewWebSocketDriver will handle the creation of all the components needed to create an outport driver that sends data over WebSocket
@@ -52,11 +51,11 @@ func createWebSocketClient(args ArgsWebSocketDriverFactory) (webSocket.HostWebSo
 
 	return client.NewWebSocketClient(client.ArgsWebSocketClient{
 		RetryDurationInSeconds: args.WebSocketConfig.RetryDurationInSec,
-		WithAcknowledge:        args.WithAcknowledge,
+		WithAcknowledge:        args.WebSocketConfig.WithAcknowledge,
 		URL:                    args.WebSocketConfig.URL,
 		PayloadConverter:       payloadConverter,
 		Log:                    args.Log,
-		BlockingAckOnError:     false,
+		BlockingAckOnError:     args.WebSocketConfig.BlockingAckOnError,
 	})
 }
 
@@ -68,11 +67,11 @@ func createWebSocketServer(args ArgsWebSocketDriverFactory) (webSocket.HostWebSo
 
 	host, err := server.NewWebSocketServer(server.ArgsWebSocketServer{
 		RetryDurationInSeconds: args.WebSocketConfig.RetryDurationInSec,
-		WithAcknowledge:        args.WithAcknowledge,
+		WithAcknowledge:        args.WebSocketConfig.WithAcknowledge,
 		URL:                    args.WebSocketConfig.URL,
 		PayloadConverter:       payloadConverter,
 		Log:                    args.Log,
-		BlockingAckOnError:     false,
+		BlockingAckOnError:     args.WebSocketConfig.BlockingAckOnError,
 	})
 	if err != nil {
 		return nil, err

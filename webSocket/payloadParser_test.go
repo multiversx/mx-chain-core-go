@@ -169,3 +169,20 @@ func TestConstructPayloadDataAndExtract(t *testing.T) {
 		Payload:         []byte("something"),
 	}, payloadData)
 }
+
+func TestPrepareAckMessageAndExtract(t *testing.T) {
+	t.Parallel()
+
+	converter, err := NewWebSocketPayloadConverter(uint64ByteSlice.NewBigEndianConverter())
+	require.Nil(t, err)
+
+	payload := converter.PrepareUint64Ack(100)
+	require.True(t, converter.IsAckPayload(payload))
+
+	counter, err := converter.ExtractUint64FromAckMessage(payload)
+	require.Nil(t, err)
+	require.Equal(t, uint64(100), counter)
+
+	_, err = converter.ExtractUint64FromAckMessage(nil)
+	require.Equal(t, data.ErrInvalidPayloadForAckMessage, err)
+}
