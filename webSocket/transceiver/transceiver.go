@@ -129,7 +129,7 @@ func (wt *wsTransceiver) verifyPayloadAndSendAckIfNeeded(connection webSocket.WS
 		return
 	}
 
-	err = wt.payloadHandler.ProcessPayload(payloadData.Payload)
+	err = wt.payloadHandler.ProcessPayload(payloadData)
 	if err != nil && wt.blockingAckOnError {
 		wt.log.Debug("wt.payloadHandler.ProcessPayload: cannot handler payload", "error", err)
 		return

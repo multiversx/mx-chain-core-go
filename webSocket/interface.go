@@ -42,7 +42,7 @@ type HostWebSocket interface {
 
 // PayloadHandler defines what a payload handler should be able to do
 type PayloadHandler interface {
-	ProcessPayload(payload []byte) error
+	ProcessPayload(payload *outportSenderData.PayloadData) error
 	Close() error
 	IsInterfaceNil() bool
 }
