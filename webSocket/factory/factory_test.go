@@ -18,11 +18,11 @@ func createArgs() ArgsWebSocketDriverFactory {
 			WithAcknowledge:    false,
 			IsServer:           false,
 			RetryDurationInSec: 1,
+			BlockingAckOnError: false,
 		},
 		Marshaller:               &mock.MarshalizerMock{},
 		Uint64ByteSliceConverter: uint64ByteSlice.NewBigEndianConverter(),
 		Log:                      &mock.LoggerMock{},
-		WithAcknowledge:          false,
 	}
 }
 
