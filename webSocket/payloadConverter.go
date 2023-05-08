@@ -32,7 +32,7 @@ func (wpc *webSocketsPayloadConverter) ExtractWsMessage(payload []byte) (*data.W
 	return wsMessage, nil
 }
 
-// ConstructPayload will marshaller the provided *data.WsMessage
+// ConstructPayload will marshal the provided *data.WsMessage
 func (wpc *webSocketsPayloadConverter) ConstructPayload(wsMessage *data.WsMessage) ([]byte, error) {
 	return wpc.marshaller.Marshal(wsMessage)
 }
