@@ -38,9 +38,9 @@ func TestStartServerAddClientAndSendData(t *testing.T) {
 	wsClient.Start()
 
 	for {
-		err = wsClient.Send(data.WsSendArgs{
-			Payload: []byte("test"),
-			OpType:  data.OperationSaveBlock,
+		err = wsClient.Send(data.PayloadData{
+			Payload:       []byte("test"),
+			OperationType: data.OperationSaveBlock.Uint32(),
 		})
 		if err == nil {
 			break
@@ -89,9 +89,9 @@ func TestStartServerAddClientAndCloseClientAndServerShouldReceiveClose(t *testin
 	time.Sleep(time.Second)
 
 	for {
-		err = wsClient.Send(data.WsSendArgs{
-			Payload: []byte("test"),
-			OpType:  data.OperationSaveBlock,
+		err = wsClient.Send(data.PayloadData{
+			Payload:       []byte("test"),
+			OperationType: data.OperationSaveBlock.Uint32(),
 		})
 		if err == nil {
 			break
@@ -139,9 +139,9 @@ func TestStartServerStartClientCloseServer(t *testing.T) {
 	for idx := 0; idx < 100; idx++ {
 		message := fmt.Sprintf("%d", idx)
 		for {
-			err = wsClient.Send(data.WsSendArgs{
-				Payload: []byte(message),
-				OpType:  data.OperationSaveBlock,
+			err = wsClient.Send(data.PayloadData{
+				Payload:       []byte(message),
+				OperationType: data.OperationSaveBlock.Uint32(),
 			})
 			if err == nil {
 				sentMessages = append(sentMessages, message)
@@ -165,9 +165,9 @@ func TestStartServerStartClientCloseServer(t *testing.T) {
 	for idx := 100; idx < 200; idx++ {
 		message := fmt.Sprintf("%d", idx)
 		for {
-			err = wsClient.Send(data.WsSendArgs{
-				Payload: []byte(message),
-				OpType:  data.OperationSaveBlock,
+			err = wsClient.Send(data.PayloadData{
+				Payload:       []byte(message),
+				OperationType: data.OperationSaveBlock.Uint32(),
 			})
 			if err == nil {
 				sentMessages = append(sentMessages, message)

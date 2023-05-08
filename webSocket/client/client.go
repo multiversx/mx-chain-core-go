@@ -123,7 +123,7 @@ func (c *client) Start() {
 }
 
 // Send will send the provided payload from args
-func (c *client) Send(args data.WsSendArgs) error {
+func (c *client) Send(args data.PayloadData) error {
 	return c.transceiver.Send(args, c.wsConn)
 }
 

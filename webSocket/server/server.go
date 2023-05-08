@@ -140,7 +140,7 @@ func (s *server) initializeServer(wsURL string, wsPath string) {
 }
 
 // Send will send the provided payload from args
-func (s *server) Send(args data.WsSendArgs) error {
+func (s *server) Send(args data.PayloadData) error {
 	for _, tuple := range s.transceiversAndConn.getAll() {
 		err := tuple.transceiver.Send(args, tuple.conn)
 		if err != nil {

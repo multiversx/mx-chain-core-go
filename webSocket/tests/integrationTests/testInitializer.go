@@ -2,7 +2,7 @@ package integrationTests
 
 import (
 	"github.com/multiversx/mx-chain-core-go/core"
-	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
+	"github.com/multiversx/mx-chain-core-go/marshal/factory"
 	"github.com/multiversx/mx-chain-core-go/webSocket"
 	"github.com/multiversx/mx-chain-core-go/webSocket/client"
 	"github.com/multiversx/mx-chain-core-go/webSocket/server"
@@ -11,8 +11,8 @@ import (
 const retryDurationInSeconds = 1
 
 var (
-	uint64Converter     = uint64ByteSlice.NewBigEndianConverter()
-	payloadConverter, _ = webSocket.NewWebSocketPayloadConverter(uint64Converter)
+	marshaller, _       = factory.NewMarshalizer("gogo protobuf")
+	payloadConverter, _ = webSocket.NewWebSocketPayloadConverter(marshaller)
 )
 
 func createClient(url string, log core.Logger) (webSocket.HostWebSocket, error) {

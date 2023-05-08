@@ -44,7 +44,7 @@ func NewWebSocketDriver(args ArgsWebSocketDriverFactory) (webSocket.Driver, erro
 
 // TODO merge the ArgsWebSocketClient and ArgsWebSocketServer as they look the same and remove the duplicated arguments build
 func createWebSocketClient(args ArgsWebSocketDriverFactory) (webSocket.HostWebSocket, error) {
-	payloadConverter, err := webSocket.NewWebSocketPayloadConverter(args.Uint64ByteSliceConverter)
+	payloadConverter, err := webSocket.NewWebSocketPayloadConverter(args.Marshaller)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +60,7 @@ func createWebSocketClient(args ArgsWebSocketDriverFactory) (webSocket.HostWebSo
 }
 
 func createWebSocketServer(args ArgsWebSocketDriverFactory) (webSocket.HostWebSocket, error) {
-	payloadConverter, err := webSocket.NewWebSocketPayloadConverter(args.Uint64ByteSliceConverter)
+	payloadConverter, err := webSocket.NewWebSocketPayloadConverter(args.Marshaller)
 	if err != nil {
 		return nil, err
 	}

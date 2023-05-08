@@ -100,9 +100,9 @@ func (o *webSocketDriver) handleAction(args interface{}, operation outportSender
 		return fmt.Errorf("%w while marshaling block for operation %s", err, operation.String())
 	}
 
-	err = o.webSocketSender.Send(outportSenderData.WsSendArgs{
-		Payload: marshalledPayload,
-		OpType:  operation,
+	err = o.webSocketSender.Send(outportSenderData.PayloadData{
+		Payload:       marshalledPayload,
+		OperationType: operation.Uint32(),
 	})
 	if err != nil {
 		o.log.Error("cannot send on route", "operation", operation.String(), "error", err)

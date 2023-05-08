@@ -14,6 +14,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
 	"github.com/multiversx/mx-chain-core-go/marshal"
+	"github.com/multiversx/mx-chain-core-go/marshal/factory"
 	"github.com/multiversx/mx-chain-core-go/webSocket"
 	"github.com/multiversx/mx-chain-core-go/webSocket/data"
 	logger "github.com/multiversx/mx-chain-logger-go"
@@ -115,25 +116,26 @@ func (tc *tempClient) verifyPayloadAndSendAckIfNeeded(payload []byte, ackHandler
 		return
 	}
 
-	payloadParser, _ := webSocket.NewWebSocketPayloadConverter(uint64ByteSliceConverter)
-	payloadData, err := payloadParser.ExtractPayloadData(payload)
+	marshaller, _ := factory.NewMarshalizer("json")
+	payloadParser, _ := webSocket.NewWebSocketPayloadConverter(marshaller)
+	wsMessage, err := payloadParser.ExtractWsMessage(payload)
 	if err != nil {
 		log.Error(tc.name + " -> error while extracting payload data: " + err.Error())
 		return
 	}
 
 	log.Info(tc.name+" -> processing payload",
-		"counter", payloadData.Counter,
-		"operation type", payloadData.OperationType,
-		"message length", len(payloadData.Payload),
-		"data", payloadData.Payload,
-		"with ack", payloadData.WithAcknowledge,
+		"counter", wsMessage.Counter,
+		"operation type", wsMessage.PayloadData.OperationType,
+		"message length", len(wsMessage.PayloadData.Payload),
+		"data", wsMessage.PayloadData.Payload,
+		"with ack", wsMessage.WithAcknowledge,
 	)
 
-	if payloadData.OperationType.Uint32() == data.OperationSaveBlock.Uint32() {
+	if wsMessage.PayloadData.OperationType == data.OperationSaveBlock.Uint32() {
 		log.Debug(tc.name + " -> save block operation")
 		var argsBlock outport.OutportBlock
-		err = tc.marshaller.Unmarshal(&argsBlock, payloadData.Payload)
+		err = tc.marshaller.Unmarshal(&argsBlock, wsMessage.PayloadData.Payload)
 		if err != nil {
 			log.Error(tc.name+" -> cannot unmarshal block", "error", err)
 		} else {
@@ -141,8 +143,8 @@ func (tc *tempClient) verifyPayloadAndSendAckIfNeeded(payload []byte, ackHandler
 		}
 	}
 
-	if payloadData.WithAcknowledge {
-		counterBytes := uint64ByteSliceConverter.ToByteSlice(payloadData.Counter)
+	if wsMessage.WithAcknowledge {
+		counterBytes := uint64ByteSliceConverter.ToByteSlice(wsMessage.Counter)
 		err = ackHandler.WriteMessage(websocket.BinaryMessage, counterBytes)
 		if err != nil {
 			log.Error(tc.name + " -> " + err.Error())

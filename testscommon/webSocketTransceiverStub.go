@@ -7,14 +7,14 @@ import (
 
 // WebSocketTransceiverStub -
 type WebSocketTransceiverStub struct {
-	SendCalled              func(args data.WsSendArgs, conn webSocket.WSConClient) error
+	SendCalled              func(args data.PayloadData, conn webSocket.WSConClient) error
 	CloseCalled             func() error
 	SetPayloadHandlerCalled func(handler webSocket.PayloadHandler) error
 	ListenCalled            func(conn webSocket.WSConClient) (closed bool)
 }
 
 // Send -
-func (w *WebSocketTransceiverStub) Send(args data.WsSendArgs, conn webSocket.WSConClient) error {
+func (w *WebSocketTransceiverStub) Send(args data.PayloadData, conn webSocket.WSConClient) error {
 	if w.SendCalled != nil {
 		return w.SendCalled(args, conn)
 	}

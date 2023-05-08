@@ -26,14 +26,14 @@ type Driver interface {
 
 // WebSocketSenderHandler defines what the actions that a web socket sender should do
 type WebSocketSenderHandler interface {
-	Send(args outportSenderData.WsSendArgs) error
+	Send(args outportSenderData.PayloadData) error
 	Close() error
 	IsInterfaceNil() bool
 }
 
 // HostWebSocket defines what a WebSocket host should be able to do
 type HostWebSocket interface {
-	Send(args outportSenderData.WsSendArgs) error
+	Send(args outportSenderData.PayloadData) error
 	SetPayloadHandler(handler PayloadHandler) error
 	Start()
 	Close() error
@@ -49,11 +49,8 @@ type PayloadHandler interface {
 
 // PayloadConverter defines what a websocket payload converter should do
 type PayloadConverter interface {
-	ExtractPayloadData(payload []byte) (*outportSenderData.PayloadData, error)
-	ConstructPayloadData(args outportSenderData.WsSendArgs, counter uint64, withAcknowledge bool) []byte
-	PrepareUint64Ack(counter uint64) []byte
-	IsAckPayload(payload []byte) bool
-	ExtractUint64FromAckMessage(payload []byte) (uint64, error)
+	ExtractWsMessage(payload []byte) (*outportSenderData.WsMessage, error)
+	ConstructPayload(wsMessage *outportSenderData.WsMessage) ([]byte, error)
 	IsInterfaceNil() bool
 }
 
