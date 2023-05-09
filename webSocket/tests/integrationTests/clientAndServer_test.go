@@ -23,8 +23,8 @@ func TestStartServerAddClientAndSendData(t *testing.T) {
 	wg.Add(1)
 
 	_ = wsServer.SetPayloadHandler(&testscommon.PayloadHandlerStub{
-		ProcessPayloadCalled: func(payloadData *data.WsMessage) error {
-			require.Equal(t, []byte("test"), payloadData.Payload)
+		ProcessPayloadCalled: func(payload []byte, payloadType data.PayloadType) error {
+			require.Equal(t, []byte("test"), payload)
 			wg.Done()
 			return nil
 		},
@@ -71,8 +71,8 @@ func TestStartServerAddClientAndCloseClientAndServerShouldReceiveClose(t *testin
 	require.Nil(t, err)
 
 	_ = wsServer.SetPayloadHandler(&testscommon.PayloadHandlerStub{
-		ProcessPayloadCalled: func(payloadData *data.WsMessage) error {
-			require.Equal(t, []byte("test"), payloadData.Payload)
+		ProcessPayloadCalled: func(payload []byte, _ data.PayloadType) error {
+			require.Equal(t, []byte("test"), payload)
 			wg1.Done()
 			return nil
 		},
@@ -113,8 +113,8 @@ func TestStartServerStartClientCloseServer(t *testing.T) {
 
 	numMessagesReceived := 0
 	payloadHandler := &testscommon.PayloadHandlerStub{
-		ProcessPayloadCalled: func(payloadData *data.WsMessage) error {
-			receivedMessages = append(receivedMessages, string(payloadData.Payload))
+		ProcessPayloadCalled: func(payload []byte, _ data.PayloadType) error {
+			receivedMessages = append(receivedMessages, string(payload))
 			numMessagesReceived++
 			if numMessagesReceived == 200 {
 				wg.Done()

@@ -103,7 +103,7 @@ func TestReceiver_ListenAndSendAck(t *testing.T) {
 	require.Nil(t, err)
 
 	_ = webSocketsReceiver.SetPayloadHandler(&testscommon.PayloadHandlerStub{
-		ProcessPayloadCalled: func(payloadData *data.WsMessage) error {
+		ProcessPayloadCalled: func(_ []byte, _ data.PayloadType) error {
 			return nil
 		},
 	})

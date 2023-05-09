@@ -17,8 +17,8 @@ type WebSocketConfig struct {
 // PayloadType defines the type to be used to group web socket operations
 type PayloadType uint8
 
-// PayloadTypeFromUint64 returns the payload type based on the provided uint64 value
-func PayloadTypeFromUint64(value uint64) PayloadType {
+// PayloadTypeFromUint32 returns the payload type based on the provided uint32 value
+func PayloadTypeFromUint32(value uint32) PayloadType {
 	return PayloadType(uint8(value))
 }
 

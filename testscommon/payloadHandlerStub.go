@@ -4,7 +4,7 @@ import "github.com/multiversx/mx-chain-core-go/webSocket/data"
 
 // PayloadHandlerStub -
 type PayloadHandlerStub struct {
-	ProcessPayloadCalled func(payload *data.WsMessage) error
+	ProcessPayloadCalled func(payload []byte, payloadType data.PayloadType) error
 	CloseCalled          func() error
 }
 
@@ -14,9 +14,9 @@ func (ph *PayloadHandlerStub) IsInterfaceNil() bool {
 }
 
 // ProcessPayload -
-func (ph *PayloadHandlerStub) ProcessPayload(payload *data.WsMessage) error {
+func (ph *PayloadHandlerStub) ProcessPayload(payload []byte, payloadType data.PayloadType) error {
 	if ph.ProcessPayloadCalled != nil {
-		return ph.ProcessPayloadCalled(payload)
+		return ph.ProcessPayloadCalled(payload, payloadType)
 	}
 	return nil
 }
