@@ -123,8 +123,8 @@ func (c *client) Start() {
 }
 
 // Send will send the provided payload from args
-func (c *client) Send(payload []byte, payloadType data.PayloadType) error {
-	return c.transceiver.Send(payload, payloadType, c.wsConn)
+func (c *client) Send(payload []byte, topic string) error {
+	return c.transceiver.Send(payload, topic, c.wsConn)
 }
 
 // SetPayloadHandler set the payload handler

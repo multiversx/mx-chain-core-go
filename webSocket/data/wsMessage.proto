@@ -11,8 +11,8 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 message WsMessage {
   bool        WithAcknowledge = 1 [(gogoproto.jsontag) = "withAcknowledge,omitempty"];
   uint64      Counter         = 2 [(gogoproto.jsontag) = "counter,omitempty"];
-  int32       Type            = 3 [(gogoproto.jsontag) = "messageType,omitempty"];
+  int32       Type            = 3 [(gogoproto.jsontag) = "type,omitempty"];
   bytes       Payload         = 4 [(gogoproto.jsontag) = "payload,omitempty"];
-  uint32      PayloadType     = 5 [(gogoproto.jsontag) = "operationType,omitempty"];
+  string      Topic           = 5 [(gogoproto.jsontag) = "topic,omitempty"];
 }
 

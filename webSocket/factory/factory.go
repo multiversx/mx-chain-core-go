@@ -6,6 +6,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/webSocket"
 	"github.com/multiversx/mx-chain-core-go/webSocket/client"
 	outportData "github.com/multiversx/mx-chain-core-go/webSocket/data"
+	"github.com/multiversx/mx-chain-core-go/webSocket/driver"
 	"github.com/multiversx/mx-chain-core-go/webSocket/server"
 )
 
@@ -33,8 +34,8 @@ func NewWebSocketDriver(args ArgsWebSocketDriverFactory) (webSocket.Driver, erro
 
 	host.Start()
 
-	return webSocket.NewWebsocketDriver(
-		webSocket.ArgsWebSocketDriver{
+	return driver.NewWebsocketDriver(
+		driver.ArgsWebSocketDriver{
 			Marshaller:      args.Marshaller,
 			WebsocketSender: host,
 			Log:             args.Log,

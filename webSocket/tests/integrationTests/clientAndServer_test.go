@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"github.com/multiversx/mx-chain-core-go/core/mock"
+	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/testscommon"
-	"github.com/multiversx/mx-chain-core-go/webSocket/data"
 	"github.com/stretchr/testify/require"
 )
 
@@ -23,7 +23,7 @@ func TestStartServerAddClientAndSendData(t *testing.T) {
 	wg.Add(1)
 
 	_ = wsServer.SetPayloadHandler(&testscommon.PayloadHandlerStub{
-		ProcessPayloadCalled: func(payload []byte, payloadType data.PayloadType) error {
+		ProcessPayloadCalled: func(payload []byte, topic string) error {
 			require.Equal(t, []byte("test"), payload)
 			wg.Done()
 			return nil
@@ -38,7 +38,7 @@ func TestStartServerAddClientAndSendData(t *testing.T) {
 	wsClient.Start()
 
 	for {
-		err = wsClient.Send([]byte("test"), data.PayloadSaveAccounts)
+		err = wsClient.Send([]byte("test"), outport.TopicSaveAccounts)
 		if err == nil {
 			break
 		}
@@ -71,7 +71,7 @@ func TestStartServerAddClientAndCloseClientAndServerShouldReceiveClose(t *testin
 	require.Nil(t, err)
 
 	_ = wsServer.SetPayloadHandler(&testscommon.PayloadHandlerStub{
-		ProcessPayloadCalled: func(payload []byte, _ data.PayloadType) error {
+		ProcessPayloadCalled: func(payload []byte, _ string) error {
 			require.Equal(t, []byte("test"), payload)
 			wg1.Done()
 			return nil
@@ -86,7 +86,7 @@ func TestStartServerAddClientAndCloseClientAndServerShouldReceiveClose(t *testin
 	time.Sleep(time.Second)
 
 	for {
-		err = wsClient.Send([]byte("test"), data.PayloadSaveBlock)
+		err = wsClient.Send([]byte("test"), outport.TopicSaveBlock)
 		if err == nil {
 			break
 		}
@@ -113,7 +113,7 @@ func TestStartServerStartClientCloseServer(t *testing.T) {
 
 	numMessagesReceived := 0
 	payloadHandler := &testscommon.PayloadHandlerStub{
-		ProcessPayloadCalled: func(payload []byte, _ data.PayloadType) error {
+		ProcessPayloadCalled: func(payload []byte, _ string) error {
 			receivedMessages = append(receivedMessages, string(payload))
 			numMessagesReceived++
 			if numMessagesReceived == 200 {
@@ -133,7 +133,7 @@ func TestStartServerStartClientCloseServer(t *testing.T) {
 	for idx := 0; idx < 100; idx++ {
 		message := fmt.Sprintf("%d", idx)
 		for {
-			err = wsClient.Send([]byte(message), data.PayloadSaveBlock)
+			err = wsClient.Send([]byte(message), outport.TopicSaveBlock)
 			if err == nil {
 				sentMessages = append(sentMessages, message)
 				break
@@ -156,7 +156,7 @@ func TestStartServerStartClientCloseServer(t *testing.T) {
 	for idx := 100; idx < 200; idx++ {
 		message := fmt.Sprintf("%d", idx)
 		for {
-			err = wsClient.Send([]byte(message), data.PayloadSaveBlock)
+			err = wsClient.Send([]byte(message), outport.TopicSaveBlock)
 			if err == nil {
 				sentMessages = append(sentMessages, message)
 				break

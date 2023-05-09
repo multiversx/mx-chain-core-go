@@ -4,6 +4,7 @@ import (
 	"testing"
 
 	"github.com/multiversx/mx-chain-core-go/core/mock"
+	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/webSocket/data"
 	"github.com/stretchr/testify/require"
 )
@@ -38,7 +39,7 @@ func TestWebSocketsPayloadConverter_ConstructPayload(t *testing.T) {
 	wsMessage := &data.WsMessage{
 		WithAcknowledge: true,
 		Payload:         []byte("test"),
-		PayloadType:     data.PayloadSaveAccounts.Uint32(),
+		Topic:           outport.TopicSaveAccounts,
 		Counter:         10,
 		Type:            data.PayloadMessage,
 	}

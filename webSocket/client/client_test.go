@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"github.com/multiversx/mx-chain-core-go/core/mock"
+	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/testscommon"
 	"github.com/multiversx/mx-chain-core-go/webSocket"
 	"github.com/multiversx/mx-chain-core-go/webSocket/data"
@@ -80,7 +81,7 @@ func TestClient_SendAndClose(t *testing.T) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		err = ws.Send([]byte("send"), data.PayloadSaveAccounts)
+		err = ws.Send([]byte("send"), outport.TopicSaveAccounts)
 		require.Equal(t, "use of closed network connection", err.Error())
 		atomic.AddUint64(&count, 1)
 	}()
@@ -109,7 +110,7 @@ func TestClient_Send(t *testing.T) {
 
 	go func() {
 		defer wg.Done()
-		err = ws.Send([]byte("test"), data.PayloadSaveValidatorsRating)
+		err = ws.Send([]byte("test"), outport.TopicFinalizedBlock)
 		require.Equal(t, "local error", err.Error())
 		atomic.AddUint64(&count, 1)
 	}()

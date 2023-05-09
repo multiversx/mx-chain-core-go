@@ -2,21 +2,20 @@ package testscommon
 
 import (
 	"github.com/multiversx/mx-chain-core-go/webSocket"
-	"github.com/multiversx/mx-chain-core-go/webSocket/data"
 )
 
 // WebSocketTransceiverStub -
 type WebSocketTransceiverStub struct {
-	SendCalled              func(payload []byte, payloadType data.PayloadType, conn webSocket.WSConClient) error
+	SendCalled              func(payload []byte, topic string, conn webSocket.WSConClient) error
 	CloseCalled             func() error
 	SetPayloadHandlerCalled func(handler webSocket.PayloadHandler) error
 	ListenCalled            func(conn webSocket.WSConClient) (closed bool)
 }
 
 // Send -
-func (w *WebSocketTransceiverStub) Send(payload []byte, payloadType data.PayloadType, conn webSocket.WSConClient) error {
+func (w *WebSocketTransceiverStub) Send(payload []byte, topic string, conn webSocket.WSConClient) error {
 	if w.SendCalled != nil {
-		return w.SendCalled(payload, payloadType, conn)
+		return w.SendCalled(payload, topic, conn)
 	}
 	return nil
 }

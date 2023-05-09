@@ -10,6 +10,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/mock"
+	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/testscommon"
 	"github.com/multiversx/mx-chain-core-go/webSocket"
 	"github.com/multiversx/mx-chain-core-go/webSocket/data"
@@ -103,7 +104,7 @@ func TestReceiver_ListenAndSendAck(t *testing.T) {
 	require.Nil(t, err)
 
 	_ = webSocketsReceiver.SetPayloadHandler(&testscommon.PayloadHandlerStub{
-		ProcessPayloadCalled: func(_ []byte, _ data.PayloadType) error {
+		ProcessPayloadCalled: func(_ []byte, _ string) error {
 			return nil
 		},
 	})
@@ -122,7 +123,7 @@ func TestReceiver_ListenAndSendAck(t *testing.T) {
 			count++
 			preparedPayload, _ := args.PayloadConverter.ConstructPayload(&data.WsMessage{
 				Payload:         []byte("something"),
-				PayloadType:     data.PayloadSaveAccounts.Uint32(),
+				Topic:           outport.TopicSaveAccounts,
 				Counter:         10,
 				WithAcknowledge: true,
 				Type:            data.PayloadMessage,
@@ -187,7 +188,7 @@ func TestSender_AddConnectionSendAndClose(t *testing.T) {
 		webSocketTransceiver.Listen(conn1)
 	}()
 
-	err := webSocketTransceiver.Send([]byte("something"), data.PayloadFinalizedBlock, conn1)
+	err := webSocketTransceiver.Send([]byte("something"), outport.TopicFinalizedBlock, conn1)
 	require.Nil(t, err)
 	require.True(t, write)
 	require.True(t, readAck)
@@ -219,7 +220,7 @@ func TestSender_AddConnectionSendAndWaitForAckClose(t *testing.T) {
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 	go func() {
-		err := webSocketTransceiver.Send([]byte("something"), data.PayloadSaveValidatorsRating, conn1)
+		err := webSocketTransceiver.Send([]byte("something"), outport.TopicSaveAccounts, conn1)
 		require.Equal(t, data.ErrExpectedAckWasNotReceivedOnClose, err)
 		called = true
 		wg.Done()

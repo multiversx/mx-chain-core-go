@@ -126,13 +126,13 @@ func (tc *tempClient) verifyPayloadAndSendAckIfNeeded(payload []byte, ackHandler
 
 	log.Info(tc.name+" -> processing payload",
 		"counter", wsMessage.Counter,
-		"payload type", wsMessage.PayloadType,
+		"topic", wsMessage.Topic,
 		"message length", len(wsMessage.Payload),
 		"data", wsMessage.Payload,
 		"with ack", wsMessage.WithAcknowledge,
 	)
 
-	if wsMessage.PayloadType == data.PayloadSaveBlock.Uint32() {
+	if wsMessage.Topic == outport.TopicSaveBlock {
 		log.Debug(tc.name + " -> save block operation")
 		var argsBlock outport.OutportBlock
 		err = tc.marshaller.Unmarshal(&argsBlock, wsMessage.Payload)

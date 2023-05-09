@@ -26,14 +26,14 @@ type Driver interface {
 
 // WebSocketSenderHandler defines what the actions that a web socket sender should do
 type WebSocketSenderHandler interface {
-	Send(payload []byte, payloadType outportSenderData.PayloadType) error
+	Send(payload []byte, topic string) error
 	Close() error
 	IsInterfaceNil() bool
 }
 
 // HostWebSocket defines what a WebSocket host should be able to do
 type HostWebSocket interface {
-	Send(payload []byte, payloadType outportSenderData.PayloadType) error
+	Send(payload []byte, topic string) error
 	SetPayloadHandler(handler PayloadHandler) error
 	Start()
 	Close() error
@@ -42,7 +42,7 @@ type HostWebSocket interface {
 
 // PayloadHandler defines what a payload handler should be able to do
 type PayloadHandler interface {
-	ProcessPayload(payload []byte, payloadType outportSenderData.PayloadType) error
+	ProcessPayload(payload []byte, topic string) error
 	Close() error
 	IsInterfaceNil() bool
 }
