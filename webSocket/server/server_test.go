@@ -7,7 +7,6 @@ import (
 	"testing"
 
 	"github.com/multiversx/mx-chain-core-go/core/mock"
-	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
 	"github.com/multiversx/mx-chain-core-go/testscommon"
 	"github.com/multiversx/mx-chain-core-go/webSocket"
 	"github.com/multiversx/mx-chain-core-go/webSocket/data"
@@ -15,7 +14,7 @@ import (
 )
 
 func createArgs() ArgsWebSocketServer {
-	payloadConverter, _ := webSocket.NewWebSocketPayloadConverter(uint64ByteSlice.NewBigEndianConverter())
+	payloadConverter, _ := webSocket.NewWebSocketPayloadConverter(&mock.MarshalizerMock{})
 	return ArgsWebSocketServer{
 		RetryDurationInSeconds: 1,
 		BlockingAckOnError:     false,

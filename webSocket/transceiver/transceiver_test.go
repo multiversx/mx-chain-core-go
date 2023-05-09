@@ -10,7 +10,7 @@ import (
 	"github.com/gorilla/websocket"
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/mock"
-	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
+	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/testscommon"
 	"github.com/multiversx/mx-chain-core-go/webSocket"
 	"github.com/multiversx/mx-chain-core-go/webSocket/data"
@@ -18,7 +18,7 @@ import (
 )
 
 func createArgs() ArgsTransceiver {
-	payloadConverter, _ := webSocket.NewWebSocketPayloadConverter(uint64ByteSlice.NewBigEndianConverter())
+	payloadConverter, _ := webSocket.NewWebSocketPayloadConverter(&mock.MarshalizerMock{})
 	return ArgsTransceiver{
 		BlockingAckOnError: false,
 		PayloadConverter:   payloadConverter,
@@ -104,7 +104,7 @@ func TestReceiver_ListenAndSendAck(t *testing.T) {
 	require.Nil(t, err)
 
 	_ = webSocketsReceiver.SetPayloadHandler(&testscommon.PayloadHandlerStub{
-		ProcessPayloadCalled: func(payloadData *data.PayloadData) error {
+		ProcessPayloadCalled: func(_ []byte, _ string) error {
 			return nil
 		},
 	})
@@ -121,10 +121,13 @@ func TestReceiver_ListenAndSendAck(t *testing.T) {
 				return 0, nil, errors.New("closed")
 			}
 			count++
-			preparedPayload := args.PayloadConverter.ConstructPayloadData(data.WsSendArgs{
-				Payload: []byte("something"),
-				OpType:  data.OperationSaveAccounts,
-			}, 10, true)
+			preparedPayload, _ := args.PayloadConverter.ConstructPayload(&data.WsMessage{
+				Payload:         []byte("something"),
+				Topic:           outport.TopicSaveAccounts,
+				Counter:         10,
+				WithAcknowledge: true,
+				Type:            data.PayloadMessage,
+			})
 			return websocket.BinaryMessage, preparedPayload, nil
 		},
 		CloseCalled: func() error {
@@ -167,7 +170,11 @@ func TestSender_AddConnectionSendAndClose(t *testing.T) {
 		},
 		ReadMessageCalled: func() (messageType int, payload []byte, err error) {
 			if readAck {
-				counterBytes := args.PayloadConverter.PrepareUint64Ack(1)
+				wsMessage := &data.WsMessage{
+					Counter: 1,
+					Type:    data.AckMessage,
+				}
+				counterBytes, _ := args.PayloadConverter.ConstructPayload(wsMessage)
 				return websocket.TextMessage, counterBytes, nil
 			}
 
@@ -181,9 +188,7 @@ func TestSender_AddConnectionSendAndClose(t *testing.T) {
 		webSocketTransceiver.Listen(conn1)
 	}()
 
-	err := webSocketTransceiver.Send(data.WsSendArgs{
-		Payload: []byte("something"),
-	}, conn1)
+	err := webSocketTransceiver.Send([]byte("something"), outport.TopicFinalizedBlock, conn1)
 	require.Nil(t, err)
 	require.True(t, write)
 	require.True(t, readAck)
@@ -215,9 +220,7 @@ func TestSender_AddConnectionSendAndWaitForAckClose(t *testing.T) {
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 	go func() {
-		err := webSocketTransceiver.Send(data.WsSendArgs{
-			Payload: []byte("something"),
-		}, conn1)
+		err := webSocketTransceiver.Send([]byte("something"), outport.TopicSaveAccounts, conn1)
 		require.Equal(t, data.ErrExpectedAckWasNotReceivedOnClose, err)
 		called = true
 		wg.Done()

@@ -1,4 +1,4 @@
-package webSocket
+package driver
 
 import (
 	"errors"
@@ -68,7 +68,7 @@ func TestWebsocketOutportDriverNodePart_SaveBlock(t *testing.T) {
 
 		args := getMockArgs()
 		args.WebsocketSender = &mock.WebSocketSenderStub{
-			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+			SendOnRouteCalled: func(_ []byte, _ string) error {
 				return cannotSendOnRouteErr
 			},
 		}
@@ -101,7 +101,7 @@ func TestWebsocketOutportDriverNodePart_FinalizedBlock(t *testing.T) {
 	t.Run("Finalized block - should error", func(t *testing.T) {
 		args := getMockArgs()
 		args.WebsocketSender = &mock.WebSocketSenderStub{
-			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+			SendOnRouteCalled: func(_ []byte, _ string) error {
 				return cannotSendOnRouteErr
 			},
 		}
@@ -115,7 +115,7 @@ func TestWebsocketOutportDriverNodePart_FinalizedBlock(t *testing.T) {
 	t.Run("Finalized block - should work", func(t *testing.T) {
 		args := getMockArgs()
 		args.WebsocketSender = &mock.WebSocketSenderStub{
-			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+			SendOnRouteCalled: func(_ []byte, _ string) error {
 				return nil
 			},
 		}
@@ -133,7 +133,7 @@ func TestWebsocketOutportDriverNodePart_RevertIndexedBlock(t *testing.T) {
 	t.Run("RevertIndexedBlock - should error", func(t *testing.T) {
 		args := getMockArgs()
 		args.WebsocketSender = &mock.WebSocketSenderStub{
-			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+			SendOnRouteCalled: func(_ []byte, _ string) error {
 				return cannotSendOnRouteErr
 			},
 		}
@@ -147,7 +147,7 @@ func TestWebsocketOutportDriverNodePart_RevertIndexedBlock(t *testing.T) {
 	t.Run("RevertIndexedBlock block - should work", func(t *testing.T) {
 		args := getMockArgs()
 		args.WebsocketSender = &mock.WebSocketSenderStub{
-			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+			SendOnRouteCalled: func(_ []byte, _ string) error {
 				return nil
 			},
 		}
@@ -165,7 +165,7 @@ func TestWebsocketOutportDriverNodePart_SaveAccounts(t *testing.T) {
 	t.Run("SaveAccounts - should error", func(t *testing.T) {
 		args := getMockArgs()
 		args.WebsocketSender = &mock.WebSocketSenderStub{
-			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+			SendOnRouteCalled: func(_ []byte, _ string) error {
 				return cannotSendOnRouteErr
 			},
 		}
@@ -179,7 +179,7 @@ func TestWebsocketOutportDriverNodePart_SaveAccounts(t *testing.T) {
 	t.Run("SaveAccounts block - should work", func(t *testing.T) {
 		args := getMockArgs()
 		args.WebsocketSender = &mock.WebSocketSenderStub{
-			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+			SendOnRouteCalled: func(_ []byte, _ string) error {
 				return nil
 			},
 		}
@@ -197,7 +197,7 @@ func TestWebsocketOutportDriverNodePart_SaveRoundsInfo(t *testing.T) {
 	t.Run("SaveRoundsInfo - should error", func(t *testing.T) {
 		args := getMockArgs()
 		args.WebsocketSender = &mock.WebSocketSenderStub{
-			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+			SendOnRouteCalled: func(_ []byte, _ string) error {
 				return cannotSendOnRouteErr
 			},
 		}
@@ -211,7 +211,7 @@ func TestWebsocketOutportDriverNodePart_SaveRoundsInfo(t *testing.T) {
 	t.Run("SaveRoundsInfo block - should work", func(t *testing.T) {
 		args := getMockArgs()
 		args.WebsocketSender = &mock.WebSocketSenderStub{
-			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+			SendOnRouteCalled: func(_ []byte, _ string) error {
 				return nil
 			},
 		}
@@ -229,7 +229,7 @@ func TestWebsocketOutportDriverNodePart_SaveValidatorsPubKeys(t *testing.T) {
 	t.Run("SaveValidatorsPubKeys - should error", func(t *testing.T) {
 		args := getMockArgs()
 		args.WebsocketSender = &mock.WebSocketSenderStub{
-			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+			SendOnRouteCalled: func(_ []byte, _ string) error {
 				return cannotSendOnRouteErr
 			},
 		}
@@ -243,7 +243,7 @@ func TestWebsocketOutportDriverNodePart_SaveValidatorsPubKeys(t *testing.T) {
 	t.Run("SaveValidatorsPubKeys block - should work", func(t *testing.T) {
 		args := getMockArgs()
 		args.WebsocketSender = &mock.WebSocketSenderStub{
-			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+			SendOnRouteCalled: func(_ []byte, _ string) error {
 				return nil
 			},
 		}
@@ -261,7 +261,7 @@ func TestWebsocketOutportDriverNodePart_SaveValidatorsRating(t *testing.T) {
 	t.Run("SaveValidatorsRating - should error", func(t *testing.T) {
 		args := getMockArgs()
 		args.WebsocketSender = &mock.WebSocketSenderStub{
-			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+			SendOnRouteCalled: func(_ []byte, _ string) error {
 				return cannotSendOnRouteErr
 			},
 		}
@@ -275,7 +275,7 @@ func TestWebsocketOutportDriverNodePart_SaveValidatorsRating(t *testing.T) {
 	t.Run("SaveValidatorsRating block - should work", func(t *testing.T) {
 		args := getMockArgs()
 		args.WebsocketSender = &mock.WebSocketSenderStub{
-			SendOnRouteCalled: func(_ data.WsSendArgs) error {
+			SendOnRouteCalled: func(_ []byte, _ string) error {
 				return nil
 			},
 		}
@@ -297,8 +297,8 @@ func TestWebsocketOutportDriverNodePart_SaveBlock_PayloadCheck(t *testing.T) {
 	require.Nil(t, err)
 
 	mockArgs.WebsocketSender = &mock.WebSocketSenderStub{
-		SendOnRouteCalled: func(args data.WsSendArgs) error {
-			require.Equal(t, marshaledData, args.Payload)
+		SendOnRouteCalled: func(payload []byte, _ string) error {
+			require.Equal(t, marshaledData, payload)
 
 			return nil
 		},

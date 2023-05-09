@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/multiversx/mx-chain-core-go/core/mock"
-	"github.com/multiversx/mx-chain-core-go/data/typeConverters/uint64ByteSlice"
+	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"github.com/multiversx/mx-chain-core-go/testscommon"
 	"github.com/multiversx/mx-chain-core-go/webSocket"
 	"github.com/multiversx/mx-chain-core-go/webSocket/data"
@@ -16,7 +16,7 @@ import (
 )
 
 func createArgs() ArgsWebSocketClient {
-	payloadConverter, _ := webSocket.NewWebSocketPayloadConverter(uint64ByteSlice.NewBigEndianConverter())
+	payloadConverter, _ := webSocket.NewWebSocketPayloadConverter(&mock.MarshalizerMock{})
 	return ArgsWebSocketClient{
 		RetryDurationInSeconds: 1,
 		BlockingAckOnError:     false,
@@ -81,9 +81,7 @@ func TestClient_SendAndClose(t *testing.T) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		err = ws.Send(data.WsSendArgs{
-			Payload: []byte("send"),
-		})
+		err = ws.Send([]byte("send"), outport.TopicSaveAccounts)
 		require.Equal(t, "use of closed network connection", err.Error())
 		atomic.AddUint64(&count, 1)
 	}()
@@ -112,7 +110,7 @@ func TestClient_Send(t *testing.T) {
 
 	go func() {
 		defer wg.Done()
-		err = ws.Send(data.WsSendArgs{Payload: []byte("test")})
+		err = ws.Send([]byte("test"), outport.TopicFinalizedBlock)
 		require.Equal(t, "local error", err.Error())
 		atomic.AddUint64(&count, 1)
 	}()

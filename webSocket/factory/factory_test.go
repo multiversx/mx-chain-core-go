@@ -33,7 +33,7 @@ func TestNewWebSocketDriver(t *testing.T) {
 	driver, err := NewWebSocketDriver(args)
 	require.Nil(t, err)
 	require.NotNil(t, driver)
-	require.Equal(t, "*webSocket.webSocketDriver", fmt.Sprintf("%T", driver))
+	require.Equal(t, "*driver.webSocketDriver", fmt.Sprintf("%T", driver))
 
 	err = driver.Close()
 	require.Equal(t, errors.New("connection not open"), err)

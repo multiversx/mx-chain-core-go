@@ -31,7 +31,7 @@ type client struct {
 	safeCloser    core.SafeCloser
 	log           core.Logger
 	wsConn        webSocket.WSConClient
-	transceiver   Receiver
+	transceiver   Transceiver
 }
 
 // NewWebSocketClient will create a new instance of WebSocket client
@@ -123,8 +123,8 @@ func (c *client) Start() {
 }
 
 // Send will send the provided payload from args
-func (c *client) Send(args data.WsSendArgs) error {
-	return c.transceiver.Send(args, c.wsConn)
+func (c *client) Send(payload []byte, topic string) error {
+	return c.transceiver.Send(payload, topic, c.wsConn)
 }
 
 // SetPayloadHandler set the payload handler

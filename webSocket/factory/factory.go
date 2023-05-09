@@ -6,6 +6,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/webSocket"
 	"github.com/multiversx/mx-chain-core-go/webSocket/client"
 	outportData "github.com/multiversx/mx-chain-core-go/webSocket/data"
+	"github.com/multiversx/mx-chain-core-go/webSocket/driver"
 	"github.com/multiversx/mx-chain-core-go/webSocket/server"
 )
 
@@ -33,8 +34,8 @@ func NewWebSocketDriver(args ArgsWebSocketDriverFactory) (webSocket.Driver, erro
 
 	host.Start()
 
-	return webSocket.NewWebsocketDriver(
-		webSocket.ArgsWebSocketDriver{
+	return driver.NewWebsocketDriver(
+		driver.ArgsWebSocketDriver{
 			Marshaller:      args.Marshaller,
 			WebsocketSender: host,
 			Log:             args.Log,
@@ -44,7 +45,7 @@ func NewWebSocketDriver(args ArgsWebSocketDriverFactory) (webSocket.Driver, erro
 
 // TODO merge the ArgsWebSocketClient and ArgsWebSocketServer as they look the same and remove the duplicated arguments build
 func createWebSocketClient(args ArgsWebSocketDriverFactory) (webSocket.HostWebSocket, error) {
-	payloadConverter, err := webSocket.NewWebSocketPayloadConverter(args.Uint64ByteSliceConverter)
+	payloadConverter, err := webSocket.NewWebSocketPayloadConverter(args.Marshaller)
 	if err != nil {
 		return nil, err
 	}
@@ -60,7 +61,7 @@ func createWebSocketClient(args ArgsWebSocketDriverFactory) (webSocket.HostWebSo
 }
 
 func createWebSocketServer(args ArgsWebSocketDriverFactory) (webSocket.HostWebSocket, error) {
-	payloadConverter, err := webSocket.NewWebSocketPayloadConverter(args.Uint64ByteSliceConverter)
+	payloadConverter, err := webSocket.NewWebSocketPayloadConverter(args.Marshaller)
 	if err != nil {
 		return nil, err
 	}

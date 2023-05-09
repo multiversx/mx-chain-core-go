@@ -113,39 +113,37 @@ func (wt *wsTransceiver) Listen(connection webSocket.WSConClient) (closed bool) 
 }
 
 func (wt *wsTransceiver) verifyPayloadAndSendAckIfNeeded(connection webSocket.WSConClient, payload []byte) {
-	if wt.payloadParser.IsAckPayload(payload) {
-		wt.handleAckMessage(payload)
-		return
-	}
-
 	if len(payload) == 0 {
 		wt.log.Debug("wt.verifyPayloadAndSendAckIfNeeded(): empty payload")
 		return
 	}
 
-	payloadData, err := wt.payloadParser.ExtractPayloadData(payload)
+	wsMessage, err := wt.payloadParser.ExtractWsMessage(payload)
 	if err != nil {
 		wt.log.Warn("wt.verifyPayloadAndSendAckIfNeeded: cannot extract payload data", "error", err.Error())
 		return
 	}
 
-	err = wt.payloadHandler.ProcessPayload(payloadData)
-	if err != nil && wt.blockingAckOnError {
-		wt.log.Debug("wt.payloadHandler.ProcessPayload: cannot handler payload", "error", err)
+	if wsMessage.Type == data.AckMessage {
+		wt.handleAckMessage(wsMessage.Counter)
 		return
 	}
 
-	wt.sendAckIfNeeded(connection, payloadData)
+	if wsMessage.Type != data.PayloadMessage {
+		wt.log.Debug("received an unknown message type", "message type received", wsMessage.Type)
+		return
+	}
+
+	err = wt.payloadHandler.ProcessPayload(wsMessage.Payload, wsMessage.Topic)
+	if err != nil && wt.blockingAckOnError {
+		wt.log.Debug("wt.payloadHandler.ProcessPayload: cannot handle payload", "error", err)
+		return
+	}
+
+	wt.sendAckIfNeeded(connection, wsMessage)
 }
 
-func (wt *wsTransceiver) handleAckMessage(payload []byte) {
-	counter, err := wt.payloadParser.ExtractUint64FromAckMessage(payload)
-	if err != nil {
-		wt.log.Debug("wsTransceiver.handleAckMessage cannot decode the ack message", "error", err)
-		return
-	}
-
-	wt.log.Trace("wt.handleAckMessage: received ack", "counter", counter)
+func (wt *wsTransceiver) handleAckMessage(counter uint64) {
 	expectedCounter := atomic.LoadUint64(&wt.counter)
 	if expectedCounter != counter {
 		wt.log.Debug("wsTransceiver.handleAckMessage invalid counter received", "expected", expectedCounter, "received", counter)
@@ -154,25 +152,32 @@ func (wt *wsTransceiver) handleAckMessage(payload []byte) {
 
 	select {
 	case wt.ackChan <- struct{}{}:
-		return
 	case <-wt.safeCloser.ChanClose():
-		return
 	}
 }
 
-func (wt *wsTransceiver) sendAckIfNeeded(connection webSocket.WSConClient, payloadData *data.PayloadData) {
-	if !payloadData.WithAcknowledge {
+func (wt *wsTransceiver) sendAckIfNeeded(connection webSocket.WSConClient, wsMessage *data.WsMessage) {
+	if !wsMessage.WithAcknowledge {
 		return
 	}
 
 	timer := time.NewTimer(wt.retryDuration)
 	defer timer.Stop()
 
-	counterBytes := wt.payloadParser.PrepareUint64Ack(payloadData.Counter)
+	ackWsMessage := &data.WsMessage{
+		Counter: wsMessage.Counter,
+		Type:    data.AckMessage,
+	}
+	wsMessageBytes, errConstruct := wt.payloadParser.ConstructPayload(ackWsMessage)
+	if errConstruct != nil {
+		wt.log.Warn("sendAckIfNeeded.ConstructPayload: cannot prepare message", "error", errConstruct)
+		return
+	}
+
 	for {
 		timer.Reset(wt.retryDuration)
 
-		err := connection.WriteMessage(websocket.BinaryMessage, counterBytes)
+		err := connection.WriteMessage(websocket.BinaryMessage, wsMessageBytes)
 		if err == nil {
 			return
 		}
@@ -192,9 +197,19 @@ func (wt *wsTransceiver) sendAckIfNeeded(connection webSocket.WSConClient, paylo
 }
 
 // Send will prepare and send the provided WsSendArgs
-func (wt *wsTransceiver) Send(args data.WsSendArgs, connection webSocket.WSConClient) error {
+func (wt *wsTransceiver) Send(payload []byte, topic string, connection webSocket.WSConClient) error {
 	assignedCounter := atomic.AddUint64(&wt.counter, 1)
-	newPayload := wt.payloadParser.ConstructPayloadData(args, assignedCounter, wt.withAcknowledge)
+	wsMessage := &data.WsMessage{
+		WithAcknowledge: wt.withAcknowledge,
+		Counter:         assignedCounter,
+		Type:            data.PayloadMessage,
+		Payload:         payload,
+		Topic:           topic,
+	}
+	newPayload, err := wt.payloadParser.ConstructPayload(wsMessage)
+	if err != nil {
+		return err
+	}
 
 	return wt.sendPayload(newPayload, connection)
 }
@@ -227,7 +242,7 @@ func (wt *wsTransceiver) Close() error {
 
 	err := wt.payloadHandler.Close()
 	if err != nil {
-		wt.log.Debug("cannot close the operations handler", "error", err)
+		wt.log.Debug("cannot close the payload handler", "error", err)
 	}
 
 	return err

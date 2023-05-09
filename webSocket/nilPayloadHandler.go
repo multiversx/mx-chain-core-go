@@ -1,7 +1,5 @@
 package webSocket
 
-import "github.com/multiversx/mx-chain-core-go/webSocket/data"
-
 type nilPayloadHandler struct{}
 
 // NewNilPayloadHandler will create a new instance of nilPayloadHandler
@@ -10,7 +8,7 @@ func NewNilPayloadHandler() PayloadHandler {
 }
 
 // ProcessPayload will do nothing
-func (n nilPayloadHandler) ProcessPayload(_ *data.PayloadData) error {
+func (n nilPayloadHandler) ProcessPayload(_ []byte, _ string) error {
 	return nil
 }
 
