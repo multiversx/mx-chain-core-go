@@ -51,37 +51,37 @@ func NewWebsocketDriver(args ArgsWebSocketDriver) (*webSocketDriver, error) {
 
 // SaveBlock will send the provided block saving arguments within the websocket
 func (o *webSocketDriver) SaveBlock(outportBlock *outport.OutportBlock) error {
-	return o.handleAction(outportBlock, outportSenderData.OperationSaveBlock)
+	return o.handleAction(outportBlock, outportSenderData.PayloadSaveBlock)
 }
 
 // RevertIndexedBlock will handle the action of reverting the indexed block
 func (o *webSocketDriver) RevertIndexedBlock(blockData *outport.BlockData) error {
-	return o.handleAction(blockData, outportSenderData.OperationRevertIndexedBlock)
+	return o.handleAction(blockData, outportSenderData.PayloadRevertIndexedBlock)
 }
 
 // SaveRoundsInfo will handle the saving of rounds
 func (o *webSocketDriver) SaveRoundsInfo(roundsInfos *outport.RoundsInfo) error {
-	return o.handleAction(roundsInfos, outportSenderData.OperationSaveRoundsInfo)
+	return o.handleAction(roundsInfos, outportSenderData.PayloadSaveRoundsInfo)
 }
 
 // SaveValidatorsPubKeys will handle the saving of the validators' public keys
 func (o *webSocketDriver) SaveValidatorsPubKeys(validatorsPubKeys *outport.ValidatorsPubKeys) error {
-	return o.handleAction(validatorsPubKeys, outportSenderData.OperationSaveValidatorsPubKeys)
+	return o.handleAction(validatorsPubKeys, outportSenderData.PayloadSaveValidatorsPubKeys)
 }
 
 // SaveValidatorsRating will handle the saving of the validators' rating
 func (o *webSocketDriver) SaveValidatorsRating(validatorsRating *outport.ValidatorsRating) error {
-	return o.handleAction(validatorsRating, outportSenderData.OperationSaveValidatorsRating)
+	return o.handleAction(validatorsRating, outportSenderData.PayloadSaveValidatorsRating)
 }
 
 // SaveAccounts will handle the accounts' saving
 func (o *webSocketDriver) SaveAccounts(accounts *outport.Accounts) error {
-	return o.handleAction(accounts, outportSenderData.OperationSaveAccounts)
+	return o.handleAction(accounts, outportSenderData.PayloadSaveAccounts)
 }
 
 // FinalizedBlock will handle the finalized block
 func (o *webSocketDriver) FinalizedBlock(finalizedBlock *outport.FinalizedBlock) error {
-	return o.handleAction(finalizedBlock, outportSenderData.OperationFinalizedBlock)
+	return o.handleAction(finalizedBlock, outportSenderData.PayloadFinalizedBlock)
 }
 
 // GetMarshaller returns the internal marshaller
@@ -89,24 +89,21 @@ func (o *webSocketDriver) GetMarshaller() marshal.Marshalizer {
 	return o.marshalizer
 }
 
-func (o *webSocketDriver) handleAction(args interface{}, operation outportSenderData.OperationType) error {
+func (o *webSocketDriver) handleAction(args interface{}, payloadType outportSenderData.PayloadType) error {
 	if o.isClosed.IsSet() {
 		return outportSenderData.ErrWebSocketServerIsClosed
 	}
 
 	marshalledPayload, err := o.marshalizer.Marshal(args)
 	if err != nil {
-		o.log.Error("cannot marshal block", "operation", operation.String(), "error", err)
-		return fmt.Errorf("%w while marshaling block for operation %s", err, operation.String())
+		o.log.Error("cannot marshal block", "payload type", payloadType.String(), "error", err)
+		return fmt.Errorf("%w while marshaling block for operation %s", err, payloadType.String())
 	}
 
-	err = o.webSocketSender.Send(outportSenderData.WsMessage{
-		Payload:       marshalledPayload,
-		OperationType: operation.Uint32(),
-	})
+	err = o.webSocketSender.Send(marshalledPayload, payloadType)
 	if err != nil {
-		o.log.Error("cannot send on route", "operation", operation.String(), "error", err)
-		return fmt.Errorf("%w while sending data on route for operation %s", err, operation.String())
+		o.log.Error("cannot send on route", "payload type", payloadType.String(), "error", err)
+		return fmt.Errorf("%w while sending data on route for operation %s", err, payloadType.String())
 	}
 
 	return nil

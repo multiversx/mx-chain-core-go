@@ -124,13 +124,13 @@ func (wt *wsTransceiver) verifyPayloadAndSendAckIfNeeded(connection webSocket.WS
 		return
 	}
 
-	if wsMessage.MessageType == data.AckMessage {
+	if wsMessage.Type == data.AckMessage {
 		wt.handleAckMessage(wsMessage.Counter)
 		return
 	}
 
-	if wsMessage.MessageType != data.PayloadMessage {
-		wt.log.Debug("received an unknown message type", "message type received", wsMessage.MessageType)
+	if wsMessage.Type != data.PayloadMessage {
+		wt.log.Debug("received an unknown message type", "message type received", wsMessage.Type)
 		return
 	}
 
@@ -165,8 +165,8 @@ func (wt *wsTransceiver) sendAckIfNeeded(connection webSocket.WSConClient, wsMes
 	defer timer.Stop()
 
 	ackWsMessage := &data.WsMessage{
-		Counter:     wsMessage.Counter,
-		MessageType: data.AckMessage,
+		Counter: wsMessage.Counter,
+		Type:    data.AckMessage,
 	}
 	wsMessageBytes, errConstruct := wt.payloadParser.ConstructPayload(ackWsMessage)
 	if errConstruct != nil {
@@ -197,14 +197,14 @@ func (wt *wsTransceiver) sendAckIfNeeded(connection webSocket.WSConClient, wsMes
 }
 
 // Send will prepare and send the provided WsSendArgs
-func (wt *wsTransceiver) Send(payloadData data.WsMessage, connection webSocket.WSConClient) error {
+func (wt *wsTransceiver) Send(payload []byte, payloadType data.PayloadType, connection webSocket.WSConClient) error {
 	assignedCounter := atomic.AddUint64(&wt.counter, 1)
 	wsMessage := &data.WsMessage{
 		WithAcknowledge: wt.withAcknowledge,
 		Counter:         assignedCounter,
-		MessageType:     data.PayloadMessage,
-		Payload:         payloadData.Payload,
-		OperationType:   payloadData.OperationType,
+		Type:            data.PayloadMessage,
+		Payload:         payload,
+		PayloadType:     payloadType.Uint32(),
 	}
 	newPayload, err := wt.payloadParser.ConstructPayload(wsMessage)
 	if err != nil {

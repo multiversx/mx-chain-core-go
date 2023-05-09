@@ -6,7 +6,7 @@ import (
 
 // WebSocketSenderStub -
 type WebSocketSenderStub struct {
-	SendOnRouteCalled func(args data.WsMessage) error
+	SendOnRouteCalled func(payload []byte, payloadType data.PayloadType) error
 	AddClientCalled   func(wss data.WSConn, remoteAddr string)
 	CloseCalled       func() error
 }
@@ -19,9 +19,9 @@ func (w *WebSocketSenderStub) AddClient(wss data.WSConn, remoteAddr string) {
 }
 
 // Send -
-func (w *WebSocketSenderStub) Send(args data.WsMessage) error {
+func (w *WebSocketSenderStub) Send(payload []byte, payloadType data.PayloadType) error {
 	if w.SendOnRouteCalled != nil {
-		return w.SendOnRouteCalled(args)
+		return w.SendOnRouteCalled(payload, payloadType)
 	}
 
 	return nil

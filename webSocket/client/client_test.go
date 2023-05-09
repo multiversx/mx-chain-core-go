@@ -80,9 +80,7 @@ func TestClient_SendAndClose(t *testing.T) {
 	wg.Add(1)
 	go func() {
 		defer wg.Done()
-		err = ws.Send(data.WsMessage{
-			Payload: []byte("send"),
-		})
+		err = ws.Send([]byte("send"), data.PayloadSaveAccounts)
 		require.Equal(t, "use of closed network connection", err.Error())
 		atomic.AddUint64(&count, 1)
 	}()
@@ -111,7 +109,7 @@ func TestClient_Send(t *testing.T) {
 
 	go func() {
 		defer wg.Done()
-		err = ws.Send(data.WsMessage{Payload: []byte("test")})
+		err = ws.Send([]byte("test"), data.PayloadSaveValidatorsRating)
 		require.Equal(t, "local error", err.Error())
 		atomic.AddUint64(&count, 1)
 	}()

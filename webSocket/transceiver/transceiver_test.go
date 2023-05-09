@@ -122,10 +122,10 @@ func TestReceiver_ListenAndSendAck(t *testing.T) {
 			count++
 			preparedPayload, _ := args.PayloadConverter.ConstructPayload(&data.WsMessage{
 				Payload:         []byte("something"),
-				OperationType:   data.OperationSaveAccounts.Uint32(),
+				PayloadType:     data.PayloadSaveAccounts.Uint32(),
 				Counter:         10,
 				WithAcknowledge: true,
-				MessageType:     data.PayloadMessage,
+				Type:            data.PayloadMessage,
 			})
 			return websocket.BinaryMessage, preparedPayload, nil
 		},
@@ -170,8 +170,8 @@ func TestSender_AddConnectionSendAndClose(t *testing.T) {
 		ReadMessageCalled: func() (messageType int, payload []byte, err error) {
 			if readAck {
 				wsMessage := &data.WsMessage{
-					Counter:     1,
-					MessageType: data.AckMessage,
+					Counter: 1,
+					Type:    data.AckMessage,
 				}
 				counterBytes, _ := args.PayloadConverter.ConstructPayload(wsMessage)
 				return websocket.TextMessage, counterBytes, nil
@@ -187,9 +187,7 @@ func TestSender_AddConnectionSendAndClose(t *testing.T) {
 		webSocketTransceiver.Listen(conn1)
 	}()
 
-	err := webSocketTransceiver.Send(data.WsMessage{
-		Payload: []byte("something"),
-	}, conn1)
+	err := webSocketTransceiver.Send([]byte("something"), data.PayloadFinalizedBlock, conn1)
 	require.Nil(t, err)
 	require.True(t, write)
 	require.True(t, readAck)
@@ -221,9 +219,7 @@ func TestSender_AddConnectionSendAndWaitForAckClose(t *testing.T) {
 	wg := &sync.WaitGroup{}
 	wg.Add(1)
 	go func() {
-		err := webSocketTransceiver.Send(data.WsMessage{
-			Payload: []byte("something"),
-		}, conn1)
+		err := webSocketTransceiver.Send([]byte("something"), data.PayloadSaveValidatorsRating, conn1)
 		require.Equal(t, data.ErrExpectedAckWasNotReceivedOnClose, err)
 		called = true
 		wg.Done()

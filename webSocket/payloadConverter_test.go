@@ -38,9 +38,9 @@ func TestWebSocketsPayloadConverter_ConstructPayload(t *testing.T) {
 	wsMessage := &data.WsMessage{
 		WithAcknowledge: true,
 		Payload:         []byte("test"),
-		OperationType:   data.OperationSaveAccounts.Uint32(),
+		PayloadType:     data.PayloadSaveAccounts.Uint32(),
 		Counter:         10,
-		MessageType:     data.PayloadMessage,
+		Type:            data.PayloadMessage,
 	}
 
 	payload, err := payloadConverter.ConstructPayload(wsMessage)
