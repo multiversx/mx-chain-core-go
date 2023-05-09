@@ -20,6 +20,16 @@ func TestNewWebSocketPayloadConverter(t *testing.T) {
 	require.False(t, payloadConverter.IsInterfaceNil())
 }
 
+func TestWebSocketPayloadConverter_IsInterfaceNil(t *testing.T) {
+	t.Parallel()
+
+	addrGroup, _ := NewWebSocketPayloadConverter(nil)
+	require.True(t, addrGroup.IsInterfaceNil())
+
+	addrGroup, _ = NewWebSocketPayloadConverter(&mock.MarshalizerMock{})
+	require.False(t, addrGroup.IsInterfaceNil())
+}
+
 func TestWebSocketsPayloadConverter_ConstructPayload(t *testing.T) {
 	t.Parallel()
 
@@ -27,12 +37,10 @@ func TestWebSocketsPayloadConverter_ConstructPayload(t *testing.T) {
 
 	wsMessage := &data.WsMessage{
 		WithAcknowledge: true,
-		PayloadData: &data.PayloadData{
-			Payload:       []byte("test"),
-			OperationType: data.OperationSaveAccounts.Uint32(),
-		},
-		Counter:     10,
-		MessageType: data.PayloadMessage,
+		Payload:         []byte("test"),
+		OperationType:   data.OperationSaveAccounts.Uint32(),
+		Counter:         10,
+		MessageType:     data.PayloadMessage,
 	}
 
 	payload, err := payloadConverter.ConstructPayload(wsMessage)

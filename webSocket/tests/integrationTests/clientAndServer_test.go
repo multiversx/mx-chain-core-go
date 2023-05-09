@@ -23,7 +23,7 @@ func TestStartServerAddClientAndSendData(t *testing.T) {
 	wg.Add(1)
 
 	_ = wsServer.SetPayloadHandler(&testscommon.PayloadHandlerStub{
-		ProcessPayloadCalled: func(payloadData *data.PayloadData) error {
+		ProcessPayloadCalled: func(payloadData *data.WsMessage) error {
 			require.Equal(t, []byte("test"), payloadData.Payload)
 			wg.Done()
 			return nil
@@ -38,7 +38,7 @@ func TestStartServerAddClientAndSendData(t *testing.T) {
 	wsClient.Start()
 
 	for {
-		err = wsClient.Send(data.PayloadData{
+		err = wsClient.Send(data.WsMessage{
 			Payload:       []byte("test"),
 			OperationType: data.OperationSaveBlock.Uint32(),
 		})
@@ -74,7 +74,7 @@ func TestStartServerAddClientAndCloseClientAndServerShouldReceiveClose(t *testin
 	require.Nil(t, err)
 
 	_ = wsServer.SetPayloadHandler(&testscommon.PayloadHandlerStub{
-		ProcessPayloadCalled: func(payloadData *data.PayloadData) error {
+		ProcessPayloadCalled: func(payloadData *data.WsMessage) error {
 			require.Equal(t, []byte("test"), payloadData.Payload)
 			wg1.Done()
 			return nil
@@ -89,7 +89,7 @@ func TestStartServerAddClientAndCloseClientAndServerShouldReceiveClose(t *testin
 	time.Sleep(time.Second)
 
 	for {
-		err = wsClient.Send(data.PayloadData{
+		err = wsClient.Send(data.WsMessage{
 			Payload:       []byte("test"),
 			OperationType: data.OperationSaveBlock.Uint32(),
 		})
@@ -119,7 +119,7 @@ func TestStartServerStartClientCloseServer(t *testing.T) {
 
 	numMessagesReceived := 0
 	payloadHandler := &testscommon.PayloadHandlerStub{
-		ProcessPayloadCalled: func(payloadData *data.PayloadData) error {
+		ProcessPayloadCalled: func(payloadData *data.WsMessage) error {
 			receivedMessages = append(receivedMessages, string(payloadData.Payload))
 			numMessagesReceived++
 			if numMessagesReceived == 200 {
@@ -139,7 +139,7 @@ func TestStartServerStartClientCloseServer(t *testing.T) {
 	for idx := 0; idx < 100; idx++ {
 		message := fmt.Sprintf("%d", idx)
 		for {
-			err = wsClient.Send(data.PayloadData{
+			err = wsClient.Send(data.WsMessage{
 				Payload:       []byte(message),
 				OperationType: data.OperationSaveBlock.Uint32(),
 			})
@@ -165,7 +165,7 @@ func TestStartServerStartClientCloseServer(t *testing.T) {
 	for idx := 100; idx < 200; idx++ {
 		message := fmt.Sprintf("%d", idx)
 		for {
-			err = wsClient.Send(data.PayloadData{
+			err = wsClient.Send(data.WsMessage{
 				Payload:       []byte(message),
 				OperationType: data.OperationSaveBlock.Uint32(),
 			})

@@ -6,12 +6,12 @@ import (
 
 // PayloadProcessorStub -
 type PayloadProcessorStub struct {
-	ProcessPayloadCalled func(payload *data.PayloadData) error
+	ProcessPayloadCalled func(payload *data.WsMessage) error
 	CloseCalled          func() error
 }
 
 // ProcessPayload -
-func (pps *PayloadProcessorStub) ProcessPayload(payload *data.PayloadData) error {
+func (pps *PayloadProcessorStub) ProcessPayload(payload *data.WsMessage) error {
 	if pps.ProcessPayloadCalled != nil {
 		return pps.ProcessPayloadCalled(payload)
 	}

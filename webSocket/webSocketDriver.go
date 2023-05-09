@@ -100,7 +100,7 @@ func (o *webSocketDriver) handleAction(args interface{}, operation outportSender
 		return fmt.Errorf("%w while marshaling block for operation %s", err, operation.String())
 	}
 
-	err = o.webSocketSender.Send(outportSenderData.PayloadData{
+	err = o.webSocketSender.Send(outportSenderData.WsMessage{
 		Payload:       marshalledPayload,
 		OperationType: operation.Uint32(),
 	})

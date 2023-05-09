@@ -10,7 +10,7 @@ func NewNilPayloadHandler() PayloadHandler {
 }
 
 // ProcessPayload will do nothing
-func (n nilPayloadHandler) ProcessPayload(_ *data.PayloadData) error {
+func (n nilPayloadHandler) ProcessPayload(_ *data.WsMessage) error {
 	return nil
 }
 

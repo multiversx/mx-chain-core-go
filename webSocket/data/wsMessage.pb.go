@@ -28,10 +28,11 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // WsMessage contains all the information needed for a WebSocket message
 type WsMessage struct {
-	WithAcknowledge bool         `protobuf:"varint,1,opt,name=WithAcknowledge,proto3" json:"withAcknowledge,omitempty"`
-	PayloadData     *PayloadData `protobuf:"bytes,2,opt,name=PayloadData,proto3" json:"payloadData,omitempty"`
-	Counter         uint64       `protobuf:"varint,3,opt,name=Counter,proto3" json:"counter,omitempty"`
-	MessageType     int32        `protobuf:"varint,4,opt,name=MessageType,proto3" json:"messageType,omitempty"`
+	WithAcknowledge bool   `protobuf:"varint,1,opt,name=WithAcknowledge,proto3" json:"withAcknowledge,omitempty"`
+	Counter         uint64 `protobuf:"varint,2,opt,name=Counter,proto3" json:"counter,omitempty"`
+	MessageType     int32  `protobuf:"varint,3,opt,name=MessageType,proto3" json:"messageType,omitempty"`
+	Payload         []byte `protobuf:"bytes,4,opt,name=Payload,proto3" json:"payload,omitempty"`
+	OperationType   uint32 `protobuf:"varint,5,opt,name=OperationType,proto3" json:"operationType,omitempty"`
 }
 
 func (m *WsMessage) Reset()      { *m = WsMessage{} }
@@ -69,13 +70,6 @@ func (m *WsMessage) GetWithAcknowledge() bool {
 	return false
 }
 
-func (m *WsMessage) GetPayloadData() *PayloadData {
-	if m != nil {
-		return m.PayloadData
-	}
-	return nil
-}
-
 func (m *WsMessage) GetCounter() uint64 {
 	if m != nil {
 		return m.Counter
@@ -90,48 +84,14 @@ func (m *WsMessage) GetMessageType() int32 {
 	return 0
 }
 
-// PayloadData contains all the information needed for payload data
-type PayloadData struct {
-	Payload       []byte `protobuf:"bytes,1,opt,name=Payload,proto3" json:"payload,omitempty"`
-	OperationType uint32 `protobuf:"varint,2,opt,name=OperationType,proto3" json:"operationType,omitempty"`
-}
-
-func (m *PayloadData) Reset()      { *m = PayloadData{} }
-func (*PayloadData) ProtoMessage() {}
-func (*PayloadData) Descriptor() ([]byte, []int) {
-	return fileDescriptor_5e88e8c2dafbb96c, []int{1}
-}
-func (m *PayloadData) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *PayloadData) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	b = b[:cap(b)]
-	n, err := m.MarshalToSizedBuffer(b)
-	if err != nil {
-		return nil, err
-	}
-	return b[:n], nil
-}
-func (m *PayloadData) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_PayloadData.Merge(m, src)
-}
-func (m *PayloadData) XXX_Size() int {
-	return m.Size()
-}
-func (m *PayloadData) XXX_DiscardUnknown() {
-	xxx_messageInfo_PayloadData.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_PayloadData proto.InternalMessageInfo
-
-func (m *PayloadData) GetPayload() []byte {
+func (m *WsMessage) GetPayload() []byte {
 	if m != nil {
 		return m.Payload
 	}
 	return nil
 }
 
-func (m *PayloadData) GetOperationType() uint32 {
+func (m *WsMessage) GetOperationType() uint32 {
 	if m != nil {
 		return m.OperationType
 	}
@@ -140,38 +100,35 @@ func (m *PayloadData) GetOperationType() uint32 {
 
 func init() {
 	proto.RegisterType((*WsMessage)(nil), "proto.WsMessage")
-	proto.RegisterType((*PayloadData)(nil), "proto.PayloadData")
 }
 
 func init() { proto.RegisterFile("wsMessage.proto", fileDescriptor_5e88e8c2dafbb96c) }
 
 var fileDescriptor_5e88e8c2dafbb96c = []byte{
-	// 391 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x92, 0xbf, 0xae, 0xda, 0x30,
-	0x14, 0xc6, 0x63, 0x0a, 0xfd, 0x63, 0x8a, 0x50, 0x23, 0xa1, 0x86, 0x56, 0x75, 0x22, 0xa6, 0x0c,
-	0x0d, 0x91, 0xda, 0xad, 0x4c, 0xa4, 0x95, 0x3a, 0x55, 0x54, 0x6d, 0x25, 0xa4, 0x6e, 0x4e, 0x70,
-	0x43, 0x04, 0x89, 0xa3, 0xc4, 0x69, 0x60, 0x6b, 0xdf, 0xa0, 0x52, 0x5f, 0xe2, 0x3e, 0xca, 0x1d,
-	0x19, 0x99, 0xa2, 0x8b, 0x59, 0xae, 0x32, 0xf1, 0x08, 0x57, 0x38, 0x41, 0x18, 0x96, 0xc4, 0xe7,
-	0x3b, 0xe7, 0x3b, 0x3f, 0xfb, 0xd8, 0xb0, 0x9b, 0xa7, 0x5f, 0x48, 0x9a, 0x62, 0x9f, 0x0c, 0xe3,
-	0x84, 0x32, 0xaa, 0xb6, 0xc4, 0xef, 0x95, 0xe5, 0x07, 0x6c, 0x9e, 0xb9, 0x43, 0x8f, 0x86, 0xb6,
-	0x4f, 0x7d, 0x6a, 0x0b, 0xd9, 0xcd, 0x7e, 0x89, 0x48, 0x04, 0x62, 0x55, 0xb9, 0x06, 0xff, 0x1b,
-	0xf0, 0xd9, 0xf4, 0xd4, 0x49, 0xfd, 0x0c, 0xbb, 0xd3, 0x80, 0xcd, 0xc7, 0xde, 0x22, 0xa2, 0xf9,
-	0x92, 0xcc, 0x7c, 0xa2, 0x01, 0x03, 0x98, 0x4f, 0x9d, 0x37, 0x65, 0xa1, 0xf7, 0xf3, 0xcb, 0xd4,
-	0x5b, 0x1a, 0x06, 0x8c, 0x84, 0x31, 0x5b, 0x7f, 0xbb, 0x76, 0xa9, 0x13, 0xd8, 0xfe, 0x8a, 0xd7,
-	0x4b, 0x8a, 0x67, 0x9f, 0x30, 0xc3, 0x5a, 0xc3, 0x00, 0x66, 0xfb, 0x9d, 0x5a, 0x31, 0x87, 0x52,
-	0xc6, 0xe9, 0x97, 0x85, 0xde, 0x8b, 0xcf, 0x82, 0xd4, 0x54, 0xee, 0xa0, 0xda, 0xf0, 0xc9, 0x47,
-	0x9a, 0x45, 0x8c, 0x24, 0xda, 0x23, 0x03, 0x98, 0x4d, 0xa7, 0x57, 0x16, 0xfa, 0x0b, 0xaf, 0x92,
-	0x24, 0xd3, 0xa9, 0x4a, 0x1d, 0xc1, 0x76, 0x7d, 0xaa, 0x1f, 0xeb, 0x98, 0x68, 0x4d, 0x03, 0x98,
-	0xad, 0x8a, 0x16, 0x9e, 0x65, 0x99, 0x26, 0x55, 0x0f, 0xfe, 0x02, 0x78, 0x4d, 0xaf, 0x43, 0x31,
-	0x8f, 0xe7, 0x15, 0xbd, 0xde, 0xb6, 0x4c, 0xaf, 0xab, 0xd4, 0x31, 0xec, 0x4c, 0x62, 0x92, 0x60,
-	0x16, 0xd0, 0x48, 0xf0, 0x8f, 0x13, 0xe8, 0x38, 0xaf, 0xcb, 0x42, 0x7f, 0x49, 0xe5, 0x84, 0x64,
-	0xbe, 0x74, 0x38, 0x6c, 0xb3, 0x43, 0xca, 0x76, 0x87, 0x94, 0xc3, 0x0e, 0x81, 0x3f, 0x1c, 0x81,
-	0x1b, 0x8e, 0xc0, 0x2d, 0x47, 0x60, 0xc3, 0x11, 0xd8, 0x72, 0x04, 0xee, 0x38, 0x02, 0xf7, 0x1c,
-	0x29, 0x07, 0x8e, 0xc0, 0xbf, 0x3d, 0x52, 0x36, 0x7b, 0xa4, 0x6c, 0xf7, 0x48, 0xf9, 0xf9, 0x41,
-	0x7a, 0x02, 0x61, 0xb6, 0x64, 0xc1, 0x6f, 0x92, 0xa4, 0x2b, 0x3b, 0x5c, 0x59, 0xde, 0x1c, 0x07,
-	0x91, 0xe5, 0xd1, 0x84, 0x58, 0x3e, 0xb5, 0x73, 0xe2, 0x7e, 0xa7, 0xde, 0x82, 0x30, 0x7b, 0x86,
-	0x19, 0x1e, 0x1d, 0x3f, 0xee, 0x63, 0x71, 0x45, 0xef, 0x1f, 0x02, 0x00, 0x00, 0xff, 0xff, 0x87,
-	0x62, 0x2a, 0x98, 0x5f, 0x02, 0x00, 0x00,
+	// 359 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x5c, 0x91, 0xc1, 0x4e, 0xf2, 0x40,
+	0x14, 0x85, 0x3b, 0xfc, 0xf0, 0xab, 0x55, 0x42, 0x6c, 0x42, 0x2c, 0x1a, 0xa7, 0x8d, 0xab, 0x2e,
+	0x2c, 0x5d, 0xb8, 0x93, 0x15, 0x75, 0xe1, 0xca, 0x68, 0xd4, 0x84, 0xc4, 0x5d, 0x5b, 0xc6, 0xd2,
+	0x40, 0x7b, 0x9b, 0x76, 0x6a, 0x61, 0xe7, 0x23, 0xf8, 0x18, 0x3e, 0x81, 0xcf, 0xe0, 0x92, 0x25,
+	0xab, 0x46, 0x86, 0x8d, 0xe9, 0x8a, 0x47, 0x30, 0xb4, 0x10, 0x07, 0x37, 0x33, 0x73, 0xcf, 0x3d,
+	0xdf, 0x9c, 0x9b, 0x5c, 0xb1, 0x91, 0xc6, 0x37, 0x24, 0x8e, 0x2d, 0x97, 0xb4, 0xc3, 0x08, 0x28,
+	0x48, 0xb5, 0xe2, 0x3a, 0xd6, 0x5d, 0x8f, 0x0e, 0x12, 0xbb, 0xed, 0x80, 0x6f, 0xb8, 0xe0, 0x82,
+	0x51, 0xc8, 0x76, 0xf2, 0x5c, 0x54, 0x45, 0x51, 0xbc, 0x4a, 0xea, 0xec, 0xa3, 0x22, 0xee, 0xf5,
+	0x36, 0x3f, 0x49, 0xd7, 0x62, 0xa3, 0xe7, 0xd1, 0x41, 0xd7, 0x19, 0x06, 0x90, 0x8e, 0x48, 0xdf,
+	0x25, 0x32, 0x52, 0x91, 0xb6, 0x6b, 0x9e, 0xe6, 0x99, 0xd2, 0x4a, 0xb7, 0x5b, 0xe7, 0xe0, 0x7b,
+	0x94, 0xf8, 0x21, 0x9d, 0xdc, 0xff, 0xa5, 0x24, 0x43, 0xdc, 0xb9, 0x82, 0x24, 0xa0, 0x24, 0x92,
+	0x2b, 0x2a, 0xd2, 0xaa, 0x66, 0x33, 0xcf, 0x94, 0x43, 0xa7, 0x94, 0x38, 0x70, 0xe3, 0x92, 0x3a,
+	0xe2, 0xfe, 0x7a, 0x88, 0xc7, 0x49, 0x48, 0xe4, 0x7f, 0x2a, 0xd2, 0x6a, 0x66, 0x2b, 0xcf, 0x94,
+	0xa6, 0xff, 0x2b, 0x73, 0x20, 0xef, 0x5e, 0xa5, 0xdd, 0x59, 0x93, 0x11, 0x58, 0x7d, 0xb9, 0xaa,
+	0x22, 0xed, 0xa0, 0x4c, 0x0b, 0x4b, 0x89, 0x4f, 0x5b, 0xbb, 0xa4, 0xae, 0x58, 0xbf, 0x0d, 0x49,
+	0x64, 0x51, 0x0f, 0x82, 0x22, 0xaf, 0xa6, 0x22, 0xad, 0x6e, 0x9e, 0xe4, 0x99, 0x72, 0x04, 0x7c,
+	0x83, 0x83, 0xb7, 0x09, 0x93, 0x4e, 0xe7, 0x58, 0x98, 0xcd, 0xb1, 0xb0, 0x9c, 0x63, 0xf4, 0xca,
+	0x30, 0x7a, 0x67, 0x18, 0x7d, 0x32, 0x8c, 0xa6, 0x0c, 0xa3, 0x19, 0xc3, 0xe8, 0x8b, 0x61, 0xf4,
+	0xcd, 0xb0, 0xb0, 0x64, 0x18, 0xbd, 0x2d, 0xb0, 0x30, 0x5d, 0x60, 0x61, 0xb6, 0xc0, 0xc2, 0xd3,
+	0x25, 0xb7, 0x21, 0x3f, 0x19, 0x51, 0xef, 0x85, 0x44, 0xf1, 0xd8, 0xf0, 0xc7, 0xba, 0x33, 0xb0,
+	0xbc, 0x40, 0x77, 0x20, 0x22, 0xba, 0x0b, 0x46, 0x4a, 0xec, 0x07, 0x70, 0x86, 0x84, 0x1a, 0x7d,
+	0x8b, 0x5a, 0x9d, 0xd5, 0x61, 0xff, 0x2f, 0xb6, 0x76, 0xf1, 0x13, 0x00, 0x00, 0xff, 0xff, 0x06,
+	0xfd, 0x4b, 0xb9, 0xfe, 0x01, 0x00, 0x00,
 }
 
 func (this *WsMessage) Equal(that interface{}) bool {
@@ -196,34 +153,10 @@ func (this *WsMessage) Equal(that interface{}) bool {
 	if this.WithAcknowledge != that1.WithAcknowledge {
 		return false
 	}
-	if !this.PayloadData.Equal(that1.PayloadData) {
-		return false
-	}
 	if this.Counter != that1.Counter {
 		return false
 	}
 	if this.MessageType != that1.MessageType {
-		return false
-	}
-	return true
-}
-func (this *PayloadData) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*PayloadData)
-	if !ok {
-		that2, ok := that.(PayloadData)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
 		return false
 	}
 	if !bytes.Equal(this.Payload, that1.Payload) {
@@ -238,23 +171,11 @@ func (this *WsMessage) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 8)
+	s := make([]string, 0, 9)
 	s = append(s, "&data.WsMessage{")
 	s = append(s, "WithAcknowledge: "+fmt.Sprintf("%#v", this.WithAcknowledge)+",\n")
-	if this.PayloadData != nil {
-		s = append(s, "PayloadData: "+fmt.Sprintf("%#v", this.PayloadData)+",\n")
-	}
 	s = append(s, "Counter: "+fmt.Sprintf("%#v", this.Counter)+",\n")
 	s = append(s, "MessageType: "+fmt.Sprintf("%#v", this.MessageType)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *PayloadData) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 6)
-	s = append(s, "&data.PayloadData{")
 	s = append(s, "Payload: "+fmt.Sprintf("%#v", this.Payload)+",\n")
 	s = append(s, "OperationType: "+fmt.Sprintf("%#v", this.OperationType)+",\n")
 	s = append(s, "}")
@@ -288,27 +209,27 @@ func (m *WsMessage) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.OperationType != 0 {
+		i = encodeVarintWsMessage(dAtA, i, uint64(m.OperationType))
+		i--
+		dAtA[i] = 0x28
+	}
+	if len(m.Payload) > 0 {
+		i -= len(m.Payload)
+		copy(dAtA[i:], m.Payload)
+		i = encodeVarintWsMessage(dAtA, i, uint64(len(m.Payload)))
+		i--
+		dAtA[i] = 0x22
+	}
 	if m.MessageType != 0 {
 		i = encodeVarintWsMessage(dAtA, i, uint64(m.MessageType))
 		i--
-		dAtA[i] = 0x20
+		dAtA[i] = 0x18
 	}
 	if m.Counter != 0 {
 		i = encodeVarintWsMessage(dAtA, i, uint64(m.Counter))
 		i--
-		dAtA[i] = 0x18
-	}
-	if m.PayloadData != nil {
-		{
-			size, err := m.PayloadData.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintWsMessage(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0x12
+		dAtA[i] = 0x10
 	}
 	if m.WithAcknowledge {
 		i--
@@ -319,41 +240,6 @@ func (m *WsMessage) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		}
 		i--
 		dAtA[i] = 0x8
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *PayloadData) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *PayloadData) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *PayloadData) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.OperationType != 0 {
-		i = encodeVarintWsMessage(dAtA, i, uint64(m.OperationType))
-		i--
-		dAtA[i] = 0x10
-	}
-	if len(m.Payload) > 0 {
-		i -= len(m.Payload)
-		copy(dAtA[i:], m.Payload)
-		i = encodeVarintWsMessage(dAtA, i, uint64(len(m.Payload)))
-		i--
-		dAtA[i] = 0xa
 	}
 	return len(dAtA) - i, nil
 }
@@ -378,25 +264,12 @@ func (m *WsMessage) Size() (n int) {
 	if m.WithAcknowledge {
 		n += 2
 	}
-	if m.PayloadData != nil {
-		l = m.PayloadData.Size()
-		n += 1 + l + sovWsMessage(uint64(l))
-	}
 	if m.Counter != 0 {
 		n += 1 + sovWsMessage(uint64(m.Counter))
 	}
 	if m.MessageType != 0 {
 		n += 1 + sovWsMessage(uint64(m.MessageType))
 	}
-	return n
-}
-
-func (m *PayloadData) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
 	l = len(m.Payload)
 	if l > 0 {
 		n += 1 + l + sovWsMessage(uint64(l))
@@ -419,18 +292,8 @@ func (this *WsMessage) String() string {
 	}
 	s := strings.Join([]string{`&WsMessage{`,
 		`WithAcknowledge:` + fmt.Sprintf("%v", this.WithAcknowledge) + `,`,
-		`PayloadData:` + strings.Replace(this.PayloadData.String(), "PayloadData", "PayloadData", 1) + `,`,
 		`Counter:` + fmt.Sprintf("%v", this.Counter) + `,`,
 		`MessageType:` + fmt.Sprintf("%v", this.MessageType) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *PayloadData) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&PayloadData{`,
 		`Payload:` + fmt.Sprintf("%v", this.Payload) + `,`,
 		`OperationType:` + fmt.Sprintf("%v", this.OperationType) + `,`,
 		`}`,
@@ -495,42 +358,6 @@ func (m *WsMessage) Unmarshal(dAtA []byte) error {
 			}
 			m.WithAcknowledge = bool(v != 0)
 		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PayloadData", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowWsMessage
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthWsMessage
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthWsMessage
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.PayloadData == nil {
-				m.PayloadData = &PayloadData{}
-			}
-			if err := m.PayloadData.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Counter", wireType)
 			}
@@ -549,7 +376,7 @@ func (m *WsMessage) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 4:
+		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field MessageType", wireType)
 			}
@@ -568,60 +395,7 @@ func (m *WsMessage) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		default:
-			iNdEx = preIndex
-			skippy, err := skipWsMessage(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthWsMessage
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthWsMessage
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *PayloadData) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowWsMessage
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: PayloadData: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: PayloadData: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
+		case 4:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Payload", wireType)
 			}
@@ -655,7 +429,7 @@ func (m *PayloadData) Unmarshal(dAtA []byte) error {
 				m.Payload = []byte{}
 			}
 			iNdEx = postIndex
-		case 2:
+		case 5:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field OperationType", wireType)
 			}

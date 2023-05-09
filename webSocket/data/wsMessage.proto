@@ -10,14 +10,9 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 // WsMessage contains all the information needed for a WebSocket message
 message WsMessage {
   bool        WithAcknowledge = 1 [(gogoproto.jsontag) = "withAcknowledge,omitempty"];
-  PayloadData PayloadData     = 2 [(gogoproto.jsontag) = "payloadData,omitempty"];
-  uint64      Counter         = 3 [(gogoproto.jsontag) = "counter,omitempty"];
-  int32       MessageType     = 4 [(gogoproto.jsontag) = "messageType,omitempty"];
+  uint64      Counter         = 2 [(gogoproto.jsontag) = "counter,omitempty"];
+  int32       MessageType     = 3 [(gogoproto.jsontag) = "messageType,omitempty"];
+  bytes       Payload         = 4 [(gogoproto.jsontag) = "payload,omitempty"];
+  uint32      OperationType   = 5 [(gogoproto.jsontag) = "operationType,omitempty"];
 }
 
-
-// PayloadData contains all the information needed for payload data
-message PayloadData {
-  bytes  Payload         = 1 [(gogoproto.jsontag) = "payload,omitempty"];
-  uint32 OperationType   = 2 [(gogoproto.jsontag) = "operationType,omitempty"];
-}
