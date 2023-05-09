@@ -98,13 +98,13 @@ func (o *webSocketDriver) handleAction(args interface{}, topic string) error {
 	marshalledPayload, err := o.marshalizer.Marshal(args)
 	if err != nil {
 		o.log.Error("cannot marshal block", "topic", topic, "error", err)
-		return fmt.Errorf("%w while marshaling block for operation %s", err, topic)
+		return fmt.Errorf("%w while marshaling block for topic %s", err, topic)
 	}
 
 	err = o.webSocketSender.Send(marshalledPayload, topic)
 	if err != nil {
-		o.log.Error("cannot send on route", "payload type", topic, "error", err)
-		return fmt.Errorf("%w while sending data on route for operation %s", err, topic)
+		o.log.Error("cannot send on route", "topic", topic, "error", err)
+		return fmt.Errorf("%w while sending data on route for topic %s", err, topic)
 	}
 
 	return nil

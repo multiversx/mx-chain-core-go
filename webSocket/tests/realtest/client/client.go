@@ -133,7 +133,7 @@ func (tc *tempClient) verifyPayloadAndSendAckIfNeeded(payload []byte, ackHandler
 	)
 
 	if wsMessage.Topic == outport.TopicSaveBlock {
-		log.Debug(tc.name + " -> save block operation")
+		log.Debug(tc.name + " -> save block topic")
 		var argsBlock outport.OutportBlock
 		err = tc.marshaller.Unmarshal(&argsBlock, wsMessage.Payload)
 		if err != nil {
