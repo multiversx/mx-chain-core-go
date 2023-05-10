@@ -6,12 +6,12 @@ package proto;
 option go_package = "block";
 option (gogoproto.stable_marshaler_all) = true;
 
-import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "block.proto";
 import "blockV2.proto";
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 // ShardHeaderExtended extends the HeaderV2 structure with extra fields needed by sovereign chain
 message ShardHeaderExtended {
-  HeaderV2  Header = 1;
-  repeated MiniBlock IncomingMiniBlocks = 2;
+  HeaderV2           Header             = 1 [(gogoproto.jsontag) = "header"];
+  repeated MiniBlock IncomingMiniBlocks = 2 [(gogoproto.jsontag) = "incomingMiniBlocks,omitempty"];
 }
