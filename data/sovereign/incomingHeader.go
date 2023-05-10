@@ -28,3 +28,8 @@ func (ih *IncomingHeader) GetHeaderHandler() data.HeaderHandler {
 
 	return ih.GetHeader()
 }
+
+// IsInterfaceNil checks if the underlying pointer is nil
+func (ih *IncomingHeader) IsInterfaceNil() bool {
+	return ih == nil
+}
