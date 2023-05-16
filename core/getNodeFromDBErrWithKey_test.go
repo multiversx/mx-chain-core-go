@@ -52,7 +52,7 @@ func TestGetNodeFromDBErrWithKey_GetIdentifier(t *testing.T) {
 func TestGetNodeFromDBErrWithKey_IsInterfaceNil(t *testing.T) {
 	t.Parallel()
 
-	var err *GetNodeFromDBErrWithKey
+	var err *getNodeFromDBErrWithKey
 	assert.True(t, err.IsInterfaceNil())
 
 	err = NewGetNodeFromDBErrWithKey(testKey, testErr, testId)
