@@ -8,7 +8,7 @@ import (
 // GetNodeFromDBErrorString represents the string which is returned when a getting node from DB returns an error
 const GetNodeFromDBErrorString = "getNodeFromDB error"
 
-// GetNodeFromDBErrWithKey defines a custom error for trie get node
+// getNodeFromDBErrWithKey defines a custom error for trie get node
 type getNodeFromDBErrWithKey struct {
 	getErr       error
 	key          []byte
