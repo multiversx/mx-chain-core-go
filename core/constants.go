@@ -117,11 +117,11 @@ const BuiltInFunctionMultiESDTNFTTransfer = "MultiESDTNFTTransfer"
 // BuiltInFunctionSetGuardian is the key for setting a guardian built-in function
 const BuiltInFunctionSetGuardian = "SetGuardian"
 
-// BuiltInFunctionFreezeAccount is the built-in function key for freezing an account
-const BuiltInFunctionFreezeAccount = "FreezeAccount"
+// BuiltInFunctionGuardAccount is the built-in function key for guarding an account
+const BuiltInFunctionGuardAccount = "GuardAccount"
 
-// BuiltInFunctionUnfreezeAccount is the built-in function key for unfreezing an account
-const BuiltInFunctionUnfreezeAccount = "UnfreezeAccount"
+// BuiltInFunctionUnGuardAccount is the built-in function key for un-guarding an account
+const BuiltInFunctionUnGuardAccount = "UnGuardAccount"
 
 // ESDTRoleLocalMint is the constant string for the local role of mint for ESDT tokens
 const ESDTRoleLocalMint = "ESDTRoleLocalMint"
@@ -251,6 +251,9 @@ const CompletedTxEventIdentifier = "completedTxEvent"
 
 // GasRefundForRelayerMessage is the return message for to the smart contract result with refund for the relayer
 const GasRefundForRelayerMessage = "gas refund for relayer"
+
+// InitialVersionOfTransaction defines the initial version for a transaction
+const InitialVersionOfTransaction = uint32(1)
 
 // DefaultAddressPrefix is the default hrp of MultiversX/Elrond
 const DefaultAddressPrefix = "erd"
