@@ -47,11 +47,12 @@ func Test_SortTransactionsBySenderAndNonceWithFrontRunningProtection(t *testing.
 		&transaction.Transaction{Nonce: 3, SndAddr: senders[3]},
 		&transaction.Transaction{Nonce: 3, SndAddr: senders[2]},
 	}
-	wrappedTxs := make([]data.TransactionHandlerWithGasUsedAndFee, 0, len(txs))
+	wrappedTxs := make([]data.TxWithExecutionOrderHandler, 0, len(txs))
 	for _, tx := range txs {
-		wrappedTxs = append(wrappedTxs, outport.NewTransactionHandlerWithGasAndFee(tx, 0, big.NewInt(0)))
+		wrappedTxs = append(wrappedTxs, &outport.TxInfo{
+			Transaction: tx.(*transaction.Transaction),
+			FeeInfo:     &outport.FeeInfo{Fee: big.NewInt(0)}})
 	}
-
 	SortTransactionsBySenderAndNonceWithFrontRunningProtection(txs, hasher, []byte(randomness))
 	SortTransactionsBySenderAndNonceWithFrontRunningProtectionExtendedTransactions(wrappedTxs, hasher, []byte(randomness))
 
@@ -69,7 +70,7 @@ func Test_SortTransactionsBySenderAndNonceWithFrontRunningProtection(t *testing.
 
 	for i, item := range txs {
 		assert.Equal(t, expectedOutput[i], fmt.Sprintf("%d %s", item.GetNonce(), hex.EncodeToString(item.GetSndAddr())))
-		assert.Equal(t, expectedOutput[i], fmt.Sprintf("%d %s", wrappedTxs[i].GetNonce(), hex.EncodeToString(wrappedTxs[i].GetSndAddr())))
+		assert.Equal(t, expectedOutput[i], fmt.Sprintf("%d %s", wrappedTxs[i].GetTxHandler().GetNonce(), hex.EncodeToString(wrappedTxs[i].GetTxHandler().GetSndAddr())))
 	}
 }
 
@@ -84,9 +85,11 @@ func Test_SortTransactionsBySenderAndNonceLegacy(t *testing.T) {
 		&transaction.Transaction{Nonce: 3, SndAddr: []byte("ffff")},
 		&transaction.Transaction{Nonce: 3, SndAddr: []byte("eeee")},
 	}
-	wrappedTxs := make([]data.TransactionHandlerWithGasUsedAndFee, 0, len(txs))
+	wrappedTxs := make([]data.TxWithExecutionOrderHandler, 0, len(txs))
 	for _, tx := range txs {
-		wrappedTxs = append(wrappedTxs, outport.NewTransactionHandlerWithGasAndFee(tx, 0, big.NewInt(0)))
+		wrappedTxs = append(wrappedTxs, &outport.TxInfo{
+			Transaction: tx.(*transaction.Transaction),
+			FeeInfo:     &outport.FeeInfo{Fee: big.NewInt(0)}})
 	}
 
 	SortTransactionsBySenderAndNonce(txs)
@@ -105,6 +108,6 @@ func Test_SortTransactionsBySenderAndNonceLegacy(t *testing.T) {
 
 	for i, item := range txs {
 		assert.Equal(t, expectedOutput[i], fmt.Sprintf("%d %s", item.GetNonce(), string(item.GetSndAddr())))
-		assert.Equal(t, expectedOutput[i], fmt.Sprintf("%d %s", wrappedTxs[i].GetNonce(), string(wrappedTxs[i].GetSndAddr())))
+		assert.Equal(t, expectedOutput[i], fmt.Sprintf("%d %s", wrappedTxs[i].GetTxHandler().GetNonce(), string(wrappedTxs[i].GetTxHandler().GetSndAddr())))
 	}
 }
