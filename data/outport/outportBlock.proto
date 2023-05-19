@@ -21,10 +21,9 @@ message OutportBlock {
   map <string, AlteredAccount> AlteredAccounts        = 4 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
   repeated string              NotarizedHeadersHashes = 5 [(gogoproto.jsontag) = "notarizedHeadersHashes,omitempty"];
   uint32                       NumberOfShards         = 6 [(gogoproto.jsontag) = "numberOfShards"];
-  bool                         IsImportDB             = 7 [(gogoproto.jsontag) = "isImportDB"];
-  repeated uint64              SignersIndexes         = 8 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
-  uint64                       HighestFinalBlockNonce = 9 [(gogoproto.jsontag) = "highestFinalBlockNonce"];
-  bytes                        HighestFinalBlockHash  = 10 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
+  repeated uint64              SignersIndexes         = 7 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
+  uint64                       HighestFinalBlockNonce = 8 [(gogoproto.jsontag) = "highestFinalBlockNonce"];
+  bytes                        HighestFinalBlockHash  = 9 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
 }
 
 message BlockData {
