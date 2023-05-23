@@ -281,19 +281,10 @@ type TransactionHandler interface {
 	CheckIntegrity() error
 }
 
-// TransactionHandlerWithGasUsedAndFee extends TransactionHandler by also including used gas and fee
-type TransactionHandlerWithGasUsedAndFee interface {
-	TransactionHandler
-
-	SetInitialPaidFee(fee *big.Int)
-	SetGasUsed(gasUsed uint64)
-	SetFee(fee *big.Int)
-	GetInitialPaidFee() *big.Int
-	GetGasUsed() uint64
-	GetFee() *big.Int
+type TxWithExecutionOrderHandler interface {
+	SetExecutionOrder(order uint32)
+	GetExecutionOrder() uint32
 	GetTxHandler() TransactionHandler
-	SetExecutionOrder(order int)
-	GetExecutionOrder() int
 }
 
 // Encoder represents a byte slice to string encoder
