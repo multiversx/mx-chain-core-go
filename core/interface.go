@@ -128,3 +128,11 @@ type Logger interface {
 	LogIfError(err error, args ...interface{})
 	IsInterfaceNil() bool
 }
+
+// GetNodeFromDbErrHandler defines the behavior of a component that can provide extra info from a missing trie node err
+type GetNodeFromDbErrHandler interface {
+	Error() string
+	GetKey() []byte
+	GetIdentifier() string
+	IsInterfaceNil() bool
+}
