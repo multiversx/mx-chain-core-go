@@ -128,6 +128,14 @@ type Logger interface {
 	IsInterfaceNil() bool
 }
 
+// GetNodeFromDbErrHandler defines the behavior of a component that can provide extra info from a missing trie node err
+type GetNodeFromDbErrHandler interface {
+	Error() string
+	GetKey() []byte
+	GetIdentifier() string
+	IsInterfaceNil() bool
+}
+
 // TrieNodeVersionVerifier defines the behavior of a component that can verify if a trie node version is valid
 type TrieNodeVersionVerifier interface {
 	IsValidVersion(version TrieNodeVersion) bool
