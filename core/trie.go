@@ -59,7 +59,7 @@ func (vv *trieNodeVersionVerifier) IsValidVersion(version TrieNodeVersion) bool 
 	return version == NotSpecified
 }
 
-// IsInterfaceNil returns true is there is no value under the interface
+// IsInterfaceNil returns true if there is no value under the interface
 func (vv *trieNodeVersionVerifier) IsInterfaceNil() bool {
 	return vv == nil
 }
