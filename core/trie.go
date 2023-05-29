@@ -17,13 +17,20 @@ const (
 	AutoBalanceEnabled
 )
 
-// GetStringForVersion returns the string representation of the given trie node version
-func GetStringForVersion(version TrieNodeVersion) string {
+const (
+	// NotSpecifiedString is the string representation of NotSpecified trie node version
+	NotSpecifiedString = "not specified"
+
+	// AutoBalanceEnabledString is the string representation of AutoBalanceEnabled trie node version
+	AutoBalanceEnabledString = "auto balanced"
+)
+
+func (version TrieNodeVersion) String() string {
 	switch version {
 	case NotSpecified:
-		return "not specified"
+		return NotSpecifiedString
 	case AutoBalanceEnabled:
-		return "auto balanced"
+		return AutoBalanceEnabledString
 	default:
 		return "unknown: " + strconv.Itoa(int(version))
 	}
@@ -52,6 +59,7 @@ func (vv *trieNodeVersionVerifier) IsValidVersion(version TrieNodeVersion) bool 
 	return version == NotSpecified
 }
 
+// IsInterfaceNil returns true is there is no value under the interface
 func (vv *trieNodeVersionVerifier) IsInterfaceNil() bool {
 	return vv == nil
 }
