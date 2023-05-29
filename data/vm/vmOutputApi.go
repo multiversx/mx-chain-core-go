@@ -52,7 +52,7 @@ type LogEntryApi struct {
 	Identifier []byte   `json:"identifier"`
 	Address    string   `json:"address"`
 	Topics     [][]byte `json:"topics"`
-	Data       []byte   `json:"data"`
+	Data       [][]byte `json:"data"`
 }
 
 // GetFirstReturnData is a helper function that returns the first ReturnData of VMOutput, interpreted as specified.
