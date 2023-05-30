@@ -49,10 +49,11 @@ type OutputTransferApi struct {
 
 // LogEntryApi is a wrapper over vmcommon's LogEntry
 type LogEntryApi struct {
-	Identifier []byte   `json:"identifier"`
-	Address    string   `json:"address"`
-	Topics     [][]byte `json:"topics"`
-	Data       [][]byte `json:"data"`
+	Identifier     []byte   `json:"identifier"`
+	Address        string   `json:"address"`
+	Topics         [][]byte `json:"topics"`
+	Data           []byte   `json:"data"`
+	AdditionalData [][]byte `json:"additionalData"`
 }
 
 // GetFirstReturnData is a helper function that returns the first ReturnData of VMOutput, interpreted as specified.
