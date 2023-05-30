@@ -68,7 +68,6 @@ type Throttler interface {
 type KeyValueHolder interface {
 	Key() []byte
 	Value() []byte
-	ValueWithoutSuffix(suffix []byte) ([]byte, error)
 }
 
 // EpochSubscriberHandler defines the behavior of a component that can be notified if a new epoch was confirmed
@@ -134,5 +133,17 @@ type GetNodeFromDbErrHandler interface {
 	Error() string
 	GetKey() []byte
 	GetIdentifier() string
+	IsInterfaceNil() bool
+}
+
+// TrieNodeVersionVerifier defines the behavior of a component that can verify if a trie node version is valid
+type TrieNodeVersionVerifier interface {
+	IsValidVersion(version TrieNodeVersion) bool
+	IsInterfaceNil() bool
+}
+
+// EnableEpochsHandler defines the behavior of a component that can return if a feature is enabled or not
+type EnableEpochsHandler interface {
+	IsAutoBalanceDataTriesEnabled() bool
 	IsInterfaceNil() bool
 }
