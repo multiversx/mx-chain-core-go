@@ -2,12 +2,6 @@ package transaction
 
 import "github.com/multiversx/mx-chain-core-go/data/block"
 
-// Marshalizer is able to encode an object to its byte slice representation
-type Marshalizer interface {
-	Marshal(obj interface{}) ([]byte, error)
-	IsInterfaceNil() bool
-}
-
 // StatusComputerHandler computes a transaction status
 type StatusComputerHandler interface {
 	ComputeStatusWhenInStorageKnowingMiniblock(miniblockType block.Type, tx *ApiTransactionResult) (TxStatus, error)

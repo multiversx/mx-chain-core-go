@@ -1,0 +1,17 @@
+// This file holds data structures related to incoming headers from one chain(local/main/test/etc.) to a sovereign chain.
+// This incoming header will be received from a notifier. In the future, this will also hold a proof of the incoming operations
+syntax = "proto3";
+
+package proto;
+
+option go_package = "sovereign";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "github.com/multiversx/mx-chain-core-go/data/block/blockV2.proto";
+import "github.com/multiversx/mx-chain-core-go/data/transaction/log.proto";
+
+message IncomingHeader {
+  HeaderV2       Header         = 1 [(gogoproto.jsontag) = "header"];
+  repeated Event IncomingEvents = 2 [(gogoproto.jsontag) = "incomingEvents,omitempty"];
+}
