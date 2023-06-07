@@ -386,13 +386,13 @@ func (sch *SovereignChainHeader) SetValidatorStatsRootHash(rootHash []byte) erro
 	return nil
 }
 
-// SetMainChainShardHeaderHashes sets the main chain shard header hashes
-func (sch *SovereignChainHeader) SetMainChainShardHeaderHashes(hdrHashes [][]byte) error {
+// SetExtendedShardHeaderHashes sets the extended shard header hashes
+func (sch *SovereignChainHeader) SetExtendedShardHeaderHashes(hdrHashes [][]byte) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
 	}
 
-	sch.MainChainShardHeaderHashes = hdrHashes
+	sch.ExtendedShardHeaderHashes = hdrHashes
 
 	return nil
 }

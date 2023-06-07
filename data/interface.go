@@ -88,10 +88,11 @@ type ValidatorStatisticsInfoHandler interface {
 // SovereignChainHeaderHandler defines getters and setters for the sovereign chain header
 type SovereignChainHeaderHandler interface {
 	CommonHeaderHandler
+	GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32
 	SetValidatorStatsRootHash(rootHash []byte) error
 	GetValidatorStatsRootHash() []byte
-	SetMainChainShardHeaderHashes(hdrHashes [][]byte) error
-	GetMainChainShardHeaderHashes() [][]byte
+	SetExtendedShardHeaderHashes(hdrHashes [][]byte) error
+	GetExtendedShardHeaderHashes() [][]byte
 }
 
 // HeaderHandler defines getters and setters for header data holder
