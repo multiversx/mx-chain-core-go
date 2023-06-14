@@ -15,6 +15,6 @@ const (
 	TopicSaveAccounts = "SaveAccounts"
 	// TopicFinalizedBlock is the topic that triggers the handling of a finalized block
 	TopicFinalizedBlock = "FinalizedBlock"
-	// TopicSettings is the topic that tigger a settings sending
+	// TopicSettings is the topic that triggers the sending of node settings
 	TopicSettings = "Settings"
 )
