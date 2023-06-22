@@ -115,3 +115,6 @@ var ErrContextClosing = errors.New("context closing")
 
 // ErrDBIsClosed is raised when the DB is closed
 var ErrDBIsClosed = errors.New("DB is closed")
+
+// ErrNilEnableEpochsHandler signals that a nil enable epochs handler has been provided
+var ErrNilEnableEpochsHandler = errors.New("nil enable epochs handler")
