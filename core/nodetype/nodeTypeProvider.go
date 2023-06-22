@@ -33,7 +33,7 @@ func (ntp *nodeTypeProvider) GetType() core.NodeType {
 	return ntp.nodeType
 }
 
-// IsInterfaceNil returns true is there is no value under the interface
+// IsInterfaceNil returns true if there is no value under the interface
 func (ntp *nodeTypeProvider) IsInterfaceNil() bool {
 	return ntp == nil
 }
