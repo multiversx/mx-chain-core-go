@@ -14,5 +14,10 @@
 # Dependency directories
 /vendor
 
+# IDE files
+.idea/
+
 # Go workspace file
 go.work
+
+.idea
