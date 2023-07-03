@@ -131,7 +131,7 @@ type CostResponse struct {
 	Logs                 *ApiLogs                           `json:"logs,omitempty"`
 }
 
-// SimulationResults is the data transfer object which will hold results for simulation a transaction's execution
+// SimulationResults is the data transfer object which will hold results for simulating a transaction's execution
 type SimulationResults struct {
 	Hash       string                             `json:"hash,omitempty"`
 	FailReason string                             `json:"failReason,omitempty"`
