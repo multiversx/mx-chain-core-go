@@ -128,4 +128,15 @@ type CostResponse struct {
 	GasUnits             uint64                             `json:"txGasUnits"`
 	ReturnMessage        string                             `json:"returnMessage"`
 	SmartContractResults map[string]*ApiSmartContractResult `json:"smartContractResults"`
+	Logs                 *ApiLogs                           `json:"logs,omitempty"`
+}
+
+// SimulationResults is the data transfer object which will hold results for simulating a transaction's execution
+type SimulationResults struct {
+	Hash       string                             `json:"hash,omitempty"`
+	FailReason string                             `json:"failReason,omitempty"`
+	Status     TxStatus                           `json:"status,omitempty"`
+	ScResults  map[string]*ApiSmartContractResult `json:"scResults,omitempty"`
+	Receipts   map[string]*ApiReceipt             `json:"receipts,omitempty"`
+	Logs       *ApiLogs                           `json:"logs,omitempty"`
 }
