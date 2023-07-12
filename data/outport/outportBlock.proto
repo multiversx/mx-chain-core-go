@@ -27,10 +27,11 @@ message OutportBlock {
 }
 
 message BlockData {
-  bytes  HeaderBytes = 1 [(gogoproto.jsontag) = "headerBytes,omitempty"];
-  string HeaderType  = 2 [(gogoproto.jsontag) = "headerType,omitempty"];
-  bytes  HeaderHash  = 3 [(gogoproto.jsontag) = "headerHash,omitempty"];
-  Body   Body        = 4 [(gogoproto.jsontag) = "body,omitempty"];
+  bytes              HeaderBytes          = 1 [(gogoproto.jsontag) = "headerBytes,omitempty"];
+  string             HeaderType           = 2 [(gogoproto.jsontag) = "headerType,omitempty"];
+  bytes              HeaderHash           = 3 [(gogoproto.jsontag) = "headerHash,omitempty"];
+  Body               Body                 = 4 [(gogoproto.jsontag) = "body,omitempty"];
+  repeated MiniBlock IntraShardMiniBlocks = 5 [(gogoproto.jsontag) = "intraShardMiniBlocks,omitempty"];
 }
 
 message TransactionPool {
