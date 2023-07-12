@@ -258,6 +258,9 @@ const SignalErrorOperation = "signalError"
 // CompletedTxEventIdentifier is the identifier for the log that is generated when the execution of a smart contract call is done
 const CompletedTxEventIdentifier = "completedTxEvent"
 
+// InternalVMErrorsOperation is the identifier for the log that is generated when the execution of a smart contract generates an interval vm error
+const InternalVMErrorsOperation = "internalVMErrors"
+
 // GasRefundForRelayerMessage is the return message for to the smart contract result with refund for the relayer
 const GasRefundForRelayerMessage = "gas refund for relayer"
 
