@@ -35,7 +35,7 @@ func TestTrieNodeVersionVerifier_IsValidVersion(t *testing.T) {
 
 		vv, _ := NewTrieNodeVersionVerifier(
 			&mock.EnableEpochsHandlerStub{
-				IsAutoBalanceDataTriesEnabledCalled: func() bool {
+				IsAutoBalanceDataTriesEnabledInEpochCalled: func(_ uint32) bool {
 					return true
 				},
 			},
@@ -50,7 +50,7 @@ func TestTrieNodeVersionVerifier_IsValidVersion(t *testing.T) {
 
 		vv, _ := NewTrieNodeVersionVerifier(
 			&mock.EnableEpochsHandlerStub{
-				IsAutoBalanceDataTriesEnabledCalled: func() bool {
+				IsAutoBalanceDataTriesEnabledInEpochCalled: func(_ uint32) bool {
 					return false
 				},
 			},
@@ -77,7 +77,7 @@ func TestGetVersionForNewData(t *testing.T) {
 
 		getVersionForNewData := GetVersionForNewData(
 			&mock.EnableEpochsHandlerStub{
-				IsAutoBalanceDataTriesEnabledCalled: func() bool {
+				IsAutoBalanceDataTriesEnabledInEpochCalled: func(_ uint32) bool {
 					return true
 				},
 			},
@@ -90,7 +90,7 @@ func TestGetVersionForNewData(t *testing.T) {
 
 		getVersionForNewData := GetVersionForNewData(
 			&mock.EnableEpochsHandlerStub{
-				IsAutoBalanceDataTriesEnabledCalled: func() bool {
+				IsAutoBalanceDataTriesEnabledInEpochCalled: func(_ uint32) bool {
 					return false
 				},
 			},
