@@ -44,7 +44,7 @@ func (sch *SovereignChainHeader) ShallowClone() data.HeaderHandler {
 
 // GetShardID returns 0 as the shardID for the sovereign chain header
 func (sch *SovereignChainHeader) GetShardID() uint32 {
-	return 0
+	return sch.Header.ShardID
 }
 
 // GetNonce returns the header nonce
@@ -371,7 +371,8 @@ func (sch *SovereignChainHeader) SetTxCount(txCount uint32) error {
 }
 
 // SetShardID does nothing and returns nil for the sovereign chain header
-func (sch *SovereignChainHeader) SetShardID(_ uint32) error {
+func (sch *SovereignChainHeader) SetShardID(shardID uint32) error {
+	sch.Header.ShardID = shardID
 	return nil
 }
 
