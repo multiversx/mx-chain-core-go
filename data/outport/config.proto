@@ -8,5 +8,6 @@ option (gogoproto.stable_marshaler_all) = true;
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 message OutportConfig {
-  bool IsInImportDBMode = 1 [(gogoproto.jsontag) = "isInImportDBMode"];
+  uint32 ShardID          = 1 [(gogoproto.jsontag) = "shardID"];
+  bool   IsInImportDBMode = 2 [(gogoproto.jsontag) = "isInImportDBMode"];
 }
