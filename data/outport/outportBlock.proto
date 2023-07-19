@@ -126,3 +126,7 @@ message FinalizedBlock {
   uint32 ShardID    = 1 [(gogoproto.jsontag) = "shardID"];
   bytes  HeaderHash = 2 [(gogoproto.jsontag) = "headerHash"];
 }
+
+message Shard {
+  uint32 ShardID = 1 [(gogoproto.jsontag) = "shardID"];
+}
