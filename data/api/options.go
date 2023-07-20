@@ -17,3 +17,10 @@ type BlockQueryOptions struct {
 	WithTransactions bool
 	WithLogs         bool
 }
+
+// VmQueryOptions holds options for vm queries
+type VmQueryOptions struct {
+	BlockNonce    core.OptionalUint64
+	BlockHash     []byte
+	BlockRootHash []byte
+}
