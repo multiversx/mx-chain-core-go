@@ -48,6 +48,20 @@ func LoadTomlFile(dest interface{}, relativePath string) error {
 	return toml.NewDecoder(f).Decode(dest)
 }
 
+// SaveTomlFile will open and save data to toml file
+func SaveTomlFile(src interface{}, relativePath string) error {
+	f, err := os.Create(relativePath)
+	if err != nil {
+		return err
+	}
+
+	defer func() {
+		_ = f.Close()
+	}()
+
+	return toml.NewEncoder(f).Encode(src)
+}
+
 // LoadTomlFileToMap opens and decodes a toml file as a map[string]interface{}
 func LoadTomlFileToMap(relativePath string) (map[string]interface{}, error) {
 	f, err := OpenFile(relativePath)

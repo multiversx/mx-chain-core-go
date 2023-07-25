@@ -10,10 +10,11 @@ import (
 
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 )
 
 type TestStruct struct {
-	a, b int
+	A, B int
 }
 
 func TestOpenFile_NoExistingFileShouldErr(t *testing.T) {
@@ -68,6 +69,61 @@ func TestLoadTomlFile_FileExitsShouldPass(t *testing.T) {
 	assert.Nil(t, err)
 }
 
+func TestSaveTomlFile(t *testing.T) {
+	t.Parallel()
+
+	t.Run("empty filename, should fail", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := &TestStruct{}
+
+		fileName := ""
+
+		err := core.SaveTomlFile(cfg, fileName)
+		require.Error(t, err)
+	})
+
+	t.Run("invalid path, should fail", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := &TestStruct{}
+
+		fileName := "invalid_path" + "/testFile1"
+
+		err := core.SaveTomlFile(cfg, fileName)
+		require.Error(t, err)
+	})
+
+	t.Run("should work with valid dir", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := &TestStruct{}
+
+		dir := t.TempDir()
+		fileName := dir + "/testFile1"
+
+		err := core.SaveTomlFile(cfg, fileName)
+		require.Nil(t, err)
+	})
+
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
+		cfg := &TestStruct{A: 10, B: 20}
+		dir := t.TempDir()
+		fileName := dir + "/testFile1"
+
+		err := core.SaveTomlFile(cfg, fileName)
+		require.Nil(t, err)
+
+		newCfg := &TestStruct{}
+		err = core.LoadTomlFile(newCfg, fileName)
+		require.Nil(t, err)
+
+		require.Equal(t, cfg, newCfg)
+	})
+}
+
 func TestLoadJSonFile_NoExistingFileShouldErr(t *testing.T) {
 	t.Parallel()
 
@@ -76,7 +132,6 @@ func TestLoadJSonFile_NoExistingFileShouldErr(t *testing.T) {
 	err := core.LoadJsonFile(cfg, "file")
 
 	assert.Error(t, err)
-
 }
 
 func TestLoadJSonFile_FileExitsShouldPass(t *testing.T) {
@@ -88,7 +143,7 @@ func TestLoadJSonFile_FileExitsShouldPass(t *testing.T) {
 	file, err := os.Create(fileName)
 	assert.Nil(t, err)
 
-	data, _ := json.MarshalIndent(TestStruct{a: 0, b: 0}, "", " ")
+	data, _ := json.MarshalIndent(TestStruct{A: 0, B: 0}, "", " ")
 
 	_ = ioutil.WriteFile(fileName, data, 0644)
 
