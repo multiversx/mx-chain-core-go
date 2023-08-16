@@ -4,6 +4,7 @@ package outport
 
 import (
 	"github.com/multiversx/mx-chain-core-go/data"
+	"github.com/multiversx/mx-chain-core-go/data/block"
 )
 
 // OutportBlockWithHeader will extend the OutportBlock structure
@@ -14,9 +15,10 @@ type OutportBlockWithHeader struct {
 
 // HeaderDataWithBody holds header and body data
 type HeaderDataWithBody struct {
-	Body       data.BodyHandler
-	Header     data.HeaderHandler
-	HeaderHash []byte
+	Body                 data.BodyHandler
+	Header               data.HeaderHandler
+	IntraShardMiniBlocks []*block.MiniBlock
+	HeaderHash           []byte
 }
 
 // OutportBlockWithHeaderAndBody is a wrapper for OutportBlock used for outport handler
