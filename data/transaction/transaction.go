@@ -57,32 +57,19 @@ func TrimSliceHandler(in []data.TransactionHandler) []data.TransactionHandler {
 }
 
 // GetDataForSigning returns the serialized transaction having an empty signature field
-func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.Marshaller, hasher data.Hasher) ([]byte, error) {
+func (tx *Transaction) GetDataForSigning(encoder Encoder, marshalizer Marshalizer) ([]byte, error) {
 	if check.IfNil(encoder) {
 		return nil, ErrNilEncoder
 	}
-	if check.IfNil(marshaller) {
+	if check.IfNil(marshalizer) {
 		return nil, ErrNilMarshalizer
-	}
-	if check.IfNil(hasher) {
-		return nil, ErrNilHasher
-	}
-
-	receiverAddr, err := encoder.Encode(tx.RcvAddr)
-	if err != nil {
-		return nil, err
-	}
-
-	senderAddr, err := encoder.Encode(tx.SndAddr)
-	if err != nil {
-		return nil, err
 	}
 
 	ftx := &FrontendTransaction{
 		Nonce:            tx.Nonce,
 		Value:            tx.Value.String(),
-		Receiver:         receiverAddr,
-		Sender:           senderAddr,
+		Receiver:         encoder.Encode(tx.RcvAddr),
+		Sender:           encoder.Encode(tx.SndAddr),
 		GasPrice:         tx.GasPrice,
 		GasLimit:         tx.GasLimit,
 		SenderUsername:   tx.SndUserName,
@@ -93,38 +80,7 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.M
 		Options:          tx.Options,
 	}
 
-	if len(tx.GuardianAddr) > 0 {
-		guardianAddr, errGuardian := encoder.Encode(tx.GuardianAddr)
-		if errGuardian != nil {
-			return nil, errGuardian
-		}
-
-		ftx.GuardianAddr = guardianAddr
-	}
-
-	ftxBytes, err := marshaller.Marshal(ftx)
-	if err != nil {
-		return nil, err
-	}
-
-	shouldSignOnTxHash := tx.Version > core.InitialVersionOfTransaction && tx.HasOptionHashSignSet()
-	if !shouldSignOnTxHash {
-		return ftxBytes, nil
-	}
-
-	ftxHash := hasher.Compute(string(ftxBytes))
-
-	return ftxHash, nil
-}
-
-// HasOptionGuardianSet returns true if the guarded transaction option is set
-func (tx *Transaction) HasOptionGuardianSet() bool {
-	return tx.Options&MaskGuardedTransaction > 0
-}
-
-// HasOptionHashSignSet returns true if the signed with hash option is set
-func (tx *Transaction) HasOptionHashSignSet() bool {
-	return tx.Options&MaskSignedWithHash > 0
+	return marshalizer.Marshal(ftx)
 }
 
 // CheckIntegrity checks for not nil fields and negative value

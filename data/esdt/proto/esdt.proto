@@ -8,7 +8,7 @@ option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
-// ESDigitalToken holds the data for a electronic standard digital token transaction
+// ESDigitalToken holds the data for a Electronic standard digital token transaction
 message ESDigitalToken {
 	uint32 Type            = 1 [(gogoproto.jsontag) = "Type"];
 	bytes  Value           = 2 [(gogoproto.jsontag) = "Value", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];

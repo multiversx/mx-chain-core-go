@@ -25,9 +25,7 @@ type ConnectedAddressesHandler interface {
 type PubkeyConverter interface {
 	Len() int
 	Decode(humanReadable string) ([]byte, error)
-	Encode(pkBytes []byte) (string, error)
-	SilentEncode(pkBytes []byte, log Logger) string
-	EncodeSlice(pkBytesSlice [][]byte) ([]string, error)
+	Encode(pkBytes []byte) string
 	IsInterfaceNil() bool
 }
 

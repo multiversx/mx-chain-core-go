@@ -30,21 +30,19 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 // Transaction holds all the data needed for a value transfer or SC call
 type Transaction struct {
-	Nonce             uint64        `protobuf:"varint,1,opt,name=Nonce,proto3" json:"nonce"`
-	Value             *math_big.Int `protobuf:"bytes,2,opt,name=Value,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"value"`
-	RcvAddr           []byte        `protobuf:"bytes,3,opt,name=RcvAddr,proto3" json:"receiver"`
-	RcvUserName       []byte        `protobuf:"bytes,4,opt,name=RcvUserName,proto3" json:"rcvUserName,omitempty"`
-	SndAddr           []byte        `protobuf:"bytes,5,opt,name=SndAddr,proto3" json:"sender"`
-	SndUserName       []byte        `protobuf:"bytes,6,opt,name=SndUserName,proto3" json:"sndUserName,omitempty"`
-	GasPrice          uint64        `protobuf:"varint,7,opt,name=GasPrice,proto3" json:"gasPrice,omitempty"`
-	GasLimit          uint64        `protobuf:"varint,8,opt,name=GasLimit,proto3" json:"gasLimit,omitempty"`
-	Data              []byte        `protobuf:"bytes,9,opt,name=Data,proto3" json:"data,omitempty"`
-	ChainID           []byte        `protobuf:"bytes,10,opt,name=ChainID,proto3" json:"chainID"`
-	Version           uint32        `protobuf:"varint,11,opt,name=Version,proto3" json:"version"`
-	Signature         []byte        `protobuf:"bytes,12,opt,name=Signature,proto3" json:"signature,omitempty"`
-	Options           uint32        `protobuf:"varint,13,opt,name=Options,proto3" json:"options,omitempty"`
-	GuardianAddr      []byte        `protobuf:"bytes,14,opt,name=GuardianAddr,proto3" json:"guardian,omitempty"`
-	GuardianSignature []byte        `protobuf:"bytes,15,opt,name=GuardianSignature,proto3" json:"guardianSignature,omitempty"`
+	Nonce       uint64        `protobuf:"varint,1,opt,name=Nonce,proto3" json:"nonce"`
+	Value       *math_big.Int `protobuf:"bytes,2,opt,name=Value,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"value"`
+	RcvAddr     []byte        `protobuf:"bytes,3,opt,name=RcvAddr,proto3" json:"receiver"`
+	RcvUserName []byte        `protobuf:"bytes,4,opt,name=RcvUserName,proto3" json:"rcvUserName,omitempty"`
+	SndAddr     []byte        `protobuf:"bytes,5,opt,name=SndAddr,proto3" json:"sender"`
+	SndUserName []byte        `protobuf:"bytes,6,opt,name=SndUserName,proto3" json:"sndUserName,omitempty"`
+	GasPrice    uint64        `protobuf:"varint,7,opt,name=GasPrice,proto3" json:"gasPrice,omitempty"`
+	GasLimit    uint64        `protobuf:"varint,8,opt,name=GasLimit,proto3" json:"gasLimit,omitempty"`
+	Data        []byte        `protobuf:"bytes,9,opt,name=Data,proto3" json:"data,omitempty"`
+	ChainID     []byte        `protobuf:"bytes,10,opt,name=ChainID,proto3" json:"chainID"`
+	Version     uint32        `protobuf:"varint,11,opt,name=Version,proto3" json:"version"`
+	Signature   []byte        `protobuf:"bytes,12,opt,name=Signature,proto3" json:"signature,omitempty"`
+	Options     uint32        `protobuf:"varint,13,opt,name=Options,proto3" json:"options,omitempty"`
 }
 
 func (m *Transaction) Reset()      { *m = Transaction{} }
@@ -166,20 +164,6 @@ func (m *Transaction) GetOptions() uint32 {
 	return 0
 }
 
-func (m *Transaction) GetGuardianAddr() []byte {
-	if m != nil {
-		return m.GuardianAddr
-	}
-	return nil
-}
-
-func (m *Transaction) GetGuardianSignature() []byte {
-	if m != nil {
-		return m.GuardianSignature
-	}
-	return nil
-}
-
 func init() {
 	proto.RegisterType((*Transaction)(nil), "proto.Transaction")
 }
@@ -287,19 +271,13 @@ func (this *Transaction) Equal(that interface{}) bool {
 	if this.Options != that1.Options {
 		return false
 	}
-	if !bytes.Equal(this.GuardianAddr, that1.GuardianAddr) {
-		return false
-	}
-	if !bytes.Equal(this.GuardianSignature, that1.GuardianSignature) {
-		return false
-	}
 	return true
 }
 func (this *Transaction) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 19)
+	s := make([]string, 0, 17)
 	s = append(s, "&transaction.Transaction{")
 	s = append(s, "Nonce: "+fmt.Sprintf("%#v", this.Nonce)+",\n")
 	s = append(s, "Value: "+fmt.Sprintf("%#v", this.Value)+",\n")
@@ -314,8 +292,6 @@ func (this *Transaction) GoString() string {
 	s = append(s, "Version: "+fmt.Sprintf("%#v", this.Version)+",\n")
 	s = append(s, "Signature: "+fmt.Sprintf("%#v", this.Signature)+",\n")
 	s = append(s, "Options: "+fmt.Sprintf("%#v", this.Options)+",\n")
-	s = append(s, "GuardianAddr: "+fmt.Sprintf("%#v", this.GuardianAddr)+",\n")
-	s = append(s, "GuardianSignature: "+fmt.Sprintf("%#v", this.GuardianSignature)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -347,20 +323,6 @@ func (m *Transaction) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.GuardianSignature) > 0 {
-		i -= len(m.GuardianSignature)
-		copy(dAtA[i:], m.GuardianSignature)
-		i = encodeVarintTransaction(dAtA, i, uint64(len(m.GuardianSignature)))
-		i--
-		dAtA[i] = 0x7a
-	}
-	if len(m.GuardianAddr) > 0 {
-		i -= len(m.GuardianAddr)
-		copy(dAtA[i:], m.GuardianAddr)
-		i = encodeVarintTransaction(dAtA, i, uint64(len(m.GuardianAddr)))
-		i--
-		dAtA[i] = 0x72
-	}
 	if m.Options != 0 {
 		i = encodeVarintTransaction(dAtA, i, uint64(m.Options))
 		i--
@@ -514,14 +476,6 @@ func (m *Transaction) Size() (n int) {
 	if m.Options != 0 {
 		n += 1 + sovTransaction(uint64(m.Options))
 	}
-	l = len(m.GuardianAddr)
-	if l > 0 {
-		n += 1 + l + sovTransaction(uint64(l))
-	}
-	l = len(m.GuardianSignature)
-	if l > 0 {
-		n += 1 + l + sovTransaction(uint64(l))
-	}
 	return n
 }
 
@@ -549,8 +503,6 @@ func (this *Transaction) String() string {
 		`Version:` + fmt.Sprintf("%v", this.Version) + `,`,
 		`Signature:` + fmt.Sprintf("%v", this.Signature) + `,`,
 		`Options:` + fmt.Sprintf("%v", this.Options) + `,`,
-		`GuardianAddr:` + fmt.Sprintf("%v", this.GuardianAddr) + `,`,
-		`GuardianSignature:` + fmt.Sprintf("%v", this.GuardianSignature) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -963,74 +915,6 @@ func (m *Transaction) Unmarshal(dAtA []byte) error {
 					break
 				}
 			}
-		case 14:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field GuardianAddr", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTransaction
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthTransaction
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTransaction
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.GuardianAddr = append(m.GuardianAddr[:0], dAtA[iNdEx:postIndex]...)
-			if m.GuardianAddr == nil {
-				m.GuardianAddr = []byte{}
-			}
-			iNdEx = postIndex
-		case 15:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field GuardianSignature", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowTransaction
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthTransaction
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthTransaction
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.GuardianSignature = append(m.GuardianSignature[:0], dAtA[iNdEx:postIndex]...)
-			if m.GuardianSignature == nil {
-				m.GuardianSignature = []byte{}
-			}
-			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipTransaction(dAtA[iNdEx:])
