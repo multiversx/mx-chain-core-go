@@ -1,8 +1,6 @@
 package core
 
 import (
-	"runtime/debug"
-
 	"github.com/multiversx/mx-chain-core-go/core/check"
 )
 
@@ -113,12 +111,9 @@ const (
 )
 
 // CheckHandlerCompatibility checks if the provided handler is compatible with this mx-chain-core-go version
-func CheckHandlerCompatibility(handler EnableEpochsHandler, logger Logger) error {
+func CheckHandlerCompatibility(handler EnableEpochsHandler) error {
 	if check.IfNil(handler) {
 		return ErrNilEnableEpochsHandler
-	}
-	if check.IfNil(logger) {
-		return ErrNilLogger
 	}
 
 	// allFlags slice must contain all flags defined above
@@ -227,7 +222,6 @@ func CheckHandlerCompatibility(handler EnableEpochsHandler, logger Logger) error
 
 	for _, flag := range allFlags {
 		if !handler.IsFlagDefined(flag) {
-			logger.Trace("programming error, incompatible handler detected", "stack trace", string(debug.Stack()))
 			return ErrInvalidEnableEpochsHandler
 		}
 	}

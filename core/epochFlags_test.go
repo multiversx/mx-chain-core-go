@@ -11,18 +11,15 @@ import (
 func TestCheckHandlerCompatibility(t *testing.T) {
 	t.Parallel()
 
-	err := core.CheckHandlerCompatibility(nil, &mock.LoggerMock{})
+	err := core.CheckHandlerCompatibility(nil)
 	require.Equal(t, core.ErrNilEnableEpochsHandler, err)
-
-	err = core.CheckHandlerCompatibility(&mock.EnableEpochsHandlerStub{}, nil)
-	require.Equal(t, core.ErrNilLogger, err)
 
 	allFlagsDefinedHandler := &mock.EnableEpochsHandlerStub{
 		IsFlagDefinedCalled: func(flag core.EnableEpochFlag) bool {
 			return true
 		},
 	}
-	err = core.CheckHandlerCompatibility(allFlagsDefinedHandler, &mock.LoggerMock{})
+	err = core.CheckHandlerCompatibility(allFlagsDefinedHandler)
 	require.Nil(t, err)
 
 	allFlagsUndefinedHandler := &mock.EnableEpochsHandlerStub{
@@ -30,7 +27,7 @@ func TestCheckHandlerCompatibility(t *testing.T) {
 			return false
 		},
 	}
-	err = core.CheckHandlerCompatibility(allFlagsUndefinedHandler, &mock.LoggerMock{})
+	err = core.CheckHandlerCompatibility(allFlagsUndefinedHandler)
 	require.Equal(t, core.ErrInvalidEnableEpochsHandler, err)
 
 	oneFlagUndefinedHandler := &mock.EnableEpochsHandlerStub{
@@ -38,6 +35,6 @@ func TestCheckHandlerCompatibility(t *testing.T) {
 			return flag != core.SetGuardianFlag
 		},
 	}
-	err = core.CheckHandlerCompatibility(oneFlagUndefinedHandler, &mock.LoggerMock{})
+	err = core.CheckHandlerCompatibility(oneFlagUndefinedHandler)
 	require.Equal(t, core.ErrInvalidEnableEpochsHandler, err)
 }
