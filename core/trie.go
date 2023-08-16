@@ -52,7 +52,7 @@ func NewTrieNodeVersionVerifier(enableEpochsHandler EnableEpochsHandler) (*trieN
 
 // IsValidVersion returns true if the given trie node version is valid
 func (vv *trieNodeVersionVerifier) IsValidVersion(version TrieNodeVersion) bool {
-	if vv.enableEpochsHandler.IsAutoBalanceDataTriesEnabledInEpoch(vv.enableEpochsHandler.GetCurrentEpoch()) {
+	if vv.enableEpochsHandler.IsFlagEnabledInCurrentEpoch(AutoBalanceDataTriesFlag) {
 		return version <= AutoBalanceEnabled
 	}
 
@@ -66,7 +66,7 @@ func (vv *trieNodeVersionVerifier) IsInterfaceNil() bool {
 
 // GetVersionForNewData returns the trie node version that should be used for new data
 func GetVersionForNewData(handler EnableEpochsHandler) TrieNodeVersion {
-	if handler.IsAutoBalanceDataTriesEnabledInEpoch(handler.GetCurrentEpoch()) {
+	if handler.IsFlagEnabledInCurrentEpoch(AutoBalanceDataTriesFlag) {
 		return AutoBalanceEnabled
 	}
 

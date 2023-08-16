@@ -1,29 +1,30 @@
 package mock
 
+import "github.com/multiversx/mx-chain-core-go/core"
+
 // EnableEpochsHandlerStub -
 type EnableEpochsHandlerStub struct {
-	GetCurrentEpochCalled                      func() uint32
-	IsAutoBalanceDataTriesEnabledInEpochCalled func(epoch uint32) bool
+	IsFlagDefinedCalled               func(flag core.EnableEpochFlag) bool
+	IsFlagEnabledInCurrentEpochCalled func(flag core.EnableEpochFlag) bool
 }
 
-// GetCurrentEpoch -
-func (stub *EnableEpochsHandlerStub) GetCurrentEpoch() uint32 {
-	if stub.GetCurrentEpochCalled != nil {
-		return stub.GetCurrentEpochCalled()
+// IsFlagDefined -
+func (stub *EnableEpochsHandlerStub) IsFlagDefined(flag core.EnableEpochFlag) bool {
+	if stub.IsFlagDefinedCalled != nil {
+		return stub.IsFlagDefinedCalled(flag)
 	}
-	return 0
-}
-
-// IsAutoBalanceDataTriesEnabledInEpoch -
-func (stub *EnableEpochsHandlerStub) IsAutoBalanceDataTriesEnabledInEpoch(epoch uint32) bool {
-	if stub.IsAutoBalanceDataTriesEnabledInEpochCalled != nil {
-		return stub.IsAutoBalanceDataTriesEnabledInEpochCalled(epoch)
-	}
-
 	return false
 }
 
-// IsInterfaceNil returns true if there is no value under the interface
+// IsFlagEnabledInCurrentEpoch -
+func (stub *EnableEpochsHandlerStub) IsFlagEnabledInCurrentEpoch(flag core.EnableEpochFlag) bool {
+	if stub.IsFlagEnabledInCurrentEpochCalled != nil {
+		return stub.IsFlagEnabledInCurrentEpochCalled(flag)
+	}
+	return false
+}
+
+// IsInterfaceNil -
 func (stub *EnableEpochsHandlerStub) IsInterfaceNil() bool {
 	return stub == nil
 }
