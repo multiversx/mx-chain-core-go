@@ -1,6 +1,6 @@
 module github.com/multiversx/mx-chain-core-go
 
-go 1.17
+go 1.20
 
 require (
 	github.com/btcsuite/btcd/btcutil v1.1.3
