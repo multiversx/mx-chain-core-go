@@ -15,22 +15,25 @@ import "github.com/multiversx/mx-chain-core-go/data/rewardTx/rewardTx.proto";
 import "github.com/multiversx/mx-chain-core-go/data/alteredAccount/alteredAccount.proto";
 
 message OutportBlock {
-  BlockData                    BlockData              = 1 [(gogoproto.jsontag) = "blockData,omitempty"];
-  TransactionPool              TransactionPool        = 2 [(gogoproto.jsontag) = "transactionPool,omitempty"];
-  HeaderGasConsumption         HeaderGasConsumption   = 3 [(gogoproto.jsontag) = "headerGasConsumption,omitempty"];
-  map <string, AlteredAccount> AlteredAccounts        = 4 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
-  repeated string              NotarizedHeadersHashes = 5 [(gogoproto.jsontag) = "notarizedHeadersHashes,omitempty"];
-  uint32                       NumberOfShards         = 6 [(gogoproto.jsontag) = "numberOfShards"];
-  repeated uint64              SignersIndexes         = 7 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
-  uint64                       HighestFinalBlockNonce = 8 [(gogoproto.jsontag) = "highestFinalBlockNonce"];
-  bytes                        HighestFinalBlockHash  = 9 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
+  uint32                       ShardID                = 1 [(gogoproto.jsontag) = "shardID,omitempty"];
+  BlockData                    BlockData              = 2 [(gogoproto.jsontag) = "blockData,omitempty"];
+  TransactionPool              TransactionPool        = 3 [(gogoproto.jsontag) = "transactionPool,omitempty"];
+  HeaderGasConsumption         HeaderGasConsumption   = 4 [(gogoproto.jsontag) = "headerGasConsumption,omitempty"];
+  map <string, AlteredAccount> AlteredAccounts        = 5 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
+  repeated string              NotarizedHeadersHashes = 6 [(gogoproto.jsontag) = "notarizedHeadersHashes,omitempty"];
+  uint32                       NumberOfShards         = 7 [(gogoproto.jsontag) = "numberOfShards"];
+  repeated uint64              SignersIndexes         = 8 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
+  uint64                       HighestFinalBlockNonce = 9 [(gogoproto.jsontag) = "highestFinalBlockNonce"];
+  bytes                        HighestFinalBlockHash  = 10 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
 }
 
 message BlockData {
-  bytes  HeaderBytes = 1 [(gogoproto.jsontag) = "headerBytes,omitempty"];
-  string HeaderType  = 2 [(gogoproto.jsontag) = "headerType,omitempty"];
-  bytes  HeaderHash  = 3 [(gogoproto.jsontag) = "headerHash,omitempty"];
-  Body   Body        = 4 [(gogoproto.jsontag) = "body,omitempty"];
+  uint32             ShardID              = 1 [(gogoproto.jsontag) = "shardID,omitempty"];
+  bytes              HeaderBytes          = 2 [(gogoproto.jsontag) = "headerBytes,omitempty"];
+  string             HeaderType           = 3 [(gogoproto.jsontag) = "headerType,omitempty"];
+  bytes              HeaderHash           = 4 [(gogoproto.jsontag) = "headerHash,omitempty"];
+  Body               Body                 = 5 [(gogoproto.jsontag) = "body,omitempty"];
+  repeated MiniBlock IntraShardMiniBlocks = 6 [(gogoproto.jsontag) = "intraShardMiniBlocks,omitempty"];
 }
 
 message TransactionPool {
@@ -100,7 +103,8 @@ message RoundInfo {
 }
 
 message RoundsInfo {
-  repeated RoundInfo RoundsInfo = 1 [(gogoproto.jsontag) = "roundsInfo,omitempty"];
+  uint32             ShardID    = 1 [(gogoproto.jsontag) = "shardID"];
+  repeated RoundInfo RoundsInfo = 2 [(gogoproto.jsontag) = "roundsInfo,omitempty"];
 }
 
 message PubKeys {
@@ -108,8 +112,9 @@ message PubKeys {
 }
 
 message ValidatorsPubKeys{
-  map<uint32, PubKeys> ShardValidatorsPubKeys = 1 [(gogoproto.jsontag) = "validatorsPubKeys,omitempty"];
-  uint32               Epoch                  = 2 [(gogoproto.jsontag) = "epoch"];
+  uint32               ShardID                = 1 [(gogoproto.jsontag) = "shardID"];
+  map<uint32, PubKeys> ShardValidatorsPubKeys = 2 [(gogoproto.jsontag) = "validatorsPubKeys,omitempty"];
+  uint32               Epoch                  = 3 [(gogoproto.jsontag) = "epoch"];
 }
 
 message Accounts {
@@ -119,5 +124,10 @@ message Accounts {
 }
 
 message FinalizedBlock {
-  bytes HeaderHash = 1 [(gogoproto.jsontag) = "headerHash"];
+  uint32 ShardID    = 1 [(gogoproto.jsontag) = "shardID"];
+  bytes  HeaderHash = 2 [(gogoproto.jsontag) = "headerHash"];
+}
+
+message Shard {
+  uint32 ShardID = 1 [(gogoproto.jsontag) = "shardID"];
 }
