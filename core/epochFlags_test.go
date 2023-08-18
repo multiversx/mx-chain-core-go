@@ -1,6 +1,8 @@
 package core_test
 
 import (
+	"errors"
+	"strings"
 	"testing"
 
 	"github.com/multiversx/mx-chain-core-go/core"
@@ -28,7 +30,7 @@ func TestCheckHandlerCompatibility(t *testing.T) {
 		},
 	}
 	err = core.CheckHandlerCompatibility(allFlagsUndefinedHandler)
-	require.Equal(t, core.ErrInvalidEnableEpochsHandler, err)
+	require.True(t, errors.Is(err, core.ErrInvalidEnableEpochsHandler))
 
 	oneFlagUndefinedHandler := &mock.EnableEpochsHandlerStub{
 		IsFlagDefinedCalled: func(flag core.EnableEpochFlag) bool {
@@ -36,5 +38,6 @@ func TestCheckHandlerCompatibility(t *testing.T) {
 		},
 	}
 	err = core.CheckHandlerCompatibility(oneFlagUndefinedHandler)
-	require.Equal(t, core.ErrInvalidEnableEpochsHandler, err)
+	require.True(t, errors.Is(err, core.ErrInvalidEnableEpochsHandler))
+	require.True(t, strings.Contains(err.Error(), string(core.SetGuardianFlag)))
 }

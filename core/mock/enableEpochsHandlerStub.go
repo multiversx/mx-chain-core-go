@@ -6,6 +6,8 @@ import "github.com/multiversx/mx-chain-core-go/core"
 type EnableEpochsHandlerStub struct {
 	IsFlagDefinedCalled               func(flag core.EnableEpochFlag) bool
 	IsFlagEnabledInCurrentEpochCalled func(flag core.EnableEpochFlag) bool
+	IsFlagEnabledInEpochCalled        func(flag core.EnableEpochFlag, epoch uint32) bool
+	GetActivationEpochCalled          func(flag core.EnableEpochFlag) uint32
 }
 
 // IsFlagDefined -
@@ -22,6 +24,22 @@ func (stub *EnableEpochsHandlerStub) IsFlagEnabledInCurrentEpoch(flag core.Enabl
 		return stub.IsFlagEnabledInCurrentEpochCalled(flag)
 	}
 	return false
+}
+
+// IsFlagEnabledInEpoch -
+func (stub *EnableEpochsHandlerStub) IsFlagEnabledInEpoch(flag core.EnableEpochFlag, epoch uint32) bool {
+	if stub.IsFlagEnabledInEpochCalled != nil {
+		return stub.IsFlagEnabledInEpochCalled(flag, epoch)
+	}
+	return false
+}
+
+// GetActivationEpoch -
+func (stub *EnableEpochsHandlerStub) GetActivationEpoch(flag core.EnableEpochFlag) uint32 {
+	if stub.GetActivationEpochCalled != nil {
+		return stub.GetActivationEpochCalled(flag)
+	}
+	return 0
 }
 
 // IsInterfaceNil -

@@ -146,5 +146,7 @@ type TrieNodeVersionVerifier interface {
 type EnableEpochsHandler interface {
 	IsFlagDefined(flag EnableEpochFlag) bool
 	IsFlagEnabledInCurrentEpoch(flag EnableEpochFlag) bool
+	IsFlagEnabledInEpoch(flag EnableEpochFlag, epoch uint32) bool
+	GetActivationEpoch(flag EnableEpochFlag) uint32
 	IsInterfaceNil() bool
 }
