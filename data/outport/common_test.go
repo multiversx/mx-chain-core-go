@@ -55,8 +55,7 @@ func TestGetBody(t *testing.T) {
 	require.Nil(t, receivedBody)
 	require.Equal(t, errNilBodyHandler, err)
 
-	var body data.BodyHandler // nolint
-	body = &block.Body{}
+	body := &block.Body{}
 	receivedBody, err = GetBody(body)
 	require.Nil(t, err)
 	require.Equal(t, body, receivedBody)
