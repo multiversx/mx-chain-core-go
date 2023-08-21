@@ -351,7 +351,7 @@ func TestTransaction_CheckIntegrityShouldErr(t *testing.T) {
 func TestTransaction_ImplementsGuardedTransactionHandler(t *testing.T) {
 	t.Parallel()
 
-	var tx data.TransactionHandler
+	var tx data.TransactionHandler // nolint
 	tx = &transaction.Transaction{}
 
 	_, ok := tx.(data.GuardedTransactionHandler)
