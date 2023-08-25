@@ -42,7 +42,7 @@ func (sch *SovereignChainHeader) ShallowClone() data.HeaderHandler {
 	return &headerCopy
 }
 
-// GetShardID returns 0 as the shardID for the sovereign chain header
+// GetShardID returns internal header shard id
 func (sch *SovereignChainHeader) GetShardID() uint32 {
 	return sch.Header.ShardID
 }
@@ -370,10 +370,13 @@ func (sch *SovereignChainHeader) SetTxCount(txCount uint32) error {
 	return sch.Header.SetTxCount(txCount)
 }
 
-// SetShardID does nothing and returns nil for the sovereign chain header
+// SetShardID sets the shard id
 func (sch *SovereignChainHeader) SetShardID(shardID uint32) error {
-	sch.Header.ShardID = shardID
-	return nil
+	if sch == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return sch.Header.SetShardID(shardID)
 }
 
 // SetValidatorStatsRootHash sets the root hash for the validator statistics trie
