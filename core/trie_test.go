@@ -1,6 +1,8 @@
 package core_test
 
 import (
+	"errors"
+	"strings"
 	"testing"
 
 	"github.com/multiversx/mx-chain-core-go/core"
@@ -19,10 +21,27 @@ func TestNewTrieNodeVersionVerifier(t *testing.T) {
 		assert.Nil(t, vv)
 		assert.Equal(t, core.ErrNilEnableEpochsHandler, err)
 	})
+	t.Run("incompatible enableEpochsHandler", func(t *testing.T) {
+		t.Parallel()
+
+		vv, err := core.NewTrieNodeVersionVerifier(&mock.EnableEpochsHandlerStub{
+			IsFlagDefinedCalled: func(flag core.EnableEpochFlag) bool {
+				assert.Equal(t, core.TestAutoBalanceDataTriesFlag, flag)
+				return false
+			},
+		})
+		assert.Nil(t, vv)
+		assert.True(t, errors.Is(err, core.ErrInvalidEnableEpochsHandler))
+		assert.True(t, strings.Contains(err.Error(), string(core.TestAutoBalanceDataTriesFlag)))
+	})
 	t.Run("new trieNodeVersionVerifier", func(t *testing.T) {
 		t.Parallel()
 
-		vv, err := core.NewTrieNodeVersionVerifier(&mock.EnableEpochsHandlerStub{})
+		vv, err := core.NewTrieNodeVersionVerifier(&mock.EnableEpochsHandlerStub{
+			IsFlagDefinedCalled: func(flag core.EnableEpochFlag) bool {
+				return flag == core.TestAutoBalanceDataTriesFlag
+			},
+		})
 		assert.Nil(t, err)
 		assert.False(t, check.IfNil(vv))
 	})
@@ -36,8 +55,11 @@ func TestTrieNodeVersionVerifier_IsValidVersion(t *testing.T) {
 
 		vv, _ := core.NewTrieNodeVersionVerifier(
 			&mock.EnableEpochsHandlerStub{
-				IsFlagEnabledInCurrentEpochCalled: func(flag core.EnableEpochFlag) bool {
-					return flag == core.AutoBalanceDataTriesFlag
+				IsFlagDefinedCalled: func(flag core.EnableEpochFlag) bool {
+					return flag == core.TestAutoBalanceDataTriesFlag
+				},
+				IsFlagEnabledCalled: func(flag core.EnableEpochFlag) bool {
+					return flag == core.TestAutoBalanceDataTriesFlag
 				},
 			},
 		)
@@ -51,7 +73,10 @@ func TestTrieNodeVersionVerifier_IsValidVersion(t *testing.T) {
 
 		vv, _ := core.NewTrieNodeVersionVerifier(
 			&mock.EnableEpochsHandlerStub{
-				IsFlagEnabledInCurrentEpochCalled: func(flag core.EnableEpochFlag) bool {
+				IsFlagDefinedCalled: func(flag core.EnableEpochFlag) bool {
+					return flag == core.TestAutoBalanceDataTriesFlag
+				},
+				IsFlagEnabledCalled: func(flag core.EnableEpochFlag) bool {
 					return false
 				},
 			},
@@ -78,8 +103,11 @@ func TestGetVersionForNewData(t *testing.T) {
 
 		getVersionForNewData := core.GetVersionForNewData(
 			&mock.EnableEpochsHandlerStub{
-				IsFlagEnabledInCurrentEpochCalled: func(flag core.EnableEpochFlag) bool {
-					return flag == core.AutoBalanceDataTriesFlag
+				IsFlagDefinedCalled: func(flag core.EnableEpochFlag) bool {
+					return flag == core.TestAutoBalanceDataTriesFlag
+				},
+				IsFlagEnabledCalled: func(flag core.EnableEpochFlag) bool {
+					return flag == core.TestAutoBalanceDataTriesFlag
 				},
 			},
 		)
@@ -91,7 +119,10 @@ func TestGetVersionForNewData(t *testing.T) {
 
 		getVersionForNewData := core.GetVersionForNewData(
 			&mock.EnableEpochsHandlerStub{
-				IsFlagEnabledInCurrentEpochCalled: func(flag core.EnableEpochFlag) bool {
+				IsFlagDefinedCalled: func(flag core.EnableEpochFlag) bool {
+					return flag == core.TestAutoBalanceDataTriesFlag
+				},
+				IsFlagEnabledCalled: func(flag core.EnableEpochFlag) bool {
 					return false
 				},
 			},

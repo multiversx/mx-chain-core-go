@@ -38,3 +38,6 @@ func (sw *StopWatch) SetElapsed(identifier string, duration time.Duration) {
 func SplitExponentFraction(val string) (string, string) {
 	return splitExponentFraction(val)
 }
+
+// TestAutoBalanceDataTriesFlag -
+const TestAutoBalanceDataTriesFlag = autoBalanceDataTriesFlag
