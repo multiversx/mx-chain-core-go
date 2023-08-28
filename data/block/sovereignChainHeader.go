@@ -44,6 +44,10 @@ func (sch *SovereignChainHeader) ShallowClone() data.HeaderHandler {
 
 // GetShardID returns internal header shard id
 func (sch *SovereignChainHeader) GetShardID() uint32 {
+	if sch == nil {
+		return 0
+	}
+
 	return sch.Header.ShardID
 }
 
