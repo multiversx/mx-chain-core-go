@@ -44,8 +44,7 @@ message AdditionalAccountData {
   string CurrentOwner     = 3 [(gogoproto.jsontag) = "currentOwner,omitempty"];
   string UserName         = 4 [(gogoproto.jsontag) = "userName,omitempty"];
   string DeveloperRewards = 5 [(gogoproto.jsontag) = "developerRewards,omitempty"];
-  bytes  Code             = 6 [(gogoproto.jsontag) = "code,omitempty"];
-  bytes  CodeHash         = 7 [(gogoproto.jsontag) = "codeHash,omitempty"];
-  bytes  RootHash         = 8 [(gogoproto.jsontag) = "rootHash,omitempty"];
-  bytes  CodeMetadata     = 9 [(gogoproto.jsontag) = "codeMetadata,omitempty"];
+  bytes  CodeHash         = 6 [(gogoproto.jsontag) = "codeHash,omitempty"];
+  bytes  RootHash         = 7 [(gogoproto.jsontag) = "rootHash,omitempty"];
+  bytes  CodeMetadata     = 8 [(gogoproto.jsontag) = "codeMetadata,omitempty"];
 }
