@@ -132,6 +132,9 @@ const BuiltInFunctionUnGuardAccount = "UnGuardAccount"
 // BuiltInFunctionMigrateDataTrie is the built-in function key for migrating the data trie
 const BuiltInFunctionMigrateDataTrie = "MigrateDataTrie"
 
+// BuiltInFunctionRemoveCodeLeaf is the built-in function key for removing code leaf
+const BuiltInFunctionRemoveCodeLeaf = "RemoveCodeLeaf"
+
 // ESDTRoleLocalMint is the constant string for the local role of mint for ESDT tokens
 const ESDTRoleLocalMint = "ESDTRoleLocalMint"
 
