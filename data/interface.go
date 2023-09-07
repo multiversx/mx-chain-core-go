@@ -3,6 +3,7 @@ package data
 import (
 	"math/big"
 
+	"github.com/multiversx/mx-chain-core-go/data/block"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
 )
 
@@ -162,6 +163,7 @@ type ShardDataHandler interface {
 	GetLastIncludedMetaNonce() uint64
 	GetShardID() uint32
 	GetTxCount() uint32
+	GetEpoch() *block.OptionalUint32
 
 	SetHeaderHash(hash []byte) error
 	SetShardMiniBlockHeaderHandlers(mbHeaderHandlers []MiniBlockHeaderHandler) error
