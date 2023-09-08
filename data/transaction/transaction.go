@@ -79,21 +79,11 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.M
 		return nil, err
 	}
 
-	innerTxs := make([]*Transaction, 0)
-	err = marshaller.Unmarshal(&innerTxs, tx.InnerTransactions)
-	if err != nil {
-		return nil, err
-	}
-	for _, innerTx := range innerTxs {
-		innerFtx, innerErr := innerTx.prepareTx(encoder)
-		if innerErr != nil {
+	if len(tx.InnerTransactions) > 0 {
+		ftx.InnerTransactions, err = tx.prepareInnerTxs(encoder, marshaller)
+		if err != nil {
 			return nil, err
 		}
-
-		innerFtx.Signature = hex.EncodeToString(innerTx.Signature)
-		innerFtx.GuardianSignature = hex.EncodeToString(innerTx.GuardianSignature)
-
-		ftx.InnerTransactions = append(ftx.InnerTransactions, innerFtx)
 	}
 
 	ftxBytes, err := marshaller.Marshal(ftx)
@@ -109,6 +99,37 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.M
 	ftxHash := hasher.Compute(string(ftxBytes))
 
 	return ftxHash, nil
+}
+
+// HasOptionGuardianSet returns true if the guarded transaction option is set
+func (tx *Transaction) HasOptionGuardianSet() bool {
+	return tx.Options&MaskGuardedTransaction > 0
+}
+
+// HasOptionHashSignSet returns true if the signed with hash option is set
+func (tx *Transaction) HasOptionHashSignSet() bool {
+	return tx.Options&MaskSignedWithHash > 0
+}
+
+// CheckIntegrity checks for not nil fields and negative value
+func (tx *Transaction) CheckIntegrity() error {
+	if tx.Signature == nil {
+		return data.ErrNilSignature
+	}
+	if tx.Value == nil {
+		return data.ErrNilValue
+	}
+	if tx.Value.Sign() < 0 {
+		return data.ErrNegativeValue
+	}
+	if len(tx.RcvUserName) > core.MaxUserNameLength {
+		return data.ErrInvalidUserNameLength
+	}
+	if len(tx.SndUserName) > core.MaxUserNameLength {
+		return data.ErrInvalidUserNameLength
+	}
+
+	return nil
 }
 
 func (tx *Transaction) prepareTx(encoder data.Encoder) (*FrontendTransaction, error) {
@@ -149,33 +170,25 @@ func (tx *Transaction) prepareTx(encoder data.Encoder) (*FrontendTransaction, er
 	return ftx, nil
 }
 
-// HasOptionGuardianSet returns true if the guarded transaction option is set
-func (tx *Transaction) HasOptionGuardianSet() bool {
-	return tx.Options&MaskGuardedTransaction > 0
-}
-
-// HasOptionHashSignSet returns true if the signed with hash option is set
-func (tx *Transaction) HasOptionHashSignSet() bool {
-	return tx.Options&MaskSignedWithHash > 0
-}
-
-// CheckIntegrity checks for not nil fields and negative value
-func (tx *Transaction) CheckIntegrity() error {
-	if tx.Signature == nil {
-		return data.ErrNilSignature
-	}
-	if tx.Value == nil {
-		return data.ErrNilValue
-	}
-	if tx.Value.Sign() < 0 {
-		return data.ErrNegativeValue
-	}
-	if len(tx.RcvUserName) > core.MaxUserNameLength {
-		return data.ErrInvalidUserNameLength
-	}
-	if len(tx.SndUserName) > core.MaxUserNameLength {
-		return data.ErrInvalidUserNameLength
+func (tx *Transaction) prepareInnerTxs(encoder data.Encoder, marshaller data.Marshaller) ([]*FrontendTransaction, error) {
+	innerTxs := make([]*Transaction, 0)
+	err := marshaller.Unmarshal(&innerTxs, tx.InnerTransactions)
+	if err != nil {
+		return nil, err
 	}
 
-	return nil
+	innerFtxs := make([]*FrontendTransaction, 0, len(innerTxs))
+	for _, innerTx := range innerTxs {
+		innerFtx, innerErr := innerTx.prepareTx(encoder)
+		if innerErr != nil {
+			return nil, err
+		}
+
+		innerFtx.Signature = hex.EncodeToString(innerTx.Signature)
+		innerFtx.GuardianSignature = hex.EncodeToString(innerTx.GuardianSignature)
+
+		innerFtxs = append(innerFtxs, innerFtx)
+	}
+
+	return innerFtxs, nil
 }
