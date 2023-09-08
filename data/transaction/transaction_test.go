@@ -23,6 +23,7 @@ func TestTransaction_SettersAndGetters(t *testing.T) {
 	gasLimit := uint64(5)
 	sender := []byte("sndr")
 	receiver := []byte("receiver")
+	innerTxs := []byte("inner txs")
 
 	tx := &transaction.Transaction{
 		Nonce:    nonce,
@@ -35,6 +36,7 @@ func TestTransaction_SettersAndGetters(t *testing.T) {
 	tx.SetData(txData)
 	tx.SetValue(value)
 	tx.SetRcvAddr(receiver)
+	tx.SetInnerTransactions(innerTxs)
 
 	assert.Equal(t, nonce, tx.GetNonce())
 	assert.Equal(t, value, tx.GetValue())
@@ -43,6 +45,7 @@ func TestTransaction_SettersAndGetters(t *testing.T) {
 	assert.Equal(t, gasLimit, tx.GetGasLimit())
 	assert.Equal(t, sender, tx.GetSndAddr())
 	assert.Equal(t, receiver, tx.GetRcvAddr())
+	assert.Equal(t, innerTxs, tx.GetInnerTransactions())
 }
 
 func TestTransaction_MarshalUnmarshalJsonShouldWork(t *testing.T) {
@@ -50,14 +53,15 @@ func TestTransaction_MarshalUnmarshalJsonShouldWork(t *testing.T) {
 
 	value := big.NewInt(445566)
 	tx := &transaction.Transaction{
-		Nonce:     112233,
-		Value:     new(big.Int).Set(value),
-		RcvAddr:   []byte("receiver"),
-		SndAddr:   []byte("sender"),
-		GasPrice:  1234,
-		GasLimit:  5678,
-		Data:      []byte("data"),
-		Signature: []byte("signature"),
+		Nonce:             112233,
+		Value:             new(big.Int).Set(value),
+		RcvAddr:           []byte("receiver"),
+		SndAddr:           []byte("sender"),
+		GasPrice:          1234,
+		GasLimit:          5678,
+		Data:              []byte("data"),
+		Signature:         []byte("signature"),
+		InnerTransactions: []byte("inner txs"),
 	}
 
 	buff, err := json.Marshal(tx)
@@ -220,7 +224,8 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 		tx := &transaction.Transaction{}
 
 		numEncodeCalled := 0
-		marshalizerWasCalled := false
+		marshallWasCalled := false
+		unmarshallWasCalled := false
 		hasherWasCalled := false
 		buff, err := tx.GetDataForSigning(
 			&mock.PubkeyConverterStub{
@@ -231,9 +236,14 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 			},
 			&mock.MarshalizerStub{
 				MarshalCalled: func(obj interface{}) (bytes []byte, err error) {
-					marshalizerWasCalled = true
+					marshallWasCalled = true
 
 					return make([]byte, 0), nil
+				},
+				UnmarshalCalled: func(obj interface{}, buff []byte) error {
+					unmarshallWasCalled = true
+
+					return nil
 				},
 			},
 			&mock.HasherStub{
@@ -247,9 +257,71 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 
 		assert.Equal(t, 0, len(buff))
 		assert.Nil(t, err)
-		assert.True(t, marshalizerWasCalled)
+		assert.True(t, marshallWasCalled)
+		assert.True(t, unmarshallWasCalled)
 		assert.False(t, hasherWasCalled)
 		assert.Equal(t, 2, numEncodeCalled)
+	})
+
+	t.Run("inner txs, without hash sign option set", func(t *testing.T) {
+		t.Parallel()
+
+		tx1 := &transaction.Transaction{
+			Nonce: 1,
+		}
+		tx2 := &transaction.Transaction{
+			Nonce: 2,
+		}
+		innerTxsBuff, err := json.Marshal([]*transaction.Transaction{tx1, tx2})
+		assert.NoError(t, err)
+		tx := &transaction.Transaction{
+			Nonce:             3,
+			InnerTransactions: innerTxsBuff,
+		}
+
+		numEncodeCalled := 0
+		marshallWasCalled := false
+		unmarshallWasCalled := false
+		hasherWasCalled := false
+		buff, err := tx.GetDataForSigning(
+			&mock.PubkeyConverterStub{
+				EncodeCalled: func(pkBytes []byte) (string, error) {
+					numEncodeCalled++
+					return "", nil
+				},
+			},
+			&mock.MarshalizerStub{
+				MarshalCalled: func(obj interface{}) (bytes []byte, err error) {
+					marshallWasCalled = true
+
+					return json.Marshal(obj)
+				},
+				UnmarshalCalled: func(obj interface{}, buff []byte) error {
+					unmarshallWasCalled = true
+
+					return json.Unmarshal(buff, obj)
+				},
+			},
+			&mock.HasherStub{
+				ComputeCalled: func(s string) []byte {
+					hasherWasCalled = true
+
+					return make([]byte, 0)
+				},
+			},
+		)
+
+		assert.Nil(t, err)
+
+		var ftx transaction.FrontendTransaction
+		err = json.Unmarshal(buff, &ftx)
+		assert.Nil(t, err)
+		assert.Equal(t, 2, len(ftx.InnerTransactions))
+
+		assert.True(t, marshallWasCalled)
+		assert.True(t, unmarshallWasCalled)
+		assert.False(t, hasherWasCalled)
+		assert.Equal(t, 6, numEncodeCalled)
 	})
 
 	t.Run("with hash sign option set", func(t *testing.T) {
@@ -260,7 +332,8 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 		tx.Options ^= transaction.MaskSignedWithHash
 
 		numEncodeCalled := 0
-		marshalizerWasCalled := false
+		marshallWasCalled := false
+		unmarshallWasCalled := false
 		hasherWasCalled := false
 		expectedHash := []byte("expectedHash")
 		buff, err := tx.GetDataForSigning(
@@ -272,9 +345,14 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 			},
 			&mock.MarshalizerStub{
 				MarshalCalled: func(obj interface{}) (bytes []byte, err error) {
-					marshalizerWasCalled = true
+					marshallWasCalled = true
 
 					return make([]byte, 0), nil
+				},
+				UnmarshalCalled: func(obj interface{}, buff []byte) error {
+					unmarshallWasCalled = true
+
+					return nil
 				},
 			},
 			&mock.HasherStub{
@@ -287,7 +365,8 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 		)
 
 		assert.Nil(t, err)
-		assert.True(t, marshalizerWasCalled)
+		assert.True(t, marshallWasCalled)
+		assert.True(t, unmarshallWasCalled)
 		assert.True(t, hasherWasCalled)
 		assert.Equal(t, expectedHash, buff)
 		assert.Equal(t, 2, numEncodeCalled)

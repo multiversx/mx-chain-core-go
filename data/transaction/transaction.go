@@ -2,6 +2,7 @@
 package transaction
 
 import (
+	"encoding/hex"
 	"math/big"
 
 	"github.com/multiversx/mx-chain-core-go/core"
@@ -36,6 +37,11 @@ func (tx *Transaction) SetSndAddr(addr []byte) {
 	tx.SndAddr = addr
 }
 
+// SetInnerTransactions sets the inner transactions of the transaction
+func (tx *Transaction) SetInnerTransactions(innerTransactions []byte) {
+	tx.InnerTransactions = innerTransactions
+}
+
 // TrimSlicePtr creates a copy of the provided slice without the excess capacity
 func TrimSlicePtr(in []*Transaction) []*Transaction {
 	if len(in) == 0 {
@@ -68,6 +74,44 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.M
 		return nil, ErrNilHasher
 	}
 
+	ftx, err := tx.prepareTx(encoder)
+	if err != nil {
+		return nil, err
+	}
+
+	innerTxs := make([]*Transaction, 0)
+	err = marshaller.Unmarshal(&innerTxs, tx.InnerTransactions)
+	if err != nil {
+		return nil, err
+	}
+	for _, innerTx := range innerTxs {
+		innerFtx, innerErr := innerTx.prepareTx(encoder)
+		if innerErr != nil {
+			return nil, err
+		}
+
+		innerFtx.Signature = hex.EncodeToString(innerTx.Signature)
+		innerFtx.GuardianSignature = hex.EncodeToString(innerTx.GuardianSignature)
+
+		ftx.InnerTransactions = append(ftx.InnerTransactions, innerFtx)
+	}
+
+	ftxBytes, err := marshaller.Marshal(ftx)
+	if err != nil {
+		return nil, err
+	}
+
+	shouldSignOnTxHash := tx.Version > core.InitialVersionOfTransaction && tx.HasOptionHashSignSet()
+	if !shouldSignOnTxHash {
+		return ftxBytes, nil
+	}
+
+	ftxHash := hasher.Compute(string(ftxBytes))
+
+	return ftxHash, nil
+}
+
+func (tx *Transaction) prepareTx(encoder data.Encoder) (*FrontendTransaction, error) {
 	receiverAddr, err := encoder.Encode(tx.RcvAddr)
 	if err != nil {
 		return nil, err
@@ -102,19 +146,7 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.M
 		ftx.GuardianAddr = guardianAddr
 	}
 
-	ftxBytes, err := marshaller.Marshal(ftx)
-	if err != nil {
-		return nil, err
-	}
-
-	shouldSignOnTxHash := tx.Version > core.InitialVersionOfTransaction && tx.HasOptionHashSignSet()
-	if !shouldSignOnTxHash {
-		return ftxBytes, nil
-	}
-
-	ftxHash := hasher.Compute(string(ftxBytes))
-
-	return ftxHash, nil
+	return ftx, nil
 }
 
 // HasOptionGuardianSet returns true if the guarded transaction option is set

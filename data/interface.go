@@ -296,6 +296,7 @@ type Encoder interface {
 // Marshaller is able to encode an object to its byte slice representation
 type Marshaller interface {
 	Marshal(obj interface{}) ([]byte, error)
+	Unmarshal(obj interface{}, buff []byte) error
 	IsInterfaceNil() bool
 }
 
