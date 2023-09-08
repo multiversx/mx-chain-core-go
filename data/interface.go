@@ -408,3 +408,8 @@ type UserAccountHandler interface {
 	AddressBytes() []byte
 	IsInterfaceNil() bool
 }
+
+// RelayedV3TransactionHandler defines functionality for relayed v3 transaction
+type RelayedV3TransactionHandler interface {
+	GetInnerTransactions() []byte
+}
