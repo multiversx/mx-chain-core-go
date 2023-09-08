@@ -186,6 +186,9 @@ func TestTransaction_GetDataForSigningMarshalizerErrShouldErr(t *testing.T) {
 			MarshalCalled: func(obj interface{}) (bytes []byte, err error) {
 				return nil, expectedErr
 			},
+			UnmarshalCalled: func(obj interface{}, buff []byte) error {
+				return nil
+			},
 		},
 		&mock.HasherMock{},
 	)
