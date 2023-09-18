@@ -25,6 +25,13 @@ type Block struct {
 	Status                 string                 `json:"status,omitempty"`
 	RandSeed               string                 `json:"randSeed,omitempty"`
 	PrevRandSeed           string                 `json:"prevRandSeed,omitempty"`
+	PubKeyBitmap           string                 `json:"pubKeyBitmap"`
+	Signature              string                 `json:"signature,omitempty"`
+	LeaderSignature        string                 `json:"leaderSignature,omitempty"`
+	ChainID                string                 `json:"chainID,omitempty"`
+	SoftwareVersion        string                 `json:"softwareVersion,omitempty"`
+	ReceiptsHash           string                 `json:"receiptsHash,omitempty"`
+	Reserved               []byte                 `json:"reserved,omitempty"`
 	Timestamp              time.Duration          `json:"timestamp,omitempty"`
 	NotarizedBlocks        []*NotarizedBlock      `json:"notarizedBlocks,omitempty"`
 	MiniBlocks             []*MiniBlock           `json:"miniBlocks,omitempty"`
