@@ -171,8 +171,8 @@ func (tx *Transaction) prepareTx(encoder data.Encoder) (*FrontendTransaction, er
 }
 
 func (tx *Transaction) prepareInnerTx(encoder data.Encoder, marshaller data.Marshaller) (*FrontendTransaction, error) {
-	var innerTx *Transaction
-	err := marshaller.Unmarshal(&innerTx, tx.InnerTransaction)
+	innerTx := &Transaction{}
+	err := marshaller.Unmarshal(innerTx, tx.InnerTransaction)
 	if err != nil {
 		return nil, err
 	}
