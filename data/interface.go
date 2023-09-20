@@ -411,5 +411,5 @@ type UserAccountHandler interface {
 
 // RelayedV3TransactionHandler defines functionality for relayed v3 transaction
 type RelayedV3TransactionHandler interface {
-	GetInnerTransactions() []byte
+	GetInnerTransaction() []byte
 }

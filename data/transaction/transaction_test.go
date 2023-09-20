@@ -23,7 +23,7 @@ func TestTransaction_SettersAndGetters(t *testing.T) {
 	gasLimit := uint64(5)
 	sender := []byte("sndr")
 	receiver := []byte("receiver")
-	innerTxs := []byte("inner txs")
+	innerTx := []byte("inner tx")
 
 	tx := &transaction.Transaction{
 		Nonce:    nonce,
@@ -36,7 +36,7 @@ func TestTransaction_SettersAndGetters(t *testing.T) {
 	tx.SetData(txData)
 	tx.SetValue(value)
 	tx.SetRcvAddr(receiver)
-	tx.SetInnerTransactions(innerTxs)
+	tx.SetInnerTransaction(innerTx)
 
 	assert.Equal(t, nonce, tx.GetNonce())
 	assert.Equal(t, value, tx.GetValue())
@@ -45,7 +45,7 @@ func TestTransaction_SettersAndGetters(t *testing.T) {
 	assert.Equal(t, gasLimit, tx.GetGasLimit())
 	assert.Equal(t, sender, tx.GetSndAddr())
 	assert.Equal(t, receiver, tx.GetRcvAddr())
-	assert.Equal(t, innerTxs, tx.GetInnerTransactions())
+	assert.Equal(t, innerTx, tx.GetInnerTransaction())
 }
 
 func TestTransaction_MarshalUnmarshalJsonShouldWork(t *testing.T) {
@@ -53,15 +53,15 @@ func TestTransaction_MarshalUnmarshalJsonShouldWork(t *testing.T) {
 
 	value := big.NewInt(445566)
 	tx := &transaction.Transaction{
-		Nonce:             112233,
-		Value:             new(big.Int).Set(value),
-		RcvAddr:           []byte("receiver"),
-		SndAddr:           []byte("sender"),
-		GasPrice:          1234,
-		GasLimit:          5678,
-		Data:              []byte("data"),
-		Signature:         []byte("signature"),
-		InnerTransactions: []byte("inner txs"),
+		Nonce:            112233,
+		Value:            new(big.Int).Set(value),
+		RcvAddr:          []byte("receiver"),
+		SndAddr:          []byte("sender"),
+		GasPrice:         1234,
+		GasLimit:         5678,
+		Data:             []byte("data"),
+		Signature:        []byte("signature"),
+		InnerTransaction: []byte("inner tx"),
 	}
 
 	buff, err := json.Marshal(tx)
@@ -265,14 +265,11 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 		tx1 := &transaction.Transaction{
 			Nonce: 1,
 		}
-		tx2 := &transaction.Transaction{
-			Nonce: 2,
-		}
-		innerTxsBuff, err := json.Marshal([]*transaction.Transaction{tx1, tx2})
+		innerTxBuff, err := json.Marshal(tx1)
 		assert.NoError(t, err)
 		tx := &transaction.Transaction{
-			Nonce:             3,
-			InnerTransactions: innerTxsBuff,
+			Nonce:            3,
+			InnerTransaction: innerTxBuff,
 		}
 
 		numEncodeCalled := 0
@@ -312,12 +309,11 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 		var ftx transaction.FrontendTransaction
 		err = json.Unmarshal(buff, &ftx)
 		assert.Nil(t, err)
-		assert.Equal(t, 2, len(ftx.InnerTransactions))
 
 		assert.True(t, marshallWasCalled)
 		assert.True(t, unmarshallWasCalled)
 		assert.False(t, hasherWasCalled)
-		assert.Equal(t, 6, numEncodeCalled)
+		assert.Equal(t, 4, numEncodeCalled)
 	})
 
 	t.Run("with hash sign option set", func(t *testing.T) {

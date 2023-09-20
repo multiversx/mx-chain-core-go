@@ -30,5 +30,5 @@ message Transaction {
 	uint32   Options           = 13 [(gogoproto.jsontag) = "options,omitempty"];
 	bytes    GuardianAddr      = 14 [(gogoproto.jsontag) = "guardian,omitempty"];
 	bytes    GuardianSignature = 15 [(gogoproto.jsontag) = "guardianSignature,omitempty"];
-	bytes    InnerTransactions = 16 [(gogoproto.jsontag) = "innerTransactions,omitempty"];
+	bytes    InnerTransaction  = 16 [(gogoproto.jsontag) = "innerTransaction,omitempty"];
 }

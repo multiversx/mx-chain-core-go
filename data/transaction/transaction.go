@@ -37,9 +37,9 @@ func (tx *Transaction) SetSndAddr(addr []byte) {
 	tx.SndAddr = addr
 }
 
-// SetInnerTransactions sets the inner transactions of the transaction
-func (tx *Transaction) SetInnerTransactions(innerTransactions []byte) {
-	tx.InnerTransactions = innerTransactions
+// SetInnerTransaction sets the inner transaction of the transaction
+func (tx *Transaction) SetInnerTransaction(innerTransaction []byte) {
+	tx.InnerTransaction = innerTransaction
 }
 
 // TrimSlicePtr creates a copy of the provided slice without the excess capacity
@@ -79,8 +79,8 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.M
 		return nil, err
 	}
 
-	if len(tx.InnerTransactions) > 0 {
-		ftx.InnerTransactions, err = tx.prepareInnerTxs(encoder, marshaller)
+	if len(tx.InnerTransaction) > 0 {
+		ftx.InnerTransaction, err = tx.prepareInnerTx(encoder, marshaller)
 		if err != nil {
 			return nil, err
 		}
@@ -170,25 +170,20 @@ func (tx *Transaction) prepareTx(encoder data.Encoder) (*FrontendTransaction, er
 	return ftx, nil
 }
 
-func (tx *Transaction) prepareInnerTxs(encoder data.Encoder, marshaller data.Marshaller) ([]*FrontendTransaction, error) {
-	innerTxs := make([]*Transaction, 0)
-	err := marshaller.Unmarshal(&innerTxs, tx.InnerTransactions)
+func (tx *Transaction) prepareInnerTx(encoder data.Encoder, marshaller data.Marshaller) (*FrontendTransaction, error) {
+	var innerTx Transaction
+	err := marshaller.Unmarshal(&innerTx, tx.InnerTransaction)
 	if err != nil {
 		return nil, err
 	}
 
-	innerFtxs := make([]*FrontendTransaction, 0, len(innerTxs))
-	for _, innerTx := range innerTxs {
-		innerFtx, innerErr := innerTx.prepareTx(encoder)
-		if innerErr != nil {
-			return nil, err
-		}
-
-		innerFtx.Signature = hex.EncodeToString(innerTx.Signature)
-		innerFtx.GuardianSignature = hex.EncodeToString(innerTx.GuardianSignature)
-
-		innerFtxs = append(innerFtxs, innerFtx)
+	ftx, err := tx.prepareTx(encoder)
+	if err != nil {
+		return nil, err
 	}
 
-	return innerFtxs, nil
+	ftx.Signature = hex.EncodeToString(innerTx.Signature)
+	ftx.GuardianSignature = hex.EncodeToString(innerTx.GuardianSignature)
+
+	return ftx, nil
 }
