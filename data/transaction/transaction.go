@@ -2,6 +2,7 @@
 package transaction
 
 import (
+	"encoding/hex"
 	"math/big"
 
 	"github.com/multiversx/mx-chain-core-go/core"
@@ -83,6 +84,9 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.M
 		if err != nil {
 			return nil, err
 		}
+
+		ftx.InnerTransaction.Signature = hex.EncodeToString(tx.InnerTransaction.Signature)
+		ftx.InnerTransaction.GuardianSignature = hex.EncodeToString(tx.InnerTransaction.GuardianSignature)
 	}
 
 	ftxBytes, err := marshaller.Marshal(ftx)
