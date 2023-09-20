@@ -177,7 +177,7 @@ func (tx *Transaction) prepareInnerTx(encoder data.Encoder, marshaller data.Mars
 		return nil, err
 	}
 
-	ftx, err := tx.prepareTx(encoder)
+	ftx, err := innerTx.prepareTx(encoder)
 	if err != nil {
 		return nil, err
 	}

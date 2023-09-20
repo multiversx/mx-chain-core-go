@@ -259,7 +259,7 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 		assert.Equal(t, 2, numEncodeCalled)
 	})
 
-	t.Run("inner txs, without hash sign option set", func(t *testing.T) {
+	t.Run("inner tx, without hash sign option set", func(t *testing.T) {
 		t.Parallel()
 
 		tx1 := &transaction.Transaction{
