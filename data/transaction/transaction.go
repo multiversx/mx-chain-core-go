@@ -2,7 +2,6 @@
 package transaction
 
 import (
-	"encoding/hex"
 	"math/big"
 
 	"github.com/multiversx/mx-chain-core-go/core"
@@ -38,7 +37,7 @@ func (tx *Transaction) SetSndAddr(addr []byte) {
 }
 
 // SetInnerTransaction sets the inner transaction of the transaction
-func (tx *Transaction) SetInnerTransaction(innerTransaction []byte) {
+func (tx *Transaction) SetInnerTransaction(innerTransaction *Transaction) {
 	tx.InnerTransaction = innerTransaction
 }
 
@@ -79,8 +78,8 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.M
 		return nil, err
 	}
 
-	if len(tx.InnerTransaction) > 0 {
-		ftx.InnerTransaction, err = tx.prepareInnerTx(encoder, marshaller)
+	if tx.InnerTransaction != nil {
+		ftx.InnerTransaction, err = tx.prepareTx(encoder)
 		if err != nil {
 			return nil, err
 		}
@@ -166,24 +165,6 @@ func (tx *Transaction) prepareTx(encoder data.Encoder) (*FrontendTransaction, er
 
 		ftx.GuardianAddr = guardianAddr
 	}
-
-	return ftx, nil
-}
-
-func (tx *Transaction) prepareInnerTx(encoder data.Encoder, marshaller data.Marshaller) (*FrontendTransaction, error) {
-	innerTx := &Transaction{}
-	err := marshaller.Unmarshal(innerTx, tx.InnerTransaction)
-	if err != nil {
-		return nil, err
-	}
-
-	ftx, err := innerTx.prepareTx(encoder)
-	if err != nil {
-		return nil, err
-	}
-
-	ftx.Signature = hex.EncodeToString(innerTx.Signature)
-	ftx.GuardianSignature = hex.EncodeToString(innerTx.GuardianSignature)
 
 	return ftx, nil
 }

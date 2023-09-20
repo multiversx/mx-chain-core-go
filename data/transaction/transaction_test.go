@@ -23,7 +23,9 @@ func TestTransaction_SettersAndGetters(t *testing.T) {
 	gasLimit := uint64(5)
 	sender := []byte("sndr")
 	receiver := []byte("receiver")
-	innerTx := []byte("inner tx")
+	innerTx := &transaction.Transaction{
+		Nonce: 123,
+	}
 
 	tx := &transaction.Transaction{
 		Nonce:    nonce,
@@ -53,15 +55,17 @@ func TestTransaction_MarshalUnmarshalJsonShouldWork(t *testing.T) {
 
 	value := big.NewInt(445566)
 	tx := &transaction.Transaction{
-		Nonce:            112233,
-		Value:            new(big.Int).Set(value),
-		RcvAddr:          []byte("receiver"),
-		SndAddr:          []byte("sender"),
-		GasPrice:         1234,
-		GasLimit:         5678,
-		Data:             []byte("data"),
-		Signature:        []byte("signature"),
-		InnerTransaction: []byte("inner tx"),
+		Nonce:     112233,
+		Value:     new(big.Int).Set(value),
+		RcvAddr:   []byte("receiver"),
+		SndAddr:   []byte("sender"),
+		GasPrice:  1234,
+		GasLimit:  5678,
+		Data:      []byte("data"),
+		Signature: []byte("signature"),
+		InnerTransaction: &transaction.Transaction{
+			Nonce: 123,
+		},
 	}
 
 	buff, err := json.Marshal(tx)
@@ -265,16 +269,13 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 		tx1 := &transaction.Transaction{
 			Nonce: 1,
 		}
-		innerTxBuff, err := json.Marshal(tx1)
-		assert.NoError(t, err)
 		tx := &transaction.Transaction{
 			Nonce:            3,
-			InnerTransaction: innerTxBuff,
+			InnerTransaction: tx1,
 		}
 
 		numEncodeCalled := 0
 		marshallWasCalled := false
-		unmarshallWasCalled := false
 		hasherWasCalled := false
 		buff, err := tx.GetDataForSigning(
 			&mock.PubkeyConverterStub{
@@ -288,11 +289,6 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 					marshallWasCalled = true
 
 					return json.Marshal(obj)
-				},
-				UnmarshalCalled: func(obj interface{}, buff []byte) error {
-					unmarshallWasCalled = true
-
-					return json.Unmarshal(buff, obj)
 				},
 			},
 			&mock.HasherStub{
@@ -311,7 +307,6 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 		assert.Nil(t, err)
 
 		assert.True(t, marshallWasCalled)
-		assert.True(t, unmarshallWasCalled)
 		assert.False(t, hasherWasCalled)
 		assert.Equal(t, 4, numEncodeCalled)
 	})
