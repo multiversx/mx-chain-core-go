@@ -79,7 +79,7 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.M
 	}
 
 	if tx.InnerTransaction != nil {
-		ftx.InnerTransaction, err = tx.prepareTx(encoder)
+		ftx.InnerTransaction, err = tx.InnerTransaction.prepareTx(encoder)
 		if err != nil {
 			return nil, err
 		}
