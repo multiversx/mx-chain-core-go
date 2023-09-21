@@ -24,13 +24,15 @@ func TestTransaction_SettersAndGetters(t *testing.T) {
 	sender := []byte("sndr")
 	receiver := []byte("receiver")
 	innerTx := &transaction.Transaction{
-		Nonce: 123,
+		Nonce:       123,
+		RelayedAddr: sender,
 	}
 
 	tx := &transaction.Transaction{
-		Nonce:    nonce,
-		GasPrice: gasPrice,
-		GasLimit: gasLimit,
+		Nonce:            nonce,
+		GasPrice:         gasPrice,
+		GasLimit:         gasLimit,
+		InnerTransaction: innerTx,
 	}
 	assert.False(t, check.IfNil(tx))
 
@@ -38,7 +40,6 @@ func TestTransaction_SettersAndGetters(t *testing.T) {
 	tx.SetData(txData)
 	tx.SetValue(value)
 	tx.SetRcvAddr(receiver)
-	tx.SetInnerTransaction(innerTx)
 
 	assert.Equal(t, nonce, tx.GetNonce())
 	assert.Equal(t, value, tx.GetValue())
@@ -48,6 +49,7 @@ func TestTransaction_SettersAndGetters(t *testing.T) {
 	assert.Equal(t, sender, tx.GetSndAddr())
 	assert.Equal(t, receiver, tx.GetRcvAddr())
 	assert.Equal(t, innerTx, tx.GetInnerTransaction())
+	assert.Equal(t, sender, tx.GetInnerTransaction().GetRelayedAddr())
 }
 
 func TestTransaction_MarshalUnmarshalJsonShouldWork(t *testing.T) {

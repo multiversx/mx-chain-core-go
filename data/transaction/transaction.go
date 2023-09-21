@@ -37,11 +37,6 @@ func (tx *Transaction) SetSndAddr(addr []byte) {
 	tx.SndAddr = addr
 }
 
-// SetInnerTransaction sets the inner transaction of the transaction
-func (tx *Transaction) SetInnerTransaction(innerTransaction *Transaction) {
-	tx.InnerTransaction = innerTransaction
-}
-
 // TrimSlicePtr creates a copy of the provided slice without the excess capacity
 func TrimSlicePtr(in []*Transaction) []*Transaction {
 	if len(in) == 0 {
@@ -159,6 +154,15 @@ func (tx *Transaction) prepareTx(encoder data.Encoder) (*FrontendTransaction, er
 		ChainID:          string(tx.ChainID),
 		Version:          tx.Version,
 		Options:          tx.Options,
+	}
+
+	if len(tx.RelayedAddr) > 0 {
+		relayerAddr, errRelayer := encoder.Encode(tx.RelayedAddr)
+		if errRelayer != nil {
+			return nil, errRelayer
+		}
+
+		ftx.Relayer = relayerAddr
 	}
 
 	if len(tx.GuardianAddr) > 0 {

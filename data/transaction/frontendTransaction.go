@@ -17,5 +17,6 @@ type FrontendTransaction struct {
 	Options           uint32               `json:"options,omitempty"`
 	GuardianAddr      string               `json:"guardian,omitempty"`
 	GuardianSignature string               `json:"guardianSignature,omitempty"`
+	Relayer           string               `json:"relayer,omitempty"`
 	InnerTransaction  *FrontendTransaction `json:"innerTransaction,omitempty"`
 }
