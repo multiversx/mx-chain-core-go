@@ -25,7 +25,7 @@ func TestTransaction_SettersAndGetters(t *testing.T) {
 	receiver := []byte("receiver")
 	innerTx := &transaction.Transaction{
 		Nonce:       123,
-		RelayedAddr: sender,
+		RelayerAddr: sender,
 	}
 
 	tx := &transaction.Transaction{
@@ -49,7 +49,7 @@ func TestTransaction_SettersAndGetters(t *testing.T) {
 	assert.Equal(t, sender, tx.GetSndAddr())
 	assert.Equal(t, receiver, tx.GetRcvAddr())
 	assert.Equal(t, innerTx, tx.GetInnerTransaction())
-	assert.Equal(t, sender, tx.GetInnerTransaction().GetRelayedAddr())
+	assert.Equal(t, sender, tx.GetInnerTransaction().GetRelayerAddr())
 }
 
 func TestTransaction_MarshalUnmarshalJsonShouldWork(t *testing.T) {

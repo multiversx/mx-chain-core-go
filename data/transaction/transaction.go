@@ -156,8 +156,8 @@ func (tx *Transaction) prepareTx(encoder data.Encoder) (*FrontendTransaction, er
 		Options:          tx.Options,
 	}
 
-	if len(tx.RelayedAddr) > 0 {
-		relayerAddr, errRelayer := encoder.Encode(tx.RelayedAddr)
+	if len(tx.RelayerAddr) > 0 {
+		relayerAddr, errRelayer := encoder.Encode(tx.RelayerAddr)
 		if errRelayer != nil {
 			return nil, errRelayer
 		}
