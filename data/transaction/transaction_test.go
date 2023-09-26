@@ -48,7 +48,7 @@ func TestTransaction_SettersAndGetters(t *testing.T) {
 	assert.Equal(t, gasLimit, tx.GetGasLimit())
 	assert.Equal(t, sender, tx.GetSndAddr())
 	assert.Equal(t, receiver, tx.GetRcvAddr())
-	assert.Equal(t, innerTx, tx.GetInnerTransaction())
+	assert.Equal(t, innerTx, tx.GetUserTransaction())
 	assert.Equal(t, sender, tx.GetInnerTransaction().GetRelayerAddr())
 }
 

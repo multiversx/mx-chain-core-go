@@ -58,6 +58,11 @@ func (_ *Receipt) GetRcvUserName() []byte {
 	return nil
 }
 
+// GetUserTransaction returns nil as Receipt does not have user transaction
+func (rpt *Receipt) GetUserTransaction() data.TransactionHandler {
+	return nil
+}
+
 // CheckIntegrity checks for not nil fields and negative value
 func (rpt *Receipt) CheckIntegrity() error {
 	return nil

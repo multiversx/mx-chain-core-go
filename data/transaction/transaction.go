@@ -37,6 +37,11 @@ func (tx *Transaction) SetSndAddr(addr []byte) {
 	tx.SndAddr = addr
 }
 
+// GetUserTransaction returns the inner transaction
+func (tx *Transaction) GetUserTransaction() data.TransactionHandler {
+	return tx.GetInnerTransaction()
+}
+
 // TrimSlicePtr creates a copy of the provided slice without the excess capacity
 func TrimSlicePtr(in []*Transaction) []*Transaction {
 	if len(in) == 0 {

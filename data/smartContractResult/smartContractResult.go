@@ -39,6 +39,11 @@ func (_ *SmartContractResult) GetRcvUserName() []byte {
 	return nil
 }
 
+// GetUserTransaction returns nil as SmartContractResult does not have user transaction
+func (scr *SmartContractResult) GetUserTransaction() data.TransactionHandler {
+	return nil
+}
+
 // TrimSlicePtr creates a copy of the provided slice without the excess capacity
 func TrimSlicePtr(in []*SmartContractResult) []*SmartContractResult {
 	if len(in) == 0 {
