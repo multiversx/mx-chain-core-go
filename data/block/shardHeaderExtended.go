@@ -889,3 +889,28 @@ func (she *ShardHeaderExtended) SetIncomingMiniBlockHandlers(miniBlockHandlers [
 
 	return nil
 }
+
+// GetIncomingEventHandlers returns the incoming events as an array of event handlers
+func (she *ShardHeaderExtended) GetIncomingEventHandlers() []data.EventHandler {
+	if she == nil {
+		return nil
+	}
+
+	events := she.GetIncomingEvents()
+	logHandlers := make([]data.EventHandler, len(events))
+
+	for i := range events {
+		logHandlers[i] = events[i]
+	}
+
+	return logHandlers
+}
+
+// GetHeaderHandler returns the incoming headerV2 as a header handler
+func (she *ShardHeaderExtended) GetHeaderHandler() data.HeaderHandler {
+	if she == nil {
+		return nil
+	}
+
+	return she.GetHeader()
+}

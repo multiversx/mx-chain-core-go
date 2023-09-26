@@ -8,3 +8,11 @@ type IncomingHeaderHandler interface {
 	GetHeaderHandler() data.HeaderHandler
 	IsInterfaceNil() bool
 }
+
+// Proof defines the proof of proposed mini blocks, using provided incoming header and events
+type Proof interface {
+	GetHeaderHandler() data.HeaderHandler
+	GetIncomingEventHandlers() []data.EventHandler
+	GetIncomingMiniBlockHandlers() []data.MiniBlockHandler
+	IsInterfaceNil() bool
+}
