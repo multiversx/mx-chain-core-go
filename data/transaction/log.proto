@@ -10,10 +10,11 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
 // Event holds all the data needed for an event structure
 message Event {
-    bytes Address          = 1 [(gogoproto.jsontag) = "address"];
-    bytes Identifier       = 2 [(gogoproto.jsontag) = "identifier"];
-    repeated bytes Topics  = 3 [(gogoproto.jsontag) = "topics"];
-    bytes Data             = 4 [(gogoproto.jsontag) = "data"];
+    bytes Address                   = 1 [(gogoproto.jsontag) = "address"];
+    bytes Identifier                = 2 [(gogoproto.jsontag) = "identifier"];
+    repeated bytes Topics           = 3 [(gogoproto.jsontag) = "topics"];
+    bytes Data                      = 4 [(gogoproto.jsontag) = "data"];
+    repeated bytes AdditionalData   = 5 [(gogoproto.jsontag) = "additionalData"];
 }
 
 // Log holds all the data needed for a log structure
