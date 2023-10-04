@@ -10,6 +10,8 @@ const (
 	ShardHeaderV1 HeaderType = "Header"
 	// ShardHeaderV2 defines the type of *block.HeaderV2
 	ShardHeaderV2 HeaderType = "HeaderV2"
+	// SovereignChainHeader defines the type of *block.SovereignChainHeader
+	SovereignChainHeader = "SovereignChainHeader"
 )
 
 // NodeType represents the node's role in the network
