@@ -58,8 +58,8 @@ func (_ *Receipt) GetRcvUserName() []byte {
 	return nil
 }
 
-// GetUserTransaction returns nil as Receipt does not have user transaction
-func (rpt *Receipt) GetUserTransaction() data.TransactionHandler {
+// GetUserTransactions returns nil as Receipt does not have user transactions
+func (rpt *Receipt) GetUserTransactions() []data.TransactionHandler {
 	return nil
 }
 
