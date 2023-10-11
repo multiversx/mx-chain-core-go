@@ -23,16 +23,18 @@ func TestTransaction_SettersAndGetters(t *testing.T) {
 	gasLimit := uint64(5)
 	sender := []byte("sndr")
 	receiver := []byte("receiver")
-	innerTx := &transaction.Transaction{
-		Nonce:       123,
-		RelayerAddr: sender,
+	innerTxs := []*transaction.Transaction{
+		{
+			Nonce:       123,
+			RelayerAddr: sender,
+		},
 	}
 
 	tx := &transaction.Transaction{
-		Nonce:            nonce,
-		GasPrice:         gasPrice,
-		GasLimit:         gasLimit,
-		InnerTransaction: innerTx,
+		Nonce:             nonce,
+		GasPrice:          gasPrice,
+		GasLimit:          gasLimit,
+		InnerTransactions: innerTxs,
 	}
 	assert.False(t, check.IfNil(tx))
 
@@ -48,8 +50,8 @@ func TestTransaction_SettersAndGetters(t *testing.T) {
 	assert.Equal(t, gasLimit, tx.GetGasLimit())
 	assert.Equal(t, sender, tx.GetSndAddr())
 	assert.Equal(t, receiver, tx.GetRcvAddr())
-	assert.Equal(t, innerTx, tx.GetUserTransaction())
-	assert.Equal(t, sender, tx.GetInnerTransaction().GetRelayerAddr())
+	assert.Equal(t, innerTxs[0], tx.GetUserTransactions()[0])
+	assert.Equal(t, sender, tx.GetInnerTransactions()[0].GetRelayerAddr())
 }
 
 func TestTransaction_MarshalUnmarshalJsonShouldWork(t *testing.T) {
@@ -65,8 +67,10 @@ func TestTransaction_MarshalUnmarshalJsonShouldWork(t *testing.T) {
 		GasLimit:  5678,
 		Data:      []byte("data"),
 		Signature: []byte("signature"),
-		InnerTransaction: &transaction.Transaction{
-			Nonce: 123,
+		InnerTransactions: []*transaction.Transaction{
+			{
+				Nonce: 123,
+			},
 		},
 	}
 
@@ -265,15 +269,15 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 		assert.Equal(t, 2, numEncodeCalled)
 	})
 
-	t.Run("inner tx, without hash sign option set", func(t *testing.T) {
+	t.Run("inner txs, without hash sign option set", func(t *testing.T) {
 		t.Parallel()
 
 		tx1 := &transaction.Transaction{
 			Nonce: 1,
 		}
 		tx := &transaction.Transaction{
-			Nonce:            3,
-			InnerTransaction: tx1,
+			Nonce:             3,
+			InnerTransactions: []*transaction.Transaction{tx1},
 		}
 
 		numEncodeCalled := 0

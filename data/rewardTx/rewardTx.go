@@ -62,8 +62,8 @@ func (rtx *RewardTx) GetRcvUserName() []byte {
 	return nil
 }
 
-// GetUserTransaction returns nil as RewardTx does not have user transaction
-func (rtx *RewardTx) GetUserTransaction() data.TransactionHandler {
+// GetUserTransactions returns nil as RewardTx does not have user transactions
+func (rtx *RewardTx) GetUserTransactions() []data.TransactionHandler {
 	return nil
 }
 

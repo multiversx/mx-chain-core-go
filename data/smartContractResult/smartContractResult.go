@@ -39,8 +39,8 @@ func (_ *SmartContractResult) GetRcvUserName() []byte {
 	return nil
 }
 
-// GetUserTransaction returns nil as SmartContractResult does not have user transaction
-func (scr *SmartContractResult) GetUserTransaction() data.TransactionHandler {
+// GetUserTransactions returns nil as SmartContractResult does not have user transactions
+func (scr *SmartContractResult) GetUserTransactions() []data.TransactionHandler {
 	return nil
 }
 

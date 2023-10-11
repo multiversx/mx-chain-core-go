@@ -271,7 +271,7 @@ type TransactionHandler interface {
 	GetSndAddr() []byte
 	GetGasLimit() uint64
 	GetGasPrice() uint64
-	GetUserTransaction() TransactionHandler
+	GetUserTransactions() []TransactionHandler
 
 	SetValue(*big.Int)
 	SetData([]byte)
