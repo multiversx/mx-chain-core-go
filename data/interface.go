@@ -93,6 +93,8 @@ type SovereignChainHeaderHandler interface {
 	GetValidatorStatsRootHash() []byte
 	SetExtendedShardHeaderHashes(hdrHashes [][]byte) error
 	GetExtendedShardHeaderHashes() [][]byte
+	SetOutGoingOperationHashes(hashes [][]byte) error
+	GetOutGoingOperationHashes() [][]byte
 }
 
 // HeaderHandler defines getters and setters for header data holder

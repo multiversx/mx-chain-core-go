@@ -536,3 +536,12 @@ func (sch *SovereignChainHeader) CheckFieldsForNil() error {
 
 	return nil
 }
+
+func (sch *SovereignChainHeader) SetOutGoingOperationHashes(hashes [][]byte) error {
+	if sch == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	sch.OutGoingOperationHashes = hashes
+	return nil
+}

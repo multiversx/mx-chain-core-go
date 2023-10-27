@@ -14,4 +14,5 @@ message SovereignChainHeader {
   Header         Header                    = 1 [(gogoproto.jsontag) = "header"];
   bytes          ValidatorStatsRootHash    = 2 [(gogoproto.jsontag) = "validatorStatsRootHash"];
   repeated bytes ExtendedShardHeaderHashes = 3 [(gogoproto.jsontag) = "extendedShardHeaderHashes,omitempty"];
+  repeated bytes OutGoingOperationHashes   = 4 [(gogoproto.jsontag) = "outGoingOperationHashes,omitempty"];
 }
