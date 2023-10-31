@@ -537,11 +537,94 @@ func (sch *SovereignChainHeader) CheckFieldsForNil() error {
 	return nil
 }
 
+// SetOutGoingOperationHashes sets outgoing operation hashes
 func (sch *SovereignChainHeader) SetOutGoingOperationHashes(hashes [][]byte) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
 	}
 
-	sch.OutGoingOperationHashes = hashes
+	if sch.OutGoingOperations == nil {
+		sch.OutGoingOperations = &OutGoingOperations{}
+	}
+
+	sch.OutGoingOperations.OutGoingOperationHashes = hashes
 	return nil
+}
+
+// GetOutGoingOperationHashes returns outgoing operation hashes
+func (sch *SovereignChainHeader) GetOutGoingOperationHashes() [][]byte {
+	if sch == nil {
+		return nil
+	}
+
+	return sch.OutGoingOperations.GetOutGoingOperationHashes()
+}
+
+// SetOutGoingOperationsHash sets outgoing operations hash
+func (sch *SovereignChainHeader) SetOutGoingOperationsHash(hash []byte) error {
+	if sch == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	if sch.OutGoingOperations == nil {
+		sch.OutGoingOperations = &OutGoingOperations{}
+	}
+
+	sch.OutGoingOperations.OutGoingOperationsHash = hash
+	return nil
+}
+
+// GetOutGoingOperationsHash returns outgoing operations hash
+func (sch *SovereignChainHeader) GetOutGoingOperationsHash() []byte {
+	if sch == nil {
+		return nil
+	}
+
+	return sch.OutGoingOperations.GetOutGoingOperationsHash()
+}
+
+// SetAggregatedSignatureOutGoingOperations sets aggregated signature for outgoing operations hash
+func (sch *SovereignChainHeader) SetAggregatedSignatureOutGoingOperations(signature []byte) error {
+	if sch == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	if sch.OutGoingOperations == nil {
+		sch.OutGoingOperations = &OutGoingOperations{}
+	}
+
+	sch.OutGoingOperations.AggregatedSignatureOutGoingOperations = signature
+	return nil
+}
+
+// GetAggregatedSignatureOutGoingOperations returns aggregated signature for outgoing operations hash
+func (sch *SovereignChainHeader) GetAggregatedSignatureOutGoingOperations() []byte {
+	if sch == nil {
+		return nil
+	}
+
+	return sch.OutGoingOperations.GetAggregatedSignatureOutGoingOperations()
+}
+
+// SetLeaderSignatureOutGoingOperations sets leader signature for outgoing operations hash
+func (sch *SovereignChainHeader) SetLeaderSignatureOutGoingOperations(signature []byte) error {
+	if sch == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	if sch.OutGoingOperations == nil {
+		sch.OutGoingOperations = &OutGoingOperations{}
+	}
+
+	sch.OutGoingOperations.LeaderSignatureOutGoingOperations = signature
+	return nil
+}
+
+// GetLeaderSignatureOutGoingOperations returns leader signature for outgoing operations hash
+func (sch *SovereignChainHeader) GetLeaderSignatureOutGoingOperations() []byte {
+	if sch == nil {
+		return nil
+	}
+
+	return sch.OutGoingOperations.GetLeaderSignatureOutGoingOperations()
 }

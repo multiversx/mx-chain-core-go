@@ -95,6 +95,12 @@ type SovereignChainHeaderHandler interface {
 	GetExtendedShardHeaderHashes() [][]byte
 	SetOutGoingOperationHashes(hashes [][]byte) error
 	GetOutGoingOperationHashes() [][]byte
+	SetOutGoingOperationsHash(hash []byte) error
+	GetOutGoingOperationsHash() []byte
+	SetAggregatedSignatureOutGoingOperations(signature []byte) error
+	GetAggregatedSignatureOutGoingOperations() []byte
+	SetLeaderSignatureOutGoingOperations(signature []byte) error
+	GetLeaderSignatureOutGoingOperations() []byte
 }
 
 // HeaderHandler defines getters and setters for header data holder

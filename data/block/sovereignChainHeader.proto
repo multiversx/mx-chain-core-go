@@ -11,8 +11,15 @@ import "block.proto";
 
 // SovereignChainHeader extends the Header structure with extra fields needed by sovereign chain
 message SovereignChainHeader {
-  Header         Header                    = 1 [(gogoproto.jsontag) = "header"];
-  bytes          ValidatorStatsRootHash    = 2 [(gogoproto.jsontag) = "validatorStatsRootHash"];
-  repeated bytes ExtendedShardHeaderHashes = 3 [(gogoproto.jsontag) = "extendedShardHeaderHashes,omitempty"];
-  repeated bytes OutGoingOperationHashes   = 4 [(gogoproto.jsontag) = "outGoingOperationHashes,omitempty"];
+  Header             Header                    = 1 [(gogoproto.jsontag) = "header"];
+  bytes              ValidatorStatsRootHash    = 2 [(gogoproto.jsontag) = "validatorStatsRootHash"];
+  repeated bytes     ExtendedShardHeaderHashes = 3 [(gogoproto.jsontag) = "extendedShardHeaderHashes,omitempty"];
+  OutGoingOperations OutGoingOperations        = 4 [(gogoproto.jsontag) = "outGoingOperations,omitempty"];
+}
+
+message OutGoingOperations {
+  repeated bytes OutGoingOperationHashes               = 1 [(gogoproto.jsontag) = "outGoingOperationHashes,omitempty"];
+  bytes          OutGoingOperationsHash                = 2 [(gogoproto.jsontag) = "outGoingOperationsHash,omitempty"];
+  bytes          AggregatedSignatureOutGoingOperations = 3 [(gogoproto.jsontag) = "aggregatedSignatureOutGoingOperations,omitempty"];
+  bytes          LeaderSignatureOutGoingOperations     = 4 [(gogoproto.jsontag) = "leaderSignatureOutGoingOperations,omitempty"];
 }
