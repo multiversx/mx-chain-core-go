@@ -167,6 +167,10 @@ const (
 	Fungible ESDTType = iota
 	// NonFungible defines the token type for ESDT non fungible tokens
 	NonFungible
+	// NonFungibleV2 defines the token type for ESDT non fungible tokens
+	NonFungibleV2
+	// Meta defines the token type for ESDT meta tokens
+	Meta
 )
 
 // FungibleESDT defines the string for the token type of fungible ESDT
@@ -174,6 +178,12 @@ const FungibleESDT = "FungibleESDT"
 
 // NonFungibleESDT defines the string for the token type of non fungible ESDT
 const NonFungibleESDT = "NonFungibleESDT"
+
+// NonFungibleESDTv2 defines the string for the token type of non fungible ESDT
+const NonFungibleESDTv2 = "NonFungibleESDTv2"
+
+// MetaESDT defines the string for the token type of meta ESDT
+const MetaESDT = "MetaESDT"
 
 // SemiFungibleESDT defines the string for the token type of semi fungible ESDT
 const SemiFungibleESDT = "SemiFungibleESDT"

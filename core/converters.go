@@ -177,3 +177,19 @@ func ConvertToEvenHexBigInt(value *big.Int) string {
 
 	return str
 }
+
+// ConvertESDTTypeToUint32 converts the esdt type to uint32
+func ConvertESDTTypeToUint32(esdtType string) (uint32, error) {
+	switch esdtType {
+	case FungibleESDT:
+		return uint32(Fungible), nil
+	case NonFungibleESDT:
+		return uint32(NonFungible), nil
+	case NonFungibleESDTv2:
+		return uint32(NonFungibleV2), nil
+	case MetaESDT:
+		return uint32(Meta), nil
+	default:
+		return math.MaxUint32, fmt.Errorf("invalid esdt type: %s", esdtType)
+	}
+}
