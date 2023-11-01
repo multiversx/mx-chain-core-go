@@ -93,14 +93,23 @@ type SovereignChainHeaderHandler interface {
 	GetValidatorStatsRootHash() []byte
 	SetExtendedShardHeaderHashes(hdrHashes [][]byte) error
 	GetExtendedShardHeaderHashes() [][]byte
-	SetOutGoingOperationHashes(hashes [][]byte) error
-	GetOutGoingOperationHashes() [][]byte
-	SetOutGoingOperationsHash(hash []byte) error
+	GetOutGoingMiniBlockHeaderHandler() OutGoingMiniBlockHeaderHandler
+	SetOutGoingMiniBlockHeaderHandler(mbHeader OutGoingMiniBlockHeaderHandler) error
+}
+
+// OutGoingMiniBlockHeaderHandler defines setters and getters for sovereign outgoing mini block header
+type OutGoingMiniBlockHeaderHandler interface {
+	GetHash() []byte
 	GetOutGoingOperationsHash() []byte
-	SetAggregatedSignatureOutGoingOperations(signature []byte) error
 	GetAggregatedSignatureOutGoingOperations() []byte
-	SetLeaderSignatureOutGoingOperations(signature []byte) error
 	GetLeaderSignatureOutGoingOperations() []byte
+
+	SetHash(hash []byte) error
+	SetOutGoingOperationsHash(hash []byte) error
+	SetLeaderSignatureOutGoingOperations(sig []byte) error
+	SetAggregatedSignatureOutGoingOperations(sig []byte) error
+
+	IsInterfaceNil() bool
 }
 
 // HeaderHandler defines getters and setters for header data holder

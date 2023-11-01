@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/big"
 
+	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
 )
@@ -537,94 +538,77 @@ func (sch *SovereignChainHeader) CheckFieldsForNil() error {
 	return nil
 }
 
-// SetOutGoingOperationHashes sets outgoing operation hashes
-func (sch *SovereignChainHeader) SetOutGoingOperationHashes(hashes [][]byte) error {
-	if sch == nil {
-		return data.ErrNilPointerReceiver
-	}
-
-	if sch.OutGoingOperations == nil {
-		sch.OutGoingOperations = &OutGoingOperations{}
-	}
-
-	sch.OutGoingOperations.OutGoingOperationHashes = hashes
-	return nil
-}
-
-// GetOutGoingOperationHashes returns outgoing operation hashes
-func (sch *SovereignChainHeader) GetOutGoingOperationHashes() [][]byte {
+// GetOutGoingMiniBlockHeaderHandler returns the outgoing mini block header
+func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandler() data.OutGoingMiniBlockHeaderHandler {
 	if sch == nil {
 		return nil
 	}
 
-	return sch.OutGoingOperations.GetOutGoingOperationHashes()
+	return sch.GetOutGoingMiniBlockHeader()
 }
 
-// SetOutGoingOperationsHash sets outgoing operations hash
-func (sch *SovereignChainHeader) SetOutGoingOperationsHash(hash []byte) error {
+// SetOutGoingMiniBlockHeaderHandler returns the outgoing mini block header
+func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data.OutGoingMiniBlockHeaderHandler) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
 	}
 
-	if sch.OutGoingOperations == nil {
-		sch.OutGoingOperations = &OutGoingOperations{}
-	}
-
-	sch.OutGoingOperations.OutGoingOperationsHash = hash
-	return nil
-}
-
-// GetOutGoingOperationsHash returns outgoing operations hash
-func (sch *SovereignChainHeader) GetOutGoingOperationsHash() []byte {
-	if sch == nil {
+	if check.IfNil(mbHeader) {
+		sch.OutGoingMiniBlockHeader = nil
 		return nil
 	}
 
-	return sch.OutGoingOperations.GetOutGoingOperationsHash()
+	sch.OutGoingMiniBlockHeader = &OutGoingMiniBlockHeader{
+		Hash:                                  mbHeader.GetHash(),
+		OutGoingOperationsHash:                mbHeader.GetOutGoingOperationsHash(),
+		AggregatedSignatureOutGoingOperations: mbHeader.GetAggregatedSignatureOutGoingOperations(),
+		LeaderSignatureOutGoingOperations:     mbHeader.GetLeaderSignatureOutGoingOperations(),
+	}
+
+	return nil
 }
 
-// SetAggregatedSignatureOutGoingOperations sets aggregated signature for outgoing operations hash
-func (sch *SovereignChainHeader) SetAggregatedSignatureOutGoingOperations(signature []byte) error {
-	if sch == nil {
+// SetHash returns the hash
+func (omb *OutGoingMiniBlockHeader) SetHash(hash []byte) error {
+	if omb == nil {
 		return data.ErrNilPointerReceiver
 	}
 
-	if sch.OutGoingOperations == nil {
-		sch.OutGoingOperations = &OutGoingOperations{}
-	}
-
-	sch.OutGoingOperations.AggregatedSignatureOutGoingOperations = signature
+	omb.Hash = hash
 	return nil
 }
 
-// GetAggregatedSignatureOutGoingOperations returns aggregated signature for outgoing operations hash
-func (sch *SovereignChainHeader) GetAggregatedSignatureOutGoingOperations() []byte {
-	if sch == nil {
-		return nil
-	}
-
-	return sch.OutGoingOperations.GetAggregatedSignatureOutGoingOperations()
-}
-
-// SetLeaderSignatureOutGoingOperations sets leader signature for outgoing operations hash
-func (sch *SovereignChainHeader) SetLeaderSignatureOutGoingOperations(signature []byte) error {
-	if sch == nil {
+// SetOutGoingOperationsHash returns the outgoing operations hash
+func (omb *OutGoingMiniBlockHeader) SetOutGoingOperationsHash(hash []byte) error {
+	if omb == nil {
 		return data.ErrNilPointerReceiver
 	}
 
-	if sch.OutGoingOperations == nil {
-		sch.OutGoingOperations = &OutGoingOperations{}
-	}
-
-	sch.OutGoingOperations.LeaderSignatureOutGoingOperations = signature
+	omb.OutGoingOperationsHash = hash
 	return nil
 }
 
-// GetLeaderSignatureOutGoingOperations returns leader signature for outgoing operations hash
-func (sch *SovereignChainHeader) GetLeaderSignatureOutGoingOperations() []byte {
-	if sch == nil {
-		return nil
+// SetLeaderSignatureOutGoingOperations returns the leader signature
+func (omb *OutGoingMiniBlockHeader) SetLeaderSignatureOutGoingOperations(sig []byte) error {
+	if omb == nil {
+		return data.ErrNilPointerReceiver
 	}
 
-	return sch.OutGoingOperations.GetLeaderSignatureOutGoingOperations()
+	omb.LeaderSignatureOutGoingOperations = sig
+	return nil
+}
+
+// SetAggregatedSignatureOutGoingOperations returns the aggregated signature
+func (omb *OutGoingMiniBlockHeader) SetAggregatedSignatureOutGoingOperations(sig []byte) error {
+	if omb == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	omb.AggregatedSignatureOutGoingOperations = sig
+	return nil
+}
+
+// IsInterfaceNil checks if the underlying interface is nil
+func (omb *OutGoingMiniBlockHeader) IsInterfaceNil() bool {
+	return omb == nil
 }
