@@ -171,6 +171,14 @@ const (
 	NonFungibleV2
 	// Meta defines the token type for ESDT meta tokens
 	Meta
+	// SemiFungible defines the token type for ESDT semi fungible tokens
+	SemiFungible
+	// DynamicNFT defines the token type for ESDT dynamic NFT tokens
+	DynamicNFT
+	// DynamicSFT defines the token type for ESDT dynamic SFT tokens
+	DynamicSFT
+	// DynamicMeta defines the token type for ESDT dynamic meta tokens
+	DynamicMeta
 )
 
 // FungibleESDT defines the string for the token type of fungible ESDT
@@ -187,6 +195,15 @@ const MetaESDT = "MetaESDT"
 
 // SemiFungibleESDT defines the string for the token type of semi fungible ESDT
 const SemiFungibleESDT = "SemiFungibleESDT"
+
+// DynamicNFTESDT defines the string for the token type of dynamic NFT ESDT
+const DynamicNFTESDT = "DynamicNFTESDT"
+
+// DynamicSFTESDT defines the string for the token type of dynamic SFT ESDT
+const DynamicSFTESDT = "DynamicSFTESDT"
+
+// DynamicMetaESDT defines the string for the token type of dynamic meta ESDT
+const DynamicMetaESDT = "DynamicMetaESDT"
 
 // MaxRoyalty defines 100% as uint32
 const MaxRoyalty = uint32(10000)

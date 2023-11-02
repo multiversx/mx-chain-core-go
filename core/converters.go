@@ -189,6 +189,14 @@ func ConvertESDTTypeToUint32(esdtType string) (uint32, error) {
 		return uint32(NonFungibleV2), nil
 	case MetaESDT:
 		return uint32(Meta), nil
+	case SemiFungibleESDT:
+		return uint32(SemiFungible), nil
+	case DynamicNFTESDT:
+		return uint32(DynamicNFT), nil
+	case DynamicSFTESDT:
+		return uint32(DynamicSFT), nil
+	case DynamicMetaESDT:
+		return uint32(DynamicMeta), nil
 	default:
 		return math.MaxUint32, fmt.Errorf("invalid esdt type: %s", esdtType)
 	}
