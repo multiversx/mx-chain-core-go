@@ -37,11 +37,14 @@ func (sch *SovereignChainHeader) ShallowClone() data.HeaderHandler {
 	}
 
 	internalHeaderCopy := *sch.Header
-	internalOutGoingMbHeader := *sch.OutGoingMiniBlockHeader
 
 	headerCopy := *sch
 	headerCopy.Header = &internalHeaderCopy
-	headerCopy.OutGoingMiniBlockHeader = &internalOutGoingMbHeader
+
+	if !check.IfNil(sch.OutGoingMiniBlockHeader) {
+		internalOutGoingMbHeader := *sch.OutGoingMiniBlockHeader
+		headerCopy.OutGoingMiniBlockHeader = &internalOutGoingMbHeader
+	}
 
 	return &headerCopy
 }
