@@ -201,3 +201,8 @@ func ConvertESDTTypeToUint32(esdtType string) (uint32, error) {
 		return math.MaxUint32, fmt.Errorf("invalid esdt type: %s", esdtType)
 	}
 }
+
+// IsDynamicESDT returns true if the esdt type is dynamic
+func IsDynamicESDT(esdtType uint32) bool {
+	return esdtType == uint32(DynamicNFT) || esdtType == uint32(DynamicSFT) || esdtType == uint32(DynamicMeta)
+}

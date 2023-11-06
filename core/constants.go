@@ -196,14 +196,17 @@ const MetaESDT = "MetaESDT"
 // SemiFungibleESDT defines the string for the token type of semi fungible ESDT
 const SemiFungibleESDT = "SemiFungibleESDT"
 
+// Dynamic is the prefix used for dynamic ESDT tokens
+const Dynamic = "Dynamic"
+
 // DynamicNFTESDT defines the string for the token type of dynamic NFT ESDT
-const DynamicNFTESDT = "DynamicNFTESDT"
+const DynamicNFTESDT = Dynamic + NonFungibleESDT
 
 // DynamicSFTESDT defines the string for the token type of dynamic SFT ESDT
-const DynamicSFTESDT = "DynamicSFTESDT"
+const DynamicSFTESDT = Dynamic + SemiFungibleESDT
 
 // DynamicMetaESDT defines the string for the token type of dynamic meta ESDT
-const DynamicMetaESDT = "DynamicMetaESDT"
+const DynamicMetaESDT = Dynamic + MetaESDT
 
 // MaxRoyalty defines 100% as uint32
 const MaxRoyalty = uint32(10000)
