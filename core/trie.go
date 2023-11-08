@@ -15,6 +15,10 @@ const (
 
 	// AutoBalanceEnabled is used for data tries, and only after the activation of AutoBalanceDataTriesEnableEpoch flag
 	AutoBalanceEnabled
+
+	// WithoutCodeLeaf is used for account with code, it specifies that the trie code leaf has been moved to storage,
+	// it is enabled only after the activation of RemoveCodeLeafEnableEpoch flag
+	WithoutCodeLeaf
 )
 
 const (
@@ -24,7 +28,11 @@ const (
 	// AutoBalanceEnabledString is the string representation of AutoBalanceEnabled trie node version
 	AutoBalanceEnabledString = "auto balanced"
 
+	// WithoutCodeLeafString is the string representation of WithoutCodeLeaf trie node version
+	WithoutCodeLeafString = "without code leaf"
+
 	autoBalanceDataTriesFlag = EnableEpochFlag("AutoBalanceDataTriesFlag")
+	withoutCodeLeafFlag      = EnableEpochFlag("RemoveCodeLeafFlag")
 )
 
 func (version TrieNodeVersion) String() string {
@@ -33,6 +41,8 @@ func (version TrieNodeVersion) String() string {
 		return NotSpecifiedString
 	case AutoBalanceEnabled:
 		return AutoBalanceEnabledString
+	case WithoutCodeLeaf:
+		return WithoutCodeLeafString
 	default:
 		return "unknown: " + strconv.Itoa(int(version))
 	}
@@ -59,6 +69,9 @@ func NewTrieNodeVersionVerifier(enableEpochsHandler EnableEpochsHandler) (*trieN
 
 // IsValidVersion returns true if the given trie node version is valid
 func (vv *trieNodeVersionVerifier) IsValidVersion(version TrieNodeVersion) bool {
+	if vv.enableEpochsHandler.IsFlagEnabled(withoutCodeLeafFlag) {
+		return version <= WithoutCodeLeaf
+	}
 	if vv.enableEpochsHandler.IsFlagEnabled(autoBalanceDataTriesFlag) {
 		return version <= AutoBalanceEnabled
 	}
@@ -73,6 +86,9 @@ func (vv *trieNodeVersionVerifier) IsInterfaceNil() bool {
 
 // GetVersionForNewData returns the trie node version that should be used for new data
 func GetVersionForNewData(handler EnableEpochsHandler) TrieNodeVersion {
+	if handler.IsFlagEnabled(withoutCodeLeafFlag) {
+		return WithoutCodeLeaf
+	}
 	if handler.IsFlagEnabled(autoBalanceDataTriesFlag) {
 		return AutoBalanceEnabled
 	}
