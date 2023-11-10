@@ -3,6 +3,7 @@ package keyValStorage_test
 import (
 	"testing"
 
+	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/keyValStorage"
 	"github.com/stretchr/testify/assert"
 )
@@ -13,7 +14,7 @@ func TestNewKeyValStorage_GetKeyAndVal(t *testing.T) {
 	key := []byte("key")
 	value := []byte("value")
 
-	keyVal := keyValStorage.NewKeyValStorage(key, value)
+	keyVal := keyValStorage.NewKeyValStorage(key, value, core.NotSpecified)
 	assert.NotNil(t, keyVal)
 	assert.Equal(t, key, keyVal.Key())
 	assert.Equal(t, value, keyVal.Value())

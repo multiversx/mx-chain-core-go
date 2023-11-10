@@ -17,7 +17,7 @@ const (
 	AutoBalanceEnabled
 
 	// WithoutCodeLeaf is used for account with code, it specifies that the trie code leaf has been moved to storage,
-	// it is enabled only after the activation of RemoveCodeLeafEnableEpoch flag
+	// it is enabled only after the activation of MigrateCodeLeafEnableEpoch flag
 	WithoutCodeLeaf
 )
 
