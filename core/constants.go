@@ -159,6 +159,21 @@ const ESDTRoleNFTUpdateAttributes = "ESDTRoleNFTUpdateAttributes"
 // ESDTRoleTransfer is the constant string for the local role to transfer ESDT, only for special tokens
 const ESDTRoleTransfer = "ESDTTransferRole"
 
+// ESDTSetTokenType represents the builtin function name to set token type
+const ESDTSetTokenType = "ESDTSetTokenType"
+
+// ESDTRoleSetNewURI represents the role which can rewrite the URI in the token metadata
+const ESDTRoleSetNewURI = "ESDTRoleSetNewURI"
+
+// ESDTRoleModifyRoyalties represents the role which can rewrite the royalties of a token
+const ESDTRoleModifyRoyalties = "ESDTRoleModifyRoyalties"
+
+// ESDTRoleModifyCreator represents the role which can rewrite the creator in the token metadata
+const ESDTRoleModifyCreator = "ESDTRoleModifyCreator"
+
+// ESDTRoleNFTRecreate represents the role which can recreate the token metadata
+const ESDTRoleNFTRecreate = "ESDTRoleNFTRecreate"
+
 // ESDTType defines the possible types in case of ESDT tokens
 type ESDTType uint32
 
