@@ -132,6 +132,21 @@ const BuiltInFunctionUnGuardAccount = "UnGuardAccount"
 // BuiltInFunctionMigrateDataTrie is the built-in function key for migrating the data trie
 const BuiltInFunctionMigrateDataTrie = "MigrateDataTrie"
 
+// ESDTSetTokenType represents the builtin function name to set token type
+const ESDTSetTokenType = "ESDTSetTokenType"
+
+// ESDTModifyRoyalties represents the builtin function name to modify royalties
+const ESDTModifyRoyalties = "ESDTModifyRoyalties"
+
+// ESDTNFTSetNewURIs represents the builtin function name to set new URIs for NFTs
+const ESDTNFTSetNewURIs = "ESDTNFTSetNewURIs"
+
+// ESDTNFTModifyCreator represents the builtin function name to modify creator for NFTs
+const ESDTNFTModifyCreator = "ESDTNFTModifyCreator"
+
+// ESDTMetaDataRecreate represents the builtin function name to recreate the metadata for ESDT tokens
+const ESDTMetaDataRecreate = "ESDTMetaDataRecreate"
+
 // ESDTRoleLocalMint is the constant string for the local role of mint for ESDT tokens
 const ESDTRoleLocalMint = "ESDTRoleLocalMint"
 
@@ -158,9 +173,6 @@ const ESDTRoleNFTUpdateAttributes = "ESDTRoleNFTUpdateAttributes"
 
 // ESDTRoleTransfer is the constant string for the local role to transfer ESDT, only for special tokens
 const ESDTRoleTransfer = "ESDTTransferRole"
-
-// ESDTSetTokenType represents the builtin function name to set token type
-const ESDTSetTokenType = "ESDTSetTokenType"
 
 // ESDTRoleSetNewURI represents the role which can rewrite the URI in the token metadata
 const ESDTRoleSetNewURI = "ESDTRoleSetNewURI"
