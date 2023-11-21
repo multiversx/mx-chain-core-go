@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package sovereign;
+option go_package = "github.com/multiversx/mx-chain-core-go/data/sovereign;sovereign";
+
+message BridgeOperations {
+  repeated BridgeOutGoingData Data = 1;
+}
+
+message BridgeOutGoingData {
+  bytes       Hash                      = 1;
+  map<string, bytes> OutGoingOperations = 2;
+}
+
+message BridgeOperationsResponse {
+  repeated bytes TxHashes = 1;
+}
+
+service BridgeTxSender {
+  rpc Send(BridgeOperations) returns (BridgeOperationsResponse) {}
+}
