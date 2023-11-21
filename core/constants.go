@@ -147,6 +147,9 @@ const ESDTNFTModifyCreator = "ESDTNFTModifyCreator"
 // ESDTMetaDataRecreate represents the builtin function name to recreate the metadata for ESDT tokens
 const ESDTMetaDataRecreate = "ESDTMetaDataRecreate"
 
+// ESDTMetaDataUpdate represents the builtin function name to update the metadata for ESDT tokens
+const ESDTMetaDataUpdate = "ESDTMetaDataUpdate"
+
 // ESDTRoleLocalMint is the constant string for the local role of mint for ESDT tokens
 const ESDTRoleLocalMint = "ESDTRoleLocalMint"
 
