@@ -138,11 +138,11 @@ const ESDTSetTokenType = "ESDTSetTokenType"
 // ESDTModifyRoyalties represents the builtin function name to modify royalties
 const ESDTModifyRoyalties = "ESDTModifyRoyalties"
 
-// ESDTNFTSetNewURIs represents the builtin function name to set new URIs for NFTs
-const ESDTNFTSetNewURIs = "ESDTNFTSetNewURIs"
+// ESDTSetNewURIs represents the builtin function name to set new URIs for NFTs
+const ESDTSetNewURIs = "ESDTSetNewURIs"
 
-// ESDTNFTModifyCreator represents the builtin function name to modify creator for NFTs
-const ESDTNFTModifyCreator = "ESDTNFTModifyCreator"
+// ESDTModifyCreator represents the builtin function name to modify creator for NFTs
+const ESDTModifyCreator = "ESDTModifyCreator"
 
 // ESDTMetaDataRecreate represents the builtin function name to recreate the metadata for ESDT tokens
 const ESDTMetaDataRecreate = "ESDTMetaDataRecreate"
