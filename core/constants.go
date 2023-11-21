@@ -186,6 +186,9 @@ const ESDTRoleModifyCreator = "ESDTRoleModifyCreator"
 // ESDTRoleNFTRecreate represents the role which can recreate the token metadata
 const ESDTRoleNFTRecreate = "ESDTRoleNFTRecreate"
 
+// ESDTRoleNFTUpdate represents the role which can update the token metadata
+const ESDTRoleNFTUpdate = "ESDTRoleNFTUpdate"
+
 // ESDTType defines the possible types in case of ESDT tokens
 type ESDTType uint32
 
