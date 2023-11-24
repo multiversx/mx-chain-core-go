@@ -11,5 +11,5 @@ type Guardian struct {
 type GuardianData struct {
 	ActiveGuardian  *Guardian `json:"activeGuardian,omitempty"`
 	PendingGuardian *Guardian `json:"pendingGuardian,omitempty"`
-	Guarded         bool      `json:"guarded,omitempty"`
+	Guarded         bool      `json:"guarded"`
 }
