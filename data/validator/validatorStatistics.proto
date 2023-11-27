@@ -7,8 +7,8 @@ option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
-// ValidatorStatus holds information about a validator
-message ValidatorStatus {
+// ValidatorStatistics holds information about a validator
+message ValidatorStatistics {
   float   TempRating                          = 1 [(gogoproto.jsontag) = "tempRating"];
   uint32  NumLeaderSuccess                    = 2 [(gogoproto.jsontag) = "numLeaderSuccess"];
   uint32  NumLeaderFailure                    = 3 [(gogoproto.jsontag) = "numLeaderFailure"];
