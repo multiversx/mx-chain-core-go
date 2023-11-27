@@ -412,8 +412,7 @@ func TestTransaction_CheckIntegrityShouldErr(t *testing.T) {
 func TestTransaction_ImplementsGuardedTransactionHandler(t *testing.T) {
 	t.Parallel()
 
-	var tx data.TransactionHandler
-	tx = &transaction.Transaction{}
+	var tx data.TransactionHandler = &transaction.Transaction{}
 
 	_, ok := tx.(data.GuardedTransactionHandler)
 	assert.True(t, ok)
