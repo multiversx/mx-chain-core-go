@@ -15,7 +15,7 @@ message BridgeOutGoingData {
 }
 
 message BridgeOperationsResponse {
-  repeated bytes TxHashes = 1;
+  repeated string TxHashes = 1;
 }
 
 service BridgeTxSender {
