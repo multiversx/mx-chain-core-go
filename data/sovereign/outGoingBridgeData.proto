@@ -9,9 +9,14 @@ message BridgeOperations {
 
 message BridgeOutGoingData {
   bytes Hash = 1;
-  map<string, bytes> OutGoingOperations = 2;
+  repeated OutGoingOperation OutGoingOperations = 2;
   bytes AggregatedSignature = 3;
   bytes LeaderSignature = 4;
+}
+
+message OutGoingOperation {
+  bytes Hash = 1;
+  bytes Data = 2;
 }
 
 message BridgeOperationsResponse {
