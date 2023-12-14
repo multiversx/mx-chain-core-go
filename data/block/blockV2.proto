@@ -18,6 +18,7 @@ message HeaderV2 {
   uint64  ScheduledGasProvided = 5 [(gogoproto.jsontag) = "scheduledGasProvided"];
   uint64  ScheduledGasPenalized = 6 [(gogoproto.jsontag) = "scheduledGasPenalized"];
   uint64  ScheduledGasRefunded = 7 [(gogoproto.jsontag) = "scheduledGasRefunded"];
+  Proof   Proof = 8 [(gogoproto.jsontag) = "proof"];
 }
 
 message MiniBlockReserved {
@@ -30,4 +31,10 @@ message MiniBlockHeaderReserved {
   MiniBlockState State = 2 [(gogoproto.jsontag) = "state"];
   int32 IndexOfFirstTxProcessed = 3 [(gogoproto.jsontag) = "indexOfFirstTxProcessed"];
   int32 IndexOfLastTxProcessed = 4 [(gogoproto.jsontag) = "indexOfLastTxProcessed"];
+}
+
+// Proof defines a block proof
+message Proof {
+  bytes PreviousPubkeysBitmap = 1 [(gogoproto.jsontag) = "previousPubkeysBitmap"];
+  bytes PreviousAggregatedSignature = 2 [(gogoproto.jsontag) = "previousAggregatedSignature"];
 }
