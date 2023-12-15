@@ -1228,6 +1228,6 @@ func TestHeaderV2_GetProof(t *testing.T) {
 		PreviousPubkeysBitmap:       []byte("previous pub keys bitmap"),
 		PreviousAggregatedSignature: []byte("previous aggregated signature"),
 	}
-	shardBlock.Proof = providedProof
+	shardBlock.SetProof(providedProof)
 	require.Equal(t, providedProof, shardBlock.GetProof())
 }

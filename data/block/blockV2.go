@@ -650,3 +650,8 @@ func (hv2 *HeaderV2) CheckFieldsForNil() error {
 
 	return nil
 }
+
+// SetProof sets the proof for the block
+func (hv2 *HeaderV2) SetProof(proof *Proof) {
+	hv2.Proof = proof
+}
