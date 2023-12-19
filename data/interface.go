@@ -256,6 +256,8 @@ type ChainHandler interface {
 	GetCurrentBlockRootHash() []byte
 	SetFinalBlockInfo(nonce uint64, blockHash []byte, rootHash []byte)
 	GetFinalBlockInfo() (nonce uint64, blockHash []byte, rootHash []byte)
+	SetCurrentAggregatedSignature(signature []byte, pubKeysBitmap []byte)
+	GetCurrentAggregatedSignature() ([]byte, []byte)
 	IsInterfaceNil() bool
 }
 
