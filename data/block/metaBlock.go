@@ -566,3 +566,14 @@ func (m *MetaBlock) CheckFieldsForNil() error {
 
 	return nil
 }
+
+// GetPreviousAggregatedSignatureAndBitmap returns the previous aggregated signature and the previous pubkeys bitmap
+func (m *MetaBlock) GetPreviousAggregatedSignatureAndBitmap() ([]byte, []byte) {
+	// no proof for meta block header
+	return nil, nil
+}
+
+// SetPreviousAggregatedSignatureAndBitmap sets the previous aggregated signature and the previous pubkeys bitmap
+func (m *MetaBlock) SetPreviousAggregatedSignatureAndBitmap(_ []byte, _ []byte) {
+	// no proof for meta block header
+}

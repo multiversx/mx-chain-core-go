@@ -651,7 +651,18 @@ func (hv2 *HeaderV2) CheckFieldsForNil() error {
 	return nil
 }
 
-// SetProof sets the proof for the block
-func (hv2 *HeaderV2) SetProof(proof *Proof) {
-	hv2.Proof = proof
+// GetPreviousAggregatedSignatureAndBitmap returns the previous aggregated signature and the previous pubkeys bitmap
+func (hv2 *HeaderV2) GetPreviousAggregatedSignatureAndBitmap() ([]byte, []byte) {
+	if hv2.Proof == nil {
+		return nil, nil
+	}
+	return hv2.Proof.PreviousAggregatedSignature, hv2.Proof.PreviousPubkeysBitmap
+}
+
+// SetPreviousAggregatedSignatureAndBitmap sets the previous aggregated signature and the previous pubkeys bitmap
+func (hv2 *HeaderV2) SetPreviousAggregatedSignatureAndBitmap(aggregatedSignature []byte, pubkeysBitmap []byte) {
+	hv2.Proof = &Proof{
+		PreviousPubkeysBitmap:       pubkeysBitmap,
+		PreviousAggregatedSignature: aggregatedSignature,
+	}
 }

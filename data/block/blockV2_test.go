@@ -1218,16 +1218,19 @@ func TestHeaderV2_HasScheduledMiniBlocks(t *testing.T) {
 	require.False(t, shardBlock.HasScheduledMiniBlocks())
 }
 
-func TestHeaderV2_GetProof(t *testing.T) {
+func TestHeaderV2_GetPreviousAggregatedSignatureAndBitmap(t *testing.T) {
 	t.Parallel()
 
 	shardBlock := &block.HeaderV2{}
-	require.Nil(t, shardBlock.GetProof())
+	sig, bitmap := shardBlock.GetPreviousAggregatedSignatureAndBitmap()
+	require.Nil(t, sig)
+	require.Nil(t, bitmap)
 
-	providedProof := &block.Proof{
-		PreviousPubkeysBitmap:       []byte("previous pub keys bitmap"),
-		PreviousAggregatedSignature: []byte("previous aggregated signature"),
-	}
-	shardBlock.SetProof(providedProof)
-	require.Equal(t, providedProof, shardBlock.GetProof())
+	previousPubkeysBitmap := []byte("previous pub keys bitmap")
+	previousAggregatedSignature := []byte("previous aggregated signature")
+
+	shardBlock.SetPreviousAggregatedSignatureAndBitmap(previousAggregatedSignature, previousPubkeysBitmap)
+	sig, bitmap = shardBlock.GetPreviousAggregatedSignatureAndBitmap()
+	require.Equal(t, previousPubkeysBitmap, bitmap)
+	require.Equal(t, previousAggregatedSignature, sig)
 }
