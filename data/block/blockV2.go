@@ -653,16 +653,16 @@ func (hv2 *HeaderV2) CheckFieldsForNil() error {
 
 // GetPreviousAggregatedSignatureAndBitmap returns the previous aggregated signature and the previous pubkeys bitmap
 func (hv2 *HeaderV2) GetPreviousAggregatedSignatureAndBitmap() ([]byte, []byte) {
-	if hv2.Proof == nil {
+	if hv2.PreviousHeaderProof == nil {
 		return nil, nil
 	}
-	return hv2.Proof.PreviousAggregatedSignature, hv2.Proof.PreviousPubkeysBitmap
+	return hv2.PreviousHeaderProof.AggregatedSignature, hv2.PreviousHeaderProof.PubKeysBitmap
 }
 
 // SetPreviousAggregatedSignatureAndBitmap sets the previous aggregated signature and the previous pubkeys bitmap
-func (hv2 *HeaderV2) SetPreviousAggregatedSignatureAndBitmap(aggregatedSignature []byte, pubkeysBitmap []byte) {
-	hv2.Proof = &Proof{
-		PreviousPubkeysBitmap:       pubkeysBitmap,
-		PreviousAggregatedSignature: aggregatedSignature,
+func (hv2 *HeaderV2) SetPreviousAggregatedSignatureAndBitmap(aggregatedSignature []byte, pubKeysBitmap []byte) {
+	hv2.PreviousHeaderProof = &PreviousHeaderProof{
+		PubKeysBitmap:       pubKeysBitmap,
+		AggregatedSignature: aggregatedSignature,
 	}
 }

@@ -402,3 +402,20 @@ func TestMetaBlock_HasScheduledMiniBlocks(t *testing.T) {
 
 	require.True(t, metaBlock.HasScheduledMiniBlocks())
 }
+
+func TestMetaBlock2_GetPreviousAggregatedSignatureAndBitmap(t *testing.T) {
+	t.Parallel()
+
+	metaBlock := &block.MetaBlock{}
+	sig, bitmap := metaBlock.GetPreviousAggregatedSignatureAndBitmap()
+	require.Nil(t, sig)
+	require.Nil(t, bitmap)
+
+	previousPubkeysBitmap := []byte("previous pub keys bitmap")
+	previousAggregatedSignature := []byte("previous aggregated signature")
+
+	metaBlock.SetPreviousAggregatedSignatureAndBitmap(previousAggregatedSignature, previousPubkeysBitmap)
+	sig, bitmap = metaBlock.GetPreviousAggregatedSignatureAndBitmap()
+	require.Equal(t, previousPubkeysBitmap, bitmap)
+	require.Equal(t, previousAggregatedSignature, sig)
+}
