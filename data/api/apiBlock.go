@@ -4,7 +4,7 @@ import (
 	"math/big"
 	"time"
 
-	"github.com/multiversx/mx-chain-core-go/data/outport"
+	"github.com/multiversx/mx-chain-core-go/data/alteredAccount"
 	"github.com/multiversx/mx-chain-core-go/data/transaction"
 )
 
@@ -25,6 +25,13 @@ type Block struct {
 	Status                 string                 `json:"status,omitempty"`
 	RandSeed               string                 `json:"randSeed,omitempty"`
 	PrevRandSeed           string                 `json:"prevRandSeed,omitempty"`
+	PubKeyBitmap           string                 `json:"pubKeyBitmap"`
+	Signature              string                 `json:"signature,omitempty"`
+	LeaderSignature        string                 `json:"leaderSignature,omitempty"`
+	ChainID                string                 `json:"chainID,omitempty"`
+	SoftwareVersion        string                 `json:"softwareVersion,omitempty"`
+	ReceiptsHash           string                 `json:"receiptsHash,omitempty"`
+	Reserved               []byte                 `json:"reserved,omitempty"`
 	Timestamp              time.Duration          `json:"timestamp,omitempty"`
 	NotarizedBlocks        []*NotarizedBlock      `json:"notarizedBlocks,omitempty"`
 	MiniBlocks             []*MiniBlock           `json:"miniBlocks,omitempty"`
@@ -57,13 +64,13 @@ type EpochStartInfo struct {
 
 // NotarizedBlock represents a notarized block
 type NotarizedBlock struct {
-	Hash            string                    `json:"hash"`
-	Nonce           uint64                    `json:"nonce"`
-	Round           uint64                    `json:"round"`
-	Shard           uint32                    `json:"shard"`
-	RootHash        string                    `json:"rootHash"`
-	MiniBlockHashes []string                  `json:"miniBlockHashes,omitempty"`
-	AlteredAccounts []*outport.AlteredAccount `json:"alteredAccounts,omitempty"`
+	Hash            string                           `json:"hash"`
+	Nonce           uint64                           `json:"nonce"`
+	Round           uint64                           `json:"round"`
+	Shard           uint32                           `json:"shard"`
+	RootHash        string                           `json:"rootHash"`
+	MiniBlockHashes []string                         `json:"miniBlockHashes,omitempty"`
+	AlteredAccounts []*alteredAccount.AlteredAccount `json:"alteredAccounts,omitempty"`
 }
 
 // EpochStartShardData is a structure that holds data about the epoch start shard data

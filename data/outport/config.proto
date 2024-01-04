@@ -1,0 +1,13 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/multiversx/mx-chain-core-go/data/outport;outport";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+message OutportConfig {
+  uint32 ShardID          = 1 [(gogoproto.jsontag) = "shardID"];
+  bool   IsInImportDBMode = 2 [(gogoproto.jsontag) = "isInImportDBMode"];
+}

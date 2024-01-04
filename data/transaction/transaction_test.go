@@ -173,9 +173,9 @@ func TestTransaction_GetDataForSigningMarshalizerErrShouldErr(t *testing.T) {
 	expectedErr := errors.New("expected error")
 	buff, err := tx.GetDataForSigning(
 		&mock.PubkeyConverterStub{
-			EncodeCalled: func(pkBytes []byte) string {
+			EncodeCalled: func(pkBytes []byte) (string, error) {
 				numEncodeCalled++
-				return ""
+				return "", nil
 			},
 		},
 		&mock.MarshalizerStub{
@@ -224,9 +224,9 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 		hasherWasCalled := false
 		buff, err := tx.GetDataForSigning(
 			&mock.PubkeyConverterStub{
-				EncodeCalled: func(pkBytes []byte) string {
+				EncodeCalled: func(pkBytes []byte) (string, error) {
 					numEncodeCalled++
-					return ""
+					return "", nil
 				},
 			},
 			&mock.MarshalizerStub{
@@ -265,9 +265,9 @@ func TestTransaction_GetDataForSigningShouldWork(t *testing.T) {
 		expectedHash := []byte("expectedHash")
 		buff, err := tx.GetDataForSigning(
 			&mock.PubkeyConverterStub{
-				EncodeCalled: func(pkBytes []byte) string {
+				EncodeCalled: func(pkBytes []byte) (string, error) {
 					numEncodeCalled++
-					return ""
+					return "", nil
 				},
 			},
 			&mock.MarshalizerStub{
@@ -346,4 +346,13 @@ func TestTransaction_CheckIntegrityShouldErr(t *testing.T) {
 
 	err = tx.CheckIntegrity()
 	assert.Equal(t, data.ErrInvalidUserNameLength, err)
+}
+
+func TestTransaction_ImplementsGuardedTransactionHandler(t *testing.T) {
+	t.Parallel()
+
+	var tx data.TransactionHandler = &transaction.Transaction{}
+
+	_, ok := tx.(data.GuardedTransactionHandler)
+	assert.True(t, ok)
 }

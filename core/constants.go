@@ -40,6 +40,9 @@ const AllShardId = uint32(0xFFFFFFF0)
 // MegabyteSize represents the size in bytes of a megabyte
 const MegabyteSize = 1024 * 1024
 
+// MaxMachineIDLen is the maximum machine ID length
+const MaxMachineIDLen = 10
+
 // BuiltInFunctionClaimDeveloperRewards is the key for the claim developer rewards built-in function
 const BuiltInFunctionClaimDeveloperRewards = "ClaimDeveloperRewards"
 
@@ -125,6 +128,9 @@ const BuiltInFunctionGuardAccount = "GuardAccount"
 
 // BuiltInFunctionUnGuardAccount is the built-in function key for un-guarding an account
 const BuiltInFunctionUnGuardAccount = "UnGuardAccount"
+
+// BuiltInFunctionMigrateDataTrie is the built-in function key for migrating the data trie
+const BuiltInFunctionMigrateDataTrie = "MigrateDataTrie"
 
 // ESDTRoleLocalMint is the constant string for the local role of mint for ESDT tokens
 const ESDTRoleLocalMint = "ESDTRoleLocalMint"
@@ -252,8 +258,17 @@ const SignalErrorOperation = "signalError"
 // CompletedTxEventIdentifier is the identifier for the log that is generated when the execution of a smart contract call is done
 const CompletedTxEventIdentifier = "completedTxEvent"
 
+// InternalVMErrorsOperation is the identifier for the log that is generated when the execution of a smart contract generates an interval vm error
+const InternalVMErrorsOperation = "internalVMErrors"
+
 // GasRefundForRelayerMessage is the return message for to the smart contract result with refund for the relayer
 const GasRefundForRelayerMessage = "gas refund for relayer"
 
 // InitialVersionOfTransaction defines the initial version for a transaction
 const InitialVersionOfTransaction = uint32(1)
+
+// DefaultAddressPrefix is the default hrp of MultiversX/Elrond
+const DefaultAddressPrefix = "erd"
+
+// TopicRequestSuffix represents the topic name suffix for requests
+const TopicRequestSuffix = "_REQUEST"

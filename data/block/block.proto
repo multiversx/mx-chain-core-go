@@ -8,7 +8,7 @@ syntax = "proto3";
 
 package proto;
 
-option go_package = "block";
+option go_package = "github.com/multiversx/mx-chain-core-go/data/block;block";
 option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
@@ -37,63 +37,63 @@ enum MiniBlockState{
 }
 
 message MiniBlock {
-  repeated bytes TxHashes = 1;
-  uint32         ReceiverShardID = 2;
-  uint32         SenderShardID = 3;
-  Type           Type = 4;
-  bytes          Reserved = 5;
+  repeated bytes TxHashes = 1 [(gogoproto.jsontag) = "txHashes,omitempty"];
+  uint32         ReceiverShardID = 2 [(gogoproto.jsontag) = "receiverShardID"];
+  uint32         SenderShardID = 3 [(gogoproto.jsontag) = "senderShardID"];
+  Type           Type = 4 [(gogoproto.jsontag) = "type"];
+  bytes          Reserved = 5 [(gogoproto.jsontag) = "reserved,omitempty"];
 }
 
 message MiniBlockHeader  {
-  bytes  Hash = 1;
-  uint32 SenderShardID = 2;
-  uint32 ReceiverShardID = 3;
-  uint32 TxCount = 4;
-  Type   Type = 5;
-  bytes  Reserved = 6;
+  bytes  Hash = 1 [(gogoproto.jsontag) = "hash,omitempty"];
+  uint32 SenderShardID = 2 [(gogoproto.jsontag) = "senderShardID"];
+  uint32 ReceiverShardID = 3 [(gogoproto.jsontag) = "receiverShardID"];
+  uint32 TxCount = 4 [(gogoproto.jsontag) = "txCount"];
+  Type   Type = 5 [(gogoproto.jsontag) = "type"];
+  bytes  Reserved = 6 [(gogoproto.jsontag) = "reserved,omitempty"];
 }
 
 // PeerChange holds a change in one peer to shard assignation
 message PeerChange {
-  bytes  PubKey = 1;
-  uint32 ShardIdDest = 2;
+  bytes  PubKey = 1 [(gogoproto.jsontag) = "pubKey,omitempty"];
+  uint32 ShardIdDest = 2 [(gogoproto.jsontag) = "shardIdDest"];
 }
 
 // Header holds the metadata of a block. This is the part that is being hashed and run through consensus.
 // The header holds the hash of the body and also the link to the previous block header hash
 message Header  {
-  uint64                   Nonce = 1;
-  bytes                    PrevHash = 2;
-  bytes                    PrevRandSeed = 3;
-  bytes                    RandSeed = 4;
-  bytes                    PubKeysBitmap = 5;
-  uint32                   ShardID = 6;
-  uint64                   TimeStamp = 7;
-  uint64                   Round = 8;
-  uint32                   Epoch = 9;
-  Type                     BlockBodyType = 10;
-  bytes                    Signature = 11;
-  bytes                    LeaderSignature = 12;
-  repeated MiniBlockHeader MiniBlockHeaders = 13 [(gogoproto.nullable) = false];
-  repeated PeerChange      PeerChanges = 14 [(gogoproto.nullable) = false];
-  bytes                    RootHash = 15;
-  repeated bytes           MetaBlockHashes = 16;
-  uint32                   TxCount = 17;
-  bytes                    EpochStartMetaHash = 18;
-  bytes                    ReceiptsHash = 19;
-  bytes                    ChainID = 20;
-  bytes                    SoftwareVersion = 21;
-  bytes                    AccumulatedFees = 22 [(gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-  bytes                    DeveloperFees = 23 [(gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-  bytes                    Reserved = 24;
+  uint64                   Nonce = 1 [(gogoproto.jsontag) = "nonce"];
+  bytes                    PrevHash = 2 [(gogoproto.jsontag) = "prevHash,omitempty"];
+  bytes                    PrevRandSeed = 3 [(gogoproto.jsontag) = "prevRandSeed,omitempty"];
+  bytes                    RandSeed = 4 [(gogoproto.jsontag) = "randSeed,omitempty"];
+  bytes                    PubKeysBitmap = 5 [(gogoproto.jsontag) = "pubKeysBitmap,omitempty"];
+  uint32                   ShardID = 6 [(gogoproto.jsontag) = "shardID"];
+  uint64                   TimeStamp = 7 [(gogoproto.jsontag) = "timeStamp,omitempty"];
+  uint64                   Round = 8 [(gogoproto.jsontag) = "round"];
+  uint32                   Epoch = 9 [(gogoproto.jsontag) = "epoch"];
+  Type                     BlockBodyType = 10 [(gogoproto.jsontag) = "blockBodyType"];
+  bytes                    Signature = 11 [(gogoproto.jsontag) = "signature,omitempty"];
+  bytes                    LeaderSignature = 12 [(gogoproto.jsontag) = "leaderSignature,omitempty"];
+  repeated MiniBlockHeader MiniBlockHeaders = 13 [(gogoproto.jsontag) = "miniBlockHeaders", (gogoproto.nullable) = false];
+  repeated PeerChange      PeerChanges = 14 [(gogoproto.jsontag) = "peerChanges", (gogoproto.nullable) = false];
+  bytes                    RootHash = 15 [(gogoproto.jsontag) = "rootHash,omitempty"];
+  repeated bytes           MetaBlockHashes = 16 [(gogoproto.jsontag) = "metaBlockHashes,omitempty"];
+  uint32                   TxCount = 17 [(gogoproto.jsontag) = "txCount"];
+  bytes                    EpochStartMetaHash = 18 [(gogoproto.jsontag) = "epochStartMetaHash,omitempty"];
+  bytes                    ReceiptsHash = 19 [(gogoproto.jsontag) = "receiptsHash,omitempty"];
+  bytes                    ChainID = 20 [(gogoproto.jsontag) = "chainID,omitempty"];
+  bytes                    SoftwareVersion = 21 [(gogoproto.jsontag) = "softwareVersion,omitempty"];
+  bytes                    AccumulatedFees = 22 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  bytes                    DeveloperFees = 23 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  bytes                    Reserved = 24 [(gogoproto.jsontag) = "reserved,omitempty"];
 }
 
 message Body {
-  repeated MiniBlock MiniBlocks = 1;
+  repeated MiniBlock MiniBlocks = 1 [(gogoproto.jsontag) = "miniBlocks,omitempty"];
 }
 
 // BodyHeaderPair holds a body and header hash pair
 message BodyHeaderPair{
-  bytes Body = 1;
-  bytes Header = 2;
+  bytes Body = 1 [(gogoproto.jsontag) = "body,omitempty"];
+  bytes Header = 2 [(gogoproto.jsontag) = "header,omitempty"];
 }

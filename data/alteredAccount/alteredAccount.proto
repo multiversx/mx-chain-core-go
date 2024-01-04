@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/multiversx/mx-chain-core-go/data/alteredAccount;alteredAccount";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+message AlteredAccount {
+  string                    Address        = 1 [(gogoproto.jsontag) = "address"];
+  uint64                    Nonce          = 2 [(gogoproto.jsontag) = "nonce"];
+  string                    Balance        = 3 [(gogoproto.jsontag) = "balance,omitempty"];
+  repeated AccountTokenData Tokens         = 4 [(gogoproto.jsontag) = "tokens,omitempty"];
+  AdditionalAccountData     AdditionalData = 5 [(gogoproto.jsontag) = "additionalAccountData,omitempty"];
+}
+
+message AccountTokenData {
+  uint64                     Nonce          = 1 [(gogoproto.jsontag) = "nonce"];
+  string                     Identifier     = 2 [(gogoproto.jsontag) = "identifier"];
+  string                     Balance        = 3 [(gogoproto.jsontag) = "balance"];
+  string                     Properties     = 4 [(gogoproto.jsontag) = "properties"];
+  TokenMetaData              MetaData       = 5 [(gogoproto.jsontag) = "metaData,omitempty"];
+  AdditionalAccountTokenData AdditionalData = 6 [(gogoproto.jsontag) = "additionalData,omitempty"];
+}
+
+message TokenMetaData {
+  uint64         Nonce      = 1 [(gogoproto.jsontag) = "nonce"];
+  string         Name       = 2 [(gogoproto.jsontag) = "name"];
+  string         Creator    = 3 [(gogoproto.jsontag) = "creator"];
+  uint32         Royalties  = 4 [(gogoproto.jsontag) = "royalties"];
+  bytes          Hash       = 5 [(gogoproto.jsontag) = "hash"];
+  repeated bytes URIs       = 6 [(gogoproto.jsontag) = "uris"];
+  bytes          Attributes = 7 [(gogoproto.jsontag) = "attributes"];
+}
+
+message AdditionalAccountTokenData {
+  bool IsNFTCreate = 1 [(gogoproto.jsontag) = "isNFTCreate,omitempty"];
+}
+
+message AdditionalAccountData {
+  bool   IsSender         = 1 [(gogoproto.jsontag) = "isSender,omitempty"];
+  bool   BalanceChanged   = 2 [(gogoproto.jsontag) = "balanceChanged,omitempty"];
+  string CurrentOwner     = 3 [(gogoproto.jsontag) = "currentOwner,omitempty"];
+  string UserName         = 4 [(gogoproto.jsontag) = "userName,omitempty"];
+  string DeveloperRewards = 5 [(gogoproto.jsontag) = "developerRewards,omitempty"];
+  bytes  CodeHash         = 6 [(gogoproto.jsontag) = "codeHash,omitempty"];
+  bytes  RootHash         = 7 [(gogoproto.jsontag) = "rootHash,omitempty"];
+  bytes  CodeMetadata     = 8 [(gogoproto.jsontag) = "codeMetadata,omitempty"];
+}

@@ -1,4 +1,4 @@
-//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf  --gogoslick_out=. transaction.proto
+//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf  --gogoslick_out=$GOPATH/src transaction.proto
 package transaction
 
 import (
@@ -68,11 +68,21 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.M
 		return nil, ErrNilHasher
 	}
 
+	receiverAddr, err := encoder.Encode(tx.RcvAddr)
+	if err != nil {
+		return nil, err
+	}
+
+	senderAddr, err := encoder.Encode(tx.SndAddr)
+	if err != nil {
+		return nil, err
+	}
+
 	ftx := &FrontendTransaction{
 		Nonce:            tx.Nonce,
 		Value:            tx.Value.String(),
-		Receiver:         encoder.Encode(tx.RcvAddr),
-		Sender:           encoder.Encode(tx.SndAddr),
+		Receiver:         receiverAddr,
+		Sender:           senderAddr,
 		GasPrice:         tx.GasPrice,
 		GasLimit:         tx.GasLimit,
 		SenderUsername:   tx.SndUserName,
@@ -84,7 +94,12 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.M
 	}
 
 	if len(tx.GuardianAddr) > 0 {
-		ftx.GuardianAddr = encoder.Encode(tx.GuardianAddr)
+		guardianAddr, errGuardian := encoder.Encode(tx.GuardianAddr)
+		if errGuardian != nil {
+			return nil, errGuardian
+		}
+
+		ftx.GuardianAddr = guardianAddr
 	}
 
 	ftxBytes, err := marshaller.Marshal(ftx)
