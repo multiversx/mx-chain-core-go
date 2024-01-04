@@ -12,6 +12,7 @@ import (
 var headerV2ExceptionFields = []string{
 	"Header",
 	"ScheduledRootHash",
+	"PreviousHeaderProof",
 }
 
 func TestBlockHeaderV2_Checks(t *testing.T) {
@@ -68,7 +69,8 @@ func TestBlockHeaderV2_Checks(t *testing.T) {
 		t.Parallel()
 
 		objectToTest := &HeaderV2{
-			Header: &Header{},
+			Header:              &Header{},
+			PreviousHeaderProof: &PreviousHeaderProof{},
 		}
 
 		fieldsForHeaderV1 := prepareFieldsList(objectToTest.Header, headerV1ExceptionFields...)

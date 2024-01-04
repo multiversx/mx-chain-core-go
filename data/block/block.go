@@ -14,7 +14,7 @@ var _ = data.HeaderHandler(&Header{})
 var _ = data.ShardHeaderHandler(&Header{})
 
 // MiniBlockSlice should be used when referring to subset of mini blocks that is not
-//  necessarily representing a full block body
+// necessarily representing a full block body
 type MiniBlockSlice []*MiniBlock
 
 // MiniblockAndHash holds the info related to a miniblock and its hash
@@ -614,4 +614,15 @@ func (h *Header) CheckFieldsForNil() error {
 	}
 
 	return nil
+}
+
+// GetPreviousAggregatedSignatureAndBitmap returns the previous aggregated signature and the previous pubkeys bitmap
+func (h *Header) GetPreviousAggregatedSignatureAndBitmap() ([]byte, []byte) {
+	// no proof for the initial header
+	return nil, nil
+}
+
+// SetPreviousAggregatedSignatureAndBitmap sets the previous aggregated signature and the previous pubkeys bitmap
+func (h *Header) SetPreviousAggregatedSignatureAndBitmap(_ []byte, _ []byte) {
+	// no proof for the initial header
 }
