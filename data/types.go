@@ -5,3 +5,9 @@ type LogData struct {
 	LogHandler
 	TxHash string
 }
+
+// KeyValuePair is a tuple of (key, value)
+type KeyValuePair struct {
+	Key   []byte
+	Value []byte
+}
