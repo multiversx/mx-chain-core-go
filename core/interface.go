@@ -68,6 +68,7 @@ type Throttler interface {
 type KeyValueHolder interface {
 	Key() []byte
 	Value() []byte
+	Version() TrieNodeVersion
 }
 
 // EpochSubscriberHandler defines the behavior of a component that can be notified if a new epoch was confirmed
