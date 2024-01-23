@@ -32,7 +32,7 @@ const (
 	WithoutCodeLeafString = "without code leaf"
 
 	autoBalanceDataTriesFlag = EnableEpochFlag("AutoBalanceDataTriesFlag")
-	withoutCodeLeafFlag      = EnableEpochFlag("RemoveCodeLeafFlag")
+	migrateCodeLeafFlag      = EnableEpochFlag("MigrateCodeLeafFlag")
 )
 
 func (version TrieNodeVersion) String() string {
@@ -69,7 +69,7 @@ func NewTrieNodeVersionVerifier(enableEpochsHandler EnableEpochsHandler) (*trieN
 
 // IsValidVersion returns true if the given trie node version is valid
 func (vv *trieNodeVersionVerifier) IsValidVersion(version TrieNodeVersion) bool {
-	if vv.enableEpochsHandler.IsFlagEnabled(withoutCodeLeafFlag) {
+	if vv.enableEpochsHandler.IsFlagEnabled(migrateCodeLeafFlag) {
 		return version <= WithoutCodeLeaf
 	}
 	if vv.enableEpochsHandler.IsFlagEnabled(autoBalanceDataTriesFlag) {
@@ -86,7 +86,7 @@ func (vv *trieNodeVersionVerifier) IsInterfaceNil() bool {
 
 // GetVersionForNewData returns the trie node version that should be used for new data
 func GetVersionForNewData(handler EnableEpochsHandler) TrieNodeVersion {
-	if handler.IsFlagEnabled(withoutCodeLeafFlag) {
+	if handler.IsFlagEnabled(migrateCodeLeafFlag) {
 		return WithoutCodeLeaf
 	}
 	if handler.IsFlagEnabled(autoBalanceDataTriesFlag) {
