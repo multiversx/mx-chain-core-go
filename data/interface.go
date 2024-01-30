@@ -83,6 +83,8 @@ type HeaderHandler interface {
 	IsStartOfEpochBlock() bool
 	ShallowClone() HeaderHandler
 	CheckFieldsForNil() error
+	GetPreviousAggregatedSignatureAndBitmap() ([]byte, []byte)
+	SetPreviousAggregatedSignatureAndBitmap(aggregatedSignature []byte, pubkeysBitmap []byte)
 	IsInterfaceNil() bool
 }
 
@@ -256,6 +258,8 @@ type ChainHandler interface {
 	GetCurrentBlockRootHash() []byte
 	SetFinalBlockInfo(nonce uint64, blockHash []byte, rootHash []byte)
 	GetFinalBlockInfo() (nonce uint64, blockHash []byte, rootHash []byte)
+	SetCurrentAggregatedSignatureAndBitmap(signature []byte, pubKeysBitmap []byte)
+	GetCurrentAggregatedSignatureAndBitmap() ([]byte, []byte)
 	IsInterfaceNil() bool
 }
 
