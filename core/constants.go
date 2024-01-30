@@ -202,10 +202,10 @@ const (
 	NonFungible
 	// NonFungibleV2 defines the token type for ESDT non fungible tokens
 	NonFungibleV2
-	// Meta defines the token type for ESDT meta tokens
-	Meta
 	// SemiFungible defines the token type for ESDT semi fungible tokens
 	SemiFungible
+	// MetaFungible defines the token type for ESDT meta fungible tokens
+	MetaFungible
 	// DynamicNFT defines the token type for ESDT dynamic NFT tokens
 	DynamicNFT
 	// DynamicSFT defines the token type for ESDT dynamic SFT tokens

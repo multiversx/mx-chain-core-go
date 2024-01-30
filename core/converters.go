@@ -188,7 +188,7 @@ func ConvertESDTTypeToUint32(esdtType string) (uint32, error) {
 	case NonFungibleESDTv2:
 		return uint32(NonFungibleV2), nil
 	case MetaESDT:
-		return uint32(Meta), nil
+		return uint32(MetaFungible), nil
 	case SemiFungibleESDT:
 		return uint32(SemiFungible), nil
 	case DynamicNFTESDT:
