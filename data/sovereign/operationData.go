@@ -8,12 +8,6 @@ type Operation struct {
 	TransferData *TransferData
 }
 
-type EsdtTokenPayment struct {
-	TokenIdentifier []byte
-	Nonce           uint64
-	Amount          *big.Int
-}
-
 type EsdtToken struct {
 	Identifier []byte
 	Nonce      uint64
