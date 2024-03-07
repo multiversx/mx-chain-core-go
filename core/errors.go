@@ -19,7 +19,7 @@ var ErrInvalidValue = errors.New("invalid value provided")
 // ErrNilInputData signals that a nil data has been provided
 var ErrNilInputData = errors.New("nil input data")
 
-//ErrNilUrl signals that the provided url is empty
+// ErrNilUrl signals that the provided url is empty
 var ErrNilUrl = errors.New("url is empty")
 
 // ErrPemFileIsInvalid signals that a pem file is invalid
@@ -118,3 +118,6 @@ var ErrDBIsClosed = errors.New("DB is closed")
 
 // ErrNilEnableEpochsHandler signals that a nil enable epochs handler has been provided
 var ErrNilEnableEpochsHandler = errors.New("nil enable epochs handler")
+
+// ErrInvalidEnableEpochsHandler signals that an invalid enable epochs handler has been provided
+var ErrInvalidEnableEpochsHandler = errors.New("invalid enable epochs handler")

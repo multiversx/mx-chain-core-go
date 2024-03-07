@@ -1,9 +1,10 @@
-package core
+package core_test
 
 import (
 	"fmt"
 	"testing"
 
+	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/mock"
 	"github.com/stretchr/testify/require"
 )
@@ -18,12 +19,12 @@ func TestDumpGoRoutinesToLogShouldNotPanic(t *testing.T) {
 		}
 	}()
 
-	DumpGoRoutinesToLog(0, &mock.LoggerMock{})
+	core.DumpGoRoutinesToLog(0, &mock.LoggerMock{})
 }
 
 func TestGetRunningGoRoutines(t *testing.T) {
 	t.Parallel()
 
-	res := GetRunningGoRoutines(&mock.LoggerMock{})
+	res := core.GetRunningGoRoutines(&mock.LoggerMock{})
 	require.NotNil(t, res)
 }

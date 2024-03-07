@@ -5,7 +5,7 @@ import (
 	"encoding/json"
 	"encoding/pem"
 	"fmt"
-	"io/ioutil"
+	"io"
 	"os"
 	"path/filepath"
 	"strings"
@@ -152,7 +152,7 @@ func LoadSkPkFromPemFile(relativePath string, skIndex int) ([]byte, string, erro
 		_ = file.Close()
 	}()
 
-	buff, err := ioutil.ReadAll(file)
+	buff, err := io.ReadAll(file)
 	if err != nil {
 		return nil, "", fmt.Errorf("%w while reading %s file", err, relativePath)
 	}
@@ -200,7 +200,7 @@ func LoadAllKeysFromPemFile(relativePath string) ([][]byte, []string, error) {
 		_ = file.Close()
 	}()
 
-	buff, err := ioutil.ReadAll(file)
+	buff, err := io.ReadAll(file)
 	if err != nil {
 		return nil, nil, fmt.Errorf("%w while reading %s file", err, relativePath)
 	}

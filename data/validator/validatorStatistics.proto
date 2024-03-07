@@ -1,0 +1,27 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "validator";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+// ValidatorStatistics holds information about a validator
+message ValidatorStatistics {
+  float   TempRating                          = 1 [(gogoproto.jsontag) = "tempRating"];
+  uint32  NumLeaderSuccess                    = 2 [(gogoproto.jsontag) = "numLeaderSuccess"];
+  uint32  NumLeaderFailure                    = 3 [(gogoproto.jsontag) = "numLeaderFailure"];
+  uint32  NumValidatorSuccess                 = 4 [(gogoproto.jsontag) = "numValidatorSuccess"];
+  uint32  NumValidatorFailure                 = 5 [(gogoproto.jsontag) = "numValidatorFailure"];
+  uint32  NumValidatorIgnoredSignatures       = 6 [(gogoproto.jsontag) = "numValidatorIgnoredSignatures"];
+  float   Rating                              = 7 [(gogoproto.jsontag) = "rating"];
+  float   RatingModifier                      = 8 [(gogoproto.jsontag) = "ratingModifier"];
+  uint32  TotalNumLeaderSuccess               = 9 [(gogoproto.jsontag) = "totalNumLeaderSuccess"];
+  uint32  TotalNumLeaderFailure               = 10 [(gogoproto.jsontag) = "totalNumLeaderFailure"];
+  uint32  TotalNumValidatorSuccess            = 11 [(gogoproto.jsontag) = "totalNumValidatorSuccess"];
+  uint32  TotalNumValidatorFailure            = 12 [(gogoproto.jsontag) = "totalNumValidatorFailure"];
+  uint32  TotalNumValidatorIgnoredSignatures  = 13 [(gogoproto.jsontag) = "totalNumValidatorIgnoredSignatures"];
+  uint32  ShardId                             = 14 [(gogoproto.jsontag) = "shardId"];
+  string  ValidatorStatus                     = 15 [(gogoproto.jsontag) = "validatorStatus"];
+}
