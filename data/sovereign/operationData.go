@@ -6,7 +6,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/core"
 )
 
-// Operation holds the data needed for a bridge transfer
+// Operation holds the data needed for an outgoing operation
 type Operation struct {
 	Address      []byte
 	Tokens       []EsdtToken
