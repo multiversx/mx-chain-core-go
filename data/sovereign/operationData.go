@@ -1,6 +1,10 @@
 package sovereign
 
-import "math/big"
+import (
+	"math/big"
+
+	"github.com/multiversx/mx-chain-core-go/core"
+)
 
 // Operation holds the data needed for a bridge transfer
 type Operation struct {
@@ -16,20 +20,9 @@ type EsdtToken struct {
 	Data       EsdtTokenData
 }
 
-// EsdtTokenType holds the type of the esdt token
-type EsdtTokenType uint32
-
-const (
-	Fungible EsdtTokenType = iota
-	NonFungible
-	SemiFungible
-	Meta
-	Invalid
-)
-
 // EsdtTokenData holds the properties for a token
 type EsdtTokenData struct {
-	TokenType  EsdtTokenType
+	TokenType  core.ESDTType
 	Amount     *big.Int
 	Frozen     bool
 	Hash       []byte
