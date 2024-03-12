@@ -8,9 +8,9 @@ import (
 
 // Operation holds the data needed for an outgoing operation
 type Operation struct {
-	Address      []byte
-	Tokens       []EsdtToken
-	TransferData *TransferData
+	Address []byte
+	Tokens  []EsdtToken
+	Data    *EventData
 }
 
 // EsdtToken holds the token data
