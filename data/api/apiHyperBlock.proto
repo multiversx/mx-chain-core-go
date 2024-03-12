@@ -1,0 +1,187 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/multiversx/mx-chain-core-go/data/api;api";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "github.com/multiversx/mx-chain-core-go/data/alteredAccount/alteredAccount.proto";
+
+message Hyperblock {
+    string                        Hash                   = 1  [(gogoproto.jsontag) = "hash"];
+    string                        PrevBlockHash          = 2  [(gogoproto.jsontag) = "prevBlockHash"];
+    string                        StateRootHash          = 3  [(gogoproto.jsontag) = "stateRootHash"];
+    uint64                        Nonce                  = 4  [(gogoproto.jsontag) = "nonce"];
+    uint64                        Round                  = 5  [(gogoproto.jsontag) = "round"];
+    uint32                        Epoch                  = 6  [(gogoproto.jsontag) = "epoch"];
+    uint32                        NumTxs                 = 7  [(gogoproto.jsontag) = "numTxs"];
+    string                        AccumulatedFees        = 8  [(gogoproto.jsontag) = "accumulatedFees,omitempty"];
+    string                        DeveloperFees          = 9  [(gogoproto.jsontag) = "developerFees,omitempty"];
+    string                        AccumulatedFeesInEpoch = 10 [(gogoproto.jsontag) = "accumulatedFeesInEpoch,omitempty"];
+    string                        DeveloperFeesInEpoch   = 11 [(gogoproto.jsontag) = "developerFeesInEpoch,omitempty"];
+    uint64                        Timestamp              = 12 [(gogoproto.jsontag) = "timestamp,omitempty"];
+    EpochStartInfo                EpochStartInfo         = 13 [(gogoproto.jsontag) = "epochStartInfo,omitempty"];
+    repeated EpochStartShardData  EpochStartShardsData   = 14 [(gogoproto.jsontag) = "epochStartShardsData,omitempty"];
+    repeated NotarizedBlock       ShardBlocks            = 15 [(gogoproto.jsontag) = "shardBlocks"];
+    repeated ApiTransactionResult Transactions           = 16 [(gogoproto.jsontag) = "transactions"];
+    string                        Status                 = 17 [(gogoproto.jsontag) = "status,omitempty"];
+}
+
+message EpochStartInfo {
+    string TotalSupply                      = 1 [(gogoproto.jsontag) = "totalSupply"];
+    string TotalToDistribute                = 2 [(gogoproto.jsontag) = "totalToDistribute"];
+    string TotalNewlyMinted                 = 3 [(gogoproto.jsontag) = "totalNewlyMinted"];
+    string RewardsPerBlock                  = 4 [(gogoproto.jsontag) = "rewardsPerBlock"];
+    string RewardsForProtocolSustainability = 5 [(gogoproto.jsontag) = "rewardsForProtocolSustainability"];
+    string NodePrice                        = 6 [(gogoproto.jsontag) = "nodePrice"];
+    uint64 PrevEpochStartRound              = 7 [(gogoproto.jsontag) = "prevEpochStartRound"];
+    string PrevEpochStartHash               = 8 [(gogoproto.jsontag) = "prevEpochStartHash"];
+}
+
+message EpochStartShardData  {
+    uint32             ShardID                 = 1  [(gogoproto.jsontag) = "shard"];
+    uint32             Epoch                   = 2  [(gogoproto.jsontag) = "epoch"];
+    uint64             Round                   = 3  [(gogoproto.jsontag) = "round,omitempty"];
+    uint64             Nonce                   = 4  [(gogoproto.jsontag) = "nonce,omitempty"];
+    string             HeaderHash              = 5  [(gogoproto.jsontag) = "headerHash,omitempty"];
+    string             RootHash                = 6  [(gogoproto.jsontag) = "rootHash,omitempty"];
+    string             ScheduledRootHash       = 7  [(gogoproto.jsontag) = "scheduledRootHash,omitempty"];
+    repeated MiniBlock PendingMiniBlockHeaders = 10 [(gogoproto.jsontag) = "pendingMiniBlockHeaders,omitempty"];
+}
+
+message MiniBlock {
+    string                        Hash                    = 1  [(gogoproto.jsontag) = "hash"];
+    string                        Type                    = 2  [(gogoproto.jsontag) = "type"];
+    string                        ProcessingType          = 3  [(gogoproto.jsontag) = "processingType,omitempty"];
+    string                        ConstructionState       = 4  [(gogoproto.jsontag) = "constructionState,omitempty"];
+    bool                          sFromReceiptsStorage    = 5  [(gogoproto.jsontag) = "isFromReceiptsStorage,omitempty"];
+    uint32                        SourceShard             = 6  [(gogoproto.jsontag) = "sourceShard"];
+    uint32                        DestinationShard        = 7  [(gogoproto.jsontag) = "destinationShard"];
+    repeated ApiTransactionResult Transactions            = 8  [(gogoproto.jsontag) = "transactions,omitempty"];
+    repeated ApiReceipt           Receipts                = 9  [(gogoproto.jsontag) = "receipts,omitempty"];
+    int32                         IndexOfFirstTxProcessed = 10 [(gogoproto.jsontag) = "indexOfFirstTxProcessed"];
+    int32                         IndexOfLastTxProcessed  = 11 [(gogoproto.jsontag) = "indexOfLastTxProcessed"];
+}
+
+message ApiTransactionResult {
+    /* TransactionHandler Tx                    = 1               [(gogoproto.jsontag) = "-"]; */
+    string                          Type                              = 2  [(gogoproto.jsontag) = "type"];
+    string                          ProcessingTypeOnSource            = 3  [(gogoproto.jsontag) = "processingTypeOnSource,omitempty"];
+    string                          ProcessingTypeOnDestination       = 4  [(gogoproto.jsontag) = "processingTypeOnDestination,omitempty"];
+    string                          Hash                              = 5  [(gogoproto.jsontag) = "hash,omitempty"];
+    repeated bytes                  HashBytes                         = 6  [(gogoproto.jsontag) = "-"];
+    uint64                          Nonce                             = 7  [(gogoproto.jsontag) = "nonce"];
+    uint64                          Round                             = 8  [(gogoproto.jsontag) = "round"];
+    uint32                          Epoch                             = 9  [(gogoproto.jsontag) = "epoch"];
+    string                          Value                             = 10 [(gogoproto.jsontag) = "value,omitempty"];
+    string                          Receiver                          = 11 [(gogoproto.jsontag) = "receiver,omitempty"];
+    string                          Sender                            = 12 [(gogoproto.jsontag) = "sender,omitempty"];
+    repeated bytes                  SenderUsername                    = 13 [(gogoproto.jsontag) = "senderUsername,omitempty"];
+    repeated bytes                  ReceiverUsername                  = 14 [(gogoproto.jsontag) = "receiverUsername,omitempty"];
+    uint64                          GasPrice                          = 15 [(gogoproto.jsontag) = "gasPrice,omitempty"];
+    uint64                          GasLimit                          = 16 [(gogoproto.jsontag) = "gasLimit,omitempty"];
+    uint64                          GasUsed                           = 17 [(gogoproto.jsontag) = "gasUsed,omitempty"];
+    repeated bytes                  Data                              = 18 [(gogoproto.jsontag) = "data,omitempty"];
+    repeated bytes                  CodeMetadata                      = 19 [(gogoproto.jsontag) = "codeMetadata,omitempty"];
+    string                          Code                              = 20 [(gogoproto.jsontag) = "code,omitempty"];
+    string                          PreviousTransactionHash           = 21 [(gogoproto.jsontag) = "previousTransactionHash,omitempty"];
+    string                          OriginalTransactionHash           = 22 [(gogoproto.jsontag) = "originalTransactionHash,omitempty"];
+    string                          ReturnMessage                     = 23 [(gogoproto.jsontag) = "returnMessage,omitempty"];
+    string                          OriginalSender                    = 24 [(gogoproto.jsontag) = "originalSender,omitempty"];
+    string                          Signature                         = 25 [(gogoproto.jsontag) = "signature,omitempty"];
+    uint32                          SourceShard                       = 26 [(gogoproto.jsontag) = "sourceShard"];
+    uint32                          DestinationShard                  = 27 [(gogoproto.jsontag) = "destinationShard"];
+    uint64                          BlockNonce                        = 28 [(gogoproto.jsontag) = "blockNonce,omitempty"];
+    string                          BlockHash                         = 29 [(gogoproto.jsontag) = "blockHash,omitempty"];
+    uint64                          NotarizedAtSourceInMetaNonce      = 30 [(gogoproto.jsontag) = "notarizedAtSourceInMetaNonce,omitempty"];
+    string                          NotarizedAtSourceInMetaHash       = 31 [(gogoproto.jsontag) = "NotarizedAtSourceInMetaHash,omitempty"];
+    uint64                          NotarizedAtDestinationInMetaNonce = 32 [(gogoproto.jsontag) = "notarizedAtDestinationInMetaNonce,omitempty"];
+    string                          NotarizedAtDestinationInMetaHash  = 33 [(gogoproto.jsontag) = "notarizedAtDestinationInMetaHash,omitempty"];
+    string                          MiniBlockType                     = 34 [(gogoproto.jsontag) = "miniblockType,omitempty"];
+    string                          MiniBlockHash                     = 35 [(gogoproto.jsontag) = "miniblockHash,omitempty"];
+    uint64                          HyperblockNonce                   = 36 [(gogoproto.jsontag) = "hyperblockNonce,omitempty"];
+    string                          HyperblockHash                    = 37 [(gogoproto.jsontag) = "hyperblockHash,omitempty"];
+    int64                           Timestamp                         = 38 [(gogoproto.jsontag) = "timestamp,omitempty"];
+    ApiReceipt                      Receipt                           = 39 [(gogoproto.jsontag) = "receipt,omitempty"];
+    repeated ApiSmartContractResult SmartContractResults              = 40 [(gogoproto.jsontag) = "smartContractResults,omitempty"];
+    ApiLogs                         Logs                              = 41 [(gogoproto.jsontag) = "logs,omitempty"];
+    /* TxStatus Status                            = 42                 [(gogoproto.jsontag) = "status,omitempty", (gogoproto.casttype) = "github.com/multiversx/mx-chain-core-go/data/transaction.TxStatus"]; */
+    repeated string                 Tokens                            = 43 [(gogoproto.jsontag) = "tokens,omitempty"];
+    repeated string                 ESDTValues                        = 44 [(gogoproto.jsontag) = "esdtValues,omitempty"];
+    repeated string                 Receivers                         = 45 [(gogoproto.jsontag) = "receivers,omitempty"];
+    repeated uint32                 ReceiversShardIDs                 = 46 [(gogoproto.jsontag) = "receiversShardIDs,omitempty"];
+    string                          Operation                         = 47 [(gogoproto.jsontag) = "operation,omitempty"];
+    string                          Function                          = 48 [(gogoproto.jsontag) = "function,omitempty"];
+    string                          InitiallyPaidFee                  = 49 [(gogoproto.jsontag) = "initiallyPaidFee,omitempty"];
+    string                          Fee                               = 50 [(gogoproto.jsontag) = "fee,omitempty"];
+    bool                            IsRelayed                         = 51 [(gogoproto.jsontag) = "isRelayed,omitempty"];
+    bool                            IsRefund                          = 52 [(gogoproto.jsontag) = "isRefund,omitempty"];
+    string                          CallType                          = 53 [(gogoproto.jsontag) = "callType,omitempty"];
+    string                          RelayerAddress                    = 54 [(gogoproto.jsontag) = "relayerAddress,omitempty"];
+    string                          RelayedValue                      = 55 [(gogoproto.jsontag) = "relayedValue,omitempty"];
+    string                          ChainID                           = 56 [(gogoproto.jsontag) = "chainID,omitempty"];
+    uint32                          Version                           = 57 [(gogoproto.jsontag) = "version,omitempty"];
+    uint32                          Options                           = 58 [(gogoproto.jsontag) = "options"];
+    string                          GuardianAddr                      = 59 [(gogoproto.jsontag) = "guardian,omitempty"];
+    string                          GuardianSignature                 = 60 [(gogoproto.jsontag) = "guardianSignature,omitempty"];
+}
+
+message ApiReceipt {
+    bytes  Value   = 1 [(gogoproto.jsontag) = "value", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+    string SndAddr = 2 [(gogoproto.jsontag) = "sender"];
+    string Data    = 3 [(gogoproto.jsontag) = "data,omitempty"];
+    string TxHash  = 4 [(gogoproto.jsontag) = "txHash"];
+}
+
+message ApiSmartContractResult {
+    string          Hash              = 1  [(gogoproto.jsontag) = "hash,omitempty"];
+    uint64          Nonce             = 2  [(gogoproto.jsontag) = "nonce"];
+    bytes           Value             = 3  [(gogoproto.jsontag) = "value"];
+    string          RcvAddr           = 4  [(gogoproto.jsontag) = "receiver"];
+    string          SndAddr           = 5  [(gogoproto.jsontag) = "sender"];
+    string          RelayerAddr       = 6  [(gogoproto.jsontag) = "relayerAddress,omitempty"];
+    bytes           RelayedValue      = 7  [(gogoproto.jsontag) = "relayedValue,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+    string          Code              = 8  [(gogoproto.jsontag) = "code,omitempty"];
+    string          Data              = 9  [(gogoproto.jsontag) = "data,omitempty"];
+    string          PrevTxHash        = 10 [(gogoproto.jsontag) = "prevTxHash"];
+    string          OriginalTxHash    = 11 [(gogoproto.jsontag) = "originalTxHash"];
+    uint64          GasLimit          = 12 [(gogoproto.jsontag) = "gasLimit"];
+    uint64          GasPrice          = 13 [(gogoproto.jsontag) = "gasPrice"];
+    int64           CallType          = 14 [(gogoproto.jsontag) = "callType", (gogoproto.casttype) = "github.com/multiversx/mx-chain-core-go/data/vm.CallType"];
+    string          CodeMetadata      = 15 [(gogoproto.jsontag) = "codeMetadata,omitempty"];
+    string          ReturnMessage     = 16 [(gogoproto.jsontag) = "returnMessage,omitempty"];
+    string          OriginalSender    = 17 [(gogoproto.jsontag) = "originalSender,omitempty"];
+    ApiLogs         Logs              = 18 [(gogoproto.jsontag) = "logs,omitempty"];
+    repeated string Tokens            = 19 [(gogoproto.jsontag) = "tokens,omitempty"];
+    repeated string ESDTValues        = 20 [(gogoproto.jsontag) = "esdtValues,omitempty"];
+    repeated string Receivers         = 21 [(gogoproto.jsontag) = "receivers,omitempty"];
+    repeated uint32 ReceiversShardIDs = 22 [(gogoproto.jsontag) = "receiversShardIDs,omitempty"];
+    string          Operation         = 23 [(gogoproto.jsontag) = "operation,omitempty"];
+    string          Function          = 24 [(gogoproto.jsontag) = "function,omitempty"];
+    bool            IsRelayed         = 25 [(gogoproto.jsontag) = "isRelayed,omitempty"];
+    bool            IsRefund          = 26 [(gogoproto.jsontag) = "isRefund,omitempty"];
+}
+
+message ApiLogs {
+    string         Address = 1 [(gogoproto.jsontag) = "address"];
+    repeated Event Events  = 2 [(gogoproto.jsontag) = "events"];
+}
+
+message Event {
+    string         Address        = 1 [(gogoproto.jsontag) = "address"];
+    bytes          Identifier     = 2 [(gogoproto.jsontag) = "identifier"];
+    repeated bytes Topics         = 3 [(gogoproto.jsontag) = "topics"];
+    bytes          Data           = 4 [(gogoproto.jsontag) = "data"];
+    repeated bytes AdditionalData = 5 [(gogoproto.jsontag) = "additionalData"];
+}
+
+message NotarizedBlock {
+    string                  Hash            = 1 [(gogoproto.jsontag) = "hash"];
+    uint64                  Nonce           = 2 [(gogoproto.jsontag) = "nonce"];
+    uint64                  Round           = 3 [(gogoproto.jsontag) = "round"];
+    uint32                  Shard           = 4 [(gogoproto.jsontag) = "shard"];
+    string                  RootHash        = 5 [(gogoproto.jsontag) = "rootHash"];
+    repeated string         MiniBlockHashes = 6 [(gogoproto.jsontag) = "miniBlockHashes,omitempty"];
+    repeated AlteredAccount AlteredAccounts = 7 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
+}
