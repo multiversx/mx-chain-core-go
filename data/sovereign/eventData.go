@@ -9,6 +9,7 @@ type TransferData struct {
 
 // EventData holds the full event data structure
 type EventData struct {
-	Nonce uint64
+	Nonce  uint64
+	Sender []byte
 	*TransferData
 }
