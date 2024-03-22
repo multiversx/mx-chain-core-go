@@ -14,8 +14,7 @@ var _ = data.HeaderHandler(&Header{})
 var _ = data.ShardHeaderHandler(&Header{})
 
 // MiniBlockSlice should be used when referring to subset of mini blocks that is not
-//
-//	necessarily representing a full block body
+// necessarily representing a full block body
 type MiniBlockSlice []*MiniBlock
 
 // MiniblockAndHash holds the info related to a miniblock and its hash
