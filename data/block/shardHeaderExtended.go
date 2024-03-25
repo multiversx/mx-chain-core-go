@@ -914,3 +914,12 @@ func (she *ShardHeaderExtended) GetHeaderHandler() data.HeaderHandler {
 
 	return she.GetHeader()
 }
+
+// SetBlockBodyTypeInt32 sets the blockBodyType in the header
+func (she *ShardHeaderExtended) SetBlockBodyTypeInt32(blockBodyType int32) error {
+	if she == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return she.Header.SetBlockBodyTypeInt32(blockBodyType)
+}
