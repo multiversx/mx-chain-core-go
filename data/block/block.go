@@ -14,7 +14,8 @@ var _ = data.HeaderHandler(&Header{})
 var _ = data.ShardHeaderHandler(&Header{})
 
 // MiniBlockSlice should be used when referring to subset of mini blocks that is not
-//  necessarily representing a full block body
+//
+//	necessarily representing a full block body
 type MiniBlockSlice []*MiniBlock
 
 // MiniblockAndHash holds the info related to a miniblock and its hash
@@ -272,6 +273,17 @@ func (h *Header) ShallowClone() data.HeaderHandler {
 
 	headerCopy := *h
 	return &headerCopy
+}
+
+// SetBlockBodyTypeInt32 sets the blockBodyType in the header
+func (h *Header) SetBlockBodyTypeInt32(blockBodyType int32) error {
+	if h == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	h.BlockBodyType = Type(blockBodyType)
+
+	return nil
 }
 
 // IsInterfaceNil returns true if there is no value under the interface
