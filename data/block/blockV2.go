@@ -401,6 +401,15 @@ func (hv2 *HeaderV2) ShallowClone() data.HeaderHandler {
 	return &headerCopy
 }
 
+// SetBlockBodyTypeInt32 sets the blockBodyType in the header
+func (hv2 *HeaderV2) SetBlockBodyTypeInt32(blockBodyType int32) error {
+	if hv2 == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return hv2.Header.SetBlockBodyTypeInt32(blockBodyType)
+}
+
 // IsInterfaceNil returns true if there is no value under the interface
 func (hv2 *HeaderV2) IsInterfaceNil() bool {
 	return hv2 == nil
