@@ -845,3 +845,27 @@ func TestMiniBlockHeader_GetMiniBlockHeaderReservedShouldErrWhenReservedFieldIsN
 	assert.Nil(t, mbhr)
 	assert.Equal(t, data.ErrNilReservedField, err)
 }
+
+func TestHeader_SetBlockBodyTypeInt32(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil header should error", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.Header
+		err := header.SetBlockBodyTypeInt32(int32(block.ReceiptBlock))
+		require.Equal(t, data.ErrNilPointerReceiver, err)
+	})
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.Header{}
+		err := header.SetBlockBodyTypeInt32(int32(block.ReceiptBlock))
+		require.Nil(t, err)
+		require.Equal(t, block.ReceiptBlock, header.BlockBodyType)
+
+		err = header.SetBlockBodyTypeInt32(int32(block.TxBlock))
+		require.Nil(t, err)
+		require.Equal(t, block.TxBlock, header.BlockBodyType)
+	})
+}

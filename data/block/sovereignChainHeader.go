@@ -574,6 +574,15 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data
 	return nil
 }
 
+// SetBlockBodyTypeInt32 sets the blockBodyType in the header
+func (sch *SovereignChainHeader) SetBlockBodyTypeInt32(blockBodyType int32) error {
+	if sch == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return sch.Header.SetBlockBodyTypeInt32(blockBodyType)
+}
+
 // SetHash returns the hash
 func (omb *OutGoingMiniBlockHeader) SetHash(hash []byte) error {
 	if omb == nil {
