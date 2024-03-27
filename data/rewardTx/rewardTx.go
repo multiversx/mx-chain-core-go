@@ -62,6 +62,11 @@ func (rtx *RewardTx) GetRcvUserName() []byte {
 	return nil
 }
 
+// GetUserTransaction returns nil as RewardTx does not have user transaction
+func (rtx *RewardTx) GetUserTransaction() data.TransactionHandler {
+	return nil
+}
+
 // CheckIntegrity checks for not nil fields and negative value
 func (rtx *RewardTx) CheckIntegrity() error {
 	if len(rtx.RcvAddr) == 0 {
