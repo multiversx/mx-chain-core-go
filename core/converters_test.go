@@ -255,3 +255,56 @@ func TestConvertShardIDToUint32(t *testing.T) {
 	assert.Error(t, err)
 	assert.Equal(t, uint32(0), shardID)
 }
+
+func TestConvertESDTTypeToUint32(t *testing.T) {
+	t.Parallel()
+
+	tokenTypeId, err := core.ConvertESDTTypeToUint32(core.FungibleESDT)
+	assert.Nil(t, err)
+	assert.Equal(t, uint32(core.Fungible), tokenTypeId)
+
+	tokenTypeId, err = core.ConvertESDTTypeToUint32(core.NonFungibleESDT)
+	assert.Nil(t, err)
+	assert.Equal(t, uint32(core.NonFungible), tokenTypeId)
+
+	tokenTypeId, err = core.ConvertESDTTypeToUint32(core.NonFungibleESDTv2)
+	assert.Nil(t, err)
+	assert.Equal(t, uint32(core.NonFungibleV2), tokenTypeId)
+
+	tokenTypeId, err = core.ConvertESDTTypeToUint32(core.MetaESDT)
+	assert.Nil(t, err)
+	assert.Equal(t, uint32(core.MetaFungible), tokenTypeId)
+
+	tokenTypeId, err = core.ConvertESDTTypeToUint32(core.SemiFungibleESDT)
+	assert.Nil(t, err)
+	assert.Equal(t, uint32(core.SemiFungible), tokenTypeId)
+
+	tokenTypeId, err = core.ConvertESDTTypeToUint32(core.DynamicNFTESDT)
+	assert.Nil(t, err)
+	assert.Equal(t, uint32(core.DynamicNFT), tokenTypeId)
+
+	tokenTypeId, err = core.ConvertESDTTypeToUint32(core.DynamicSFTESDT)
+	assert.Nil(t, err)
+	assert.Equal(t, uint32(core.DynamicSFT), tokenTypeId)
+
+	tokenTypeId, err = core.ConvertESDTTypeToUint32(core.DynamicMetaESDT)
+	assert.Nil(t, err)
+	assert.Equal(t, uint32(core.DynamicMeta), tokenTypeId)
+
+	tokenTypeId, err = core.ConvertESDTTypeToUint32("wrongType")
+	assert.NotNil(t, err)
+	assert.Equal(t, uint32(math.MaxUint32), tokenTypeId)
+}
+
+func TestIsDynamicESDT(t *testing.T) {
+	t.Parallel()
+
+	assert.True(t, core.IsDynamicESDT(uint32(core.DynamicNFT)))
+	assert.True(t, core.IsDynamicESDT(uint32(core.DynamicSFT)))
+	assert.True(t, core.IsDynamicESDT(uint32(core.DynamicMeta)))
+	assert.False(t, core.IsDynamicESDT(uint32(core.Fungible)))
+	assert.False(t, core.IsDynamicESDT(uint32(core.NonFungible)))
+	assert.False(t, core.IsDynamicESDT(uint32(core.NonFungibleV2)))
+	assert.False(t, core.IsDynamicESDT(uint32(core.SemiFungible)))
+	assert.False(t, core.IsDynamicESDT(uint32(core.MetaFungible)))
+}

@@ -177,3 +177,32 @@ func ConvertToEvenHexBigInt(value *big.Int) string {
 
 	return str
 }
+
+// ConvertESDTTypeToUint32 converts the esdt type to uint32
+func ConvertESDTTypeToUint32(esdtType string) (uint32, error) {
+	switch esdtType {
+	case FungibleESDT:
+		return uint32(Fungible), nil
+	case NonFungibleESDT:
+		return uint32(NonFungible), nil
+	case NonFungibleESDTv2:
+		return uint32(NonFungibleV2), nil
+	case MetaESDT:
+		return uint32(MetaFungible), nil
+	case SemiFungibleESDT:
+		return uint32(SemiFungible), nil
+	case DynamicNFTESDT:
+		return uint32(DynamicNFT), nil
+	case DynamicSFTESDT:
+		return uint32(DynamicSFT), nil
+	case DynamicMetaESDT:
+		return uint32(DynamicMeta), nil
+	default:
+		return math.MaxUint32, fmt.Errorf("invalid esdt type: %s", esdtType)
+	}
+}
+
+// IsDynamicESDT returns true if the esdt type is dynamic
+func IsDynamicESDT(esdtType uint32) bool {
+	return esdtType == uint32(DynamicNFT) || esdtType == uint32(DynamicSFT) || esdtType == uint32(DynamicMeta)
+}
