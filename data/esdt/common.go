@@ -17,6 +17,7 @@ const (
 	minLengthESDTPrefix = 1
 )
 
+// IsValidPrefixedToken checks if the provided token is valid, and returns if prefix if so
 func IsValidPrefixedToken(token string) (string, bool) {
 	tokenSplit := strings.Split(token, separatorChar)
 	if len(tokenSplit) < 3 {
