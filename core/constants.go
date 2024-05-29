@@ -250,9 +250,6 @@ const RelayedTransaction = "relayedTx"
 // RelayedTransactionV2 is the key for the optimized electronic meta/gassless/relayed transaction standard
 const RelayedTransactionV2 = "relayedTxV2"
 
-// RelayedTransactionV3 is the key for the optimized electronic meta/gassless/relayed transaction standard
-const RelayedTransactionV3 = "relayedTxV3"
-
 // SCDeployInitFunctionName is the key for the function which is called at smart contract deploy time
 const SCDeployInitFunctionName = "_init"
 
