@@ -29,8 +29,8 @@ type TriggerRegistryHandler interface {
 	SetEpochStartHeaderHandler(epochStartHeaderHandler HeaderHandler) error
 }
 
-// HeaderHandler defines getters and setters for header data holder
-type HeaderHandler interface {
+// CommonHeaderHandler defines getters and setters for header data holder
+type CommonHeaderHandler interface {
 	GetShardID() uint32
 	GetNonce() uint64
 	GetEpoch() uint32
@@ -47,20 +47,12 @@ type HeaderHandler interface {
 	GetTimeStamp() uint64
 	GetTxCount() uint32
 	GetReceiptsHash() []byte
+	GetReserved() []byte
 	GetAccumulatedFees() *big.Int
 	GetDeveloperFees() *big.Int
-	GetReserved() []byte
-	GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32
-	GetOrderedCrossMiniblocksWithDst(destId uint32) []*MiniBlockInfo
 	GetMiniBlockHeadersHashes() [][]byte
 	GetMiniBlockHeaderHandlers() []MiniBlockHeaderHandler
-	HasScheduledSupport() bool
-	GetAdditionalData() headerVersionData.HeaderAdditionalData
-	HasScheduledMiniBlocks() bool
 
-	SetAccumulatedFees(value *big.Int) error
-	SetDeveloperFees(value *big.Int) error
-	SetShardID(shId uint32) error
 	SetNonce(n uint64) error
 	SetEpoch(e uint32) error
 	SetRound(r uint64) error
@@ -75,15 +67,66 @@ type HeaderHandler interface {
 	SetChainID(chainID []byte) error
 	SetSoftwareVersion(version []byte) error
 	SetTxCount(txCount uint32) error
+	SetDeveloperFees(value *big.Int) error
+	SetAccumulatedFees(value *big.Int) error
 	SetMiniBlockHeaderHandlers(mbHeaderHandlers []MiniBlockHeaderHandler) error
 	SetReceiptsHash(hash []byte) error
-	SetScheduledRootHash(rootHash []byte) error
 	ValidateHeaderVersion() error
-	SetAdditionalData(headerVersionData headerVersionData.HeaderAdditionalData) error
 	IsStartOfEpochBlock() bool
 	ShallowClone() HeaderHandler
 	CheckFieldsForNil() error
 	IsInterfaceNil() bool
+}
+
+// ValidatorStatisticsInfoHandler is a simple handler needed for validator statistics info
+type ValidatorStatisticsInfoHandler interface {
+	SetValidatorStatsRootHash(rootHash []byte) error
+	GetValidatorStatsRootHash() []byte
+	IsInterfaceNil() bool
+}
+
+// SovereignChainHeaderHandler defines getters and setters for the sovereign chain header
+type SovereignChainHeaderHandler interface {
+	CommonHeaderHandler
+	GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32
+	SetValidatorStatsRootHash(rootHash []byte) error
+	GetValidatorStatsRootHash() []byte
+	SetExtendedShardHeaderHashes(hdrHashes [][]byte) error
+	GetExtendedShardHeaderHashes() [][]byte
+	GetOutGoingMiniBlockHeaderHandler() OutGoingMiniBlockHeaderHandler
+	SetOutGoingMiniBlockHeaderHandler(mbHeader OutGoingMiniBlockHeaderHandler) error
+}
+
+// OutGoingMiniBlockHeaderHandler defines setters and getters for sovereign outgoing mini block header
+type OutGoingMiniBlockHeaderHandler interface {
+	GetHash() []byte
+	GetOutGoingOperationsHash() []byte
+	GetAggregatedSignatureOutGoingOperations() []byte
+	GetLeaderSignatureOutGoingOperations() []byte
+
+	SetHash(hash []byte) error
+	SetOutGoingOperationsHash(hash []byte) error
+	SetLeaderSignatureOutGoingOperations(sig []byte) error
+	SetAggregatedSignatureOutGoingOperations(sig []byte) error
+
+	IsInterfaceNil() bool
+}
+
+// HeaderHandler defines getters and setters for header data holder
+type HeaderHandler interface {
+	CommonHeaderHandler
+	GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32
+	GetOrderedCrossMiniblocksWithDst(destId uint32) []*MiniBlockInfo
+	HasScheduledSupport() bool
+	GetAdditionalData() headerVersionData.HeaderAdditionalData
+	HasScheduledMiniBlocks() bool
+	GetValidatorStatsRootHash() []byte
+
+	SetShardID(shId uint32) error
+	SetScheduledRootHash(rootHash []byte) error
+	SetAdditionalData(headerVersionData headerVersionData.HeaderAdditionalData) error
+	SetValidatorStatsRootHash(rHash []byte) error
+	ShallowClone() HeaderHandler
 }
 
 // ShardHeaderHandler defines getters and setters for the shard block header
@@ -101,11 +144,9 @@ type ShardHeaderHandler interface {
 // MetaHeaderHandler defines getters and setters for the meta block header
 type MetaHeaderHandler interface {
 	HeaderHandler
-	GetValidatorStatsRootHash() []byte
 	GetEpochStartHandler() EpochStartHandler
 	GetDevFeesInEpoch() *big.Int
 	GetShardInfoHandlers() []ShardDataHandler
-	SetValidatorStatsRootHash(rHash []byte) error
 	SetDevFeesInEpoch(value *big.Int) error
 	SetShardInfoHandlers(shardInfo []ShardDataHandler) error
 	SetAccumulatedFeesInEpoch(value *big.Int) error
@@ -235,8 +276,16 @@ type EpochStartHandler interface {
 	SetEconomics(economicsHandler EconomicsHandler) error
 }
 
+// MiniBlockHandler interface for miniblock
+type MiniBlockHandler interface {
+	Clone() MiniBlockHandler
+	// IsInterfaceNil returns true if there is no value under the interface
+	IsInterfaceNil() bool
+}
+
 // BodyHandler interface for a block body
 type BodyHandler interface {
+	SetMiniBlocks(miniBlocks []MiniBlockHandler) error
 	Clone() BodyHandler
 	// IntegrityAndValidity checks the integrity and validity of the block
 	IntegrityAndValidity() error
@@ -407,4 +456,13 @@ type UserAccountHandler interface {
 	GetNonce() uint64
 	AddressBytes() []byte
 	IsInterfaceNil() bool
+}
+
+// ShardHeaderExtendedHandler extends ShardHeaderHandler interface, by also including incoming mini blocks needed by sovereign chain
+type ShardHeaderExtendedHandler interface {
+	ShardHeaderHandler
+	GetIncomingMiniBlockHandlers() []MiniBlockHandler
+	SetIncomingMiniBlockHandlers(miniBlockHandlers []MiniBlockHandler) error
+	GetHeaderHandler() HeaderHandler
+	GetIncomingEventHandlers() []EventHandler
 }
