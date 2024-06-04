@@ -88,16 +88,15 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.M
 	numInnerTxs := len(tx.InnerTransactions)
 	if numInnerTxs > 0 {
 		ftx.InnerTransactions = make([]*FrontendTransaction, numInnerTxs)
+		var errPrepare error
 		for i := 0; i < numInnerTxs; i++ {
-			innerFtx, errPrepare := tx.InnerTransactions[i].prepareTx(encoder)
+			ftx.InnerTransactions[i], errPrepare = tx.InnerTransactions[i].prepareTx(encoder)
 			if errPrepare != nil {
 				return nil, errPrepare
 			}
 
-			innerFtx.Signature = hex.EncodeToString(tx.InnerTransactions[i].Signature)
-			innerFtx.GuardianSignature = hex.EncodeToString(tx.InnerTransactions[i].GuardianSignature)
-
-			ftx.InnerTransactions[i] = innerFtx
+			ftx.InnerTransactions[i].Signature = hex.EncodeToString(tx.InnerTransactions[i].Signature)
+			ftx.InnerTransactions[i].GuardianSignature = hex.EncodeToString(tx.InnerTransactions[i].GuardianSignature)
 		}
 
 	}
