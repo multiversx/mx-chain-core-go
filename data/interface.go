@@ -399,6 +399,7 @@ type TransactionWithFeeHandler interface {
 	GetData() []byte
 	GetRcvAddr() []byte
 	GetValue() *big.Int
+	GetUserTransactions() []TransactionHandler
 }
 
 // UserAccountHandler models a user account
