@@ -37,9 +37,15 @@ func (tx *Transaction) SetSndAddr(addr []byte) {
 	tx.SndAddr = addr
 }
 
-// GetUserTransaction returns the inner transaction
-func (tx *Transaction) GetUserTransaction() data.TransactionHandler {
-	return tx.GetInnerTransaction()
+// GetUserTransactions returns the inner transactions
+func (tx *Transaction) GetUserTransactions() []data.TransactionHandler {
+	innerTxs := tx.GetInnerTransactions()
+	txsHandlers := make([]data.TransactionHandler, len(innerTxs))
+	for i := 0; i < len(innerTxs); i++ {
+		txsHandlers[i] = innerTxs[i]
+	}
+
+	return txsHandlers
 }
 
 // TrimSlicePtr creates a copy of the provided slice without the excess capacity
@@ -79,14 +85,20 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.M
 		return nil, err
 	}
 
-	if tx.InnerTransaction != nil {
-		ftx.InnerTransaction, err = tx.InnerTransaction.prepareTx(encoder)
-		if err != nil {
-			return nil, err
+	numInnerTxs := len(tx.InnerTransactions)
+	if numInnerTxs > 0 {
+		ftx.InnerTransactions = make([]*FrontendTransaction, numInnerTxs)
+		var errPrepare error
+		for i := 0; i < numInnerTxs; i++ {
+			ftx.InnerTransactions[i], errPrepare = tx.InnerTransactions[i].prepareTx(encoder)
+			if errPrepare != nil {
+				return nil, errPrepare
+			}
+
+			ftx.InnerTransactions[i].Signature = hex.EncodeToString(tx.InnerTransactions[i].Signature)
+			ftx.InnerTransactions[i].GuardianSignature = hex.EncodeToString(tx.InnerTransactions[i].GuardianSignature)
 		}
 
-		ftx.InnerTransaction.Signature = hex.EncodeToString(tx.InnerTransaction.Signature)
-		ftx.InnerTransaction.GuardianSignature = hex.EncodeToString(tx.InnerTransaction.GuardianSignature)
 	}
 
 	ftxBytes, err := marshaller.Marshal(ftx)
