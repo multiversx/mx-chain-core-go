@@ -587,6 +587,16 @@ func (sch *SovereignChainHeader) SetBlockBodyTypeInt32(blockBodyType int32) erro
 	return sch.Header.SetBlockBodyTypeInt32(blockBodyType)
 }
 
+// SetEpochStartHash sets the epoch start block hash
+func (sch *SovereignChainHeader) SetEpochStartHash(hash []byte) error {
+	if sch == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	sch.EpochStartHeaderHash = hash
+	return nil
+}
+
 // SetHash returns the hash
 func (omb *OutGoingMiniBlockHeader) SetHash(hash []byte) error {
 	if omb == nil {
