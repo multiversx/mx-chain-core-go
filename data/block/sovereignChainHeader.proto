@@ -15,6 +15,7 @@ message SovereignChainHeader {
   bytes                   ValidatorStatsRootHash    = 2 [(gogoproto.jsontag) = "validatorStatsRootHash"];
   repeated bytes          ExtendedShardHeaderHashes = 3 [(gogoproto.jsontag) = "extendedShardHeaderHashes,omitempty"];
   OutGoingMiniBlockHeader OutGoingMiniBlockHeader   = 4 [(gogoproto.jsontag) = "outGoingOperations,omitempty"];
+  bytes                   EpochStartHeaderHash      = 5 [(gogoproto.jsontag) = "epochStartHeaderHash,omitempty"];
 }
 
 message OutGoingMiniBlockHeader {

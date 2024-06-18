@@ -456,7 +456,11 @@ func (sch *SovereignChainHeader) IsInterfaceNil() bool {
 
 // IsStartOfEpochBlock returns false for the sovereign chain header
 func (sch *SovereignChainHeader) IsStartOfEpochBlock() bool {
-	return false
+	if sch == nil {
+		return false
+	}
+
+	return len(sch.EpochStartHeaderHash) > 0
 }
 
 // GetBlockBodyTypeInt32 returns the blockBody type as int32
