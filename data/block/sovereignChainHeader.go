@@ -460,7 +460,7 @@ func (sch *SovereignChainHeader) IsStartOfEpochBlock() bool {
 		return false
 	}
 
-	return len(sch.EpochStartHeaderHash) > 0
+	return sch.IsStartOfEpoch
 }
 
 // GetBlockBodyTypeInt32 returns the blockBody type as int32
@@ -587,13 +587,13 @@ func (sch *SovereignChainHeader) SetBlockBodyTypeInt32(blockBodyType int32) erro
 	return sch.Header.SetBlockBodyTypeInt32(blockBodyType)
 }
 
-// SetEpochStartHeaderHash sets the epoch start block hash
-func (sch *SovereignChainHeader) SetEpochStartHeaderHash(hash []byte) error {
+// SetStartOfEpochHeader sets the bool flag for epoch start header
+func (sch *SovereignChainHeader) SetStartOfEpochHeader() error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
 	}
 
-	sch.EpochStartHeaderHash = hash
+	sch.IsStartOfEpoch = true
 	return nil
 }
 
