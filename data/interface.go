@@ -29,6 +29,17 @@ type TriggerRegistryHandler interface {
 	SetEpochStartHeaderHandler(epochStartHeaderHandler HeaderHandler) error
 }
 
+// MetaTriggerRegistryHandler defines meta chain trigger registry interface
+type MetaTriggerRegistryHandler interface {
+	GetEpoch() uint32
+	GetCurrentRound() uint64
+	GetEpochFinalityAttestingRound() uint64
+	GetCurrEpochStartRound() uint64
+	GetPrevEpochStartRound() uint64
+	GetEpochStartMetaHash() []byte
+	GetEpochStartHeaderHandler() HeaderHandler
+}
+
 // CommonHeaderHandler defines getters and setters for header data holder
 type CommonHeaderHandler interface {
 	GetShardID() uint32
