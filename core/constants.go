@@ -214,6 +214,30 @@ const (
 	DynamicMeta
 )
 
+// String will convert number type in string
+func (t ESDTType) String() string {
+	switch t {
+	case Fungible:
+		return FungibleESDT
+	case NonFungible:
+		return NonFungibleESDT
+	case NonFungibleV2:
+		return NonFungibleESDTv2
+	case SemiFungible:
+		return SemiFungibleESDT
+	case MetaFungible:
+		return MetaESDT
+	case DynamicNFT:
+		return DynamicNFTESDT
+	case DynamicSFT:
+		return DynamicSFTESDT
+	case DynamicMeta:
+		return DynamicMetaESDT
+	default:
+		return "Unknown"
+	}
+}
+
 // FungibleESDT defines the string for the token type of fungible ESDT
 const FungibleESDT = "FungibleESDT"
 
