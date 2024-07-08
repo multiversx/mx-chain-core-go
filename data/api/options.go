@@ -10,6 +10,7 @@ type AccountQueryOptions struct {
 	BlockHash      []byte
 	BlockRootHash  []byte
 	HintEpoch      core.OptionalUint32
+	WithKeys       bool
 }
 
 // BlockQueryOptions holds options for block queries

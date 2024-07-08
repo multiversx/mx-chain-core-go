@@ -22,6 +22,7 @@ message AccountTokenData {
   string                     Properties     = 4 [(gogoproto.jsontag) = "properties"];
   TokenMetaData              MetaData       = 5 [(gogoproto.jsontag) = "metaData,omitempty"];
   AdditionalAccountTokenData AdditionalData = 6 [(gogoproto.jsontag) = "additionalData,omitempty"];
+  string                     Type           = 7 [(gogoproto.jsontag) = "type,omitempty"];
 }
 
 message TokenMetaData {
