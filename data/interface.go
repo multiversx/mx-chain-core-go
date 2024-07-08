@@ -97,6 +97,7 @@ type ShardHeaderHandler interface {
 	GetBlockBodyTypeInt32() int32
 	SetMetaBlockHashes(hashes [][]byte) error
 	MapMiniBlockHashesToShards() map[string]uint32
+	SetBlockBodyTypeInt32(blockBodyType int32) error
 }
 
 // MetaHeaderHandler defines getters and setters for the meta block header
