@@ -1218,6 +1218,32 @@ func TestHeaderV2_HasScheduledMiniBlocks(t *testing.T) {
 	require.False(t, shardBlock.HasScheduledMiniBlocks())
 }
 
+func TestHeaderV2_SetBlockBodyTypeInt32(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil header should error", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.HeaderV2
+		err := header.SetBlockBodyTypeInt32(int32(block.ReceiptBlock))
+		require.Equal(t, data.ErrNilPointerReceiver, err)
+	})
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.HeaderV2{
+			Header: &block.Header{},
+		}
+		err := header.SetBlockBodyTypeInt32(int32(block.ReceiptBlock))
+		require.Nil(t, err)
+		require.Equal(t, int32(block.ReceiptBlock), header.GetBlockBodyTypeInt32())
+
+		err = header.SetBlockBodyTypeInt32(int32(block.TxBlock))
+		require.Nil(t, err)
+		require.Equal(t, int32(block.TxBlock), header.GetBlockBodyTypeInt32())
+	})
+}
+
 func TestHeaderV2_GetPreviousAggregatedSignatureAndBitmap(t *testing.T) {
 	t.Parallel()
 

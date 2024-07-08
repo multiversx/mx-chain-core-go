@@ -278,6 +278,17 @@ func (h *Header) ShallowClone() data.HeaderHandler {
 	return &headerCopy
 }
 
+// SetBlockBodyTypeInt32 sets the blockBodyType in the header
+func (h *Header) SetBlockBodyTypeInt32(blockBodyType int32) error {
+	if h == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	h.BlockBodyType = Type(blockBodyType)
+
+	return nil
+}
+
 // IsInterfaceNil returns true if there is no value under the interface
 func (h *Header) IsInterfaceNil() bool {
 	return h == nil
