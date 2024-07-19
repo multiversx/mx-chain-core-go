@@ -631,6 +631,36 @@ func (sch *SovereignChainHeader) SetAccumulatedFeesInEpoch(value *big.Int) error
 	return nil
 }
 
+// GetEpochStartHandler returns epoch start header handler as for metachain, but without last finalized headers
+func (sch *SovereignChainHeader) GetEpochStartHandler() data.EpochStartHandler {
+	if sch == nil {
+		return nil
+	}
+
+	return &EpochStart{
+		LastFinalizedHeaders: make([]EpochStartShardData, 0),
+		Economics:            sch.EpochStart.Economics,
+	}
+}
+
+// GetShardInfoHandlers returns empty slice
+func (sch *SovereignChainHeader) GetShardInfoHandlers() []data.ShardDataHandler {
+	if sch == nil {
+		return nil
+	}
+
+	return make([]data.ShardDataHandler, 0)
+}
+
+// SetShardInfoHandlers does nothing
+func (sch *SovereignChainHeader) SetShardInfoHandlers(_ []data.ShardDataHandler) error {
+	if sch == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return nil
+}
+
 // SetHash returns the hash
 func (omb *OutGoingMiniBlockHeader) SetHash(hash []byte) error {
 	if omb == nil {

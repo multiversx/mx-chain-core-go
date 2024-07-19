@@ -111,6 +111,9 @@ type SovereignChainHeaderHandler interface {
 	GetAccumulatedFeesInEpoch() *big.Int
 	SetAccumulatedFeesInEpoch(value *big.Int) error
 	SetStartOfEpochHeader() error
+	GetEpochStartHandler() EpochStartHandler
+	GetShardInfoHandlers() []ShardDataHandler
+	SetShardInfoHandlers(shardInfo []ShardDataHandler) error
 }
 
 // OutGoingMiniBlockHeaderHandler defines setters and getters for sovereign outgoing mini block header
