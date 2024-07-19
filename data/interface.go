@@ -162,6 +162,7 @@ type MetaHeaderHandler interface {
 	HeaderHandler
 	GetEpochStartHandler() EpochStartHandler
 	GetDevFeesInEpoch() *big.Int
+	GetAccumulatedFeesInEpoch() *big.Int
 	GetShardInfoHandlers() []ShardDataHandler
 	SetDevFeesInEpoch(value *big.Int) error
 	SetShardInfoHandlers(shardInfo []ShardDataHandler) error
