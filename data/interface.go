@@ -106,7 +106,14 @@ type SovereignChainHeaderHandler interface {
 	GetExtendedShardHeaderHashes() [][]byte
 	GetOutGoingMiniBlockHeaderHandler() OutGoingMiniBlockHeaderHandler
 	SetOutGoingMiniBlockHeaderHandler(mbHeader OutGoingMiniBlockHeaderHandler) error
+	GetDevFeesInEpoch() *big.Int
+	SetDevFeesInEpoch(value *big.Int) error
+	GetAccumulatedFeesInEpoch() *big.Int
+	SetAccumulatedFeesInEpoch(value *big.Int) error
 	SetStartOfEpochHeader() error
+	GetEpochStartHandler() EpochStartHandler
+	GetShardInfoHandlers() []ShardDataHandler
+	SetShardInfoHandlers(shardInfo []ShardDataHandler) error
 }
 
 // OutGoingMiniBlockHeaderHandler defines setters and getters for sovereign outgoing mini block header
@@ -158,6 +165,7 @@ type MetaHeaderHandler interface {
 	HeaderHandler
 	GetEpochStartHandler() EpochStartHandler
 	GetDevFeesInEpoch() *big.Int
+	GetAccumulatedFeesInEpoch() *big.Int
 	GetShardInfoHandlers() []ShardDataHandler
 	SetDevFeesInEpoch(value *big.Int) error
 	SetShardInfoHandlers(shardInfo []ShardDataHandler) error

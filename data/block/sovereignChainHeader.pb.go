@@ -8,8 +8,10 @@ import (
 	fmt "fmt"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
+	github_com_multiversx_mx_chain_core_go_data "github.com/multiversx/mx-chain-core-go/data"
 	io "io"
 	math "math"
+	math_big "math/big"
 	math_bits "math/bits"
 	reflect "reflect"
 	strings "strings"
@@ -26,6 +28,46 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// EpochStart holds the block information for end-of-epoch
+type EpochStartSovereign struct {
+	Economics Economics `protobuf:"bytes,1,opt,name=Economics,proto3" json:"economics"`
+}
+
+func (m *EpochStartSovereign) Reset()      { *m = EpochStartSovereign{} }
+func (*EpochStartSovereign) ProtoMessage() {}
+func (*EpochStartSovereign) Descriptor() ([]byte, []int) {
+	return fileDescriptor_b9b8ff297a820152, []int{0}
+}
+func (m *EpochStartSovereign) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *EpochStartSovereign) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *EpochStartSovereign) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_EpochStartSovereign.Merge(m, src)
+}
+func (m *EpochStartSovereign) XXX_Size() int {
+	return m.Size()
+}
+func (m *EpochStartSovereign) XXX_DiscardUnknown() {
+	xxx_messageInfo_EpochStartSovereign.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_EpochStartSovereign proto.InternalMessageInfo
+
+func (m *EpochStartSovereign) GetEconomics() Economics {
+	if m != nil {
+		return m.Economics
+	}
+	return Economics{}
+}
+
 // SovereignChainHeader extends the Header structure with extra fields needed by sovereign chain
 type SovereignChainHeader struct {
 	Header                    *Header                  `protobuf:"bytes,1,opt,name=Header,proto3" json:"header"`
@@ -33,12 +75,15 @@ type SovereignChainHeader struct {
 	ExtendedShardHeaderHashes [][]byte                 `protobuf:"bytes,3,rep,name=ExtendedShardHeaderHashes,proto3" json:"extendedShardHeaderHashes,omitempty"`
 	OutGoingMiniBlockHeader   *OutGoingMiniBlockHeader `protobuf:"bytes,4,opt,name=OutGoingMiniBlockHeader,proto3" json:"outGoingOperations,omitempty"`
 	IsStartOfEpoch            bool                     `protobuf:"varint,5,opt,name=IsStartOfEpoch,proto3" json:"isStartOfEpoch,omitempty"`
+	AccumulatedFeesInEpoch    *math_big.Int            `protobuf:"bytes,6,opt,name=AccumulatedFeesInEpoch,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"accumulatedFeesInEpoch,omitempty"`
+	DevFeesInEpoch            *math_big.Int            `protobuf:"bytes,7,opt,name=DevFeesInEpoch,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"devFeesInEpoch,omitempty"`
+	EpochStart                EpochStartSovereign      `protobuf:"bytes,8,opt,name=EpochStart,proto3" json:"epochStart,omitempty"`
 }
 
 func (m *SovereignChainHeader) Reset()      { *m = SovereignChainHeader{} }
 func (*SovereignChainHeader) ProtoMessage() {}
 func (*SovereignChainHeader) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b9b8ff297a820152, []int{0}
+	return fileDescriptor_b9b8ff297a820152, []int{1}
 }
 func (m *SovereignChainHeader) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -98,6 +143,27 @@ func (m *SovereignChainHeader) GetIsStartOfEpoch() bool {
 	return false
 }
 
+func (m *SovereignChainHeader) GetAccumulatedFeesInEpoch() *math_big.Int {
+	if m != nil {
+		return m.AccumulatedFeesInEpoch
+	}
+	return nil
+}
+
+func (m *SovereignChainHeader) GetDevFeesInEpoch() *math_big.Int {
+	if m != nil {
+		return m.DevFeesInEpoch
+	}
+	return nil
+}
+
+func (m *SovereignChainHeader) GetEpochStart() EpochStartSovereign {
+	if m != nil {
+		return m.EpochStart
+	}
+	return EpochStartSovereign{}
+}
+
 type OutGoingMiniBlockHeader struct {
 	Hash                                  []byte `protobuf:"bytes,1,opt,name=Hash,proto3" json:"hash,omitempty"`
 	OutGoingOperationsHash                []byte `protobuf:"bytes,2,opt,name=OutGoingOperationsHash,proto3" json:"outGoingOperationsHash,omitempty"`
@@ -108,7 +174,7 @@ type OutGoingMiniBlockHeader struct {
 func (m *OutGoingMiniBlockHeader) Reset()      { *m = OutGoingMiniBlockHeader{} }
 func (*OutGoingMiniBlockHeader) ProtoMessage() {}
 func (*OutGoingMiniBlockHeader) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b9b8ff297a820152, []int{1}
+	return fileDescriptor_b9b8ff297a820152, []int{2}
 }
 func (m *OutGoingMiniBlockHeader) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -162,6 +228,7 @@ func (m *OutGoingMiniBlockHeader) GetLeaderSignatureOutGoingOperations() []byte 
 }
 
 func init() {
+	proto.RegisterType((*EpochStartSovereign)(nil), "proto.EpochStartSovereign")
 	proto.RegisterType((*SovereignChainHeader)(nil), "proto.SovereignChainHeader")
 	proto.RegisterType((*OutGoingMiniBlockHeader)(nil), "proto.OutGoingMiniBlockHeader")
 }
@@ -169,40 +236,76 @@ func init() {
 func init() { proto.RegisterFile("sovereignChainHeader.proto", fileDescriptor_b9b8ff297a820152) }
 
 var fileDescriptor_b9b8ff297a820152 = []byte{
-	// 493 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x8c, 0x53, 0x4f, 0x6f, 0xd3, 0x30,
-	0x14, 0x8f, 0x49, 0x5b, 0x21, 0x6f, 0xec, 0x60, 0xa1, 0x12, 0xaa, 0xc9, 0x09, 0xe3, 0x5f, 0x25,
-	0xa0, 0x15, 0xec, 0x03, 0x20, 0x02, 0x13, 0x43, 0x02, 0x55, 0x4a, 0x24, 0x0e, 0x88, 0x8b, 0xdb,
-	0x78, 0x8e, 0x45, 0x1b, 0x57, 0x8e, 0x3b, 0x01, 0x12, 0x12, 0x57, 0x6e, 0x7c, 0x0c, 0xc4, 0x07,
-	0x41, 0x1c, 0x7b, 0xec, 0xc9, 0xa2, 0xe9, 0x05, 0xf9, 0xb4, 0x8f, 0x80, 0xe6, 0xf4, 0x10, 0x58,
-	0xc3, 0x76, 0xca, 0x7b, 0x7e, 0xbf, 0xf7, 0xfb, 0xbd, 0x9f, 0x5f, 0x0c, 0x3b, 0xb9, 0x38, 0xa6,
-	0x92, 0x72, 0x96, 0x3d, 0x4d, 0x09, 0xcf, 0x0e, 0x29, 0x49, 0xa8, 0xec, 0x4d, 0xa5, 0x50, 0x02,
-	0x35, 0xed, 0xa7, 0xf3, 0x80, 0x71, 0x95, 0xce, 0x86, 0xbd, 0x91, 0x98, 0xf4, 0x99, 0x60, 0xa2,
-	0x6f, 0x8f, 0x87, 0xb3, 0x23, 0x9b, 0xd9, 0xc4, 0x46, 0x65, 0x57, 0x67, 0x6b, 0x38, 0x16, 0xa3,
-	0x77, 0x65, 0xb2, 0xf7, 0xc3, 0x85, 0x57, 0xe3, 0x0d, 0x0a, 0xe8, 0x21, 0x6c, 0x95, 0x91, 0x07,
-	0x02, 0xd0, 0xdd, 0x7a, 0x74, 0xa5, 0x6c, 0xe8, 0x95, 0x87, 0x21, 0x34, 0xda, 0x6f, 0xa5, 0x36,
-	0x8e, 0xd6, 0x40, 0x14, 0xc1, 0xf6, 0x6b, 0x32, 0xe6, 0x09, 0x51, 0x42, 0xc6, 0x8a, 0xa8, 0x3c,
-	0x12, 0x42, 0x1d, 0x92, 0x3c, 0xf5, 0x2e, 0x05, 0xa0, 0xbb, 0x1d, 0x76, 0x8c, 0xf6, 0xdb, 0xc7,
-	0x1b, 0x11, 0x51, 0x4d, 0x27, 0xa2, 0xf0, 0xfa, 0xc1, 0x7b, 0x45, 0xb3, 0x84, 0x26, 0x71, 0x4a,
-	0x64, 0x52, 0x4a, 0x9d, 0x96, 0x68, 0xee, 0xb9, 0x81, 0xdb, 0xdd, 0x0e, 0xef, 0x1a, 0xed, 0xdf,
-	0xa4, 0x75, 0xa0, 0xfb, 0x62, 0xc2, 0x15, 0x9d, 0x4c, 0xd5, 0x87, 0xa8, 0x9e, 0x09, 0x7d, 0x84,
-	0xd7, 0x06, 0x33, 0xf5, 0x5c, 0xf0, 0x8c, 0xbd, 0xe2, 0x19, 0x0f, 0x4f, 0x6f, 0x68, 0x6d, 0xbf,
-	0x61, 0xed, 0xe3, 0xb5, 0xfd, 0x1a, 0x54, 0x18, 0x18, 0xed, 0xef, 0x8a, 0x75, 0x71, 0x30, 0xa5,
-	0x92, 0x28, 0x2e, 0xb2, 0xaa, 0x7a, 0x9d, 0x00, 0x7a, 0x06, 0x77, 0x5e, 0xe4, 0xb1, 0x22, 0x52,
-	0x0d, 0x8e, 0x0e, 0xa6, 0x62, 0x94, 0x7a, 0xcd, 0x00, 0x74, 0x2f, 0x87, 0xbb, 0x46, 0xfb, 0x1e,
-	0xff, 0xab, 0x52, 0xa1, 0xfb, 0xa7, 0x67, 0xef, 0xbb, 0x5b, 0x6b, 0x01, 0xdd, 0x81, 0x0d, 0xbb,
-	0x06, 0x60, 0xd7, 0x80, 0x8c, 0xf6, 0x77, 0x52, 0x92, 0x57, 0xd9, 0x6c, 0x1d, 0xbd, 0x85, 0xed,
-	0xc1, 0x19, 0x0b, 0x95, 0x05, 0xde, 0x32, 0xda, 0x0f, 0xc4, 0x46, 0x44, 0x85, 0xab, 0x86, 0x03,
-	0x7d, 0x01, 0xf0, 0xf6, 0x13, 0xc6, 0x24, 0x65, 0x44, 0xd1, 0x24, 0xe6, 0x2c, 0x23, 0x6a, 0x26,
-	0xe9, 0x59, 0xb4, 0xe7, 0x5a, 0xb5, 0x7d, 0xa3, 0xfd, 0x3e, 0xb9, 0x48, 0x43, 0x45, 0xfc, 0x62,
-	0x0a, 0xe8, 0x13, 0xbc, 0xf1, 0xd2, 0xde, 0xcd, 0xff, 0xc6, 0x68, 0xd8, 0x31, 0xfa, 0x46, 0xfb,
-	0xf7, 0xc6, 0xe7, 0x81, 0x2b, 0x23, 0x9c, 0xcf, 0x1c, 0x3e, 0x9e, 0x2f, 0xb1, 0xb3, 0x58, 0x62,
-	0xe7, 0x64, 0x89, 0xc1, 0xe7, 0x02, 0x83, 0x6f, 0x05, 0x06, 0x3f, 0x0b, 0x0c, 0xe6, 0x05, 0x06,
-	0x8b, 0x02, 0x83, 0x5f, 0x05, 0x06, 0xbf, 0x0b, 0xec, 0x9c, 0x14, 0x18, 0x7c, 0x5d, 0x61, 0x67,
-	0xbe, 0xc2, 0xce, 0x62, 0x85, 0x9d, 0x37, 0x4d, 0xfb, 0x78, 0x87, 0x2d, 0xfb, 0x37, 0xee, 0xff,
-	0x09, 0x00, 0x00, 0xff, 0xff, 0x9e, 0x96, 0xb1, 0x70, 0x1e, 0x04, 0x00, 0x00,
+	// 683 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x54, 0x4f, 0x6f, 0xd3, 0x4a,
+	0x10, 0xcf, 0xbe, 0xb4, 0x79, 0xed, 0xb6, 0xaf, 0x0f, 0x96, 0x2a, 0x98, 0xa8, 0x5a, 0x87, 0xf2,
+	0x2f, 0x12, 0x24, 0x16, 0xf4, 0xc8, 0x01, 0xd5, 0x6d, 0xa0, 0x91, 0x40, 0x91, 0x1c, 0x09, 0x55,
+	0x88, 0xcb, 0xc6, 0xde, 0xda, 0x2b, 0x62, 0x6f, 0x64, 0xaf, 0xa3, 0x82, 0x84, 0xc4, 0x95, 0x03,
+	0x12, 0x5f, 0x02, 0x09, 0xf5, 0x93, 0xf4, 0xd8, 0x63, 0x4e, 0x86, 0xba, 0x17, 0xe4, 0x53, 0x3f,
+	0x02, 0xca, 0xc6, 0x6d, 0xdc, 0x36, 0xa6, 0xbd, 0x70, 0xf2, 0xee, 0xcc, 0x6f, 0x7e, 0xbf, 0x99,
+	0x9d, 0x19, 0xc3, 0x4a, 0xc0, 0x07, 0xd4, 0xa7, 0xcc, 0xf6, 0x36, 0x1c, 0xc2, 0xbc, 0x2d, 0x4a,
+	0x2c, 0xea, 0x37, 0xfa, 0x3e, 0x17, 0x1c, 0xcd, 0xca, 0x4f, 0xa5, 0x6e, 0x33, 0xe1, 0x84, 0xdd,
+	0x86, 0xc9, 0x5d, 0xcd, 0xe6, 0x36, 0xd7, 0xa4, 0xb9, 0x1b, 0xee, 0xc8, 0x9b, 0xbc, 0xc8, 0xd3,
+	0x38, 0xaa, 0xb2, 0xd0, 0xed, 0x71, 0xf3, 0x5d, 0x7a, 0xf9, 0xdf, 0xa5, 0x82, 0xe8, 0x13, 0xc3,
+	0xea, 0x36, 0xbc, 0xd1, 0xec, 0x73, 0xd3, 0xe9, 0x08, 0xe2, 0x8b, 0xce, 0x89, 0x36, 0x5a, 0x87,
+	0xf3, 0x4d, 0x93, 0x7b, 0xdc, 0x65, 0x66, 0xa0, 0x80, 0x2a, 0xa8, 0x2d, 0x3c, 0xb9, 0x36, 0x8e,
+	0x68, 0x9c, 0xda, 0xf5, 0xeb, 0xfb, 0x91, 0x5a, 0x48, 0x22, 0x75, 0x9e, 0x9e, 0x98, 0x8c, 0x49,
+	0xd4, 0xea, 0xb0, 0x04, 0x97, 0x3b, 0x53, 0x8a, 0x41, 0x8f, 0x61, 0x69, 0x7c, 0x4a, 0x89, 0xff,
+	0x4b, 0x89, 0xc7, 0x46, 0x1d, 0x26, 0x91, 0x5a, 0x72, 0xe4, 0xd9, 0x48, 0x81, 0xc8, 0x80, 0xe5,
+	0xd7, 0xa4, 0xc7, 0x2c, 0x22, 0xb8, 0xdf, 0x11, 0x44, 0x04, 0x06, 0xe7, 0x62, 0x8b, 0x04, 0x8e,
+	0xf2, 0x4f, 0x15, 0xd4, 0x16, 0xf5, 0x4a, 0x12, 0xa9, 0xe5, 0xc1, 0x54, 0x84, 0x91, 0x13, 0x89,
+	0x28, 0xbc, 0xd5, 0xdc, 0x15, 0xd4, 0xb3, 0xa8, 0xd5, 0x71, 0x88, 0x6f, 0x8d, 0xa5, 0x46, 0x2e,
+	0x1a, 0x28, 0xc5, 0x6a, 0xb1, 0xb6, 0xa8, 0x3f, 0x48, 0x22, 0xf5, 0x0e, 0xcd, 0x03, 0x3d, 0xe2,
+	0x2e, 0x13, 0xd4, 0xed, 0x8b, 0xf7, 0x46, 0x3e, 0x13, 0xfa, 0x00, 0x6f, 0xb6, 0x43, 0xf1, 0x82,
+	0x33, 0xcf, 0x7e, 0xc5, 0x3c, 0x26, 0xdf, 0x3e, 0x2d, 0x7f, 0x46, 0x96, 0x8f, 0xd3, 0xf2, 0x73,
+	0x50, 0x7a, 0x35, 0x89, 0xd4, 0x15, 0x9e, 0x3a, 0xdb, 0x7d, 0xea, 0x13, 0xc1, 0xb8, 0x97, 0x55,
+	0xcf, 0x13, 0x40, 0x9b, 0x70, 0xa9, 0x15, 0xc8, 0xce, 0xb6, 0x77, 0x64, 0x97, 0x95, 0xd9, 0x2a,
+	0xa8, 0xcd, 0xe9, 0x2b, 0x49, 0xa4, 0x2a, 0xec, 0x8c, 0x27, 0x43, 0x77, 0x2e, 0x06, 0x7d, 0x03,
+	0xb0, 0xbc, 0x6e, 0x9a, 0xa1, 0x1b, 0xf6, 0x88, 0xa0, 0xd6, 0x73, 0x4a, 0x83, 0x96, 0x37, 0xa6,
+	0x2b, 0xc9, 0xd7, 0x77, 0x93, 0x48, 0xad, 0x92, 0xa9, 0x88, 0x09, 0xed, 0xde, 0x0f, 0xb5, 0xe9,
+	0x12, 0xe1, 0x68, 0x5d, 0x66, 0x37, 0x5a, 0x9e, 0x78, 0x9a, 0x99, 0x62, 0x37, 0xec, 0x09, 0x36,
+	0xa0, 0x7e, 0xb0, 0xab, 0xb9, 0xbb, 0x75, 0x73, 0x34, 0x2b, 0x75, 0x93, 0xfb, 0xb4, 0x6e, 0x73,
+	0xcd, 0x22, 0x82, 0x34, 0x74, 0x66, 0xb7, 0x3c, 0xb1, 0x41, 0x02, 0x41, 0x7d, 0x23, 0x27, 0x19,
+	0xf4, 0x05, 0xc0, 0xa5, 0x4d, 0x3a, 0xc8, 0xe6, 0xf7, 0xaf, 0xcc, 0x8f, 0x8e, 0xca, 0xb5, 0xce,
+	0x78, 0xfe, 0x46, 0x5e, 0xe7, 0xc4, 0xd1, 0x36, 0x84, 0x93, 0xd5, 0x52, 0xe6, 0x64, 0xb3, 0x2b,
+	0x27, 0x4b, 0x74, 0x71, 0xe7, 0xf4, 0x95, 0x74, 0x9d, 0x96, 0xe9, 0xa9, 0x33, 0xd3, 0x95, 0x0c,
+	0xd7, 0xea, 0x5e, 0x31, 0x77, 0xa8, 0xd0, 0x7d, 0x38, 0x23, 0x17, 0x03, 0xc8, 0xd2, 0x51, 0x12,
+	0xa9, 0x4b, 0x0e, 0x09, 0xb2, 0xfd, 0x95, 0x7e, 0xf4, 0x16, 0x96, 0xdb, 0x17, 0x86, 0x2a, 0xb3,
+	0x52, 0x77, 0x47, 0x4d, 0xe5, 0x53, 0x11, 0x19, 0xae, 0x1c, 0x0e, 0xf4, 0x19, 0xc0, 0x7b, 0xeb,
+	0xb6, 0xed, 0x53, 0x7b, 0xd4, 0xa5, 0x0e, 0xb3, 0x3d, 0x22, 0x42, 0x9f, 0x5e, 0x44, 0x2b, 0x45,
+	0xa9, 0xb6, 0x96, 0x44, 0xaa, 0x46, 0xae, 0x12, 0x90, 0x11, 0xbf, 0x9a, 0x02, 0xfa, 0x08, 0x6f,
+	0xbf, 0x94, 0x6f, 0xf3, 0xa7, 0x34, 0x66, 0x64, 0x1a, 0x5a, 0x12, 0xa9, 0x0f, 0x7b, 0x97, 0x81,
+	0x33, 0x29, 0x5c, 0xce, 0xac, 0x3f, 0x3b, 0x38, 0xc4, 0x85, 0xe1, 0x21, 0x2e, 0x1c, 0x1f, 0x62,
+	0xf0, 0x29, 0xc6, 0xe0, 0x7b, 0x8c, 0xc1, 0x7e, 0x8c, 0xc1, 0x41, 0x8c, 0xc1, 0x30, 0xc6, 0xe0,
+	0x67, 0x8c, 0xc1, 0xaf, 0x18, 0x17, 0x8e, 0x63, 0x0c, 0xbe, 0x1e, 0xe1, 0xc2, 0xc1, 0x11, 0x2e,
+	0x0c, 0x8f, 0x70, 0xe1, 0xcd, 0xac, 0xfc, 0x73, 0x77, 0x4b, 0x72, 0x64, 0xd6, 0x7e, 0x07, 0x00,
+	0x00, 0xff, 0xff, 0x94, 0xeb, 0x6a, 0x8a, 0x1b, 0x06, 0x00, 0x00,
 }
 
+func (this *EpochStartSovereign) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*EpochStartSovereign)
+	if !ok {
+		that2, ok := that.(EpochStartSovereign)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if !this.Economics.Equal(&that1.Economics) {
+		return false
+	}
+	return true
+}
 func (this *SovereignChainHeader) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
@@ -242,6 +345,21 @@ func (this *SovereignChainHeader) Equal(that interface{}) bool {
 	if this.IsStartOfEpoch != that1.IsStartOfEpoch {
 		return false
 	}
+	{
+		__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
+		if !__caster.Equal(this.AccumulatedFeesInEpoch, that1.AccumulatedFeesInEpoch) {
+			return false
+		}
+	}
+	{
+		__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
+		if !__caster.Equal(this.DevFeesInEpoch, that1.DevFeesInEpoch) {
+			return false
+		}
+	}
+	if !this.EpochStart.Equal(&that1.EpochStart) {
+		return false
+	}
 	return true
 }
 func (this *OutGoingMiniBlockHeader) Equal(that interface{}) bool {
@@ -277,11 +395,21 @@ func (this *OutGoingMiniBlockHeader) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *EpochStartSovereign) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&block.EpochStartSovereign{")
+	s = append(s, "Economics: "+strings.Replace(this.Economics.GoString(), `&`, ``, 1)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *SovereignChainHeader) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 9)
+	s := make([]string, 0, 12)
 	s = append(s, "&block.SovereignChainHeader{")
 	if this.Header != nil {
 		s = append(s, "Header: "+fmt.Sprintf("%#v", this.Header)+",\n")
@@ -292,6 +420,9 @@ func (this *SovereignChainHeader) GoString() string {
 		s = append(s, "OutGoingMiniBlockHeader: "+fmt.Sprintf("%#v", this.OutGoingMiniBlockHeader)+",\n")
 	}
 	s = append(s, "IsStartOfEpoch: "+fmt.Sprintf("%#v", this.IsStartOfEpoch)+",\n")
+	s = append(s, "AccumulatedFeesInEpoch: "+fmt.Sprintf("%#v", this.AccumulatedFeesInEpoch)+",\n")
+	s = append(s, "DevFeesInEpoch: "+fmt.Sprintf("%#v", this.DevFeesInEpoch)+",\n")
+	s = append(s, "EpochStart: "+strings.Replace(this.EpochStart.GoString(), `&`, ``, 1)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -316,6 +447,39 @@ func valueToGoStringSovereignChainHeader(v interface{}, typ string) string {
 	pv := reflect.Indirect(rv).Interface()
 	return fmt.Sprintf("func(v %v) *%v { return &v } ( %#v )", typ, typ, pv)
 }
+func (m *EpochStartSovereign) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *EpochStartSovereign) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *EpochStartSovereign) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	{
+		size, err := m.Economics.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintSovereignChainHeader(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0xa
+	return len(dAtA) - i, nil
+}
+
 func (m *SovereignChainHeader) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -336,6 +500,38 @@ func (m *SovereignChainHeader) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	{
+		size, err := m.EpochStart.MarshalToSizedBuffer(dAtA[:i])
+		if err != nil {
+			return 0, err
+		}
+		i -= size
+		i = encodeVarintSovereignChainHeader(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x42
+	{
+		__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
+		size := __caster.Size(m.DevFeesInEpoch)
+		i -= size
+		if _, err := __caster.MarshalTo(m.DevFeesInEpoch, dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintSovereignChainHeader(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x3a
+	{
+		__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
+		size := __caster.Size(m.AccumulatedFeesInEpoch)
+		i -= size
+		if _, err := __caster.MarshalTo(m.AccumulatedFeesInEpoch, dAtA[i:]); err != nil {
+			return 0, err
+		}
+		i = encodeVarintSovereignChainHeader(dAtA, i, uint64(size))
+	}
+	i--
+	dAtA[i] = 0x32
 	if m.IsStartOfEpoch {
 		i--
 		if m.IsStartOfEpoch {
@@ -451,6 +647,17 @@ func encodeVarintSovereignChainHeader(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
+func (m *EpochStartSovereign) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	l = m.Economics.Size()
+	n += 1 + l + sovSovereignChainHeader(uint64(l))
+	return n
+}
+
 func (m *SovereignChainHeader) Size() (n int) {
 	if m == nil {
 		return 0
@@ -478,6 +685,18 @@ func (m *SovereignChainHeader) Size() (n int) {
 	if m.IsStartOfEpoch {
 		n += 2
 	}
+	{
+		__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
+		l = __caster.Size(m.AccumulatedFeesInEpoch)
+		n += 1 + l + sovSovereignChainHeader(uint64(l))
+	}
+	{
+		__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
+		l = __caster.Size(m.DevFeesInEpoch)
+		n += 1 + l + sovSovereignChainHeader(uint64(l))
+	}
+	l = m.EpochStart.Size()
+	n += 1 + l + sovSovereignChainHeader(uint64(l))
 	return n
 }
 
@@ -512,6 +731,16 @@ func sovSovereignChainHeader(x uint64) (n int) {
 func sozSovereignChainHeader(x uint64) (n int) {
 	return sovSovereignChainHeader(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
+func (this *EpochStartSovereign) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&EpochStartSovereign{`,
+		`Economics:` + strings.Replace(strings.Replace(fmt.Sprintf("%v", this.Economics), "Economics", "Economics", 1), `&`, ``, 1) + `,`,
+		`}`,
+	}, "")
+	return s
+}
 func (this *SovereignChainHeader) String() string {
 	if this == nil {
 		return "nil"
@@ -522,6 +751,9 @@ func (this *SovereignChainHeader) String() string {
 		`ExtendedShardHeaderHashes:` + fmt.Sprintf("%v", this.ExtendedShardHeaderHashes) + `,`,
 		`OutGoingMiniBlockHeader:` + strings.Replace(this.OutGoingMiniBlockHeader.String(), "OutGoingMiniBlockHeader", "OutGoingMiniBlockHeader", 1) + `,`,
 		`IsStartOfEpoch:` + fmt.Sprintf("%v", this.IsStartOfEpoch) + `,`,
+		`AccumulatedFeesInEpoch:` + fmt.Sprintf("%v", this.AccumulatedFeesInEpoch) + `,`,
+		`DevFeesInEpoch:` + fmt.Sprintf("%v", this.DevFeesInEpoch) + `,`,
+		`EpochStart:` + strings.Replace(strings.Replace(this.EpochStart.String(), "EpochStartSovereign", "EpochStartSovereign", 1), `&`, ``, 1) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -546,6 +778,92 @@ func valueToStringSovereignChainHeader(v interface{}) string {
 	}
 	pv := reflect.Indirect(rv).Interface()
 	return fmt.Sprintf("*%v", pv)
+}
+func (m *EpochStartSovereign) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowSovereignChainHeader
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: EpochStartSovereign: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: EpochStartSovereign: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Economics", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowSovereignChainHeader
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthSovereignChainHeader
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSovereignChainHeader
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.Economics.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipSovereignChainHeader(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthSovereignChainHeader
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthSovereignChainHeader
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
 }
 func (m *SovereignChainHeader) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -734,6 +1052,115 @@ func (m *SovereignChainHeader) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.IsStartOfEpoch = bool(v != 0)
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccumulatedFeesInEpoch", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowSovereignChainHeader
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthSovereignChainHeader
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthSovereignChainHeader
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			{
+				__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
+				if tmp, err := __caster.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+					return err
+				} else {
+					m.AccumulatedFeesInEpoch = tmp
+				}
+			}
+			iNdEx = postIndex
+		case 7:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DevFeesInEpoch", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowSovereignChainHeader
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthSovereignChainHeader
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthSovereignChainHeader
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			{
+				__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
+				if tmp, err := __caster.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+					return err
+				} else {
+					m.DevFeesInEpoch = tmp
+				}
+			}
+			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EpochStart", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowSovereignChainHeader
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthSovereignChainHeader
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthSovereignChainHeader
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if err := m.EpochStart.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipSovereignChainHeader(dAtA[iNdEx:])
