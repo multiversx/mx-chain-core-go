@@ -132,6 +132,24 @@ const BuiltInFunctionUnGuardAccount = "UnGuardAccount"
 // BuiltInFunctionMigrateDataTrie is the built-in function key for migrating the data trie
 const BuiltInFunctionMigrateDataTrie = "MigrateDataTrie"
 
+// ESDTSetTokenType represents the builtin function name to set token type
+const ESDTSetTokenType = "ESDTSetTokenType"
+
+// ESDTModifyRoyalties represents the builtin function name to modify royalties
+const ESDTModifyRoyalties = "ESDTModifyRoyalties"
+
+// ESDTSetNewURIs represents the builtin function name to set new URIs for NFTs
+const ESDTSetNewURIs = "ESDTSetNewURIs"
+
+// ESDTModifyCreator represents the builtin function name to modify creator for NFTs
+const ESDTModifyCreator = "ESDTModifyCreator"
+
+// ESDTMetaDataRecreate represents the builtin function name to recreate the metadata for ESDT tokens
+const ESDTMetaDataRecreate = "ESDTMetaDataRecreate"
+
+// ESDTMetaDataUpdate represents the builtin function name to update the metadata for ESDT tokens
+const ESDTMetaDataUpdate = "ESDTMetaDataUpdate"
+
 // ESDTRoleLocalMint is the constant string for the local role of mint for ESDT tokens
 const ESDTRoleLocalMint = "ESDTRoleLocalMint"
 
@@ -159,6 +177,21 @@ const ESDTRoleNFTUpdateAttributes = "ESDTRoleNFTUpdateAttributes"
 // ESDTRoleTransfer is the constant string for the local role to transfer ESDT, only for special tokens
 const ESDTRoleTransfer = "ESDTTransferRole"
 
+// ESDTRoleSetNewURI represents the role which can rewrite the URI in the token metadata
+const ESDTRoleSetNewURI = "ESDTRoleSetNewURI"
+
+// ESDTRoleModifyRoyalties represents the role which can rewrite the royalties of a token
+const ESDTRoleModifyRoyalties = "ESDTRoleModifyRoyalties"
+
+// ESDTRoleModifyCreator represents the role which can rewrite the creator in the token metadata
+const ESDTRoleModifyCreator = "ESDTRoleModifyCreator"
+
+// ESDTRoleNFTRecreate represents the role which can recreate the token metadata
+const ESDTRoleNFTRecreate = "ESDTRoleNFTRecreate"
+
+// ESDTRoleNFTUpdate represents the role which can update the token metadata
+const ESDTRoleNFTUpdate = "ESDTRoleNFTUpdate"
+
 // ESDTType defines the possible types in case of ESDT tokens
 type ESDTType uint32
 
@@ -167,7 +200,43 @@ const (
 	Fungible ESDTType = iota
 	// NonFungible defines the token type for ESDT non fungible tokens
 	NonFungible
+	// NonFungibleV2 defines the token type for ESDT non fungible tokens
+	NonFungibleV2
+	// SemiFungible defines the token type for ESDT semi fungible tokens
+	SemiFungible
+	// MetaFungible defines the token type for ESDT meta fungible tokens
+	MetaFungible
+	// DynamicNFT defines the token type for ESDT dynamic NFT tokens
+	DynamicNFT
+	// DynamicSFT defines the token type for ESDT dynamic SFT tokens
+	DynamicSFT
+	// DynamicMeta defines the token type for ESDT dynamic meta tokens
+	DynamicMeta
 )
+
+// String will convert number type in string
+func (t ESDTType) String() string {
+	switch t {
+	case Fungible:
+		return FungibleESDT
+	case NonFungible:
+		return NonFungibleESDT
+	case NonFungibleV2:
+		return NonFungibleESDTv2
+	case SemiFungible:
+		return SemiFungibleESDT
+	case MetaFungible:
+		return MetaESDT
+	case DynamicNFT:
+		return DynamicNFTESDT
+	case DynamicSFT:
+		return DynamicSFTESDT
+	case DynamicMeta:
+		return DynamicMetaESDT
+	default:
+		return "Unknown"
+	}
+}
 
 // FungibleESDT defines the string for the token type of fungible ESDT
 const FungibleESDT = "FungibleESDT"
@@ -175,8 +244,26 @@ const FungibleESDT = "FungibleESDT"
 // NonFungibleESDT defines the string for the token type of non fungible ESDT
 const NonFungibleESDT = "NonFungibleESDT"
 
+// NonFungibleESDTv2 defines the string for the token type of non fungible ESDT
+const NonFungibleESDTv2 = "NonFungibleESDTv2"
+
+// MetaESDT defines the string for the token type of meta ESDT
+const MetaESDT = "MetaESDT"
+
 // SemiFungibleESDT defines the string for the token type of semi fungible ESDT
 const SemiFungibleESDT = "SemiFungibleESDT"
+
+// Dynamic is the prefix used for dynamic ESDT tokens
+const Dynamic = "Dynamic"
+
+// DynamicNFTESDT defines the string for the token type of dynamic NFT ESDT
+const DynamicNFTESDT = Dynamic + NonFungibleESDT
+
+// DynamicSFTESDT defines the string for the token type of dynamic SFT ESDT
+const DynamicSFTESDT = Dynamic + SemiFungibleESDT
+
+// DynamicMetaESDT defines the string for the token type of dynamic meta ESDT
+const DynamicMetaESDT = Dynamic + MetaESDT
 
 // MaxRoyalty defines 100% as uint32
 const MaxRoyalty = uint32(10000)
