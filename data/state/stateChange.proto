@@ -1,0 +1,23 @@
+
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/multiversx/mx-chain-core-go/data/state";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+// StateChange is used to collect state changes
+message StateChange {
+  bytes                   Type            = 1  [(gogoproto.jsontag) = "type"];
+  repeated DataTrieChange DataTrieChanges = 2  [(gogoproto.jsontag) = "dataTrieChanges"];
+}
+
+
+// DataTrieChange represents a change in the data trie
+message DataTrieChange {
+  bytes Type = 1  [(gogoproto.jsontag) = "type"];
+  bytes Key  = 2  [(gogoproto.jsontag) = "key"];
+  bytes Val  = 3  [(gogoproto.jsontag) = "val"];
+}
