@@ -32,3 +32,12 @@ message MetaData {
 	repeated bytes  URIs = 6 [(gogoproto.jsontag) = "URIs"];
 	bytes  Attributes    = 7 [(gogoproto.jsontag) = "Attributes"];
 }
+
+message MetaDataVersion {
+	uint64 Name = 1 [(gogoproto.jsontag) = "Name"];
+	uint64 Creator = 2 [(gogoproto.jsontag) = "Creator"];
+	uint64 Royalties = 3 [(gogoproto.jsontag) = "Royalties"];
+	uint64 Hash = 4 [(gogoproto.jsontag) = "Hash"];
+	uint64 URIs = 5 [(gogoproto.jsontag) = "URIs"];
+	uint64 Attributes = 6 [(gogoproto.jsontag) = "Attributes"];
+}
