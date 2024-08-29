@@ -100,6 +100,7 @@ type EpochNotifier interface {
 type GasScheduleNotifier interface {
 	RegisterNotifyHandler(handler GasScheduleSubscribeHandler)
 	LatestGasSchedule() map[string]map[string]uint64
+	GasScheduleForEpoch(epoch uint32) (map[string]map[string]uint64, error)
 	UnRegisterAll()
 	IsInterfaceNil() bool
 }
