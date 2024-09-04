@@ -1244,19 +1244,24 @@ func TestHeaderV2_SetBlockBodyTypeInt32(t *testing.T) {
 	})
 }
 
-func TestHeaderV2_GetPreviousAggregatedSignatureAndBitmap(t *testing.T) {
+func TestHeaderV2_GetPreviousProof(t *testing.T) {
 	t.Parallel()
 
 	shardBlock := &block.HeaderV2{}
-	sig, bitmap := shardBlock.GetPreviousAggregatedSignatureAndBitmap()
-	require.Nil(t, sig)
-	require.Nil(t, bitmap)
+	proof := shardBlock.GetPreviousProof()
+	require.Nil(t, proof)
 
-	previousPubkeysBitmap := []byte("previous pub keys bitmap")
-	previousAggregatedSignature := []byte("previous aggregated signature")
+	previousProof := &data.HeaderProof{
+		AggregatedSignature: []byte("previous aggregated signature"),
+		PubKeysBitmap:       []byte("previous pub keys bitmap"),
+		HeaderHash:          []byte("previous hash"),
+		HeaderEpoch:         123,
+	}
 
-	shardBlock.SetPreviousAggregatedSignatureAndBitmap(previousAggregatedSignature, previousPubkeysBitmap)
-	sig, bitmap = shardBlock.GetPreviousAggregatedSignatureAndBitmap()
-	require.Equal(t, previousPubkeysBitmap, bitmap)
-	require.Equal(t, previousAggregatedSignature, sig)
+	shardBlock.SetPreviousProof(previousProof)
+	proof = shardBlock.GetPreviousProof()
+	require.Equal(t, previousProof.AggregatedSignature, proof.AggregatedSignature)
+	require.Equal(t, previousProof.PubKeysBitmap, proof.PubKeysBitmap)
+	require.Equal(t, previousProof.HeaderHash, proof.HeaderHash)
+	require.Equal(t, previousProof.HeaderEpoch, proof.HeaderEpoch)
 }

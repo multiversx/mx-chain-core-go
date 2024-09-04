@@ -660,18 +660,26 @@ func (hv2 *HeaderV2) CheckFieldsForNil() error {
 	return nil
 }
 
-// GetPreviousAggregatedSignatureAndBitmap returns the previous aggregated signature and the previous pubkeys bitmap
-func (hv2 *HeaderV2) GetPreviousAggregatedSignatureAndBitmap() ([]byte, []byte) {
+// GetPreviousProof returns the previous proof
+func (hv2 *HeaderV2) GetPreviousProof() *data.HeaderProof {
 	if hv2.PreviousHeaderProof == nil {
-		return nil, nil
+		return nil
 	}
-	return hv2.PreviousHeaderProof.AggregatedSignature, hv2.PreviousHeaderProof.PubKeysBitmap
+
+	return &data.HeaderProof{
+		AggregatedSignature: hv2.PreviousHeaderProof.AggregatedSignature,
+		PubKeysBitmap:       hv2.PreviousHeaderProof.PubKeysBitmap,
+		HeaderHash:          hv2.PreviousHeaderProof.HeaderHash,
+		HeaderEpoch:         hv2.PreviousHeaderProof.HeaderEpoch,
+	}
 }
 
-// SetPreviousAggregatedSignatureAndBitmap sets the previous aggregated signature and the previous pubkeys bitmap
-func (hv2 *HeaderV2) SetPreviousAggregatedSignatureAndBitmap(aggregatedSignature []byte, pubKeysBitmap []byte) {
-	hv2.PreviousHeaderProof = &PreviousHeaderProof{
-		PubKeysBitmap:       pubKeysBitmap,
-		AggregatedSignature: aggregatedSignature,
+// SetPreviousProof sets the previous proof
+func (hv2 *HeaderV2) SetPreviousProof(proof *data.HeaderProof) {
+	hv2.PreviousHeaderProof = &HeaderProof{
+		PubKeysBitmap:       proof.PubKeysBitmap,
+		AggregatedSignature: proof.AggregatedSignature,
+		HeaderHash:          proof.HeaderHash,
+		HeaderEpoch:         proof.HeaderEpoch,
 	}
 }

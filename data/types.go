@@ -16,4 +16,6 @@ type KeyValuePair struct {
 type HeaderProof struct {
 	AggregatedSignature []byte
 	PubKeysBitmap       []byte
+	HeaderHash          []byte
+	HeaderEpoch         uint32
 }

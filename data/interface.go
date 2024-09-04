@@ -83,8 +83,8 @@ type HeaderHandler interface {
 	IsStartOfEpochBlock() bool
 	ShallowClone() HeaderHandler
 	CheckFieldsForNil() error
-	GetPreviousAggregatedSignatureAndBitmap() ([]byte, []byte)
-	SetPreviousAggregatedSignatureAndBitmap(aggregatedSignature []byte, pubkeysBitmap []byte)
+	GetPreviousProof() *HeaderProof
+	SetPreviousProof(proof *HeaderProof)
 	IsInterfaceNil() bool
 }
 

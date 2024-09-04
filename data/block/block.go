@@ -627,13 +627,13 @@ func (h *Header) CheckFieldsForNil() error {
 	return nil
 }
 
-// GetPreviousAggregatedSignatureAndBitmap returns the previous aggregated signature and the previous pubkeys bitmap
-func (h *Header) GetPreviousAggregatedSignatureAndBitmap() ([]byte, []byte) {
+// GetPreviousProof returns the previous proof
+func (h *Header) GetPreviousProof() *data.HeaderProof {
 	// no proof for the initial header
-	return nil, nil
+	return nil
 }
 
-// SetPreviousAggregatedSignatureAndBitmap sets the previous aggregated signature and the previous pubkeys bitmap
-func (h *Header) SetPreviousAggregatedSignatureAndBitmap(_ []byte, _ []byte) {
+// SetPreviousProof sets the previous proof
+func (h *Header) SetPreviousProof(_ *data.HeaderProof) {
 	// no proof for the initial header
 }
