@@ -1,0 +1,24 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/multiversx/mx-chain-core-go/data/stateChange;stateChange";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+message StateChange {
+  string                   Type                    = 1 [(gogoproto.jsontag) = "type"];
+  int32                    Index                   = 2 [(gogoproto.jsontag) = "-"];
+  bytes                    TxHash                  = 3 [(gogoproto.jsontag) = "-"];
+  bytes                    MainTrieKey             = 4 [(gogoproto.jsontag) = "-"];
+  bytes                    MainTrieVal             = 5 [(gogoproto.jsontag) = "-"];
+  string                   Operation               = 6 [(gogoproto.jsontag) = "operation"];
+  repeated DataTrieChange  DataTrieChanges         = 7 [(gogoproto.jsontag) = "dataTrieChanges,omitempty"];
+}
+
+message DataTrieChange {
+  string Type = 1 [(gogoproto.jsontag) = "type"];
+  bytes Key   = 2 [(gogoproto.jsontag) = "type"];
+  bytes Val   = 3 [(gogoproto.jsontag) = "type"];
+}
