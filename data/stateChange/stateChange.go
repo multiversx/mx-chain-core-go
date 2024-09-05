@@ -8,6 +8,6 @@ func (sc *StateChange) SetTxHash(txHash []byte) {
 }
 
 // SetIndex will set the index with a provided value
-func (sc *StateChange) SetIndex(index int32) {
-	sc.Index = index
+func (sc *StateChange) SetIndex(index int) {
+	sc.Index = int32(index)
 }
