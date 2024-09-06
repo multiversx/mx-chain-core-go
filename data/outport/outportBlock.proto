@@ -16,17 +16,17 @@ import "github.com/multiversx/mx-chain-core-go/data/alteredAccount/alteredAccoun
 import "github.com/multiversx/mx-chain-core-go/data/stateChange/stateChange.proto";
 
 message OutportBlock {
-  uint32                            ShardID                = 1 [(gogoproto.jsontag) = "shardID,omitempty"];
-  BlockData                         BlockData              = 2 [(gogoproto.jsontag) = "blockData,omitempty"];
-  TransactionPool                   TransactionPool        = 3 [(gogoproto.jsontag) = "transactionPool,omitempty"];
-  HeaderGasConsumption              HeaderGasConsumption   = 4 [(gogoproto.jsontag) = "headerGasConsumption,omitempty"];
-  map <string, AlteredAccount>      AlteredAccounts        = 5 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
-  repeated StateChangesForTx                 StateChanges           = 6 [(gogoproto.jsontag) = "stateChanges,omitempty"];
-  repeated string                   NotarizedHeadersHashes = 7 [(gogoproto.jsontag) = "notarizedHeadersHashes,omitempty"];
-  uint32                            NumberOfShards         = 8 [(gogoproto.jsontag) = "numberOfShards"];
-  repeated uint64                   SignersIndexes         = 9 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
-  uint64                            HighestFinalBlockNonce = 10 [(gogoproto.jsontag) = "highestFinalBlockNonce"];
-  bytes                             HighestFinalBlockHash  = 11 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
+  uint32                       ShardID                = 1 [(gogoproto.jsontag) = "shardID,omitempty"];
+  BlockData                    BlockData              = 2 [(gogoproto.jsontag) = "blockData,omitempty"];
+  TransactionPool              TransactionPool        = 3 [(gogoproto.jsontag) = "transactionPool,omitempty"];
+  HeaderGasConsumption         HeaderGasConsumption   = 4 [(gogoproto.jsontag) = "headerGasConsumption,omitempty"];
+  map <string, AlteredAccount> AlteredAccounts        = 5 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
+  map <string, StateChange>    StateChanges           = 6 [(gogoproto.jsontag) = "stateChanges,omitempty"];
+  repeated string              NotarizedHeadersHashes = 7 [(gogoproto.jsontag) = "notarizedHeadersHashes,omitempty"];
+  uint32                       NumberOfShards         = 8 [(gogoproto.jsontag) = "numberOfShards"];
+  repeated uint64              SignersIndexes         = 9 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
+  uint64                       HighestFinalBlockNonce = 10 [(gogoproto.jsontag) = "highestFinalBlockNonce"];
+  bytes                        HighestFinalBlockHash  = 11 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
 }
 
 message BlockData {
