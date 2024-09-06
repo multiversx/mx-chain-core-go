@@ -21,7 +21,7 @@ message OutportBlock {
   TransactionPool                   TransactionPool        = 3 [(gogoproto.jsontag) = "transactionPool,omitempty"];
   HeaderGasConsumption              HeaderGasConsumption   = 4 [(gogoproto.jsontag) = "headerGasConsumption,omitempty"];
   map <string, AlteredAccount>      AlteredAccounts        = 5 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
-  map <string, StateChangesForTx>   StateChanges           = 6 [(gogoproto.jsontag) = "stateChanges,omitempty"];
+  StateChangesForTx                 StateChanges           = 6 [(gogoproto.jsontag) = "stateChanges,omitempty"];
   repeated string                   NotarizedHeadersHashes = 7 [(gogoproto.jsontag) = "notarizedHeadersHashes,omitempty"];
   uint32                            NumberOfShards         = 8 [(gogoproto.jsontag) = "numberOfShards"];
   repeated uint64                   SignersIndexes         = 9 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
