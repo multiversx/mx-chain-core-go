@@ -7,6 +7,10 @@ option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
+message StateChangesForTx {
+  repeated StateChange StateChanges = 1 [(gogoproto.jsontag) = "stateChanges"];
+}
+
 message StateChange {
   string                   Type                    = 1 [(gogoproto.jsontag) = "type"];
   int32                    Index                   = 2 [(gogoproto.jsontag) = "-"];
