@@ -26,3 +26,16 @@ message DataTrieChange {
   bytes Key   = 2 [(gogoproto.jsontag) = "type"];
   bytes Val   = 3 [(gogoproto.jsontag) = "type"];
 }
+
+message DataAnalysisStateChange {
+  StateChange StateChange = 1 [(gogoproto.jsontag) = "stateChange"];
+  string Operation = 2 [(gogoproto.jsontag) = "operation"];
+  bool Nonce = 3 [(gogoproto.jsontag) = "nonceChanged"];
+  bool Balance = 4 [(gogoproto.jsontag) = "balanceChanged"];
+  bool CodeHash = 5 [(gogoproto.jsontag) = "codeHashChanged"];
+  bool RootHash = 6 [(gogoproto.jsontag) = "rootHashChanged"];
+  bool DeveloperReward = 7 [(gogoproto.jsontag) = "developerRewardChanged"];
+  bool OwnerAddress = 8 [(gogoproto.jsontag) = "ownerAddressChanged"];
+  bool UserName = 9 [(gogoproto.jsontag) = "userNameChanged"];
+  bool CodeMetadata = 10 [(gogoproto.jsontag) = "codeMetadataChanged"];
+}
