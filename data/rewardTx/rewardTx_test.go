@@ -27,6 +27,7 @@ func TestRewardTx_GettersAndSetters(t *testing.T) {
 	assert.Equal(t, uint64(0), rwdTx.GetGasLimit())
 	assert.Equal(t, uint64(0), rwdTx.GetGasPrice())
 	assert.Equal(t, uint64(0), rwdTx.GetNonce())
+	assert.Nil(t, rwdTx.GetUserTransactions())
 }
 
 func TestRewardTx_CheckIntegrityShouldWork(t *testing.T) {

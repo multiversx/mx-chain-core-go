@@ -38,6 +38,7 @@ func TestSmartContractResult_SettersAndGetters(t *testing.T) {
 	assert.Equal(t, gasLimit, scr.GetGasLimit())
 	assert.Equal(t, gasPrice, scr.GetGasPrice())
 	assert.Equal(t, nonce, scr.GetNonce())
+	assert.Nil(t, scr.GetUserTransactions())
 }
 
 func TestTrimSlicePtr(t *testing.T) {
