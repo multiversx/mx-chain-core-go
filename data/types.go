@@ -11,11 +11,3 @@ type KeyValuePair struct {
 	Key   []byte
 	Value []byte
 }
-
-// HeaderProof holds an aggregated signature and the public keys bitmap
-type HeaderProof struct {
-	AggregatedSignature []byte
-	PubKeysBitmap       []byte
-	HeaderHash          []byte
-	HeaderEpoch         uint32
-}

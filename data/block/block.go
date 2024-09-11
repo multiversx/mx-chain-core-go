@@ -628,12 +628,12 @@ func (h *Header) CheckFieldsForNil() error {
 }
 
 // GetPreviousProof returns the previous proof
-func (h *Header) GetPreviousProof() *data.HeaderProof {
+func (h *Header) GetPreviousProof() data.HeaderProofHandler {
 	// no proof for the initial header
 	return nil
 }
 
 // SetPreviousProof sets the previous proof
-func (h *Header) SetPreviousProof(_ *data.HeaderProof) {
+func (h *Header) SetPreviousProof(_ data.HeaderProofHandler) {
 	// no proof for the initial header
 }

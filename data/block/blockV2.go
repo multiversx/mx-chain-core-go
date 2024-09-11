@@ -661,25 +661,18 @@ func (hv2 *HeaderV2) CheckFieldsForNil() error {
 }
 
 // GetPreviousProof returns the previous proof
-func (hv2 *HeaderV2) GetPreviousProof() *data.HeaderProof {
-	if hv2.PreviousHeaderProof == nil {
-		return nil
-	}
-
-	return &data.HeaderProof{
-		AggregatedSignature: hv2.PreviousHeaderProof.AggregatedSignature,
-		PubKeysBitmap:       hv2.PreviousHeaderProof.PubKeysBitmap,
-		HeaderHash:          hv2.PreviousHeaderProof.HeaderHash,
-		HeaderEpoch:         hv2.PreviousHeaderProof.HeaderEpoch,
-	}
+func (hv2 *HeaderV2) GetPreviousProof() data.HeaderProofHandler {
+	return hv2.PreviousHeaderProof
 }
 
 // SetPreviousProof sets the previous proof
-func (hv2 *HeaderV2) SetPreviousProof(proof *data.HeaderProof) {
+func (hv2 *HeaderV2) SetPreviousProof(proof data.HeaderProofHandler) {
 	hv2.PreviousHeaderProof = &HeaderProof{
-		PubKeysBitmap:       proof.PubKeysBitmap,
-		AggregatedSignature: proof.AggregatedSignature,
-		HeaderHash:          proof.HeaderHash,
-		HeaderEpoch:         proof.HeaderEpoch,
+		PubKeysBitmap:       proof.GetPubKeysBitmap(),
+		AggregatedSignature: proof.GetAggregatedSignature(),
+		HeaderHash:          proof.GetHeaderHash(),
+		HeaderEpoch:         proof.GetHeaderEpoch(),
+		HeaderNonce:         proof.GetHeaderNonce(),
+		HeaderShardId:       proof.GetHeaderShardId(),
 	}
 }

@@ -83,9 +83,19 @@ type HeaderHandler interface {
 	IsStartOfEpochBlock() bool
 	ShallowClone() HeaderHandler
 	CheckFieldsForNil() error
-	GetPreviousProof() *HeaderProof
-	SetPreviousProof(proof *HeaderProof)
+	GetPreviousProof() HeaderProofHandler
+	SetPreviousProof(proof HeaderProofHandler)
 	IsInterfaceNil() bool
+}
+
+// HeaderProofHandler defines getters and setters for the header proof
+type HeaderProofHandler interface {
+	GetPubKeysBitmap() []byte
+	GetAggregatedSignature() []byte
+	GetHeaderHash() []byte
+	GetHeaderEpoch() uint32
+	GetHeaderNonce() uint64
+	GetHeaderShardId() uint32
 }
 
 // ShardHeaderHandler defines getters and setters for the shard block header

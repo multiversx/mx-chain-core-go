@@ -568,25 +568,18 @@ func (m *MetaBlock) CheckFieldsForNil() error {
 }
 
 // GetPreviousProof returns the previous proof
-func (m *MetaBlock) GetPreviousProof() *data.HeaderProof {
-	if m.PreviousHeaderProof == nil {
-		return nil
-	}
-
-	return &data.HeaderProof{
-		AggregatedSignature: m.PreviousHeaderProof.AggregatedSignature,
-		PubKeysBitmap:       m.PreviousHeaderProof.PubKeysBitmap,
-		HeaderHash:          m.PreviousHeaderProof.HeaderHash,
-		HeaderEpoch:         m.PreviousHeaderProof.HeaderEpoch,
-	}
+func (m *MetaBlock) GetPreviousProof() data.HeaderProofHandler {
+	return m.PreviousHeaderProof
 }
 
 // SetPreviousProof sets the previous proof
-func (m *MetaBlock) SetPreviousProof(proof *data.HeaderProof) {
+func (m *MetaBlock) SetPreviousProof(proof data.HeaderProofHandler) {
 	m.PreviousHeaderProof = &HeaderProof{
-		PubKeysBitmap:       proof.PubKeysBitmap,
-		AggregatedSignature: proof.AggregatedSignature,
-		HeaderHash:          proof.HeaderHash,
-		HeaderEpoch:         proof.HeaderEpoch,
+		PubKeysBitmap:       proof.GetPubKeysBitmap(),
+		AggregatedSignature: proof.GetAggregatedSignature(),
+		HeaderHash:          proof.GetHeaderHash(),
+		HeaderEpoch:         proof.GetHeaderEpoch(),
+		HeaderNonce:         proof.GetHeaderNonce(),
+		HeaderShardId:       proof.GetHeaderShardId(),
 	}
 }

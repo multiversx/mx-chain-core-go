@@ -410,17 +410,22 @@ func TestMetaBlock2_GetPreviousProof(t *testing.T) {
 	proof := metaBlock.GetPreviousProof()
 	require.Nil(t, proof)
 
-	previousProof := &data.HeaderProof{
+	previousProof := &block.HeaderProof{
 		AggregatedSignature: []byte("previous aggregated signature"),
 		PubKeysBitmap:       []byte("previous pub keys bitmap"),
 		HeaderHash:          []byte("previous hash"),
 		HeaderEpoch:         123,
+		HeaderNonce:         234,
+		HeaderShardId:       0,
 	}
 
 	metaBlock.SetPreviousProof(previousProof)
 	proof = metaBlock.GetPreviousProof()
-	require.Equal(t, previousProof.AggregatedSignature, proof.AggregatedSignature)
-	require.Equal(t, previousProof.PubKeysBitmap, proof.PubKeysBitmap)
-	require.Equal(t, previousProof.HeaderHash, proof.HeaderHash)
-	require.Equal(t, previousProof.HeaderEpoch, proof.HeaderEpoch)
+	require.Equal(t, previousProof, proof) // pointer testing
+	require.Equal(t, previousProof.AggregatedSignature, proof.GetAggregatedSignature())
+	require.Equal(t, previousProof.PubKeysBitmap, proof.GetPubKeysBitmap())
+	require.Equal(t, previousProof.HeaderHash, proof.GetHeaderHash())
+	require.Equal(t, previousProof.HeaderEpoch, proof.GetHeaderEpoch())
+	require.Equal(t, previousProof.HeaderNonce, proof.GetHeaderNonce())
+	require.Equal(t, previousProof.HeaderShardId, proof.GetHeaderShardId())
 }
