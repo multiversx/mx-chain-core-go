@@ -412,3 +412,13 @@ type UserAccountHandler interface {
 	AddressBytes() []byte
 	IsInterfaceNil() bool
 }
+
+// HeaderProofHandler defines getters and setters for the header proof
+type HeaderProofHandler interface {
+	GetPubKeysBitmap() []byte
+	GetAggregatedSignature() []byte
+	GetHeaderHash() []byte
+	GetHeaderEpoch() uint32
+	GetHeaderNonce() uint64
+	GetHeaderShardId() uint32
+}
