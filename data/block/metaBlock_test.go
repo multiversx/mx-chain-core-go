@@ -403,19 +403,29 @@ func TestMetaBlock_HasScheduledMiniBlocks(t *testing.T) {
 	require.True(t, metaBlock.HasScheduledMiniBlocks())
 }
 
-func TestMetaBlock2_GetPreviousAggregatedSignatureAndBitmap(t *testing.T) {
+func TestMetaBlock2_GetPreviousProof(t *testing.T) {
 	t.Parallel()
 
 	metaBlock := &block.MetaBlock{}
-	sig, bitmap := metaBlock.GetPreviousAggregatedSignatureAndBitmap()
-	require.Nil(t, sig)
-	require.Nil(t, bitmap)
+	proof := metaBlock.GetPreviousProof()
+	require.Nil(t, proof)
 
-	previousPubkeysBitmap := []byte("previous pub keys bitmap")
-	previousAggregatedSignature := []byte("previous aggregated signature")
+	previousProof := &block.HeaderProof{
+		AggregatedSignature: []byte("previous aggregated signature"),
+		PubKeysBitmap:       []byte("previous pub keys bitmap"),
+		HeaderHash:          []byte("previous hash"),
+		HeaderEpoch:         123,
+		HeaderNonce:         234,
+		HeaderShardId:       0,
+	}
 
-	metaBlock.SetPreviousAggregatedSignatureAndBitmap(previousAggregatedSignature, previousPubkeysBitmap)
-	sig, bitmap = metaBlock.GetPreviousAggregatedSignatureAndBitmap()
-	require.Equal(t, previousPubkeysBitmap, bitmap)
-	require.Equal(t, previousAggregatedSignature, sig)
+	metaBlock.SetPreviousProof(previousProof)
+	proof = metaBlock.GetPreviousProof()
+	require.Equal(t, previousProof, proof) // pointer testing
+	require.Equal(t, previousProof.AggregatedSignature, proof.GetAggregatedSignature())
+	require.Equal(t, previousProof.PubKeysBitmap, proof.GetPubKeysBitmap())
+	require.Equal(t, previousProof.HeaderHash, proof.GetHeaderHash())
+	require.Equal(t, previousProof.HeaderEpoch, proof.GetHeaderEpoch())
+	require.Equal(t, previousProof.HeaderNonce, proof.GetHeaderNonce())
+	require.Equal(t, previousProof.HeaderShardId, proof.GetHeaderShardId())
 }

@@ -70,7 +70,7 @@ func TestBlockHeaderV2_Checks(t *testing.T) {
 
 		objectToTest := &HeaderV2{
 			Header:              &Header{},
-			PreviousHeaderProof: &PreviousHeaderProof{},
+			PreviousHeaderProof: &HeaderProof{},
 		}
 
 		fieldsForHeaderV1 := prepareFieldsList(objectToTest.Header, headerV1ExceptionFields...)
