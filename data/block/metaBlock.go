@@ -567,18 +567,19 @@ func (m *MetaBlock) CheckFieldsForNil() error {
 	return nil
 }
 
-// GetPreviousAggregatedSignatureAndBitmap returns the previous aggregated signature and the previous pubkeys bitmap
-func (m *MetaBlock) GetPreviousAggregatedSignatureAndBitmap() ([]byte, []byte) {
-	if m.PreviousHeaderProof == nil {
-		return nil, nil
-	}
-	return m.PreviousHeaderProof.AggregatedSignature, m.PreviousHeaderProof.PubKeysBitmap
+// GetPreviousProof returns the previous proof
+func (m *MetaBlock) GetPreviousProof() data.HeaderProofHandler {
+	return m.PreviousHeaderProof
 }
 
-// SetPreviousAggregatedSignatureAndBitmap sets the previous aggregated signature and the previous pubkeys bitmap
-func (m *MetaBlock) SetPreviousAggregatedSignatureAndBitmap(aggregatedSignature []byte, pubKeysBitmap []byte) {
-	m.PreviousHeaderProof = &PreviousHeaderProof{
-		PubKeysBitmap:       pubKeysBitmap,
-		AggregatedSignature: aggregatedSignature,
+// SetPreviousProof sets the previous proof
+func (m *MetaBlock) SetPreviousProof(proof data.HeaderProofHandler) {
+	m.PreviousHeaderProof = &HeaderProof{
+		PubKeysBitmap:       proof.GetPubKeysBitmap(),
+		AggregatedSignature: proof.GetAggregatedSignature(),
+		HeaderHash:          proof.GetHeaderHash(),
+		HeaderEpoch:         proof.GetHeaderEpoch(),
+		HeaderNonce:         proof.GetHeaderNonce(),
+		HeaderShardId:       proof.GetHeaderShardId(),
 	}
 }

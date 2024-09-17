@@ -11,14 +11,14 @@ import "block.proto";
 
 // HeaderV2 extends the Header structure with extra fields for version 2
 message HeaderV2 {
-  Header                Header = 1 [(gogoproto.jsontag) = "header,omitempty"];
-  bytes                 ScheduledRootHash = 2 [(gogoproto.jsontag) = "scheduledRootHash,omitempty"];
+  Header                Header                   = 1 [(gogoproto.jsontag) = "header,omitempty"];
+  bytes                 ScheduledRootHash        = 2 [(gogoproto.jsontag) = "scheduledRootHash,omitempty"];
   bytes                 ScheduledAccumulatedFees = 3 [(gogoproto.jsontag) = "scheduledAccumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-  bytes                 ScheduledDeveloperFees = 4 [(gogoproto.jsontag) = "scheduledDeveloperFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-  uint64                ScheduledGasProvided = 5 [(gogoproto.jsontag) = "scheduledGasProvided"];
-  uint64                ScheduledGasPenalized = 6 [(gogoproto.jsontag) = "scheduledGasPenalized"];
-  uint64                ScheduledGasRefunded = 7 [(gogoproto.jsontag) = "scheduledGasRefunded"];
-  PreviousHeaderProof   PreviousHeaderProof = 8 [(gogoproto.jsontag) = "previousHeaderProof"];
+  bytes                 ScheduledDeveloperFees   = 4 [(gogoproto.jsontag) = "scheduledDeveloperFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  uint64                ScheduledGasProvided     = 5 [(gogoproto.jsontag) = "scheduledGasProvided"];
+  uint64                ScheduledGasPenalized    = 6 [(gogoproto.jsontag) = "scheduledGasPenalized"];
+  uint64                ScheduledGasRefunded     = 7 [(gogoproto.jsontag) = "scheduledGasRefunded"];
+  HeaderProof           PreviousHeaderProof      = 8 [(gogoproto.jsontag) = "previousHeaderProof"];
 }
 
 message MiniBlockReserved {
@@ -31,13 +31,6 @@ message MiniBlockHeaderReserved {
   MiniBlockState State = 2 [(gogoproto.jsontag) = "state"];
   int32 IndexOfFirstTxProcessed = 3 [(gogoproto.jsontag) = "indexOfFirstTxProcessed"];
   int32 IndexOfLastTxProcessed = 4 [(gogoproto.jsontag) = "indexOfLastTxProcessed"];
-}
-
-// TODO: remove this struct
-// PreviousHeaderProof defines a header proof
-message PreviousHeaderProof {
-  bytes PubKeysBitmap = 1 [(gogoproto.jsontag) = "pubKeysBitmap"];
-  bytes AggregatedSignature = 2 [(gogoproto.jsontag) = "aggregatedSignature"];
 }
 
 // HeaderProof defines a proof for a specific header

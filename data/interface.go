@@ -83,9 +83,19 @@ type HeaderHandler interface {
 	IsStartOfEpochBlock() bool
 	ShallowClone() HeaderHandler
 	CheckFieldsForNil() error
-	GetPreviousAggregatedSignatureAndBitmap() ([]byte, []byte)
-	SetPreviousAggregatedSignatureAndBitmap(aggregatedSignature []byte, pubkeysBitmap []byte)
+	GetPreviousProof() HeaderProofHandler
+	SetPreviousProof(proof HeaderProofHandler)
 	IsInterfaceNil() bool
+}
+
+// HeaderProofHandler defines getters and setters for the header proof
+type HeaderProofHandler interface {
+	GetPubKeysBitmap() []byte
+	GetAggregatedSignature() []byte
+	GetHeaderHash() []byte
+	GetHeaderEpoch() uint32
+	GetHeaderNonce() uint64
+	GetHeaderShardId() uint32
 }
 
 // ShardHeaderHandler defines getters and setters for the shard block header
@@ -259,8 +269,6 @@ type ChainHandler interface {
 	GetCurrentBlockRootHash() []byte
 	SetFinalBlockInfo(nonce uint64, blockHash []byte, rootHash []byte)
 	GetFinalBlockInfo() (nonce uint64, blockHash []byte, rootHash []byte)
-	SetCurrentHeaderProof(proof HeaderProof)
-	GetCurrentHeaderProof() HeaderProof
 	IsInterfaceNil() bool
 }
 
@@ -411,14 +419,4 @@ type UserAccountHandler interface {
 	GetNonce() uint64
 	AddressBytes() []byte
 	IsInterfaceNil() bool
-}
-
-// HeaderProofHandler defines getters and setters for the header proof
-type HeaderProofHandler interface {
-	GetPubKeysBitmap() []byte
-	GetAggregatedSignature() []byte
-	GetHeaderHash() []byte
-	GetHeaderEpoch() uint32
-	GetHeaderNonce() uint64
-	GetHeaderShardId() uint32
 }
