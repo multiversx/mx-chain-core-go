@@ -16,35 +16,35 @@ func NewKeyRWMutex() *keyRWMutex {
 }
 
 // RLock locks for read the Mutex for the given key
-func (csa *keyRWMutex) RLock(key string) {
-	csa.getForRLock(key).rLock()
+func (km *keyRWMutex) RLock(key string) {
+	km.getForRLock(key).rLock()
 }
 
 // RUnlock unlocks for read the Mutex for the given key
-func (csa *keyRWMutex) RUnlock(key string) {
-	csa.getForRUnlock(key).rUnlock()
-	csa.cleanupMutex(key)
+func (km *keyRWMutex) RUnlock(key string) {
+	km.getForRUnlock(key).rUnlock()
+	km.cleanupMutex(key)
 }
 
 // Lock locks the Mutex for the given key
-func (csa *keyRWMutex) Lock(key string) {
-	csa.getForLock(key).lock()
+func (km *keyRWMutex) Lock(key string) {
+	km.getForLock(key).lock()
 }
 
 // Unlock unlocks the Mutex for the given key
-func (csa *keyRWMutex) Unlock(key string) {
-	csa.getForUnlock(key).unlock()
-	csa.cleanupMutex(key)
+func (km *keyRWMutex) Unlock(key string) {
+	km.getForUnlock(key).unlock()
+	km.cleanupMutex(key)
 }
 
 // getForLock returns the Mutex for the given key, updating the Lock counter
-func (csa *keyRWMutex) getForLock(key string) *rwMutex {
-	csa.mut.Lock()
-	defer csa.mut.Unlock()
+func (km *keyRWMutex) getForLock(key string) *rwMutex {
+	km.mut.Lock()
+	defer km.mut.Unlock()
 
-	mutex, ok := csa.managedMutexes[key]
+	mutex, ok := km.managedMutexes[key]
 	if !ok {
-		mutex = csa.newInternalMutex(key)
+		mutex = km.newInternalMutex(key)
 	}
 	mutex.updateCounterLock()
 
@@ -52,13 +52,13 @@ func (csa *keyRWMutex) getForLock(key string) *rwMutex {
 }
 
 // getForRLock returns the Mutex for the given key, updating the RLock counter
-func (csa *keyRWMutex) getForRLock(key string) *rwMutex {
-	csa.mut.Lock()
-	defer csa.mut.Unlock()
+func (km *keyRWMutex) getForRLock(key string) *rwMutex {
+	km.mut.Lock()
+	defer km.mut.Unlock()
 
-	mutex, ok := csa.managedMutexes[key]
+	mutex, ok := km.managedMutexes[key]
 	if !ok {
-		mutex = csa.newInternalMutex(key)
+		mutex = km.newInternalMutex(key)
 	}
 	mutex.updateCounterRLock()
 
@@ -66,11 +66,11 @@ func (csa *keyRWMutex) getForRLock(key string) *rwMutex {
 }
 
 // getForUnlock returns the Mutex for the given key, updating the Unlock counter
-func (csa *keyRWMutex) getForUnlock(key string) *rwMutex {
-	csa.mut.Lock()
-	defer csa.mut.Unlock()
+func (km *keyRWMutex) getForUnlock(key string) *rwMutex {
+	km.mut.Lock()
+	defer km.mut.Unlock()
 
-	mutex, ok := csa.managedMutexes[key]
+	mutex, ok := km.managedMutexes[key]
 	if ok {
 		mutex.updateCounterUnlock()
 	}
@@ -79,11 +79,11 @@ func (csa *keyRWMutex) getForUnlock(key string) *rwMutex {
 }
 
 // getForRUnlock returns the Mutex for the given key, updating the RUnlock counter
-func (csa *keyRWMutex) getForRUnlock(key string) *rwMutex {
-	csa.mut.Lock()
-	defer csa.mut.Unlock()
+func (km *keyRWMutex) getForRUnlock(key string) *rwMutex {
+	km.mut.Lock()
+	defer km.mut.Unlock()
 
-	mutex, ok := csa.managedMutexes[key]
+	mutex, ok := km.managedMutexes[key]
 	if ok {
 		mutex.updateCounterRUnlock()
 	}
@@ -92,27 +92,27 @@ func (csa *keyRWMutex) getForRUnlock(key string) *rwMutex {
 }
 
 // newInternalMutex creates a new mutex for the given key and adds it to the map
-func (csa *keyRWMutex) newInternalMutex(key string) *rwMutex {
-	mutex, ok := csa.managedMutexes[key]
+func (km *keyRWMutex) newInternalMutex(key string) *rwMutex {
+	mutex, ok := km.managedMutexes[key]
 	if !ok {
 		mutex = newRWMutex()
-		csa.managedMutexes[key] = mutex
+		km.managedMutexes[key] = mutex
 	}
 	return mutex
 }
 
 // cleanupMutex removes the mutex from the map if it is not used anymore
-func (csa *keyRWMutex) cleanupMutex(key string) {
-	csa.mut.Lock()
-	defer csa.mut.Unlock()
+func (km *keyRWMutex) cleanupMutex(key string) {
+	km.mut.Lock()
+	defer km.mut.Unlock()
 
-	mut, ok := csa.managedMutexes[key]
+	mut, ok := km.managedMutexes[key]
 	if ok && mut.numLocks() == 0 {
-		delete(csa.managedMutexes, key)
+		delete(km.managedMutexes, key)
 	}
 }
 
 // IsInterfaceNil returns true if there is no value under the interface
-func (csa *keyRWMutex) IsInterfaceNil() bool {
-	return csa == nil
+func (km *keyRWMutex) IsInterfaceNil() bool {
+	return km == nil
 }

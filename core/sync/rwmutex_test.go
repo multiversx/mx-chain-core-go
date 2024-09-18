@@ -9,29 +9,29 @@ import (
 func TestNewRWMutex(t *testing.T) {
 	t.Parallel()
 
-	cs := newRWMutex()
-	require.NotNil(t, cs)
-	require.Equal(t, int32(0), cs.cntLocks)
-	require.Equal(t, int32(0), cs.cntRLocks)
+	rwm := newRWMutex()
+	require.NotNil(t, rwm)
+	require.Equal(t, int32(0), rwm.cntLocks)
+	require.Equal(t, int32(0), rwm.cntRLocks)
 }
 
 func TestRWMutex_Lock_Unlock_IsLocked_NumLocks(t *testing.T) {
 	t.Parallel()
 
-	cs := &rwMutex{}
-	cs.lock()
-	cs.updateCounterLock()
-	require.Equal(t, int32(1), cs.numLocks())
+	rwm := &rwMutex{}
+	rwm.lock()
+	rwm.updateCounterLock()
+	require.Equal(t, int32(1), rwm.numLocks())
 
-	cs.unlock()
-	cs.updateCounterUnlock()
-	require.Equal(t, int32(0), cs.numLocks())
+	rwm.unlock()
+	rwm.updateCounterUnlock()
+	require.Equal(t, int32(0), rwm.numLocks())
 
-	cs.rLock()
-	cs.updateCounterRLock()
-	require.Equal(t, int32(1), cs.numLocks())
+	rwm.rLock()
+	rwm.updateCounterRLock()
+	require.Equal(t, int32(1), rwm.numLocks())
 
-	cs.rUnlock()
-	cs.updateCounterRUnlock()
-	require.Equal(t, int32(0), cs.numLocks())
+	rwm.rUnlock()
+	rwm.updateCounterRUnlock()
+	require.Equal(t, int32(0), rwm.numLocks())
 }
