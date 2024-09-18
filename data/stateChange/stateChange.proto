@@ -13,18 +13,18 @@ message StateChanges {
 
 message StateChange {
   string                   Type                    = 1 [(gogoproto.jsontag) = "type"];
-  int32                    Index                   = 2 [(gogoproto.jsontag) = "-"];
-  bytes                    TxHash                  = 3 [(gogoproto.jsontag) = "-"];
-  bytes                    MainTrieKey             = 4 [(gogoproto.jsontag) = "-"];
-  bytes                    MainTrieVal             = 5 [(gogoproto.jsontag) = "-"];
+  int32                    Index                   = 2 [(gogoproto.jsontag) = "index"];
+  bytes                    TxHash                  = 3 [(gogoproto.jsontag) = "txHash"];
+  bytes                    MainTrieKey             = 4 [(gogoproto.jsontag) = "mainTrieKey"];
+  bytes                    MainTrieVal             = 5 [(gogoproto.jsontag) = "mainTrieVal"];
   string                   Operation               = 6 [(gogoproto.jsontag) = "operation"];
   repeated DataTrieChange  DataTrieChanges         = 7 [(gogoproto.jsontag) = "dataTrieChanges,omitempty"];
 }
 
 message DataTrieChange {
   string Type = 1 [(gogoproto.jsontag) = "type"];
-  bytes Key   = 2 [(gogoproto.jsontag) = "type"];
-  bytes Val   = 3 [(gogoproto.jsontag) = "type"];
+  bytes Key   = 2 [(gogoproto.jsontag) = "key"];
+  bytes Val   = 3 [(gogoproto.jsontag) = "val"];
 }
 
 message DataAnalysisStateChange {
