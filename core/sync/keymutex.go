@@ -71,9 +71,10 @@ func (km *keyRWMutex) getForUnlock(key string) *rwMutex {
 	defer km.mut.Unlock()
 
 	mutex, ok := km.managedMutexes[key]
-	if ok {
-		mutex.updateCounterUnlock()
+	if !ok {
+		mutex = km.newInternalMutex(key)
 	}
+	mutex.updateCounterUnlock()
 
 	return mutex
 }
@@ -84,9 +85,10 @@ func (km *keyRWMutex) getForRUnlock(key string) *rwMutex {
 	defer km.mut.Unlock()
 
 	mutex, ok := km.managedMutexes[key]
-	if ok {
-		mutex.updateCounterRUnlock()
+	if !ok {
+		mutex = km.newInternalMutex(key)
 	}
+	mutex.updateCounterRUnlock()
 
 	return mutex
 }
