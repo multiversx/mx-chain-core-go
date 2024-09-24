@@ -21,3 +21,10 @@ message DataTrieChange {
   bytes Key  = 2  [(gogoproto.jsontag) = "key"];
   bytes Val  = 3  [(gogoproto.jsontag) = "val"];
 }
+
+
+// SerializedNodeMap represents a map with key node hash and data node bytes
+message SerializedNodeMap {
+  map<string, bytes> SerializedNodes = 1 [(gogoproto.jsontag) = "serializedNodes"];
+}
+
