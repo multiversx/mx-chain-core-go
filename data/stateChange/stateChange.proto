@@ -11,8 +11,20 @@ message StateChanges {
   repeated StateChange StateChanges = 1 [(gogoproto.jsontag) = "stateChanges"];
 }
 
+enum Type {
+  Read = 0;
+  Write = 1;
+}
+
+enum Operation {
+  GetCode         = 0;
+  SaveAccount     = 1;
+  WriteCode       = 2;
+  RemoveDataTrie  = 3;
+}
+
 message StateChange {
-  string                   Type                    = 1 [(gogoproto.jsontag) = "type"];
+  Type                     Type                      = 1 [(gogoproto.jsontag) = "type"];
   int32                    Index                   = 2 [(gogoproto.jsontag) = "index"];
   bytes                    TxHash                  = 3 [(gogoproto.jsontag) = "txHash"];
   bytes                    MainTrieKey             = 4 [(gogoproto.jsontag) = "mainTrieKey"];
