@@ -659,3 +659,20 @@ func (hv2 *HeaderV2) CheckFieldsForNil() error {
 
 	return nil
 }
+
+// GetPreviousProof returns the previous proof
+func (hv2 *HeaderV2) GetPreviousProof() data.HeaderProofHandler {
+	return hv2.PreviousHeaderProof
+}
+
+// SetPreviousProof sets the previous proof
+func (hv2 *HeaderV2) SetPreviousProof(proof data.HeaderProofHandler) {
+	hv2.PreviousHeaderProof = &HeaderProof{
+		PubKeysBitmap:       proof.GetPubKeysBitmap(),
+		AggregatedSignature: proof.GetAggregatedSignature(),
+		HeaderHash:          proof.GetHeaderHash(),
+		HeaderEpoch:         proof.GetHeaderEpoch(),
+		HeaderNonce:         proof.GetHeaderNonce(),
+		HeaderShardId:       proof.GetHeaderShardId(),
+	}
+}
