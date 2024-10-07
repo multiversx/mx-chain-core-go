@@ -341,6 +341,7 @@ type TransactionHandler interface {
 	GetSndAddr() []byte
 	GetGasLimit() uint64
 	GetGasPrice() uint64
+	GetUserTransactions() []TransactionHandler
 
 	SetValue(*big.Int)
 	SetData([]byte)
@@ -467,6 +468,7 @@ type TransactionWithFeeHandler interface {
 	GetData() []byte
 	GetRcvAddr() []byte
 	GetValue() *big.Int
+	GetUserTransactions() []TransactionHandler
 }
 
 // UserAccountHandler models a user account
