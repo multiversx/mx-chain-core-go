@@ -15,6 +15,9 @@ const (
 
 	// TxTypeInvalid represents the identifier for an invalid transaction
 	TxTypeInvalid TxType = "invalid"
+
+	// TxTypeInner represents the identifier for an inner transaction of relayed v3
+	TxTypeInner TxType = "inner"
 )
 
 // MaskSignedWithHash - this mask is used to verify if LSB from last byte from field options from transaction is set
