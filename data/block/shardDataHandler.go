@@ -202,6 +202,28 @@ func (sd *ShardData) SetTxCount(txCount uint32) error {
 	return nil
 }
 
+// SetCurrentPubkeyBitmap sets the current pubkeys bitmap
+func (sd *ShardData) SetCurrentPubkeyBitmap(bitmap []byte) error {
+	if sd == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	sd.CurrentPubKeysBitmap = bitmap
+
+	return nil
+}
+
+// SetCurrentSignature sets the current signature
+func (sd *ShardData) SetCurrentSignature(signature []byte) error {
+	if sd == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	sd.CurrentSignature = signature
+
+	return nil
+}
+
 // ShallowClone creates and returns a shallow clone of shardData
 func (sd *ShardData) ShallowClone() data.ShardDataHandler {
 	if sd == nil {
