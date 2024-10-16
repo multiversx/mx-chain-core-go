@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"math/big"
 
+	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
@@ -637,8 +638,21 @@ func (sch *SovereignChainHeader) GetEpochStartHandler() data.EpochStartHandler {
 		return nil
 	}
 
+	lastFinalizedCrossChainHeaderData := EpochStartShardData{
+		ShardID:    sch.EpochStart.LastFinalizedCrossChainHeader.ShardID,
+		Epoch:      sch.EpochStart.LastFinalizedCrossChainHeader.Epoch,
+		Round:      sch.EpochStart.LastFinalizedCrossChainHeader.Round,
+		Nonce:      sch.EpochStart.LastFinalizedCrossChainHeader.Nonce,
+		HeaderHash: sch.EpochStart.LastFinalizedCrossChainHeader.HeaderHash,
+	}
+
+	epochStartShardData := make([]EpochStartShardData, 0)
+	if lastFinalizedCrossChainHeaderData.ShardID == core.MainChainShardId {
+		epochStartShardData = append(epochStartShardData, lastFinalizedCrossChainHeaderData)
+	}
+
 	return &EpochStart{
-		LastFinalizedHeaders: make([]EpochStartShardData, 0),
+		LastFinalizedHeaders: epochStartShardData,
 		Economics:            sch.EpochStart.Economics,
 	}
 }
