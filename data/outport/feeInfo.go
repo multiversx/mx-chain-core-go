@@ -16,3 +16,8 @@ func (f *FeeInfo) SetGasUsed(gasUsed uint64) {
 func (f *FeeInfo) SetFee(fee *big.Int) {
 	f.Fee = fee
 }
+
+// SetForRelayed sets ForRelayed field to true
+func (f *FeeInfo) SetForRelayed() {
+	f.ForRelayed = true
+}
