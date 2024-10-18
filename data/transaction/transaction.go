@@ -2,7 +2,6 @@
 package transaction
 
 import (
-	"encoding/hex"
 	"math/big"
 
 	"github.com/multiversx/mx-chain-core-go/core"
@@ -37,17 +36,6 @@ func (tx *Transaction) SetSndAddr(addr []byte) {
 	tx.SndAddr = addr
 }
 
-// GetUserTransactions returns the inner transactions
-func (tx *Transaction) GetUserTransactions() []data.TransactionHandler {
-	innerTxs := tx.GetInnerTransactions()
-	txsHandlers := make([]data.TransactionHandler, len(innerTxs))
-	for i := 0; i < len(innerTxs); i++ {
-		txsHandlers[i] = innerTxs[i]
-	}
-
-	return txsHandlers
-}
-
 // TrimSlicePtr creates a copy of the provided slice without the excess capacity
 func TrimSlicePtr(in []*Transaction) []*Transaction {
 	if len(in) == 0 {
@@ -80,25 +68,38 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.M
 		return nil, ErrNilHasher
 	}
 
-	ftx, err := tx.prepareTx(encoder)
+	receiverAddr, err := encoder.Encode(tx.RcvAddr)
 	if err != nil {
 		return nil, err
 	}
 
-	numInnerTxs := len(tx.InnerTransactions)
-	if numInnerTxs > 0 {
-		ftx.InnerTransactions = make([]*FrontendTransaction, numInnerTxs)
-		var errPrepare error
-		for i := 0; i < numInnerTxs; i++ {
-			ftx.InnerTransactions[i], errPrepare = tx.InnerTransactions[i].prepareTx(encoder)
-			if errPrepare != nil {
-				return nil, errPrepare
-			}
+	senderAddr, err := encoder.Encode(tx.SndAddr)
+	if err != nil {
+		return nil, err
+	}
 
-			ftx.InnerTransactions[i].Signature = hex.EncodeToString(tx.InnerTransactions[i].Signature)
-			ftx.InnerTransactions[i].GuardianSignature = hex.EncodeToString(tx.InnerTransactions[i].GuardianSignature)
+	ftx := &FrontendTransaction{
+		Nonce:            tx.Nonce,
+		Value:            tx.Value.String(),
+		Receiver:         receiverAddr,
+		Sender:           senderAddr,
+		GasPrice:         tx.GasPrice,
+		GasLimit:         tx.GasLimit,
+		SenderUsername:   tx.SndUserName,
+		ReceiverUsername: tx.RcvUserName,
+		Data:             tx.Data,
+		ChainID:          string(tx.ChainID),
+		Version:          tx.Version,
+		Options:          tx.Options,
+	}
+
+	if len(tx.GuardianAddr) > 0 {
+		guardianAddr, errGuardian := encoder.Encode(tx.GuardianAddr)
+		if errGuardian != nil {
+			return nil, errGuardian
 		}
 
+		ftx.GuardianAddr = guardianAddr
 	}
 
 	ftxBytes, err := marshaller.Marshal(ftx)
@@ -145,51 +146,4 @@ func (tx *Transaction) CheckIntegrity() error {
 	}
 
 	return nil
-}
-
-func (tx *Transaction) prepareTx(encoder data.Encoder) (*FrontendTransaction, error) {
-	receiverAddr, err := encoder.Encode(tx.RcvAddr)
-	if err != nil {
-		return nil, err
-	}
-
-	senderAddr, err := encoder.Encode(tx.SndAddr)
-	if err != nil {
-		return nil, err
-	}
-
-	ftx := &FrontendTransaction{
-		Nonce:            tx.Nonce,
-		Value:            tx.Value.String(),
-		Receiver:         receiverAddr,
-		Sender:           senderAddr,
-		GasPrice:         tx.GasPrice,
-		GasLimit:         tx.GasLimit,
-		SenderUsername:   tx.SndUserName,
-		ReceiverUsername: tx.RcvUserName,
-		Data:             tx.Data,
-		ChainID:          string(tx.ChainID),
-		Version:          tx.Version,
-		Options:          tx.Options,
-	}
-
-	if len(tx.RelayerAddr) > 0 {
-		relayerAddr, errRelayer := encoder.Encode(tx.RelayerAddr)
-		if errRelayer != nil {
-			return nil, errRelayer
-		}
-
-		ftx.Relayer = relayerAddr
-	}
-
-	if len(tx.GuardianAddr) > 0 {
-		guardianAddr, errGuardian := encoder.Encode(tx.GuardianAddr)
-		if errGuardian != nil {
-			return nil, errGuardian
-		}
-
-		ftx.GuardianAddr = guardianAddr
-	}
-
-	return ftx, nil
 }

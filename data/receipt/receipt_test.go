@@ -29,7 +29,6 @@ func TestReceipt_SettersAndGetters(t *testing.T) {
 	assert.Equal(t, uint64(0), r.GetNonce())
 	assert.Equal(t, uint64(0), r.GetGasPrice())
 	assert.Equal(t, uint64(0), r.GetGasLimit())
-	assert.Nil(t, r.GetUserTransactions())
 }
 
 func TestReceipt_CheckIntegrityReturnsNil(t *testing.T) {
