@@ -632,7 +632,7 @@ func (sch *SovereignChainHeader) SetAccumulatedFeesInEpoch(value *big.Int) error
 	return nil
 }
 
-// GetEpochStartHandler returns epoch start header handler as for metachain, but without last finalized headers
+// GetEpochStartHandler returns epoch start header handler as for metachain, but with last finalized headers from main chain, if found.
 func (sch *SovereignChainHeader) GetEpochStartHandler() data.EpochStartHandler {
 	if sch == nil {
 		return nil
@@ -655,6 +655,15 @@ func (sch *SovereignChainHeader) GetEpochStartHandler() data.EpochStartHandler {
 		LastFinalizedHeaders: epochStartShardData,
 		Economics:            sch.EpochStart.Economics,
 	}
+}
+
+// GetLastFinalizedCrossChainHeaderHandler returns the last finalized cross chain header data
+func (sch *SovereignChainHeader) GetLastFinalizedCrossChainHeaderHandler() data.EpochStartChainDataHandler {
+	if sch == nil {
+		return nil
+	}
+
+	return &sch.EpochStart.LastFinalizedCrossChainHeader
 }
 
 // GetShardInfoHandlers returns empty slice
@@ -718,4 +727,59 @@ func (omb *OutGoingMiniBlockHeader) SetAggregatedSignatureOutGoingOperations(sig
 // IsInterfaceNil checks if the underlying interface is nil
 func (omb *OutGoingMiniBlockHeader) IsInterfaceNil() bool {
 	return omb == nil
+}
+
+// SetShardID sets the epoch start shardID
+func (essd *EpochStartCrossChainData) SetShardID(shardID uint32) error {
+	if essd == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	essd.ShardID = shardID
+
+	return nil
+}
+
+// SetEpoch sets the epoch start epoch
+func (essd *EpochStartCrossChainData) SetEpoch(epoch uint32) error {
+	if essd == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	essd.Epoch = epoch
+
+	return nil
+}
+
+// SetRound sets the epoch start round
+func (essd *EpochStartCrossChainData) SetRound(round uint64) error {
+	if essd == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	essd.Round = round
+
+	return nil
+}
+
+// SetNonce sets the epoch start nonce
+func (essd *EpochStartCrossChainData) SetNonce(nonce uint64) error {
+	if essd == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	essd.Nonce = nonce
+
+	return nil
+}
+
+// SetHeaderHash sets the epoch start header hash
+func (essd *EpochStartCrossChainData) SetHeaderHash(hash []byte) error {
+	if essd == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	essd.HeaderHash = hash
+
+	return nil
 }

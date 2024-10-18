@@ -114,6 +114,7 @@ type SovereignChainHeaderHandler interface {
 	GetEpochStartHandler() EpochStartHandler
 	GetShardInfoHandlers() []ShardDataHandler
 	SetShardInfoHandlers(shardInfo []ShardDataHandler) error
+	GetLastFinalizedCrossChainHeaderHandler() EpochStartChainDataHandler
 }
 
 // OutGoingMiniBlockHeaderHandler defines setters and getters for sovereign outgoing mini block header
@@ -243,23 +244,30 @@ type ShardDataHandler interface {
 	ShallowClone() ShardDataHandler
 }
 
-// EpochStartShardDataHandler defines setters and getters for EpochStartShardData
-type EpochStartShardDataHandler interface {
+// EpochStartChainDataHandler defines setters and getters for basic information related to epoch start data
+type EpochStartChainDataHandler interface {
 	GetShardID() uint32
 	GetEpoch() uint32
 	GetRound() uint64
 	GetNonce() uint64
 	GetHeaderHash() []byte
-	GetRootHash() []byte
-	GetFirstPendingMetaBlock() []byte
-	GetLastFinishedMetaBlock() []byte
-	GetPendingMiniBlockHeaderHandlers() []MiniBlockHeaderHandler
 
 	SetShardID(uint32) error
 	SetEpoch(uint32) error
 	SetRound(uint64) error
 	SetNonce(uint64) error
 	SetHeaderHash([]byte) error
+}
+
+// EpochStartShardDataHandler defines setters and getters for EpochStartShardData
+type EpochStartShardDataHandler interface {
+	EpochStartChainDataHandler
+
+	GetRootHash() []byte
+	GetFirstPendingMetaBlock() []byte
+	GetLastFinishedMetaBlock() []byte
+	GetPendingMiniBlockHeaderHandlers() []MiniBlockHeaderHandler
+
 	SetRootHash([]byte) error
 	SetFirstPendingMetaBlock([]byte) error
 	SetLastFinishedMetaBlock([]byte) error
