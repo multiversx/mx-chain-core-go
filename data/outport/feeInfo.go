@@ -16,3 +16,8 @@ func (f *FeeInfo) SetGasUsed(gasUsed uint64) {
 func (f *FeeInfo) SetFee(fee *big.Int) {
 	f.Fee = fee
 }
+
+// SetGasRefunded sets the gas units refunded
+func (f *FeeInfo) SetGasRefunded(gasRefunded uint64) {
+	f.GasRefunded = gasRefunded
+}
