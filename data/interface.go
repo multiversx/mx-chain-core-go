@@ -318,6 +318,8 @@ type GuardedTransactionHandler interface {
 type RelayedTransactionHandler interface {
 	GetRelayerAddr() []byte
 	GetRelayerSignature() []byte
+	GetSignature() []byte
+	GetDataForSigning(encoder Encoder, marshaller Marshaller, hasher Hasher) ([]byte, error)
 }
 
 // LogHandler defines the type for a log resulted from executing a transaction or smart contract call
