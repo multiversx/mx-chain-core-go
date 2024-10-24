@@ -12,7 +12,17 @@ import "metaBlock.proto";
 
 // EpochStart holds the block information for end-of-epoch
 message EpochStartSovereign {
-  Economics Economics = 1 [(gogoproto.jsontag) = "economics", (gogoproto.nullable) = false];
+  Economics                Economics                     = 1 [(gogoproto.jsontag) = "economics", (gogoproto.nullable) = false];
+  EpochStartCrossChainData LastFinalizedCrossChainHeader = 2 [(gogoproto.jsontag) = "lastFinalizedCrossChainHeader", (gogoproto.nullable) = false];
+}
+
+// EpochStartShardData hold the last finalized headers hash and state root hash
+message EpochStartCrossChainData {
+  uint32                        ShardID                  = 1 [(gogoproto.jsontag) = "shardID"];
+  uint32                        Epoch                    = 9 [(gogoproto.jsontag) = "epoch"];
+  uint64                        Round                    = 7 [(gogoproto.jsontag) = "round"];
+  uint64                        Nonce                    = 8 [(gogoproto.jsontag) = "nonce"];
+  bytes                         HeaderHash               = 2 [(gogoproto.jsontag) = "headerHash,omitempty"];
 }
 
 // SovereignChainHeader extends the Header structure with extra fields needed by sovereign chain
