@@ -7,19 +7,19 @@ import (
 )
 
 func TestIsValidPrefixedToken(t *testing.T) {
-	prefix, valid := IsValidPrefixedToken("sov1-TKN-coffee")
+	prefix, valid := IsValidPrefixedToken("sov1-TKN-c0ffee")
 	require.True(t, valid)
 	require.Equal(t, "sov1", prefix)
 
-	prefix, valid = IsValidPrefixedToken("sOv1-TKN-coffee")
+	prefix, valid = IsValidPrefixedToken("sOv1-TKN-c0ffee")
 	require.False(t, valid)
 	require.Equal(t, "", prefix)
 
-	prefix, valid = IsValidPrefixedToken("sov1-TkN-coffee")
+	prefix, valid = IsValidPrefixedToken("sov1-TkN-c0ffee")
 	require.False(t, valid)
 	require.Equal(t, "", prefix)
 
-	prefix, valid = IsValidPrefixedToken("sov1-TKN-coffe")
+	prefix, valid = IsValidPrefixedToken("sov1-TKN-c0ffe")
 	require.False(t, valid)
 	require.Equal(t, "", prefix)
 
@@ -27,7 +27,7 @@ func TestIsValidPrefixedToken(t *testing.T) {
 	require.False(t, valid)
 	require.Equal(t, "", prefix)
 
-	prefix, valid = IsValidPrefixedToken("TKN-coffee")
+	prefix, valid = IsValidPrefixedToken("TKN-c0ffee")
 	require.False(t, valid)
 	require.Equal(t, "", prefix)
 }
