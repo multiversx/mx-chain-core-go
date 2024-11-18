@@ -35,7 +35,7 @@ func IsValidPrefixedToken(token string) (string, bool) {
 	}
 
 	tokenRandSeq := tokenSplit[2]
-	if !(len(tokenRandSeq) >= esdtTickerNumRandChars) {
+	if !IsRandomSeqValid(tokenRandSeq) {
 		return "", false
 	}
 
@@ -82,4 +82,22 @@ func IsTickerValid(ticker string) bool {
 // IsTokenTickerLenCorrect checks if the token ticker len is correct
 func IsTokenTickerLenCorrect(tokenTickerLen int) bool {
 	return !(tokenTickerLen < minLengthForTickerName || tokenTickerLen > maxLengthForTickerName)
+}
+
+// IsRandomSeqValid checks if the token random sequence is valid
+func IsRandomSeqValid(randomSeq string) bool {
+	if len(randomSeq) != esdtTickerNumRandChars {
+		return false
+	}
+
+	for _, ch := range randomSeq {
+		isSmallCharacter := ch >= 'a' && ch <= 'f'
+		isNumber := ch >= '0' && ch <= '9'
+		isReadable := isSmallCharacter || isNumber
+		if !isReadable {
+			return false
+		}
+	}
+
+	return true
 }
