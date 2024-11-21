@@ -51,8 +51,8 @@ message ShardData {
 	uint64                   LastIncludedMetaNonce 				= 13 [(gogoproto.jsontag) = "lastIncludedMetaNonce"];
 	uint32                   ShardID               				= 1 [(gogoproto.jsontag) = "shardID"];
 	uint32                   TxCount               				= 7 [(gogoproto.jsontag) = "txCount"];
-	bytes                    CurrentPubKeysBitmap         = 15 [(gogoproto.jsontag) = "currentPubKeysBitmap,omitempty"];
-	bytes                    CurrentSignature             = 16 [(gogoproto.jsontag) = "currentSignature,omitempty"];
+	HeaderProof 				     CurrentShardHeaderProof      = 15 [(gogoproto.jsontag) = "currentHeaderProof,omitempty"];
+	HeaderProof 						 PreviousShardHeaderProof     = 16 [(gogoproto.jsontag) = "previousHeaderProof,omitempty"];
 }
 
 // EpochStartShardData hold the last finalized headers hash and state root hash

@@ -3,6 +3,7 @@ package block
 import (
 	"math/big"
 
+	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
 )
 
@@ -202,24 +203,58 @@ func (sd *ShardData) SetTxCount(txCount uint32) error {
 	return nil
 }
 
-// SetCurrentPubkeyBitmap sets the current pubkeys bitmap
-func (sd *ShardData) SetCurrentPubkeyBitmap(bitmap []byte) error {
+// GetCurrentProof returns the current shard header proof
+func (sd *ShardData) GetCurrentProof() data.HeaderProofHandler {
+	return sd.CurrentShardHeaderProof
+}
+
+// SetCurrentProof sets the current shard header proof
+func (sd *ShardData) SetCurrentProof(proof data.HeaderProofHandler) error {
 	if sd == nil {
 		return data.ErrNilPointerReceiver
 	}
 
-	sd.CurrentPubKeysBitmap = bitmap
+	if check.IfNilReflect(proof) {
+		sd.CurrentShardHeaderProof = nil
+		return nil
+	}
+
+	sd.CurrentShardHeaderProof = &HeaderProof{
+		PubKeysBitmap:       proof.GetPubKeysBitmap(),
+		AggregatedSignature: proof.GetAggregatedSignature(),
+		HeaderHash:          proof.GetHeaderHash(),
+		HeaderEpoch:         proof.GetHeaderEpoch(),
+		HeaderNonce:         proof.GetHeaderNonce(),
+		HeaderShardId:       proof.GetHeaderShardId(),
+	}
 
 	return nil
 }
 
-// SetCurrentSignature sets the current signature
-func (sd *ShardData) SetCurrentSignature(signature []byte) error {
+// GetPreviousProof returns the previous shard header proof
+func (sd *ShardData) GetPreviousProof() data.HeaderProofHandler {
+	return sd.PreviousShardHeaderProof
+}
+
+// SetPreviousProof sets the previous shard header proof
+func (sd *ShardData) SetPreviousProof(proof data.HeaderProofHandler) error {
 	if sd == nil {
 		return data.ErrNilPointerReceiver
 	}
 
-	sd.CurrentSignature = signature
+	if check.IfNilReflect(proof) {
+		sd.PreviousShardHeaderProof = nil
+		return nil
+	}
+
+	sd.PreviousShardHeaderProof = &HeaderProof{
+		PubKeysBitmap:       proof.GetPubKeysBitmap(),
+		AggregatedSignature: proof.GetAggregatedSignature(),
+		HeaderHash:          proof.GetHeaderHash(),
+		HeaderEpoch:         proof.GetHeaderEpoch(),
+		HeaderNonce:         proof.GetHeaderNonce(),
+		HeaderShardId:       proof.GetHeaderShardId(),
+	}
 
 	return nil
 }

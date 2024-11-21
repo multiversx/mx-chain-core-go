@@ -667,6 +667,11 @@ func (hv2 *HeaderV2) GetPreviousProof() data.HeaderProofHandler {
 
 // SetPreviousProof sets the previous proof
 func (hv2 *HeaderV2) SetPreviousProof(proof data.HeaderProofHandler) {
+	if check.IfNilReflect(proof) {
+		hv2.PreviousHeaderProof = nil
+		return
+	}
+
 	hv2.PreviousHeaderProof = &HeaderProof{
 		PubKeysBitmap:       proof.GetPubKeysBitmap(),
 		AggregatedSignature: proof.GetAggregatedSignature(),
