@@ -1,0 +1,41 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/multiversx/mx-chain-core-go/data/stateChange;stateChange";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+
+message StateChanges {
+  repeated StateChange StateChanges = 1 [(gogoproto.jsontag) = "stateChanges"];
+}
+
+message StateChange {
+  string                   Type                    = 1 [(gogoproto.jsontag) = "type"];
+  int32                    Index                   = 2 [(gogoproto.jsontag) = "index"];
+  bytes                    TxHash                  = 3 [(gogoproto.jsontag) = "txHash"];
+  bytes                    MainTrieKey             = 4 [(gogoproto.jsontag) = "mainTrieKey"];
+  bytes                    MainTrieVal             = 5 [(gogoproto.jsontag) = "mainTrieVal"];
+  string                   Operation               = 6 [(gogoproto.jsontag) = "operation"];
+  repeated DataTrieChange  DataTrieChanges         = 7 [(gogoproto.jsontag) = "dataTrieChanges,omitempty"];
+}
+
+message DataTrieChange {
+  string Type = 1 [(gogoproto.jsontag) = "type"];
+  bytes Key   = 2 [(gogoproto.jsontag) = "key"];
+  bytes Val   = 3 [(gogoproto.jsontag) = "val"];
+}
+
+message DataAnalysisStateChange {
+  StateChange StateChange = 1 [(gogoproto.jsontag) = "stateChange"];
+  string Operation = 2 [(gogoproto.jsontag) = "operation"];
+  bool Nonce = 3 [(gogoproto.jsontag) = "nonceChanged"];
+  bool Balance = 4 [(gogoproto.jsontag) = "balanceChanged"];
+  bool CodeHash = 5 [(gogoproto.jsontag) = "codeHashChanged"];
+  bool RootHash = 6 [(gogoproto.jsontag) = "rootHashChanged"];
+  bool DeveloperReward = 7 [(gogoproto.jsontag) = "developerRewardChanged"];
+  bool OwnerAddress = 8 [(gogoproto.jsontag) = "ownerAddressChanged"];
+  bool UserName = 9 [(gogoproto.jsontag) = "userNameChanged"];
+  bool CodeMetadata = 10 [(gogoproto.jsontag) = "codeMetadataChanged"];
+}
