@@ -175,7 +175,6 @@ type ShardDataHandler interface {
 	GetLastIncludedMetaNonce() uint64
 	GetShardID() uint32
 	GetTxCount() uint32
-	GetCurrentProof() HeaderProofHandler
 	GetPreviousProof() HeaderProofHandler
 
 	SetHeaderHash(hash []byte) error
@@ -192,7 +191,6 @@ type ShardDataHandler interface {
 	SetLastIncludedMetaNonce(nonce uint64) error
 	SetShardID(shardID uint32) error
 	SetTxCount(txCount uint32) error
-	SetCurrentProof(proof HeaderProofHandler) error
 	SetPreviousProof(proof HeaderProofHandler) error
 
 	ShallowClone() ShardDataHandler

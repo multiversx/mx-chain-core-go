@@ -203,34 +203,6 @@ func (sd *ShardData) SetTxCount(txCount uint32) error {
 	return nil
 }
 
-// GetCurrentProof returns the current shard header proof
-func (sd *ShardData) GetCurrentProof() data.HeaderProofHandler {
-	return sd.CurrentShardHeaderProof
-}
-
-// SetCurrentProof sets the current shard header proof
-func (sd *ShardData) SetCurrentProof(proof data.HeaderProofHandler) error {
-	if sd == nil {
-		return data.ErrNilPointerReceiver
-	}
-
-	if check.IfNilReflect(proof) {
-		sd.CurrentShardHeaderProof = nil
-		return nil
-	}
-
-	sd.CurrentShardHeaderProof = &HeaderProof{
-		PubKeysBitmap:       proof.GetPubKeysBitmap(),
-		AggregatedSignature: proof.GetAggregatedSignature(),
-		HeaderHash:          proof.GetHeaderHash(),
-		HeaderEpoch:         proof.GetHeaderEpoch(),
-		HeaderNonce:         proof.GetHeaderNonce(),
-		HeaderShardId:       proof.GetHeaderShardId(),
-	}
-
-	return nil
-}
-
 // GetPreviousProof returns the previous shard header proof
 func (sd *ShardData) GetPreviousProof() data.HeaderProofHandler {
 	return sd.PreviousShardHeaderProof
