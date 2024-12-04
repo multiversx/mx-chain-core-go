@@ -102,6 +102,15 @@ func (tx *Transaction) GetDataForSigning(encoder data.Encoder, marshaller data.M
 		ftx.GuardianAddr = guardianAddr
 	}
 
+	if len(tx.RelayerAddr) > 0 {
+		relayerAddr, errRelayer := encoder.Encode(tx.RelayerAddr)
+		if errRelayer != nil {
+			return nil, errRelayer
+		}
+
+		ftx.RelayerAddr = relayerAddr
+	}
+
 	ftxBytes, err := marshaller.Marshal(ftx)
 	if err != nil {
 		return nil, err

@@ -63,6 +63,7 @@ type ApiTransactionResult struct {
 	IsRefund                          bool                      `json:"isRefund,omitempty"`
 	CallType                          string                    `json:"callType,omitempty"`
 	RelayerAddress                    string                    `json:"relayerAddress,omitempty"`
+	RelayerSignature                  string                    `json:"relayerSignature,omitempty"`
 	RelayedValue                      string                    `json:"relayedValue,omitempty"`
 	ChainID                           string                    `json:"chainID,omitempty"`
 	Version                           uint32                    `json:"version,omitempty"`
