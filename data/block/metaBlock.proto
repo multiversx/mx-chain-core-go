@@ -52,6 +52,7 @@ message ShardData {
 	uint32                   ShardID               				= 1 [(gogoproto.jsontag) = "shardID"];
 	uint32                   TxCount               				= 7 [(gogoproto.jsontag) = "txCount"];
 	HeaderProof 						 PreviousShardHeaderProof     = 15 [(gogoproto.jsontag) = "previousHeaderProof,omitempty"];
+	uint32									 Epoch 										    = 16 [(gogoproto.jsontag) = "epoch,omitempty"];
 }
 
 // EpochStartShardData hold the last finalized headers hash and state root hash
