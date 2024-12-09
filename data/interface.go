@@ -309,7 +309,7 @@ type BodyHandler interface {
 	Clone() BodyHandler
 	// IntegrityAndValidity checks the integrity and validity of the block
 	IntegrityAndValidity() error
-	// IsInterfaceNil returns true if there is no value under the interface
+	// IsInterfaceNil returns true if there is no valkue under the interface
 	IsInterfaceNil() bool
 }
 
