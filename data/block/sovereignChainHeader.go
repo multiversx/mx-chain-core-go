@@ -632,7 +632,7 @@ func (sch *SovereignChainHeader) SetAccumulatedFeesInEpoch(value *big.Int) error
 	return nil
 }
 
-// GetEpochStartHandler returns epoch start header handler as for metachain, but without last finalized headers
+// GetEpochStartHandler returns epoch start header handler as for metachain, but with last finalized headers from main chain, if found.
 func (sch *SovereignChainHeader) GetEpochStartHandler() data.EpochStartHandler {
 	if sch == nil {
 		return nil
@@ -652,6 +652,15 @@ func (sch *SovereignChainHeader) GetEpochStartHandler() data.EpochStartHandler {
 	}
 
 	return &sch.EpochStart
+}
+
+// GetLastFinalizedCrossChainHeaderHandler returns the last finalized cross chain header data
+func (sch *SovereignChainHeader) GetLastFinalizedCrossChainHeaderHandler() data.EpochStartChainDataHandler {
+	if sch == nil {
+		return nil
+	}
+
+	return &sch.EpochStart.LastFinalizedCrossChainHeader
 }
 
 // GetShardInfoHandlers returns empty slice
