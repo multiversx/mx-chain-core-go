@@ -638,23 +638,7 @@ func (sch *SovereignChainHeader) GetEpochStartHandler() data.EpochStartHandler {
 		return nil
 	}
 
-	lastFinalizedCrossChainHeaderData := EpochStartShardData{
-		ShardID:    sch.EpochStart.LastFinalizedCrossChainHeader.ShardID,
-		Epoch:      sch.EpochStart.LastFinalizedCrossChainHeader.Epoch,
-		Round:      sch.EpochStart.LastFinalizedCrossChainHeader.Round,
-		Nonce:      sch.EpochStart.LastFinalizedCrossChainHeader.Nonce,
-		HeaderHash: sch.EpochStart.LastFinalizedCrossChainHeader.HeaderHash,
-	}
-
-	epochStartShardData := make([]EpochStartShardData, 0)
-	if lastFinalizedCrossChainHeaderData.ShardID == core.MainChainShardId {
-		epochStartShardData = append(epochStartShardData, lastFinalizedCrossChainHeaderData)
-	}
-
-	return &EpochStart{
-		LastFinalizedHeaders: epochStartShardData,
-		Economics:            sch.EpochStart.Economics,
-	}
+	return &sch.EpochStart
 }
 
 // GetLastFinalizedCrossChainHeaderHandler returns the last finalized cross chain header data
@@ -780,6 +764,109 @@ func (essd *EpochStartCrossChainData) SetHeaderHash(hash []byte) error {
 	}
 
 	essd.HeaderHash = hash
+
+	return nil
+}
+
+// GetRootHash returns nothing
+func (essd *EpochStartCrossChainData) GetRootHash() []byte {
+	return nil
+}
+
+// GetFirstPendingMetaBlock returns nothing
+func (essd *EpochStartCrossChainData) GetFirstPendingMetaBlock() []byte {
+	return nil
+}
+
+// GetLastFinishedMetaBlock returns nothing
+func (essd *EpochStartCrossChainData) GetLastFinishedMetaBlock() []byte {
+	return nil
+}
+
+// GetPendingMiniBlockHeaderHandlers returns empty slice
+func (essd *EpochStartCrossChainData) GetPendingMiniBlockHeaderHandlers() []data.MiniBlockHeaderHandler {
+	return make([]data.MiniBlockHeaderHandler, 0)
+}
+
+// SetRootHash does nothing
+func (essd *EpochStartCrossChainData) SetRootHash([]byte) error {
+	return nil
+}
+
+// SetFirstPendingMetaBlock does nothing
+func (essd *EpochStartCrossChainData) SetFirstPendingMetaBlock([]byte) error {
+	return nil
+}
+
+// SetLastFinishedMetaBlock does nothing
+func (essd *EpochStartCrossChainData) SetLastFinishedMetaBlock([]byte) error {
+	return nil
+}
+
+// SetPendingMiniBlockHeaders does nothing
+func (essd *EpochStartCrossChainData) SetPendingMiniBlockHeaders(_ []data.MiniBlockHeaderHandler) error {
+	return nil
+}
+
+// GetLastFinalizedHeaderHandlers returns last cross main chain finalized header in a slice w.r.t to the interface
+func (m *EpochStartSovereign) GetLastFinalizedHeaderHandlers() []data.EpochStartShardDataHandler {
+	if m == nil {
+		return nil
+	}
+
+	epochStartShardData := make([]data.EpochStartShardDataHandler, 0)
+	if m.LastFinalizedCrossChainHeader.ShardID == core.MainChainShardId {
+		epochStartShardData = append(epochStartShardData, &m.LastFinalizedCrossChainHeader)
+	}
+
+	return epochStartShardData
+}
+
+// GetEconomicsHandler returns the economics
+func (m *EpochStartSovereign) GetEconomicsHandler() data.EconomicsHandler {
+	if m == nil {
+		return nil
+	}
+
+	return &m.Economics
+}
+
+// SetLastFinalizedHeaders sets epoch start data for main chain chain only
+func (m *EpochStartSovereign) SetLastFinalizedHeaders(epochStartShardDataHandlers []data.EpochStartShardDataHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	for _, epochStartShardData := range epochStartShardDataHandlers {
+		if epochStartShardData.GetShardID() == core.MainChainShardId {
+			m.LastFinalizedCrossChainHeader = EpochStartCrossChainData{
+				ShardID:    epochStartShardData.GetShardID(),
+				Epoch:      epochStartShardData.GetEpoch(),
+				Round:      epochStartShardData.GetRound(),
+				Nonce:      epochStartShardData.GetNonce(),
+				HeaderHash: epochStartShardData.GetHeaderHash(),
+			}
+		}
+	}
+
+	return nil
+}
+
+// SetEconomics sets economics
+func (m *EpochStartSovereign) SetEconomics(economicsHandler data.EconomicsHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	ec, ok := economicsHandler.(*Economics)
+	if !ok {
+		return data.ErrInvalidTypeAssertion
+	}
+	if ec == nil {
+		return data.ErrNilPointerDereference
+	}
+
+	m.Economics = *ec
 
 	return nil
 }
