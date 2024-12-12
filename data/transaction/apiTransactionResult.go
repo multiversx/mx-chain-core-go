@@ -69,7 +69,6 @@ type ApiTransactionResult struct {
 	Options                           uint32                    `json:"options"`
 	GuardianAddr                      string                    `json:"guardian,omitempty"`
 	GuardianSignature                 string                    `json:"guardianSignature,omitempty"`
-	InnerTransactions                 []*FrontendTransaction    `json:"innerTransactions,omitempty"`
 }
 
 // ApiSmartContractResult represents a smart contract result with changed fields' types in order to make it friendly for API's json
