@@ -10,6 +10,8 @@ const (
 	ShardHeaderV1 HeaderType = "Header"
 	// ShardHeaderV2 defines the type of *block.HeaderV2
 	ShardHeaderV2 HeaderType = "HeaderV2"
+	// SovereignChainHeader defines the type of *block.SovereignChainHeader
+	SovereignChainHeader = "SovereignChainHeader"
 )
 
 // NodeType represents the node's role in the network
@@ -30,12 +32,6 @@ const FileModeUserReadWrite = 0600
 // FileModeReadWrite represents the permission for a file which allows reading and writing for user and group and read
 // for others
 const FileModeReadWrite = 0664
-
-// MetachainShardId will be used to identify a shard ID as metachain
-const MetachainShardId = uint32(0xFFFFFFFF)
-
-// AllShardId will be used to identify that a message is for all shards
-const AllShardId = uint32(0xFFFFFFF0)
 
 // MegabyteSize represents the size in bytes of a megabyte
 const MegabyteSize = 1024 * 1024
