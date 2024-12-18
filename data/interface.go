@@ -115,6 +115,7 @@ type SovereignChainHeaderHandler interface {
 	GetShardInfoHandlers() []ShardDataHandler
 	SetShardInfoHandlers(shardInfo []ShardDataHandler) error
 	GetLastFinalizedCrossChainHeaderHandler() EpochStartChainDataHandler
+	SetLastFinalizedCrossChainHeaderHandler(crossChainData EpochStartChainDataHandler) error
 }
 
 // OutGoingMiniBlockHeaderHandler defines setters and getters for sovereign outgoing mini block header
