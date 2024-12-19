@@ -650,6 +650,23 @@ func (sch *SovereignChainHeader) GetLastFinalizedCrossChainHeaderHandler() data.
 	return &sch.EpochStart.LastFinalizedCrossChainHeader
 }
 
+// SetLastFinalizedCrossChainHeaderHandler sets the last finalized cross chain header handler
+func (sch *SovereignChainHeader) SetLastFinalizedCrossChainHeaderHandler(crossChainData data.EpochStartChainDataHandler) error {
+	if sch == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	sch.EpochStart.LastFinalizedCrossChainHeader = EpochStartCrossChainData{
+		ShardID:    crossChainData.GetShardID(),
+		Epoch:      crossChainData.GetEpoch(),
+		Round:      crossChainData.GetRound(),
+		Nonce:      crossChainData.GetNonce(),
+		HeaderHash: crossChainData.GetHeaderHash(),
+	}
+
+	return nil
+}
+
 // GetShardInfoHandlers returns empty slice
 func (sch *SovereignChainHeader) GetShardInfoHandlers() []data.ShardDataHandler {
 	if sch == nil {
