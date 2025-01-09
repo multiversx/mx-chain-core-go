@@ -581,5 +581,6 @@ func (m *MetaBlock) SetPreviousProof(proof data.HeaderProofHandler) {
 		HeaderEpoch:         proof.GetHeaderEpoch(),
 		HeaderNonce:         proof.GetHeaderNonce(),
 		HeaderShardId:       proof.GetHeaderShardId(),
+		HeaderRound:         proof.GetHeaderRound(),
 	}
 }
