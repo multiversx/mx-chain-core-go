@@ -12,6 +12,8 @@ message BridgeOutGoingData {
   repeated OutGoingOperation OutGoingOperations = 2;
   bytes AggregatedSignature = 3;
   bytes LeaderSignature = 4;
+  bytes PubKeysBitmap = 5;
+  uint32 Epoch = 6;
 }
 
 message OutGoingOperation {
