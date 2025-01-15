@@ -51,6 +51,7 @@ message FeeInfo {
   uint64 GasUsed        = 1 [(gogoproto.jsontag) = "gasUsed"];
   bytes  Fee            = 2 [(gogoproto.jsontag) = "fee,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
   bytes  InitialPaidFee = 3 [(gogoproto.jsontag) = "initialPaidFee,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  uint64 GasRefunded    = 4 [(gogoproto.jsontag) = "gasRefunded,omitempty"];
 }
 
 message TxInfo {
