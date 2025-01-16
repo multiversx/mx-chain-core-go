@@ -21,3 +21,8 @@ func (f *FeeInfo) SetFee(fee *big.Int) {
 func (f *FeeInfo) SetGasRefunded(gasRefunded uint64) {
 	f.GasRefunded = gasRefunded
 }
+
+// SetHadRefund sets hadRefund field with true
+func (f *FeeInfo) SetHadRefund() {
+	f.HadRefund = true
+}
