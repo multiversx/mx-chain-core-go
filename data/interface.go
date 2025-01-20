@@ -97,6 +97,7 @@ type HeaderProofHandler interface {
 	GetHeaderNonce() uint64
 	GetHeaderShardId() uint32
 	GetHeaderRound() uint64
+	GetIsStartOfEpoch() bool
 }
 
 // ShardHeaderHandler defines getters and setters for the shard block header
