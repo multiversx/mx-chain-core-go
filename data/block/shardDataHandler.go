@@ -227,6 +227,7 @@ func (sd *ShardData) SetPreviousProof(proof data.HeaderProofHandler) error {
 		HeaderNonce:         proof.GetHeaderNonce(),
 		HeaderShardId:       proof.GetHeaderShardId(),
 		HeaderRound:         proof.GetHeaderRound(),
+		IsStartOfEpoch:      proof.GetIsStartOfEpoch(),
 	}
 
 	return nil
