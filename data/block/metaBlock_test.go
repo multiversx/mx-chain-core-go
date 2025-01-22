@@ -418,6 +418,7 @@ func TestMetaBlock2_GetPreviousProof(t *testing.T) {
 		HeaderNonce:         234,
 		HeaderShardId:       0,
 		HeaderRound:         345,
+		IsStartOfEpoch:      true,
 	}
 
 	metaBlock.SetPreviousProof(previousProof)
@@ -430,4 +431,5 @@ func TestMetaBlock2_GetPreviousProof(t *testing.T) {
 	require.Equal(t, previousProof.HeaderNonce, proof.GetHeaderNonce())
 	require.Equal(t, previousProof.HeaderShardId, proof.GetHeaderShardId())
 	require.Equal(t, previousProof.HeaderRound, proof.GetHeaderRound())
+	require.Equal(t, previousProof.IsStartOfEpoch, proof.GetIsStartOfEpoch())
 }
