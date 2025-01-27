@@ -42,12 +42,8 @@ func (sch *SovereignChainHeader) ShallowClone() data.HeaderHandler {
 	headerCopy.Header = &internalHeaderCopy
 
 	if len(sch.OutGoingMiniBlockHeader) != 0 {
-		internalOutGoingMbHeaders := make([]OutGoingMiniBlockHeader, len(sch.OutGoingMiniBlockHeader))
-		for idx, outGoingMbHdr := range sch.OutGoingMiniBlockHeader {
-			internalOutGoingMbHeaders[idx] = outGoingMbHdr
-		}
-
-		headerCopy.OutGoingMiniBlockHeader = internalOutGoingMbHeaders
+		headerCopy.OutGoingMiniBlockHeader = make([]OutGoingMiniBlockHeader, len(sch.OutGoingMiniBlockHeader))
+		copy(headerCopy.OutGoingMiniBlockHeader, sch.OutGoingMiniBlockHeader)
 	}
 
 	return &headerCopy
