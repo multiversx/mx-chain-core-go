@@ -6,7 +6,6 @@ import (
 	"math/big"
 
 	"github.com/multiversx/mx-chain-core-go/core"
-	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
 )
@@ -42,9 +41,13 @@ func (sch *SovereignChainHeader) ShallowClone() data.HeaderHandler {
 	headerCopy := *sch
 	headerCopy.Header = &internalHeaderCopy
 
-	if !check.IfNil(sch.OutGoingMiniBlockHeader) {
-		internalOutGoingMbHeader := *sch.OutGoingMiniBlockHeader
-		headerCopy.OutGoingMiniBlockHeader = &internalOutGoingMbHeader
+	if len(sch.OutGoingMiniBlockHeader) != 0 {
+		internalOutGoingMbHeaders := make([]OutGoingMiniBlockHeader, len(sch.OutGoingMiniBlockHeader))
+		for idx, outGoingMbHdr := range sch.OutGoingMiniBlockHeader {
+			internalOutGoingMbHeaders[idx] = outGoingMbHdr
+		}
+
+		headerCopy.OutGoingMiniBlockHeader = internalOutGoingMbHeaders
 	}
 
 	return &headerCopy
@@ -549,33 +552,44 @@ func (sch *SovereignChainHeader) CheckFieldsForNil() error {
 	return nil
 }
 
-// GetOutGoingMiniBlockHeaderHandler returns the outgoing mini block header
-func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandler() data.OutGoingMiniBlockHeaderHandler {
+// GetOutGoingMiniBlockHeaderHandlers returns the outgoing mini block headers
+func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandlers() []data.OutGoingMiniBlockHeaderHandler {
 	if sch == nil {
 		return nil
 	}
 
-	return sch.GetOutGoingMiniBlockHeader()
+	mbHeaders := sch.GetOutGoingMiniBlockHeader()
+	mbHeaderHandlers := make([]data.OutGoingMiniBlockHeaderHandler, len(mbHeaders))
+
+	for i := range mbHeaders {
+		mbHeaderHandlers[i] = &mbHeaders[i]
+	}
+
+	return mbHeaderHandlers
 }
 
-// SetOutGoingMiniBlockHeaderHandler returns the outgoing mini block header
-func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data.OutGoingMiniBlockHeaderHandler) error {
+// SetOutGoingMiniBlockHeaderHandlers returns the outgoing mini block headers
+func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandlers(mbHeaders []data.OutGoingMiniBlockHeaderHandler) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
 	}
 
-	if check.IfNil(mbHeader) {
+	if len(mbHeaders) == 0 {
 		sch.OutGoingMiniBlockHeader = nil
 		return nil
 	}
 
-	sch.OutGoingMiniBlockHeader = &OutGoingMiniBlockHeader{
-		Hash:                                  mbHeader.GetHash(),
-		OutGoingOperationsHash:                mbHeader.GetOutGoingOperationsHash(),
-		AggregatedSignatureOutGoingOperations: mbHeader.GetAggregatedSignatureOutGoingOperations(),
-		LeaderSignatureOutGoingOperations:     mbHeader.GetLeaderSignatureOutGoingOperations(),
+	miniBlockHeaders := make([]OutGoingMiniBlockHeader, len(mbHeaders))
+	for i, mbHeaderHandler := range mbHeaders {
+		miniBlockHeaders[i] = OutGoingMiniBlockHeader{
+			Hash:                                  mbHeaderHandler.GetHash(),
+			OutGoingOperationsHash:                mbHeaderHandler.GetOutGoingOperationsHash(),
+			AggregatedSignatureOutGoingOperations: mbHeaderHandler.GetAggregatedSignatureOutGoingOperations(),
+			LeaderSignatureOutGoingOperations:     mbHeaderHandler.GetLeaderSignatureOutGoingOperations(),
+		}
 	}
 
+	sch.OutGoingMiniBlockHeader = miniBlockHeaders
 	return nil
 }
 
