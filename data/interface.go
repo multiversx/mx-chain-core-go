@@ -3,7 +3,6 @@ package data
 import (
 	"math/big"
 
-	"github.com/multiversx/mx-chain-core-go/data/block"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
 )
 
@@ -125,13 +124,13 @@ type OutGoingMiniBlockHeaderHandler interface {
 	GetOutGoingOperationsHash() []byte
 	GetAggregatedSignatureOutGoingOperations() []byte
 	GetLeaderSignatureOutGoingOperations() []byte
-	GetOutGoingMBType() block.OutGoingMBType
+	GetOutGoingMBTypeInt32() int32
 
 	SetHash(hash []byte) error
 	SetOutGoingOperationsHash(hash []byte) error
 	SetLeaderSignatureOutGoingOperations(sig []byte) error
 	SetAggregatedSignatureOutGoingOperations(sig []byte) error
-	SetOutGoingMBType(mbType block.OutGoingMBType) error
+	SetOutGoingMBTypeInt32(mbType int32) error
 
 	IsInterfaceNil() bool
 }
