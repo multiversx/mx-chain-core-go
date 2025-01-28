@@ -41,4 +41,5 @@ message HeaderProof {
   uint32 HeaderEpoch         = 4 [(gogoproto.jsontag) = "headerEpoch"];
   uint64 HeaderNonce         = 5 [(gogoproto.jsontag) = "headerNonce"];
   uint32 HeaderShardId       = 6 [(gogoproto.jsontag) = "headerShardId"];
+  uint64 HeaderRound         = 7 [(gogoproto.jsontag) = "headerRound"];
 }

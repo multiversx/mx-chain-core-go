@@ -3,6 +3,7 @@ package block
 import (
 	"math/big"
 
+	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
 )
 
@@ -198,6 +199,35 @@ func (sd *ShardData) SetTxCount(txCount uint32) error {
 	}
 
 	sd.TxCount = txCount
+
+	return nil
+}
+
+// GetPreviousProof returns the previous shard header proof
+func (sd *ShardData) GetPreviousProof() data.HeaderProofHandler {
+	return sd.PreviousShardHeaderProof
+}
+
+// SetPreviousProof sets the previous shard header proof
+func (sd *ShardData) SetPreviousProof(proof data.HeaderProofHandler) error {
+	if sd == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	if check.IfNilReflect(proof) {
+		sd.PreviousShardHeaderProof = nil
+		return nil
+	}
+
+	sd.PreviousShardHeaderProof = &HeaderProof{
+		PubKeysBitmap:       proof.GetPubKeysBitmap(),
+		AggregatedSignature: proof.GetAggregatedSignature(),
+		HeaderHash:          proof.GetHeaderHash(),
+		HeaderEpoch:         proof.GetHeaderEpoch(),
+		HeaderNonce:         proof.GetHeaderNonce(),
+		HeaderShardId:       proof.GetHeaderShardId(),
+		HeaderRound:         proof.GetHeaderRound(),
+	}
 
 	return nil
 }
