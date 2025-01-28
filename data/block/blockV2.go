@@ -679,5 +679,7 @@ func (hv2 *HeaderV2) SetPreviousProof(proof data.HeaderProofHandler) {
 		HeaderEpoch:         proof.GetHeaderEpoch(),
 		HeaderNonce:         proof.GetHeaderNonce(),
 		HeaderShardId:       proof.GetHeaderShardId(),
+		HeaderRound:         proof.GetHeaderRound(),
+		IsStartOfEpoch:      proof.GetIsStartOfEpoch(),
 	}
 }
