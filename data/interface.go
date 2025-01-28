@@ -329,6 +329,14 @@ type GuardedTransactionHandler interface {
 	GetDataForSigning(encoder Encoder, marshaller Marshaller, hasher Hasher) ([]byte, error)
 }
 
+// RelayedTransactionHandler defines functionality for the relayed transactions
+type RelayedTransactionHandler interface {
+	GetRelayerAddr() []byte
+	GetRelayerSignature() []byte
+	GetSignature() []byte
+	GetDataForSigning(encoder Encoder, marshaller Marshaller, hasher Hasher) ([]byte, error)
+}
+
 // LogHandler defines the type for a log resulted from executing a transaction or smart contract call
 type LogHandler interface {
 	// GetAddress returns the address of the sc that was originally called by the user
