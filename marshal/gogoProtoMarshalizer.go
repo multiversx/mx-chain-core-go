@@ -30,6 +30,22 @@ func (x *GogoProtoMarshalizer) Unmarshal(obj interface{}, buff []byte) error {
 	return fmt.Errorf("%T, %w", obj, ErrUnmarshallingProto)
 }
 
+func (x *GogoProtoMarshalizer) MarshalWithExtraCapacity(obj interface{}, extraCapacity int) ([]byte, error) {
+	if msg, ok := obj.(GogoProtoObj); ok {
+		size := msg.Size()
+		data := make([]byte, size, size+extraCapacity)
+
+		n, err := msg.MarshalToSizedBuffer(data[:size])
+		if err != nil {
+			return nil, err
+		}
+
+		return data[:n], nil
+	}
+
+	return nil, fmt.Errorf("%T, %w", obj, ErrMarshallingProto)
+}
+
 // IsInterfaceNil returns true if there is no value under the interface
 func (x *GogoProtoMarshalizer) IsInterfaceNil() bool {
 	return x == nil

@@ -35,6 +35,10 @@ func (jm JsonMarshalizer) Unmarshal(obj interface{}, buff []byte) error {
 	return json.Unmarshal(buff, obj)
 }
 
+func (jm JsonMarshalizer) MarshalWithExtraCapacity(obj interface{}, _ int) ([]byte, error) {
+	return jm.Marshal(obj)
+}
+
 // IsInterfaceNil returns true if there is no value under the interface
 func (jm *JsonMarshalizer) IsInterfaceNil() bool {
 	return jm == nil
