@@ -17,4 +17,5 @@ type AccountQueryOptions struct {
 type BlockQueryOptions struct {
 	WithTransactions bool
 	WithLogs         bool
+	ForHyperblock    bool
 }
