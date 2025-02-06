@@ -7,6 +7,13 @@ import (
 	bytes "bytes"
 	encoding_binary "encoding/binary"
 	fmt "fmt"
+	io "io"
+	math "math"
+	math_big "math/big"
+	math_bits "math/bits"
+	reflect "reflect"
+	strings "strings"
+
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
 	github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
@@ -16,13 +23,8 @@ import (
 	receipt "github.com/multiversx/mx-chain-core-go/data/receipt"
 	rewardTx "github.com/multiversx/mx-chain-core-go/data/rewardTx"
 	smartContractResult "github.com/multiversx/mx-chain-core-go/data/smartContractResult"
+	stateChange "github.com/multiversx/mx-chain-core-go/data/stateChange"
 	transaction "github.com/multiversx/mx-chain-core-go/data/transaction"
-	io "io"
-	math "math"
-	math_big "math/big"
-	math_bits "math/bits"
-	reflect "reflect"
-	strings "strings"
 )
 
 // Reference imports to suppress errors if they are not otherwise used.
@@ -47,6 +49,7 @@ type OutportBlock struct {
 	SignersIndexes         []uint64                                  `protobuf:"varint,8,rep,packed,name=SignersIndexes,proto3" json:"signersIndexes,omitempty"`
 	HighestFinalBlockNonce uint64                                    `protobuf:"varint,9,opt,name=HighestFinalBlockNonce,proto3" json:"highestFinalBlockNonce"`
 	HighestFinalBlockHash  []byte                                    `protobuf:"bytes,10,opt,name=HighestFinalBlockHash,proto3" json:"highestFinalBlockHash,omitempty"`
+	StateChanges           map[string]*stateChange.StateChanges      `protobuf:"bytes,11,rep,name=StateChanges,proto3" json:"stateChanges,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (m *OutportBlock) Reset()      { *m = OutportBlock{} }
@@ -143,6 +146,13 @@ func (m *OutportBlock) GetHighestFinalBlockNonce() uint64 {
 func (m *OutportBlock) GetHighestFinalBlockHash() []byte {
 	if m != nil {
 		return m.HighestFinalBlockHash
+	}
+	return nil
+}
+
+func (m *OutportBlock) GetStateChanges() map[string]*stateChange.StateChanges {
+	if m != nil {
+		return m.StateChanges
 	}
 	return nil
 }
@@ -1125,6 +1135,7 @@ func (m *Shard) GetShardID() uint32 {
 func init() {
 	proto.RegisterType((*OutportBlock)(nil), "proto.OutportBlock")
 	proto.RegisterMapType((map[string]*alteredAccount.AlteredAccount)(nil), "proto.OutportBlock.AlteredAccountsEntry")
+	proto.RegisterMapType((map[string]*stateChange.StateChanges)(nil), "proto.OutportBlock.StateChangesEntry")
 	proto.RegisterType((*BlockData)(nil), "proto.BlockData")
 	proto.RegisterType((*TransactionPool)(nil), "proto.TransactionPool")
 	proto.RegisterMapType((map[string]*TxInfo)(nil), "proto.TransactionPool.InvalidTxsEntry")
@@ -1343,6 +1354,14 @@ func (this *OutportBlock) Equal(that interface{}) bool {
 	}
 	if !bytes.Equal(this.HighestFinalBlockHash, that1.HighestFinalBlockHash) {
 		return false
+	}
+	if len(this.StateChanges) != len(that1.StateChanges) {
+		return false
+	}
+	for i := range this.StateChanges {
+		if !this.StateChanges[i].Equal(that1.StateChanges[i]) {
+			return false
+		}
 	}
 	return true
 }
@@ -1956,7 +1975,7 @@ func (this *OutportBlock) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 14)
+	s := make([]string, 0, 15)
 	s = append(s, "&outport.OutportBlock{")
 	s = append(s, "ShardID: "+fmt.Sprintf("%#v", this.ShardID)+",\n")
 	if this.BlockData != nil {
@@ -1986,6 +2005,19 @@ func (this *OutportBlock) GoString() string {
 	s = append(s, "SignersIndexes: "+fmt.Sprintf("%#v", this.SignersIndexes)+",\n")
 	s = append(s, "HighestFinalBlockNonce: "+fmt.Sprintf("%#v", this.HighestFinalBlockNonce)+",\n")
 	s = append(s, "HighestFinalBlockHash: "+fmt.Sprintf("%#v", this.HighestFinalBlockHash)+",\n")
+	keysForStateChanges := make([]string, 0, len(this.StateChanges))
+	for k, _ := range this.StateChanges {
+		keysForStateChanges = append(keysForStateChanges, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForStateChanges)
+	mapStringForStateChanges := "map[string]*stateChange.StateChanges{"
+	for _, k := range keysForStateChanges {
+		mapStringForStateChanges += fmt.Sprintf("%#v: %#v,", k, this.StateChanges[k])
+	}
+	mapStringForStateChanges += "}"
+	if this.StateChanges != nil {
+		s = append(s, "StateChanges: "+mapStringForStateChanges+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -2332,6 +2364,37 @@ func (m *OutportBlock) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.StateChanges) > 0 {
+		keysForStateChanges := make([]string, 0, len(m.StateChanges))
+		for k := range m.StateChanges {
+			keysForStateChanges = append(keysForStateChanges, string(k))
+		}
+		github_com_gogo_protobuf_sortkeys.Strings(keysForStateChanges)
+		for iNdEx := len(keysForStateChanges) - 1; iNdEx >= 0; iNdEx-- {
+			v := m.StateChanges[string(keysForStateChanges[iNdEx])]
+			baseI := i
+			if v != nil {
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintOutportBlock(dAtA, i, uint64(size))
+				}
+				i--
+				dAtA[i] = 0x12
+			}
+			i -= len(keysForStateChanges[iNdEx])
+			copy(dAtA[i:], keysForStateChanges[iNdEx])
+			i = encodeVarintOutportBlock(dAtA, i, uint64(len(keysForStateChanges[iNdEx])))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintOutportBlock(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x5a
+		}
+	}
 	if len(m.HighestFinalBlockHash) > 0 {
 		i -= len(m.HighestFinalBlockHash)
 		copy(dAtA[i:], m.HighestFinalBlockHash)
@@ -2345,20 +2408,20 @@ func (m *OutportBlock) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x48
 	}
 	if len(m.SignersIndexes) > 0 {
-		dAtA2 := make([]byte, len(m.SignersIndexes)*10)
-		var j1 int
+		dAtA3 := make([]byte, len(m.SignersIndexes)*10)
+		var j2 int
 		for _, num := range m.SignersIndexes {
 			for num >= 1<<7 {
-				dAtA2[j1] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA3[j2] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j1++
+				j2++
 			}
-			dAtA2[j1] = uint8(num)
-			j1++
+			dAtA3[j2] = uint8(num)
+			j2++
 		}
-		i -= j1
-		copy(dAtA[i:], dAtA2[:j1])
-		i = encodeVarintOutportBlock(dAtA, i, uint64(j1))
+		i -= j2
+		copy(dAtA[i:], dAtA3[:j2])
+		i = encodeVarintOutportBlock(dAtA, i, uint64(j2))
 		i--
 		dAtA[i] = 0x42
 	}
@@ -3159,20 +3222,20 @@ func (m *RoundInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x18
 	}
 	if len(m.SignersIndexes) > 0 {
-		dAtA20 := make([]byte, len(m.SignersIndexes)*10)
-		var j19 int
+		dAtA21 := make([]byte, len(m.SignersIndexes)*10)
+		var j20 int
 		for _, num := range m.SignersIndexes {
 			for num >= 1<<7 {
-				dAtA20[j19] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA21[j20] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j19++
+				j20++
 			}
-			dAtA20[j19] = uint8(num)
-			j19++
+			dAtA21[j20] = uint8(num)
+			j20++
 		}
-		i -= j19
-		copy(dAtA[i:], dAtA20[:j19])
-		i = encodeVarintOutportBlock(dAtA, i, uint64(j19))
+		i -= j20
+		copy(dAtA[i:], dAtA21[:j20])
+		i = encodeVarintOutportBlock(dAtA, i, uint64(j20))
 		i--
 		dAtA[i] = 0x12
 	}
@@ -3514,6 +3577,19 @@ func (m *OutportBlock) Size() (n int) {
 	l = len(m.HighestFinalBlockHash)
 	if l > 0 {
 		n += 1 + l + sovOutportBlock(uint64(l))
+	}
+	if len(m.StateChanges) > 0 {
+		for k, v := range m.StateChanges {
+			_ = k
+			_ = v
+			l = 0
+			if v != nil {
+				l = v.Size()
+				l += 1 + sovOutportBlock(uint64(l))
+			}
+			mapEntrySize := 1 + len(k) + sovOutportBlock(uint64(len(k))) + l
+			n += mapEntrySize + 1 + sovOutportBlock(uint64(mapEntrySize))
+		}
 	}
 	return n
 }
@@ -3971,6 +4047,16 @@ func (this *OutportBlock) String() string {
 		mapStringForAlteredAccounts += fmt.Sprintf("%v: %v,", k, this.AlteredAccounts[k])
 	}
 	mapStringForAlteredAccounts += "}"
+	keysForStateChanges := make([]string, 0, len(this.StateChanges))
+	for k, _ := range this.StateChanges {
+		keysForStateChanges = append(keysForStateChanges, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForStateChanges)
+	mapStringForStateChanges := "map[string]*stateChange.StateChanges{"
+	for _, k := range keysForStateChanges {
+		mapStringForStateChanges += fmt.Sprintf("%v: %v,", k, this.StateChanges[k])
+	}
+	mapStringForStateChanges += "}"
 	s := strings.Join([]string{`&OutportBlock{`,
 		`ShardID:` + fmt.Sprintf("%v", this.ShardID) + `,`,
 		`BlockData:` + strings.Replace(this.BlockData.String(), "BlockData", "BlockData", 1) + `,`,
@@ -3982,6 +4068,7 @@ func (this *OutportBlock) String() string {
 		`SignersIndexes:` + fmt.Sprintf("%v", this.SignersIndexes) + `,`,
 		`HighestFinalBlockNonce:` + fmt.Sprintf("%v", this.HighestFinalBlockNonce) + `,`,
 		`HighestFinalBlockHash:` + fmt.Sprintf("%v", this.HighestFinalBlockHash) + `,`,
+		`StateChanges:` + mapStringForStateChanges + `,`,
 		`}`,
 	}, "")
 	return s
@@ -4757,6 +4844,135 @@ func (m *OutportBlock) Unmarshal(dAtA []byte) error {
 			if m.HighestFinalBlockHash == nil {
 				m.HighestFinalBlockHash = []byte{}
 			}
+			iNdEx = postIndex
+		case 11:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field StateChanges", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOutportBlock
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOutportBlock
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOutportBlock
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.StateChanges == nil {
+				m.StateChanges = make(map[string]*stateChange.StateChanges)
+			}
+			var mapkey string
+			var mapvalue *stateChange.StateChanges
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOutportBlock
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOutportBlock
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthOutportBlock
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthOutportBlock
+					}
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var mapmsglen int
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOutportBlock
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapmsglen |= int(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					if mapmsglen < 0 {
+						return ErrInvalidLengthOutportBlock
+					}
+					postmsgIndex := iNdEx + mapmsglen
+					if postmsgIndex < 0 {
+						return ErrInvalidLengthOutportBlock
+					}
+					if postmsgIndex > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = &stateChange.StateChanges{}
+					if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
+						return err
+					}
+					iNdEx = postmsgIndex
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipOutportBlock(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if skippy < 0 {
+						return ErrInvalidLengthOutportBlock
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.StateChanges[mapkey] = mapvalue
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
