@@ -564,8 +564,8 @@ func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandlers() []data.Out
 	return mbHeaderHandlers
 }
 
-// GetOutGoingMiniBlockHeader returns the outgoing mb header with specified type, if found
-func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeader(mbType int32) data.OutGoingMiniBlockHeaderHandler {
+// GetOutGoingMiniBlockHeaderHandler returns the outgoing mb header with specified type, if found
+func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandler(mbType int32) data.OutGoingMiniBlockHeaderHandler {
 	if sch == nil {
 		return nil
 	}
@@ -579,9 +579,9 @@ func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeader(mbType int32) data.O
 	return nil
 }
 
-// SetOutGoingMiniBlockHeader replaces the outgoing mb from the internal outgoing mb slice, if found.
+// SetOutGoingMiniBlockHeaderHandler replaces the outgoing mb from the internal outgoing mb slice, if found.
 // Otherwise, it adds it add the end of the slice.
-func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeader(mbHeader data.OutGoingMiniBlockHeaderHandler) error {
+func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data.OutGoingMiniBlockHeaderHandler) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
 	}
