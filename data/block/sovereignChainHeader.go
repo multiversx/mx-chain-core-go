@@ -590,6 +590,7 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data
 	for idx, currOutGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
 		if int32(currOutGoingMbHdr.OutGoingMBType) == mbHeader.GetOutGoingMBTypeInt32() {
 			sch.OutGoingMiniBlockHeaders[idx] = outGoingMbHdr
+			return nil
 		}
 	}
 
