@@ -42,7 +42,7 @@ func (sch *SovereignChainHeader) ShallowClone() data.HeaderHandler {
 	headerCopy.Header = &internalHeaderCopy
 
 	if len(sch.OutGoingMiniBlockHeaders) != 0 {
-		headerCopy.OutGoingMiniBlockHeaders = make([]OutGoingMiniBlockHeader, len(sch.OutGoingMiniBlockHeaders))
+		headerCopy.OutGoingMiniBlockHeaders = make([]*OutGoingMiniBlockHeader, len(sch.OutGoingMiniBlockHeaders))
 		copy(headerCopy.OutGoingMiniBlockHeaders, sch.OutGoingMiniBlockHeaders)
 	}
 
@@ -558,7 +558,7 @@ func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandlers() []data.Out
 	mbHeaderHandlers := make([]data.OutGoingMiniBlockHeaderHandler, len(mbHeaders))
 
 	for i := range mbHeaders {
-		mbHeaderHandlers[i] = &mbHeaders[i]
+		mbHeaderHandlers[i] = mbHeaders[i]
 	}
 
 	return mbHeaderHandlers
@@ -572,7 +572,7 @@ func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandler(mbType int32)
 
 	for _, outGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
 		if int32(outGoingMbHdr.OutGoingMBType) == mbType {
-			return &outGoingMbHdr
+			return outGoingMbHdr
 		}
 	}
 
@@ -598,8 +598,8 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data
 	return nil
 }
 
-func createOutGoingMbHeader(mbHeader data.OutGoingMiniBlockHeaderHandler) OutGoingMiniBlockHeader {
-	return OutGoingMiniBlockHeader{
+func createOutGoingMbHeader(mbHeader data.OutGoingMiniBlockHeaderHandler) *OutGoingMiniBlockHeader {
+	return &OutGoingMiniBlockHeader{
 		OutGoingMBType:                        OutGoingMBType(mbHeader.GetOutGoingMBTypeInt32()),
 		Hash:                                  mbHeader.GetHash(),
 		OutGoingOperationsHash:                mbHeader.GetOutGoingOperationsHash(),
@@ -619,7 +619,7 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandlers(mbHeaders []
 		return nil
 	}
 
-	miniBlockHeaders := make([]OutGoingMiniBlockHeader, len(mbHeaders))
+	miniBlockHeaders := make([]*OutGoingMiniBlockHeader, len(mbHeaders))
 	for i, mbHeaderHandler := range mbHeaders {
 		miniBlockHeaders[i] = createOutGoingMbHeader(mbHeaderHandler)
 	}

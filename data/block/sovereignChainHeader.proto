@@ -30,7 +30,7 @@ message SovereignChainHeader {
   Header                           Header                    = 1 [(gogoproto.jsontag) = "header"];
   bytes                            ValidatorStatsRootHash    = 2 [(gogoproto.jsontag) = "validatorStatsRootHash"];
   repeated bytes                   ExtendedShardHeaderHashes = 3 [(gogoproto.jsontag) = "extendedShardHeaderHashes,omitempty"];
-  repeated OutGoingMiniBlockHeader OutGoingMiniBlockHeaders  = 4 [(gogoproto.jsontag) = "outGoingOperations,omitempty", (gogoproto.nullable) = false];
+  repeated OutGoingMiniBlockHeader OutGoingMiniBlockHeaders  = 4 [(gogoproto.jsontag) = "outGoingOperations,omitempty"];
   bool                             IsStartOfEpoch            = 5 [(gogoproto.jsontag) = "isStartOfEpoch,omitempty"];
   bytes                            AccumulatedFeesInEpoch    = 6 [(gogoproto.jsontag) = "accumulatedFeesInEpoch,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
   bytes                            DevFeesInEpoch            = 7 [(gogoproto.jsontag) = "devFeesInEpoch,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
