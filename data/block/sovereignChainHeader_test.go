@@ -118,19 +118,19 @@ func TestSovereignChainHeader_GetOutGoingMiniBlockHeaderHandler(t *testing.T) {
 	sovHdr := &SovereignChainHeader{
 		OutGoingMiniBlockHeaders: []*OutGoingMiniBlockHeader{
 			{
-				OutGoingMBType: OutGoingTxMB,
-				Hash:           []byte("h1"),
+				Type: OutGoingMbTx,
+				Hash: []byte("h1"),
 			},
 			{
-				OutGoingMBType: ChangeValidatorSetMB,
-				Hash:           []byte("h2"),
+				Type: OutGoingMbChangeValidatorSet,
+				Hash: []byte("h2"),
 			},
 		},
 	}
 
-	mb := sovHdr.GetOutGoingMiniBlockHeaderHandler(int32(OutGoingTxMB))
+	mb := sovHdr.GetOutGoingMiniBlockHeaderHandler(int32(OutGoingMbTx))
 	require.Equal(t, sovHdr.OutGoingMiniBlockHeaders[0], mb)
-	mb = sovHdr.GetOutGoingMiniBlockHeaderHandler(int32(ChangeValidatorSetMB))
+	mb = sovHdr.GetOutGoingMiniBlockHeaderHandler(int32(OutGoingMbChangeValidatorSet))
 	require.Equal(t, sovHdr.OutGoingMiniBlockHeaders[1], mb)
 	require.Nil(t, sovHdr.GetOutGoingMiniBlockHeaderHandler(-1))
 }
@@ -139,8 +139,8 @@ func TestSovereignChainHeader_SetOutGoingMiniBlockHeaderHandlers(t *testing.T) {
 	t.Parallel()
 
 	sovHdr := &SovereignChainHeader{}
-	mbHeader1 := &OutGoingMiniBlockHeader{OutGoingMBType: OutGoingTxMB, Hash: []byte("h1")}
-	mbHeader2 := &OutGoingMiniBlockHeader{OutGoingMBType: ChangeValidatorSetMB, Hash: []byte("h2")}
+	mbHeader1 := &OutGoingMiniBlockHeader{Type: OutGoingMbTx, Hash: []byte("h1")}
+	mbHeader2 := &OutGoingMiniBlockHeader{Type: OutGoingMbChangeValidatorSet, Hash: []byte("h2")}
 
 	err := sovHdr.SetOutGoingMiniBlockHeaderHandlers([]data.OutGoingMiniBlockHeaderHandler{mbHeader1, mbHeader2})
 	require.Nil(t, err)
@@ -154,9 +154,9 @@ func TestSovereignChainHeader_SetOutGoingMiniBlockHeaderHandler(t *testing.T) {
 	t.Parallel()
 
 	sovHdr := &SovereignChainHeader{}
-	mbHeader1 := &OutGoingMiniBlockHeader{OutGoingMBType: OutGoingTxMB, Hash: []byte("h1")}
-	mbHeader2 := &OutGoingMiniBlockHeader{OutGoingMBType: OutGoingTxMB, Hash: []byte("h2")}
-	mbHeader3 := &OutGoingMiniBlockHeader{OutGoingMBType: ChangeValidatorSetMB, Hash: []byte("h3")}
+	mbHeader1 := &OutGoingMiniBlockHeader{Type: OutGoingMbTx, Hash: []byte("h1")}
+	mbHeader2 := &OutGoingMiniBlockHeader{Type: OutGoingMbTx, Hash: []byte("h2")}
+	mbHeader3 := &OutGoingMiniBlockHeader{Type: OutGoingMbChangeValidatorSet, Hash: []byte("h3")}
 
 	err := sovHdr.SetOutGoingMiniBlockHeaderHandler(mbHeader1)
 	require.Nil(t, err)

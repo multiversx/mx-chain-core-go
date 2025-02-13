@@ -572,7 +572,7 @@ func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandler(mbType int32)
 	}
 
 	for _, outGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
-		if int32(outGoingMbHdr.OutGoingMBType) == mbType {
+		if int32(outGoingMbHdr.Type) == mbType {
 			return outGoingMbHdr
 		}
 	}
@@ -589,7 +589,7 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data
 
 	outGoingMbHdr := createOutGoingMbHeader(mbHeader)
 	for idx, currOutGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
-		if int32(currOutGoingMbHdr.OutGoingMBType) == mbHeader.GetOutGoingMBTypeInt32() {
+		if int32(currOutGoingMbHdr.Type) == mbHeader.GetOutGoingMBTypeInt32() {
 			sch.OutGoingMiniBlockHeaders[idx] = outGoingMbHdr
 			return nil
 		}
@@ -601,7 +601,7 @@ func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data
 
 func createOutGoingMbHeader(mbHeader data.OutGoingMiniBlockHeaderHandler) *OutGoingMiniBlockHeader {
 	return &OutGoingMiniBlockHeader{
-		OutGoingMBType:                        OutGoingMBType(mbHeader.GetOutGoingMBTypeInt32()),
+		Type:                                  OutGoingMBType(mbHeader.GetOutGoingMBTypeInt32()),
 		Hash:                                  mbHeader.GetHash(),
 		OutGoingOperationsHash:                mbHeader.GetOutGoingOperationsHash(),
 		AggregatedSignatureOutGoingOperations: mbHeader.GetAggregatedSignatureOutGoingOperations(),
@@ -781,7 +781,7 @@ func (omb *OutGoingMiniBlockHeader) GetOutGoingMBTypeInt32() int32 {
 		return 0
 	}
 
-	return int32(omb.OutGoingMBType)
+	return int32(omb.Type)
 }
 
 // SetOutGoingMBTypeInt32 sets the mini block type
@@ -790,7 +790,7 @@ func (omb *OutGoingMiniBlockHeader) SetOutGoingMBTypeInt32(mbType int32) error {
 		return data.ErrNilPointerReceiver
 	}
 
-	omb.OutGoingMBType = OutGoingMBType(mbType)
+	omb.Type = OutGoingMBType(mbType)
 	return nil
 }
 
