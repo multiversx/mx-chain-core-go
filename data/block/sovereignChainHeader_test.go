@@ -92,6 +92,41 @@ func TestSovereignChainHeader_ShallowClone(t *testing.T) {
 	require.False(t, sovHdr.Header == sovHdrClone.(*SovereignChainHeader).Header)
 }
 
+func TestSovereignChainHeader_ShallowCloneWithOutGoingMBs(t *testing.T) {
+	t.Parallel()
+
+	sovHdr := &SovereignChainHeader{
+		DevFeesInEpoch: big.NewInt(100),
+		OutGoingMiniBlockHeaders: []*OutGoingMiniBlockHeader{
+			{
+				Hash: []byte("h1"),
+			},
+			{
+				Hash:                              []byte("h2"),
+				LeaderSignatureOutGoingOperations: []byte("leaderSig"),
+			},
+		},
+	}
+
+	sovHdrHandlerClone := sovHdr.ShallowClone()
+
+	sovHdr.OutGoingMiniBlockHeaders[0].Hash = []byte("h3")
+	sovHdr.OutGoingMiniBlockHeaders[1].LeaderSignatureOutGoingOperations = nil
+
+	require.Equal(t, &SovereignChainHeader{
+		DevFeesInEpoch: big.NewInt(100),
+		OutGoingMiniBlockHeaders: []*OutGoingMiniBlockHeader{
+			{
+				Hash: []byte("h1"),
+			},
+			{
+				Hash:                              []byte("h2"),
+				LeaderSignatureOutGoingOperations: []byte("leaderSig"),
+			},
+		},
+	}, sovHdrHandlerClone.(*SovereignChainHeader))
+}
+
 func TestSovereignChainHeader_GetOutGoingMiniBlockHeaderHandlers(t *testing.T) {
 	t.Parallel()
 

@@ -38,8 +38,7 @@ func (sch *SovereignChainHeader) ShallowClone() data.HeaderHandler {
 
 	headerCopy := *sch
 	if len(sch.OutGoingMiniBlockHeaders) != 0 {
-		headerCopy.OutGoingMiniBlockHeaders = make([]*OutGoingMiniBlockHeader, len(sch.OutGoingMiniBlockHeaders))
-		copy(headerCopy.OutGoingMiniBlockHeaders, sch.OutGoingMiniBlockHeaders)
+		headerCopy.OutGoingMiniBlockHeaders = copyOutGoingMBHeaders(sch.OutGoingMiniBlockHeaders)
 	}
 
 	if sch.Header != nil {
@@ -48,6 +47,17 @@ func (sch *SovereignChainHeader) ShallowClone() data.HeaderHandler {
 	}
 
 	return &headerCopy
+}
+
+func copyOutGoingMBHeaders(outGoingMiniBlockHeaders []*OutGoingMiniBlockHeader) []*OutGoingMiniBlockHeader {
+	ret := make([]*OutGoingMiniBlockHeader, len(outGoingMiniBlockHeaders))
+
+	for idx, outGoingMBHdr := range outGoingMiniBlockHeaders {
+		copyMB := *outGoingMBHdr
+		ret[idx] = &copyMB
+	}
+
+	return ret
 }
 
 // GetShardID returns internal header shard id
