@@ -63,13 +63,13 @@ type ApiTransactionResult struct {
 	IsRefund                          bool                      `json:"isRefund,omitempty"`
 	CallType                          string                    `json:"callType,omitempty"`
 	RelayerAddress                    string                    `json:"relayerAddress,omitempty"`
+	RelayerSignature                  string                    `json:"relayerSignature,omitempty"`
 	RelayedValue                      string                    `json:"relayedValue,omitempty"`
 	ChainID                           string                    `json:"chainID,omitempty"`
 	Version                           uint32                    `json:"version,omitempty"`
 	Options                           uint32                    `json:"options"`
 	GuardianAddr                      string                    `json:"guardian,omitempty"`
 	GuardianSignature                 string                    `json:"guardianSignature,omitempty"`
-	InnerTransactions                 []*FrontendTransaction    `json:"innerTransactions,omitempty"`
 }
 
 // ApiSmartContractResult represents a smart contract result with changed fields' types in order to make it friendly for API's json

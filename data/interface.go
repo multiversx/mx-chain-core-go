@@ -272,7 +272,6 @@ type TransactionHandler interface {
 	GetSndAddr() []byte
 	GetGasLimit() uint64
 	GetGasPrice() uint64
-	GetUserTransactions() []TransactionHandler
 
 	SetValue(*big.Int)
 	SetData([]byte)
@@ -311,6 +310,14 @@ type Hasher interface {
 type GuardedTransactionHandler interface {
 	GetGuardianAddr() []byte
 	GetGuardianSignature() []byte
+	GetSignature() []byte
+	GetDataForSigning(encoder Encoder, marshaller Marshaller, hasher Hasher) ([]byte, error)
+}
+
+// RelayedTransactionHandler defines functionality for the relayed transactions
+type RelayedTransactionHandler interface {
+	GetRelayerAddr() []byte
+	GetRelayerSignature() []byte
 	GetSignature() []byte
 	GetDataForSigning(encoder Encoder, marshaller Marshaller, hasher Hasher) ([]byte, error)
 }
@@ -399,7 +406,6 @@ type TransactionWithFeeHandler interface {
 	GetData() []byte
 	GetRcvAddr() []byte
 	GetValue() *big.Int
-	GetUserTransactions() []TransactionHandler
 }
 
 // UserAccountHandler models a user account
