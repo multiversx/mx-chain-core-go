@@ -8,12 +8,13 @@ message BridgeOperations {
 }
 
 message BridgeOutGoingData {
-  bytes Hash = 1;
-  repeated OutGoingOperation OutGoingOperations = 2;
-  bytes AggregatedSignature = 3;
-  bytes LeaderSignature = 4;
-  bytes PubKeysBitmap = 5;
-  uint32 Epoch = 6;
+  int32 Type = 1;
+  bytes Hash = 2;
+  repeated OutGoingOperation OutGoingOperations = 3;
+  bytes AggregatedSignature = 4;
+  bytes LeaderSignature = 5;
+  bytes PubKeysBitmap = 6;
+  uint32 Epoch = 7;
 }
 
 message OutGoingOperation {
