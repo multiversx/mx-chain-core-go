@@ -39,6 +39,7 @@ type Block struct {
 	EpochStartShardsData   []*EpochStartShardData `json:"epochStartShardsData,omitempty"`
 	ScheduledData          *ScheduledData         `json:"scheduledData,omitempty"`
 	PreviousHeaderProof    *HeaderProof           `json:"previousHeaderProof,omitempty"`
+	Proof                  *HeaderProof           `json:"proof,omitempty"`
 }
 
 // HeaderProof is a structure that hold information about header proof
