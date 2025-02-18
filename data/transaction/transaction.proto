@@ -30,4 +30,6 @@ message Transaction {
 	uint32                  Options            = 13 [(gogoproto.jsontag) = "options,omitempty"];
 	bytes                   GuardianAddr       = 14 [(gogoproto.jsontag) = "guardian,omitempty"];
 	bytes                   GuardianSignature  = 15 [(gogoproto.jsontag) = "guardianSignature,omitempty"];
+	bytes                   RelayerAddr        = 16 [(gogoproto.jsontag) = "relayer,omitempty"];
+	bytes                   RelayerSignature   = 17 [(gogoproto.jsontag) = "relayerSignature,omitempty"];
 }
