@@ -22,6 +22,10 @@ message OutGoingOperation {
   bytes Data = 2;
 }
 
+message BridgeOutGoingDataValidatorSetChange {
+  repeated bytes PubKeyIDs = 1;
+}
+
 message BridgeOperationsResponse {
   repeated string TxHashes = 1;
 }
