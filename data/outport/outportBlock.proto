@@ -7,6 +7,7 @@ option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "github.com/multiversx/mx-chain-core-go/data/block/block.proto";
+import "github.com/multiversx/mx-chain-core-go/data/block/headerProof.proto";
 import "github.com/multiversx/mx-chain-core-go/data/transaction/log.proto";
 import "github.com/multiversx/mx-chain-core-go/data/transaction/transaction.proto";
 import "github.com/multiversx/mx-chain-core-go/data/smartContractResult/smartContractResult.proto";
@@ -34,6 +35,7 @@ message BlockData {
   bytes              HeaderHash           = 4 [(gogoproto.jsontag) = "headerHash,omitempty"];
   Body               Body                 = 5 [(gogoproto.jsontag) = "body,omitempty"];
   repeated MiniBlock IntraShardMiniBlocks = 6 [(gogoproto.jsontag) = "intraShardMiniBlocks,omitempty"];
+  HeaderProof        Proof                = 7 [(gogoproto.jsontag) = "proof,omitempty"];
 }
 
 message TransactionPool {

@@ -8,6 +8,7 @@ option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "block.proto";
+import "headerProof.proto";
 
 // HeaderV2 extends the Header structure with extra fields for version 2
 message HeaderV2 {
@@ -33,14 +34,3 @@ message MiniBlockHeaderReserved {
   int32 IndexOfLastTxProcessed = 4 [(gogoproto.jsontag) = "indexOfLastTxProcessed"];
 }
 
-// HeaderProof defines a proof for a specific header
-message HeaderProof {
-  bytes  PubKeysBitmap       = 1 [(gogoproto.jsontag) = "pubKeysBitmap"];
-  bytes  AggregatedSignature = 2 [(gogoproto.jsontag) = "aggregatedSignature"];
-  bytes  HeaderHash          = 3 [(gogoproto.jsontag) = "headerHash"];
-  uint32 HeaderEpoch         = 4 [(gogoproto.jsontag) = "headerEpoch"];
-  uint64 HeaderNonce         = 5 [(gogoproto.jsontag) = "headerNonce"];
-  uint32 HeaderShardId       = 6 [(gogoproto.jsontag) = "headerShardId"];
-  uint64 HeaderRound         = 7 [(gogoproto.jsontag) = "headerRound"];
-  bool IsStartOfEpoch        = 8 [(gogoproto.jsontag) = "isStartOfEpoch"];
-}
