@@ -35,7 +35,7 @@ message BlockData {
   bytes              HeaderHash           = 4 [(gogoproto.jsontag) = "headerHash,omitempty"];
   Body               Body                 = 5 [(gogoproto.jsontag) = "body,omitempty"];
   repeated MiniBlock IntraShardMiniBlocks = 6 [(gogoproto.jsontag) = "intraShardMiniBlocks,omitempty"];
-  HeaderProof        Proof                = 7 [(gogoproto.jsontag) = "proof,omitempty"];
+  HeaderProof        HeaderProof          = 7 [(gogoproto.jsontag) = "proof,omitempty"];
 }
 
 message TransactionPool {
