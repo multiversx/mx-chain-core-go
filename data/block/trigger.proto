@@ -9,6 +9,7 @@ import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "block.proto";
 import "blockV2.proto";
 import "metaBlock.proto";
+import "sovereignChainHeader.proto";
 
 message ShardTriggerRegistry {
     bool IsEpochStart                   = 1;
@@ -42,4 +43,14 @@ message MetaTriggerRegistry {
 	uint64 PrevEpochStartRound          = 5;
 	bytes EpochStartMetaHash            = 6;
 	MetaBlock EpochStartMeta            = 7;
+}
+
+message SovereignShardTriggerRegistry {
+  uint32               Epoch                        = 1;
+  uint64               CurrentRound                 = 2;
+  uint64               EpochFinalityAttestingRound  = 3;
+  uint64               CurrEpochStartRound          = 4;
+  uint64               PrevEpochStartRound          = 5;
+  bytes                EpochStartMetaHash           = 6;
+  SovereignChainHeader SovereignChainHeader         = 7;
 }

@@ -22,7 +22,7 @@ enum Type {
   InvalidBlock = 120;
   ReceiptBlock = 150;
   RewardsBlock = 255;
-}
+};
 
 enum ProcessingType {
   Normal = 0;

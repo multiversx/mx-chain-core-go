@@ -1,0 +1,45 @@
+// This file holds the data structures related with the functionality of a sovereign chain header
+syntax = "proto3";
+
+package proto;
+
+option go_package = "block";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "block.proto";
+import "metaBlock.proto";
+
+// EpochStart holds the block information for end-of-epoch
+message EpochStartSovereign {
+  Economics                Economics                     = 1 [(gogoproto.jsontag) = "economics", (gogoproto.nullable) = false];
+  EpochStartCrossChainData LastFinalizedCrossChainHeader = 2 [(gogoproto.jsontag) = "lastFinalizedCrossChainHeader", (gogoproto.nullable) = false];
+}
+
+// EpochStartShardData hold the last finalized headers hash and state root hash
+message EpochStartCrossChainData {
+  uint32                        ShardID                  = 1 [(gogoproto.jsontag) = "shardID"];
+  uint32                        Epoch                    = 9 [(gogoproto.jsontag) = "epoch"];
+  uint64                        Round                    = 7 [(gogoproto.jsontag) = "round"];
+  uint64                        Nonce                    = 8 [(gogoproto.jsontag) = "nonce"];
+  bytes                         HeaderHash               = 2 [(gogoproto.jsontag) = "headerHash,omitempty"];
+}
+
+// SovereignChainHeader extends the Header structure with extra fields needed by sovereign chain
+message SovereignChainHeader {
+  Header                  Header                    = 1 [(gogoproto.jsontag) = "header"];
+  bytes                   ValidatorStatsRootHash    = 2 [(gogoproto.jsontag) = "validatorStatsRootHash"];
+  repeated bytes          ExtendedShardHeaderHashes = 3 [(gogoproto.jsontag) = "extendedShardHeaderHashes,omitempty"];
+  OutGoingMiniBlockHeader OutGoingMiniBlockHeader   = 4 [(gogoproto.jsontag) = "outGoingOperations,omitempty"];
+  bool                    IsStartOfEpoch            = 5 [(gogoproto.jsontag) = "isStartOfEpoch,omitempty"];
+  bytes                   AccumulatedFeesInEpoch    = 6 [(gogoproto.jsontag) = "accumulatedFeesInEpoch,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  bytes                   DevFeesInEpoch            = 7 [(gogoproto.jsontag) = "devFeesInEpoch,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  EpochStartSovereign     EpochStart                = 8 [(gogoproto.jsontag) = "epochStart,omitempty", (gogoproto.nullable) = false];
+}
+
+message OutGoingMiniBlockHeader {
+  bytes Hash                                  = 1 [(gogoproto.jsontag) = "hash,omitempty"];
+  bytes OutGoingOperationsHash                = 2 [(gogoproto.jsontag) = "outGoingOperationsHash,omitempty"];
+  bytes AggregatedSignatureOutGoingOperations = 3 [(gogoproto.jsontag) = "aggregatedSignatureOutGoingOperations,omitempty"];
+  bytes LeaderSignatureOutGoingOperations     = 4 [(gogoproto.jsontag) = "leaderSignatureOutGoingOperations,omitempty"];
+}

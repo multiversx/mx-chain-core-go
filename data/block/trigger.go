@@ -191,3 +191,21 @@ func (strV2 *ShardTriggerRegistryV2) SetEpochStartHeaderHandler(epochStartHeader
 	}
 	return nil
 }
+
+// GetEpochStartHeaderHandler returns the epoch start header handler
+func (m *MetaTriggerRegistry) GetEpochStartHeaderHandler() data.HeaderHandler {
+	if m == nil {
+		return nil
+	}
+
+	return m.EpochStartMeta
+}
+
+// GetEpochStartHeaderHandler returns the epoch start header handler
+func (m *SovereignShardTriggerRegistry) GetEpochStartHeaderHandler() data.HeaderHandler {
+	if m == nil {
+		return nil
+	}
+
+	return m.SovereignChainHeader
+}
