@@ -18,6 +18,7 @@ var metablockExceptionFields = []string{
 	"PubKeysBitmap",
 	"ReceiptsHash",
 	"Reserved",
+	"PreviousHeaderProof",
 }
 
 func TestMetaBlockHeader_Checks(t *testing.T) {
