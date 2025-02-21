@@ -9,7 +9,7 @@ option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "block.proto";
-import "blockV2.proto";
+import "headerProof.proto";
 
 
 // PeerAction type represents the possible events that a node can trigger for the metachain to notarize
