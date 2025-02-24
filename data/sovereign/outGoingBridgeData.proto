@@ -24,6 +24,7 @@ message OutGoingOperation {
 
 message BridgeOutGoingDataValidatorSetChange {
   repeated bytes PubKeyIDs = 1;
+  uint32 Epoch             = 2;
 }
 
 message BridgeOperationsResponse {
