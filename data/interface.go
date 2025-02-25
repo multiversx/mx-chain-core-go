@@ -104,7 +104,9 @@ type SovereignChainHeaderHandler interface {
 	GetValidatorStatsRootHash() []byte
 	SetExtendedShardHeaderHashes(hdrHashes [][]byte) error
 	GetExtendedShardHeaderHashes() [][]byte
-	GetOutGoingMiniBlockHeaderHandler() OutGoingMiniBlockHeaderHandler
+	GetOutGoingMiniBlockHeaderHandlers() []OutGoingMiniBlockHeaderHandler
+	SetOutGoingMiniBlockHeaderHandlers(mbHeader []OutGoingMiniBlockHeaderHandler) error
+	GetOutGoingMiniBlockHeaderHandler(mbType int32) OutGoingMiniBlockHeaderHandler
 	SetOutGoingMiniBlockHeaderHandler(mbHeader OutGoingMiniBlockHeaderHandler) error
 	GetDevFeesInEpoch() *big.Int
 	SetDevFeesInEpoch(value *big.Int) error
@@ -124,11 +126,13 @@ type OutGoingMiniBlockHeaderHandler interface {
 	GetOutGoingOperationsHash() []byte
 	GetAggregatedSignatureOutGoingOperations() []byte
 	GetLeaderSignatureOutGoingOperations() []byte
+	GetOutGoingMBTypeInt32() int32
 
 	SetHash(hash []byte) error
 	SetOutGoingOperationsHash(hash []byte) error
 	SetLeaderSignatureOutGoingOperations(sig []byte) error
 	SetAggregatedSignatureOutGoingOperations(sig []byte) error
+	SetOutGoingMBTypeInt32(mbType int32) error
 
 	IsInterfaceNil() bool
 }
