@@ -90,3 +90,6 @@ var ErrWrongTypeAssertion = errors.New("wrong type assertion")
 
 // ErrNilHeader signals that a nil header has been provided
 var ErrNilHeader = errors.New("nil header")
+
+// ErrNilOutGoingMiniBlockHeaderHandlerProvided signals that a nil outgoing mini block header provided
+var ErrNilOutGoingMiniBlockHeaderHandlerProvided = errors.New("nil outgoing mini block header provided")

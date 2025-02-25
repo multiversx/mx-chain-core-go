@@ -33,21 +33,32 @@ func (sch *SovereignChainHeader) SetAdditionalData(_ headerVersionData.HeaderAdd
 
 // ShallowClone returns a clone of the object
 func (sch *SovereignChainHeader) ShallowClone() data.HeaderHandler {
-	if sch == nil || sch.Header == nil {
+	if sch == nil {
 		return nil
 	}
 
-	internalHeaderCopy := *sch.Header
-
 	headerCopy := *sch
-	headerCopy.Header = &internalHeaderCopy
+	if len(sch.OutGoingMiniBlockHeaders) != 0 {
+		headerCopy.OutGoingMiniBlockHeaders = copyOutGoingMBHeaders(sch.OutGoingMiniBlockHeaders)
+	}
 
-	if !check.IfNil(sch.OutGoingMiniBlockHeader) {
-		internalOutGoingMbHeader := *sch.OutGoingMiniBlockHeader
-		headerCopy.OutGoingMiniBlockHeader = &internalOutGoingMbHeader
+	if sch.Header != nil {
+		internalHeaderCopy := *sch.Header
+		headerCopy.Header = &internalHeaderCopy
 	}
 
 	return &headerCopy
+}
+
+func copyOutGoingMBHeaders(outGoingMiniBlockHeaders []*OutGoingMiniBlockHeader) []*OutGoingMiniBlockHeader {
+	ret := make([]*OutGoingMiniBlockHeader, len(outGoingMiniBlockHeaders))
+
+	for idx, outGoingMBHdr := range outGoingMiniBlockHeaders {
+		copyMB := *outGoingMBHdr
+		ret[idx] = &copyMB
+	}
+
+	return ret
 }
 
 // GetShardID returns internal header shard id
@@ -549,33 +560,87 @@ func (sch *SovereignChainHeader) CheckFieldsForNil() error {
 	return nil
 }
 
-// GetOutGoingMiniBlockHeaderHandler returns the outgoing mini block header
-func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandler() data.OutGoingMiniBlockHeaderHandler {
+// GetOutGoingMiniBlockHeaderHandlers returns the outgoing mini block headers
+func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandlers() []data.OutGoingMiniBlockHeaderHandler {
 	if sch == nil {
 		return nil
 	}
 
-	return sch.GetOutGoingMiniBlockHeader()
+	mbHeaders := sch.GetOutGoingMiniBlockHeaders()
+	mbHeaderHandlers := make([]data.OutGoingMiniBlockHeaderHandler, len(mbHeaders))
+
+	for i := range mbHeaders {
+		mbHeaderHandlers[i] = mbHeaders[i]
+	}
+
+	return mbHeaderHandlers
 }
 
-// SetOutGoingMiniBlockHeaderHandler returns the outgoing mini block header
+// GetOutGoingMiniBlockHeaderHandler returns the outgoing mb header with specified type, if found
+func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandler(mbType int32) data.OutGoingMiniBlockHeaderHandler {
+	if sch == nil {
+		return nil
+	}
+
+	for _, outGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
+		if int32(outGoingMbHdr.Type) == mbType {
+			return outGoingMbHdr
+		}
+	}
+
+	return nil
+}
+
+// SetOutGoingMiniBlockHeaderHandler replaces the outgoing mb based on its type, if found.
+// Otherwise, it adds it add the end of the slice.
 func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data.OutGoingMiniBlockHeaderHandler) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
 	}
 
 	if check.IfNil(mbHeader) {
-		sch.OutGoingMiniBlockHeader = nil
-		return nil
+		return data.ErrNilOutGoingMiniBlockHeaderHandlerProvided
 	}
 
-	sch.OutGoingMiniBlockHeader = &OutGoingMiniBlockHeader{
+	outGoingMbHdr := createOutGoingMbHeader(mbHeader)
+	for idx, currOutGoingMbHdr := range sch.OutGoingMiniBlockHeaders {
+		if int32(currOutGoingMbHdr.Type) == mbHeader.GetOutGoingMBTypeInt32() {
+			sch.OutGoingMiniBlockHeaders[idx] = outGoingMbHdr
+			return nil
+		}
+	}
+
+	sch.OutGoingMiniBlockHeaders = append(sch.OutGoingMiniBlockHeaders, outGoingMbHdr)
+	return nil
+}
+
+func createOutGoingMbHeader(mbHeader data.OutGoingMiniBlockHeaderHandler) *OutGoingMiniBlockHeader {
+	return &OutGoingMiniBlockHeader{
+		Type:                                  OutGoingMBType(mbHeader.GetOutGoingMBTypeInt32()),
 		Hash:                                  mbHeader.GetHash(),
 		OutGoingOperationsHash:                mbHeader.GetOutGoingOperationsHash(),
 		AggregatedSignatureOutGoingOperations: mbHeader.GetAggregatedSignatureOutGoingOperations(),
 		LeaderSignatureOutGoingOperations:     mbHeader.GetLeaderSignatureOutGoingOperations(),
 	}
+}
 
+// SetOutGoingMiniBlockHeaderHandlers sets the outgoing mini block headers
+func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandlers(mbHeaders []data.OutGoingMiniBlockHeaderHandler) error {
+	if sch == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	if len(mbHeaders) == 0 {
+		sch.OutGoingMiniBlockHeaders = nil
+		return nil
+	}
+
+	miniBlockHeaders := make([]*OutGoingMiniBlockHeader, len(mbHeaders))
+	for i, mbHeaderHandler := range mbHeaders {
+		miniBlockHeaders[i] = createOutGoingMbHeader(mbHeaderHandler)
+	}
+
+	sch.OutGoingMiniBlockHeaders = miniBlockHeaders
 	return nil
 }
 
@@ -722,6 +787,25 @@ func (omb *OutGoingMiniBlockHeader) SetAggregatedSignatureOutGoingOperations(sig
 	}
 
 	omb.AggregatedSignatureOutGoingOperations = sig
+	return nil
+}
+
+// GetOutGoingMBTypeInt32 returns the outgoing mb header type as int32
+func (omb *OutGoingMiniBlockHeader) GetOutGoingMBTypeInt32() int32 {
+	if omb == nil {
+		return 0
+	}
+
+	return int32(omb.Type)
+}
+
+// SetOutGoingMBTypeInt32 sets the mini block type
+func (omb *OutGoingMiniBlockHeader) SetOutGoingMBTypeInt32(mbType int32) error {
+	if omb == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	omb.Type = OutGoingMBType(mbType)
 	return nil
 }
 
