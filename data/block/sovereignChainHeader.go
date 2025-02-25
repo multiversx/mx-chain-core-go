@@ -6,6 +6,7 @@ import (
 	"math/big"
 
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
 )
@@ -590,11 +591,15 @@ func (sch *SovereignChainHeader) GetOutGoingMiniBlockHeaderHandler(mbType int32)
 	return nil
 }
 
-// SetOutGoingMiniBlockHeaderHandler replaces the outgoing mb from the internal outgoing mb slice, if found.
+// SetOutGoingMiniBlockHeaderHandler replaces the outgoing mb based on its type, if found.
 // Otherwise, it adds it add the end of the slice.
 func (sch *SovereignChainHeader) SetOutGoingMiniBlockHeaderHandler(mbHeader data.OutGoingMiniBlockHeaderHandler) error {
 	if sch == nil {
 		return data.ErrNilPointerReceiver
+	}
+
+	if check.IfNil(mbHeader) {
+		return data.ErrNilOutGoingMiniBlockHeaderHandlerProvided
 	}
 
 	outGoingMbHdr := createOutGoingMbHeader(mbHeader)
