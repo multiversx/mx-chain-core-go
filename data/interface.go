@@ -163,6 +163,7 @@ type ShardDataHandler interface {
 	GetLastIncludedMetaNonce() uint64
 	GetShardID() uint32
 	GetTxCount() uint32
+	GetEpoch() uint32
 
 	SetHeaderHash(hash []byte) error
 	SetShardMiniBlockHeaderHandlers(mbHeaderHandlers []MiniBlockHeaderHandler) error
