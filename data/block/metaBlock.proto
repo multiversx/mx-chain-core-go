@@ -9,6 +9,7 @@ option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "block.proto";
+import "headerProof.proto";
 
 
 // PeerAction type represents the possible events that a node can trigger for the metachain to notarize
@@ -36,20 +37,22 @@ message PeerData {
 
 // ShardData holds the block information sent by the shards to the metachain
 message ShardData {
-	bytes                    HeaderHash            = 2 [(gogoproto.jsontag) = "headerHash,omitempty"];
-	repeated MiniBlockHeader ShardMiniBlockHeaders = 3 [(gogoproto.jsontag) = "shardMiniBlockHeaders", (gogoproto.nullable) = false];
-	bytes                    PrevRandSeed          = 4 [(gogoproto.jsontag) = "prevRandSeed,omitempty"];
-	bytes                    PubKeysBitmap         = 5 [(gogoproto.jsontag) = "pubKeysBitmap,omitempty"];
-	bytes                    Signature             = 6 [(gogoproto.jsontag) = "signature,omitempty"];
-	uint64                   Round                 = 8 [(gogoproto.jsontag) = "round"];
-	bytes                    PrevHash              = 9 [(gogoproto.jsontag) = "prevHash,omitempty"];
-	uint64                   Nonce                 = 10 [(gogoproto.jsontag) = "nonce"];
-	bytes                    AccumulatedFees       = 12 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-	bytes                    DeveloperFees         = 14 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-	uint32                   NumPendingMiniBlocks  = 11 [(gogoproto.jsontag) = "numPendingMiniBlocks"];
-	uint64                   LastIncludedMetaNonce = 13 [(gogoproto.jsontag) = "lastIncludedMetaNonce"];
-	uint32                   ShardID               = 1 [(gogoproto.jsontag) = "shardID"];
-	uint32                   TxCount               = 7 [(gogoproto.jsontag) = "txCount"];
+	bytes                    HeaderHash            				= 2 [(gogoproto.jsontag) = "headerHash,omitempty"];
+	repeated MiniBlockHeader ShardMiniBlockHeaders 				= 3 [(gogoproto.jsontag) = "shardMiniBlockHeaders", (gogoproto.nullable) = false];
+	bytes                    PrevRandSeed          				= 4 [(gogoproto.jsontag) = "prevRandSeed,omitempty"];
+	bytes                    PubKeysBitmap         				= 5 [(gogoproto.jsontag) = "pubKeysBitmap,omitempty"];
+	bytes                    Signature             				= 6 [(gogoproto.jsontag) = "signature,omitempty"];
+	uint64                   Round                 				= 8 [(gogoproto.jsontag) = "round"];
+	bytes                    PrevHash              				= 9 [(gogoproto.jsontag) = "prevHash,omitempty"];
+	uint64                   Nonce                 				= 10 [(gogoproto.jsontag) = "nonce"];
+	bytes                    AccumulatedFees       				= 12 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+	bytes                    DeveloperFees         				= 14 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+	uint32                   NumPendingMiniBlocks  				= 11 [(gogoproto.jsontag) = "numPendingMiniBlocks"];
+	uint64                   LastIncludedMetaNonce 				= 13 [(gogoproto.jsontag) = "lastIncludedMetaNonce"];
+	uint32                   ShardID               				= 1 [(gogoproto.jsontag) = "shardID"];
+	uint32                   TxCount               				= 7 [(gogoproto.jsontag) = "txCount"];
+	HeaderProof 						 PreviousShardHeaderProof     = 15 [(gogoproto.jsontag) = "previousHeaderProof,omitempty"];
+	uint32									 Epoch 										    = 16 [(gogoproto.jsontag) = "epoch,omitempty"];
 }
 
 // EpochStartShardData hold the last finalized headers hash and state root hash
@@ -86,29 +89,30 @@ message EpochStart {
 
 // MetaBlock holds the data that will be saved to the metachain each round
 message MetaBlock {
-	 uint64            Nonce                    = 1 [(gogoproto.jsontag) = "nonce"];
-	 uint32            Epoch                    = 2 [(gogoproto.jsontag) = "epoch"];
-	 uint64            Round                    = 3 [(gogoproto.jsontag) = "round"];
-	 uint64            TimeStamp                = 4 [(gogoproto.jsontag) = "timeStamp,omitempty"];
+	 uint64               Nonce                    = 1 [(gogoproto.jsontag) = "nonce"];
+	 uint32               Epoch                    = 2 [(gogoproto.jsontag) = "epoch"];
+	 uint64               Round                    = 3 [(gogoproto.jsontag) = "round"];
+	 uint64               TimeStamp                = 4 [(gogoproto.jsontag) = "timeStamp,omitempty"];
 	 repeated ShardData       ShardInfo         = 5 [(gogoproto.jsontag) = "shardInfo", (gogoproto.nullable) = false];
 	 repeated PeerData        PeerInfo          = 6 [(gogoproto.jsontag) = "peerInfo", (gogoproto.nullable) = false];
-	 bytes             Signature                = 7 [(gogoproto.jsontag) = "signature,omitempty"];
-	 bytes             LeaderSignature          = 8 [(gogoproto.jsontag) = "leaderSignature,omitempty"];
-	 bytes             PubKeysBitmap            = 9 [(gogoproto.jsontag) = "pubKeysBitmap,omitempty"];
-	 bytes             PrevHash                 = 10 [(gogoproto.jsontag) = "prevHash,omitempty"];
-	 bytes             PrevRandSeed             = 11 [(gogoproto.jsontag) = "prevRandSeed,omitempty"];
-	 bytes             RandSeed                 = 12 [(gogoproto.jsontag) = "randSeed,omitempty"];
-	 bytes             RootHash                 = 13 [(gogoproto.jsontag) = "rootHash,omitempty"];
-	 bytes             ValidatorStatsRootHash   = 14 [(gogoproto.jsontag) = "validatorStatsRootHash,omitempty"];
+	 bytes                Signature                = 7 [(gogoproto.jsontag) = "signature,omitempty"];
+	 bytes                LeaderSignature          = 8 [(gogoproto.jsontag) = "leaderSignature,omitempty"];
+	 bytes                PubKeysBitmap            = 9 [(gogoproto.jsontag) = "pubKeysBitmap,omitempty"];
+	 bytes                PrevHash                 = 10 [(gogoproto.jsontag) = "prevHash,omitempty"];
+	 bytes                PrevRandSeed             = 11 [(gogoproto.jsontag) = "prevRandSeed,omitempty"];
+	 bytes                RandSeed                 = 12 [(gogoproto.jsontag) = "randSeed,omitempty"];
+	 bytes                RootHash                 = 13 [(gogoproto.jsontag) = "rootHash,omitempty"];
+	 bytes                ValidatorStatsRootHash   = 14 [(gogoproto.jsontag) = "validatorStatsRootHash,omitempty"];
 	 repeated MiniBlockHeader MiniBlockHeaders  = 16 [(gogoproto.jsontag) = "miniBlockHeaders", (gogoproto.nullable) = false];
-	 bytes             ReceiptsHash             = 17 [(gogoproto.jsontag) = "receiptsHash,omitempty"];
-	 EpochStart        EpochStart               = 18 [(gogoproto.jsontag) = "epochStart,omitempty", (gogoproto.nullable) = false];
-	 bytes             ChainID                  = 19 [(gogoproto.jsontag) = "chainID,omitempty"];
-	 bytes             SoftwareVersion          = 20 [(gogoproto.jsontag) = "softwareVersion,omitempty"];
-	 bytes             AccumulatedFees          = 21 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-	 bytes             AccumulatedFeesInEpoch   = 22 [(gogoproto.jsontag) = "accumulatedFeesInEpoch,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-	 bytes             DeveloperFees            = 23 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-	 bytes             DevFeesInEpoch           = 24 [(gogoproto.jsontag) = "devFeesInEpoch,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-	 uint32            TxCount                  = 25 [(gogoproto.jsontag) = "txCount"];
-	 bytes             Reserved                 = 26 [(gogoproto.jsontag) = "reserved,omitempty"];
+	 bytes                ReceiptsHash             = 17 [(gogoproto.jsontag) = "receiptsHash,omitempty"];
+	 EpochStart           EpochStart               = 18 [(gogoproto.jsontag) = "epochStart,omitempty", (gogoproto.nullable) = false];
+	 bytes                ChainID                  = 19 [(gogoproto.jsontag) = "chainID,omitempty"];
+	 bytes                SoftwareVersion          = 20 [(gogoproto.jsontag) = "softwareVersion,omitempty"];
+	 bytes                AccumulatedFees          = 21 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+	 bytes                AccumulatedFeesInEpoch   = 22 [(gogoproto.jsontag) = "accumulatedFeesInEpoch,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+	 bytes                DeveloperFees            = 23 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+	 bytes                DevFeesInEpoch           = 24 [(gogoproto.jsontag) = "devFeesInEpoch,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+	 uint32               TxCount                  = 25 [(gogoproto.jsontag) = "txCount"];
+	 bytes                Reserved                 = 26 [(gogoproto.jsontag) = "reserved,omitempty"];
+	 HeaderProof          PreviousHeaderProof      = 27 [(gogoproto.jsontag) = "previousHeaderProof"];
 }

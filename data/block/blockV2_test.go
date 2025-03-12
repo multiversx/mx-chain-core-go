@@ -1243,3 +1243,30 @@ func TestHeaderV2_SetBlockBodyTypeInt32(t *testing.T) {
 		require.Equal(t, int32(block.TxBlock), header.GetBlockBodyTypeInt32())
 	})
 }
+
+func TestHeaderV2_GetPreviousProof(t *testing.T) {
+	t.Parallel()
+
+	shardBlock := &block.HeaderV2{}
+	proof := shardBlock.GetPreviousProof()
+	require.Nil(t, proof)
+
+	previousProof := &block.HeaderProof{
+		PubKeysBitmap:       []byte("previous pub keys bitmap"),
+		AggregatedSignature: []byte("previous aggregated signature"),
+		HeaderHash:          []byte("previous hash"),
+		HeaderEpoch:         123,
+		HeaderNonce:         234,
+		HeaderShardId:       0,
+	}
+
+	shardBlock.SetPreviousProof(previousProof)
+	proof = shardBlock.GetPreviousProof()
+	require.Equal(t, previousProof, proof) // pointer testing
+	require.Equal(t, previousProof.AggregatedSignature, proof.GetAggregatedSignature())
+	require.Equal(t, previousProof.PubKeysBitmap, proof.GetPubKeysBitmap())
+	require.Equal(t, previousProof.HeaderHash, proof.GetHeaderHash())
+	require.Equal(t, previousProof.HeaderEpoch, proof.GetHeaderEpoch())
+	require.Equal(t, previousProof.HeaderNonce, proof.GetHeaderNonce())
+	require.Equal(t, previousProof.HeaderShardId, proof.GetHeaderShardId())
+}

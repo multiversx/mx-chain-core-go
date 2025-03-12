@@ -83,7 +83,21 @@ type HeaderHandler interface {
 	IsStartOfEpochBlock() bool
 	ShallowClone() HeaderHandler
 	CheckFieldsForNil() error
+	GetPreviousProof() HeaderProofHandler
+	SetPreviousProof(proof HeaderProofHandler)
 	IsInterfaceNil() bool
+}
+
+// HeaderProofHandler defines getters and setters for the header proof
+type HeaderProofHandler interface {
+	GetPubKeysBitmap() []byte
+	GetAggregatedSignature() []byte
+	GetHeaderHash() []byte
+	GetHeaderEpoch() uint32
+	GetHeaderNonce() uint64
+	GetHeaderShardId() uint32
+	GetHeaderRound() uint64
+	GetIsStartOfEpoch() bool
 }
 
 // ShardHeaderHandler defines getters and setters for the shard block header
@@ -163,6 +177,7 @@ type ShardDataHandler interface {
 	GetLastIncludedMetaNonce() uint64
 	GetShardID() uint32
 	GetTxCount() uint32
+	GetPreviousProof() HeaderProofHandler
 
 	SetHeaderHash(hash []byte) error
 	SetShardMiniBlockHeaderHandlers(mbHeaderHandlers []MiniBlockHeaderHandler) error
@@ -178,6 +193,7 @@ type ShardDataHandler interface {
 	SetLastIncludedMetaNonce(nonce uint64) error
 	SetShardID(shardID uint32) error
 	SetTxCount(txCount uint32) error
+	SetPreviousProof(proof HeaderProofHandler) error
 
 	ShallowClone() ShardDataHandler
 }
