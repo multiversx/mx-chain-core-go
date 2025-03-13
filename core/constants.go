@@ -351,7 +351,7 @@ const GasRefundForRelayerMessage = "gas refund for relayer"
 const InitialVersionOfTransaction = uint32(1)
 
 // DefaultAddressPrefix is the default hrp of MultiversX/Elrond
-const DefaultAddressPrefix = "erd"
+const DefaultAddressPrefix = "vibe"
 
 // TopicRequestSuffix represents the topic name suffix for requests
 const TopicRequestSuffix = "_REQUEST"
