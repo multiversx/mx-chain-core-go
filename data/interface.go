@@ -83,8 +83,6 @@ type HeaderHandler interface {
 	IsStartOfEpochBlock() bool
 	ShallowClone() HeaderHandler
 	CheckFieldsForNil() error
-	GetPreviousProof() HeaderProofHandler
-	SetPreviousProof(proof HeaderProofHandler)
 	IsInterfaceNil() bool
 }
 
@@ -178,7 +176,6 @@ type ShardDataHandler interface {
 	GetLastIncludedMetaNonce() uint64
 	GetShardID() uint32
 	GetTxCount() uint32
-	GetPreviousProof() HeaderProofHandler
 
 	SetHeaderHash(hash []byte) error
 	SetShardMiniBlockHeaderHandlers(mbHeaderHandlers []MiniBlockHeaderHandler) error
@@ -194,7 +191,6 @@ type ShardDataHandler interface {
 	SetLastIncludedMetaNonce(nonce uint64) error
 	SetShardID(shardID uint32) error
 	SetTxCount(txCount uint32) error
-	SetPreviousProof(proof HeaderProofHandler) error
 
 	ShallowClone() ShardDataHandler
 }
