@@ -69,8 +69,7 @@ func TestBlockHeaderV2_Checks(t *testing.T) {
 		t.Parallel()
 
 		objectToTest := &HeaderV2{
-			Header:              &Header{},
-			PreviousHeaderProof: &HeaderProof{},
+			Header: &Header{},
 		}
 
 		fieldsForHeaderV1 := prepareFieldsList(objectToTest.Header, headerV1ExceptionFields...)
