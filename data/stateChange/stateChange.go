@@ -11,3 +11,7 @@ func (sa *StateAccess) SetTxHash(txHash []byte) {
 func (sa *StateAccess) SetIndex(index int32) {
 	sa.Index = index
 }
+
+func (sa *StateAccess) SetAccountChanges(accountChanges *AccountChanges) {
+	sa.AccountChanges = accountChanges
+}
