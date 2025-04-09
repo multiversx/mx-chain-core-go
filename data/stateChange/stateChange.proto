@@ -7,8 +7,8 @@ option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 
-message StateChanges {
-  repeated StateChange StateChanges = 1 [(gogoproto.jsontag) = "stateChanges"];
+message StateAccesses {
+  repeated StateAccess StateAccess = 1 [(gogoproto.jsontag) = "stateAccess"];
 }
 
 enum ActionType {
@@ -24,7 +24,7 @@ enum Operation {
   RemoveDataTrie  = 4;
 }
 
-message StateChange {
+message StateAccess {
   ActionType               Type                    = 1 [(gogoproto.jsontag) = "type"];
   int32                    Index                   = 2 [(gogoproto.jsontag) = "index"];
   bytes                    TxHash                  = 3 [(gogoproto.jsontag) = "txHash"];
@@ -32,23 +32,23 @@ message StateChange {
   bytes                    MainTrieVal             = 5 [(gogoproto.jsontag) = "mainTrieVal"];
   Operation                Operation               = 6 [(gogoproto.jsontag) = "operation"];
   repeated DataTrieChange  DataTrieChanges         = 7 [(gogoproto.jsontag) = "dataTrieChanges,omitempty"];
+  AccountChanges           AccountChanges          = 8 [(gogoproto.jsontag) = "accountChanges"];
 }
 
 message DataTrieChange {
-  ActionType  Type  = 1 [(gogoproto.jsontag) = "type"];
-  bytes Key   = 2 [(gogoproto.jsontag) = "key"];
-  bytes Val   = 3 [(gogoproto.jsontag) = "val"];
+  ActionType  Type    = 1 [(gogoproto.jsontag) = "type"];
+  bytes       Key     = 2 [(gogoproto.jsontag) = "key"];
+  bytes       Val     = 3 [(gogoproto.jsontag) = "val"];
+  uint32      Version = 4 [(gogoproto.jsontag) = "version"];
 }
 
-message DataAnalysisStateChange {
-  StateChange StateChange = 1 [(gogoproto.jsontag) = "stateChange"];
-  Operation   Operation = 2 [(gogoproto.jsontag) = "operation"];
-  bool        Nonce = 3 [(gogoproto.jsontag) = "nonceChanged"];
-  bool        Balance = 4 [(gogoproto.jsontag) = "balanceChanged"];
-  bool        CodeHash = 5 [(gogoproto.jsontag) = "codeHashChanged"];
-  bool        RootHash = 6 [(gogoproto.jsontag) = "rootHashChanged"];
-  bool        DeveloperReward = 7 [(gogoproto.jsontag) = "developerRewardChanged"];
-  bool        OwnerAddress = 8 [(gogoproto.jsontag) = "ownerAddressChanged"];
-  bool        UserName = 9 [(gogoproto.jsontag) = "userNameChanged"];
-  bool        CodeMetadata = 10 [(gogoproto.jsontag) = "codeMetadataChanged"];
+message AccountChanges {
+  bool        Nonce           = 1 [(gogoproto.jsontag) = "nonceChanged"];
+  bool        Balance         = 2 [(gogoproto.jsontag) = "balanceChanged"];
+  bool        CodeHash        = 3 [(gogoproto.jsontag) = "codeHashChanged"];
+  bool        RootHash        = 4 [(gogoproto.jsontag) = "rootHashChanged"];
+  bool        DeveloperReward = 5 [(gogoproto.jsontag) = "developerRewardChanged"];
+  bool        OwnerAddress    = 6 [(gogoproto.jsontag) = "ownerAddressChanged"];
+  bool        UserName        = 7 [(gogoproto.jsontag) = "userNameChanged"];
+  bool        CodeMetadata    = 8 [(gogoproto.jsontag) = "codeMetadataChanged"];
 }

@@ -78,19 +78,19 @@ func (Operation) EnumDescriptor() ([]byte, []int) {
 	return fileDescriptor_8e577663eebb0888, []int{1}
 }
 
-type StateChanges struct {
-	StateChanges []*StateChange `protobuf:"bytes,1,rep,name=StateChanges,proto3" json:"stateChanges"`
+type StateAccesses struct {
+	StateAccess []*StateAccess `protobuf:"bytes,1,rep,name=StateAccess,proto3" json:"stateAccess"`
 }
 
-func (m *StateChanges) Reset()      { *m = StateChanges{} }
-func (*StateChanges) ProtoMessage() {}
-func (*StateChanges) Descriptor() ([]byte, []int) {
+func (m *StateAccesses) Reset()      { *m = StateAccesses{} }
+func (*StateAccesses) ProtoMessage() {}
+func (*StateAccesses) Descriptor() ([]byte, []int) {
 	return fileDescriptor_8e577663eebb0888, []int{0}
 }
-func (m *StateChanges) XXX_Unmarshal(b []byte) error {
+func (m *StateAccesses) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *StateChanges) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *StateAccesses) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	b = b[:cap(b)]
 	n, err := m.MarshalToSizedBuffer(b)
 	if err != nil {
@@ -98,26 +98,26 @@ func (m *StateChanges) XXX_Marshal(b []byte, deterministic bool) ([]byte, error)
 	}
 	return b[:n], nil
 }
-func (m *StateChanges) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StateChanges.Merge(m, src)
+func (m *StateAccesses) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StateAccesses.Merge(m, src)
 }
-func (m *StateChanges) XXX_Size() int {
+func (m *StateAccesses) XXX_Size() int {
 	return m.Size()
 }
-func (m *StateChanges) XXX_DiscardUnknown() {
-	xxx_messageInfo_StateChanges.DiscardUnknown(m)
+func (m *StateAccesses) XXX_DiscardUnknown() {
+	xxx_messageInfo_StateAccesses.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_StateChanges proto.InternalMessageInfo
+var xxx_messageInfo_StateAccesses proto.InternalMessageInfo
 
-func (m *StateChanges) GetStateChanges() []*StateChange {
+func (m *StateAccesses) GetStateAccess() []*StateAccess {
 	if m != nil {
-		return m.StateChanges
+		return m.StateAccess
 	}
 	return nil
 }
 
-type StateChange struct {
+type StateAccess struct {
 	Type            ActionType        `protobuf:"varint,1,opt,name=Type,proto3,enum=proto.ActionType" json:"type"`
 	Index           int32             `protobuf:"varint,2,opt,name=Index,proto3" json:"index"`
 	TxHash          []byte            `protobuf:"bytes,3,opt,name=TxHash,proto3" json:"txHash"`
@@ -125,17 +125,18 @@ type StateChange struct {
 	MainTrieVal     []byte            `protobuf:"bytes,5,opt,name=MainTrieVal,proto3" json:"mainTrieVal"`
 	Operation       Operation         `protobuf:"varint,6,opt,name=Operation,proto3,enum=proto.Operation" json:"operation"`
 	DataTrieChanges []*DataTrieChange `protobuf:"bytes,7,rep,name=DataTrieChanges,proto3" json:"dataTrieChanges,omitempty"`
+	AccountChanges  *AccountChanges   `protobuf:"bytes,8,opt,name=AccountChanges,proto3" json:"accountChanges"`
 }
 
-func (m *StateChange) Reset()      { *m = StateChange{} }
-func (*StateChange) ProtoMessage() {}
-func (*StateChange) Descriptor() ([]byte, []int) {
+func (m *StateAccess) Reset()      { *m = StateAccess{} }
+func (*StateAccess) ProtoMessage() {}
+func (*StateAccess) Descriptor() ([]byte, []int) {
 	return fileDescriptor_8e577663eebb0888, []int{1}
 }
-func (m *StateChange) XXX_Unmarshal(b []byte) error {
+func (m *StateAccess) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *StateChange) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *StateAccess) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	b = b[:cap(b)]
 	n, err := m.MarshalToSizedBuffer(b)
 	if err != nil {
@@ -143,71 +144,79 @@ func (m *StateChange) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) 
 	}
 	return b[:n], nil
 }
-func (m *StateChange) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_StateChange.Merge(m, src)
+func (m *StateAccess) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_StateAccess.Merge(m, src)
 }
-func (m *StateChange) XXX_Size() int {
+func (m *StateAccess) XXX_Size() int {
 	return m.Size()
 }
-func (m *StateChange) XXX_DiscardUnknown() {
-	xxx_messageInfo_StateChange.DiscardUnknown(m)
+func (m *StateAccess) XXX_DiscardUnknown() {
+	xxx_messageInfo_StateAccess.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_StateChange proto.InternalMessageInfo
+var xxx_messageInfo_StateAccess proto.InternalMessageInfo
 
-func (m *StateChange) GetType() ActionType {
+func (m *StateAccess) GetType() ActionType {
 	if m != nil {
 		return m.Type
 	}
 	return Read
 }
 
-func (m *StateChange) GetIndex() int32 {
+func (m *StateAccess) GetIndex() int32 {
 	if m != nil {
 		return m.Index
 	}
 	return 0
 }
 
-func (m *StateChange) GetTxHash() []byte {
+func (m *StateAccess) GetTxHash() []byte {
 	if m != nil {
 		return m.TxHash
 	}
 	return nil
 }
 
-func (m *StateChange) GetMainTrieKey() []byte {
+func (m *StateAccess) GetMainTrieKey() []byte {
 	if m != nil {
 		return m.MainTrieKey
 	}
 	return nil
 }
 
-func (m *StateChange) GetMainTrieVal() []byte {
+func (m *StateAccess) GetMainTrieVal() []byte {
 	if m != nil {
 		return m.MainTrieVal
 	}
 	return nil
 }
 
-func (m *StateChange) GetOperation() Operation {
+func (m *StateAccess) GetOperation() Operation {
 	if m != nil {
 		return m.Operation
 	}
 	return GetCode
 }
 
-func (m *StateChange) GetDataTrieChanges() []*DataTrieChange {
+func (m *StateAccess) GetDataTrieChanges() []*DataTrieChange {
 	if m != nil {
 		return m.DataTrieChanges
 	}
 	return nil
 }
 
+func (m *StateAccess) GetAccountChanges() *AccountChanges {
+	if m != nil {
+		return m.AccountChanges
+	}
+	return nil
+}
+
 type DataTrieChange struct {
-	Type ActionType `protobuf:"varint,1,opt,name=Type,proto3,enum=proto.ActionType" json:"type"`
-	Key  []byte     `protobuf:"bytes,2,opt,name=Key,proto3" json:"key"`
-	Val  []byte     `protobuf:"bytes,3,opt,name=Val,proto3" json:"val"`
+	Type    ActionType `protobuf:"varint,1,opt,name=Type,proto3,enum=proto.ActionType" json:"type"`
+	Key     []byte     `protobuf:"bytes,2,opt,name=Key,proto3" json:"key"`
+	Val     []byte     `protobuf:"bytes,3,opt,name=Val,proto3" json:"val"`
+	Version uint32     `protobuf:"varint,4,opt,name=Version,proto3" json:"version"`
 }
 
 func (m *DataTrieChange) Reset()      { *m = DataTrieChange{} }
@@ -259,28 +268,33 @@ func (m *DataTrieChange) GetVal() []byte {
 	return nil
 }
 
-type DataAnalysisStateChange struct {
-	StateChange     *StateChange `protobuf:"bytes,1,opt,name=StateChange,proto3" json:"stateChange"`
-	Operation       Operation    `protobuf:"varint,2,opt,name=Operation,proto3,enum=proto.Operation" json:"operation"`
-	Nonce           bool         `protobuf:"varint,3,opt,name=Nonce,proto3" json:"nonceChanged"`
-	Balance         bool         `protobuf:"varint,4,opt,name=Balance,proto3" json:"balanceChanged"`
-	CodeHash        bool         `protobuf:"varint,5,opt,name=CodeHash,proto3" json:"codeHashChanged"`
-	RootHash        bool         `protobuf:"varint,6,opt,name=RootHash,proto3" json:"rootHashChanged"`
-	DeveloperReward bool         `protobuf:"varint,7,opt,name=DeveloperReward,proto3" json:"developerRewardChanged"`
-	OwnerAddress    bool         `protobuf:"varint,8,opt,name=OwnerAddress,proto3" json:"ownerAddressChanged"`
-	UserName        bool         `protobuf:"varint,9,opt,name=UserName,proto3" json:"userNameChanged"`
-	CodeMetadata    bool         `protobuf:"varint,10,opt,name=CodeMetadata,proto3" json:"codeMetadataChanged"`
+func (m *DataTrieChange) GetVersion() uint32 {
+	if m != nil {
+		return m.Version
+	}
+	return 0
 }
 
-func (m *DataAnalysisStateChange) Reset()      { *m = DataAnalysisStateChange{} }
-func (*DataAnalysisStateChange) ProtoMessage() {}
-func (*DataAnalysisStateChange) Descriptor() ([]byte, []int) {
+type AccountChanges struct {
+	Nonce           bool `protobuf:"varint,1,opt,name=Nonce,proto3" json:"nonceChanged"`
+	Balance         bool `protobuf:"varint,2,opt,name=Balance,proto3" json:"balanceChanged"`
+	CodeHash        bool `protobuf:"varint,3,opt,name=CodeHash,proto3" json:"codeHashChanged"`
+	RootHash        bool `protobuf:"varint,4,opt,name=RootHash,proto3" json:"rootHashChanged"`
+	DeveloperReward bool `protobuf:"varint,5,opt,name=DeveloperReward,proto3" json:"developerRewardChanged"`
+	OwnerAddress    bool `protobuf:"varint,6,opt,name=OwnerAddress,proto3" json:"ownerAddressChanged"`
+	UserName        bool `protobuf:"varint,7,opt,name=UserName,proto3" json:"userNameChanged"`
+	CodeMetadata    bool `protobuf:"varint,8,opt,name=CodeMetadata,proto3" json:"codeMetadataChanged"`
+}
+
+func (m *AccountChanges) Reset()      { *m = AccountChanges{} }
+func (*AccountChanges) ProtoMessage() {}
+func (*AccountChanges) Descriptor() ([]byte, []int) {
 	return fileDescriptor_8e577663eebb0888, []int{3}
 }
-func (m *DataAnalysisStateChange) XXX_Unmarshal(b []byte) error {
+func (m *AccountChanges) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
 }
-func (m *DataAnalysisStateChange) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+func (m *AccountChanges) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
 	b = b[:cap(b)]
 	n, err := m.MarshalToSizedBuffer(b)
 	if err != nil {
@@ -288,82 +302,68 @@ func (m *DataAnalysisStateChange) XXX_Marshal(b []byte, deterministic bool) ([]b
 	}
 	return b[:n], nil
 }
-func (m *DataAnalysisStateChange) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_DataAnalysisStateChange.Merge(m, src)
+func (m *AccountChanges) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_AccountChanges.Merge(m, src)
 }
-func (m *DataAnalysisStateChange) XXX_Size() int {
+func (m *AccountChanges) XXX_Size() int {
 	return m.Size()
 }
-func (m *DataAnalysisStateChange) XXX_DiscardUnknown() {
-	xxx_messageInfo_DataAnalysisStateChange.DiscardUnknown(m)
+func (m *AccountChanges) XXX_DiscardUnknown() {
+	xxx_messageInfo_AccountChanges.DiscardUnknown(m)
 }
 
-var xxx_messageInfo_DataAnalysisStateChange proto.InternalMessageInfo
+var xxx_messageInfo_AccountChanges proto.InternalMessageInfo
 
-func (m *DataAnalysisStateChange) GetStateChange() *StateChange {
-	if m != nil {
-		return m.StateChange
-	}
-	return nil
-}
-
-func (m *DataAnalysisStateChange) GetOperation() Operation {
-	if m != nil {
-		return m.Operation
-	}
-	return GetCode
-}
-
-func (m *DataAnalysisStateChange) GetNonce() bool {
+func (m *AccountChanges) GetNonce() bool {
 	if m != nil {
 		return m.Nonce
 	}
 	return false
 }
 
-func (m *DataAnalysisStateChange) GetBalance() bool {
+func (m *AccountChanges) GetBalance() bool {
 	if m != nil {
 		return m.Balance
 	}
 	return false
 }
 
-func (m *DataAnalysisStateChange) GetCodeHash() bool {
+func (m *AccountChanges) GetCodeHash() bool {
 	if m != nil {
 		return m.CodeHash
 	}
 	return false
 }
 
-func (m *DataAnalysisStateChange) GetRootHash() bool {
+func (m *AccountChanges) GetRootHash() bool {
 	if m != nil {
 		return m.RootHash
 	}
 	return false
 }
 
-func (m *DataAnalysisStateChange) GetDeveloperReward() bool {
+func (m *AccountChanges) GetDeveloperReward() bool {
 	if m != nil {
 		return m.DeveloperReward
 	}
 	return false
 }
 
-func (m *DataAnalysisStateChange) GetOwnerAddress() bool {
+func (m *AccountChanges) GetOwnerAddress() bool {
 	if m != nil {
 		return m.OwnerAddress
 	}
 	return false
 }
 
-func (m *DataAnalysisStateChange) GetUserName() bool {
+func (m *AccountChanges) GetUserName() bool {
 	if m != nil {
 		return m.UserName
 	}
 	return false
 }
 
-func (m *DataAnalysisStateChange) GetCodeMetadata() bool {
+func (m *AccountChanges) GetCodeMetadata() bool {
 	if m != nil {
 		return m.CodeMetadata
 	}
@@ -373,64 +373,65 @@ func (m *DataAnalysisStateChange) GetCodeMetadata() bool {
 func init() {
 	proto.RegisterEnum("proto.ActionType", ActionType_name, ActionType_value)
 	proto.RegisterEnum("proto.Operation", Operation_name, Operation_value)
-	proto.RegisterType((*StateChanges)(nil), "proto.StateChanges")
-	proto.RegisterType((*StateChange)(nil), "proto.StateChange")
+	proto.RegisterType((*StateAccesses)(nil), "proto.StateAccesses")
+	proto.RegisterType((*StateAccess)(nil), "proto.StateAccess")
 	proto.RegisterType((*DataTrieChange)(nil), "proto.DataTrieChange")
-	proto.RegisterType((*DataAnalysisStateChange)(nil), "proto.DataAnalysisStateChange")
+	proto.RegisterType((*AccountChanges)(nil), "proto.AccountChanges")
 }
 
 func init() { proto.RegisterFile("stateChange.proto", fileDescriptor_8e577663eebb0888) }
 
 var fileDescriptor_8e577663eebb0888 = []byte{
-	// 756 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x54, 0xcf, 0x6f, 0xe2, 0x46,
-	0x18, 0xb5, 0x01, 0xf3, 0x63, 0x20, 0x40, 0x26, 0x6a, 0xe3, 0x44, 0xaa, 0x4d, 0x39, 0x54, 0x28,
-	0x0a, 0x41, 0x4d, 0x8f, 0x51, 0x0f, 0x38, 0xa9, 0x92, 0xaa, 0x4a, 0x22, 0x4d, 0xd2, 0xb4, 0xaa,
-	0xaa, 0x4a, 0x83, 0x3d, 0x05, 0x6b, 0xb1, 0x07, 0xd9, 0x03, 0x81, 0xc3, 0x4a, 0x7b, 0xdc, 0xe3,
-	0xfe, 0x19, 0xfb, 0xa7, 0xe4, 0x98, 0x63, 0x4e, 0xd6, 0xc6, 0xb9, 0xac, 0x7c, 0xca, 0x9f, 0xb0,
-	0x9a, 0x01, 0x63, 0x3b, 0xbb, 0x97, 0x9c, 0x98, 0x79, 0xdf, 0x7b, 0x6f, 0xbe, 0xef, 0xe3, 0x01,
-	0xd8, 0xf4, 0x19, 0x66, 0xe4, 0x78, 0x84, 0xdd, 0x21, 0x39, 0x98, 0x78, 0x94, 0x51, 0xa8, 0x88,
-	0x8f, 0xdd, 0xee, 0xd0, 0x66, 0xa3, 0xe9, 0xe0, 0xc0, 0xa4, 0x4e, 0x6f, 0x48, 0x87, 0xb4, 0x27,
-	0xe0, 0xc1, 0xf4, 0x7f, 0x71, 0x13, 0x17, 0x71, 0x5a, 0xaa, 0xda, 0x7f, 0x83, 0xda, 0x55, 0x62,
-	0xe5, 0xc3, 0xb3, 0xec, 0x5d, 0x95, 0x5b, 0xf9, 0x4e, 0xf5, 0x10, 0x2e, 0xd9, 0x07, 0xa9, 0x92,
-	0xd1, 0x8c, 0x02, 0xbd, 0x96, 0x6a, 0xc3, 0x47, 0x19, 0x65, 0xfb, 0x7d, 0x1e, 0x54, 0x53, 0x00,
-	0xec, 0x81, 0xc2, 0xf5, 0x62, 0x42, 0x54, 0xb9, 0x25, 0x77, 0xea, 0x87, 0x9b, 0x2b, 0xc7, 0xbe,
-	0xc9, 0x6c, 0xea, 0xf2, 0x82, 0x51, 0x8e, 0x02, 0xbd, 0xc0, 0x16, 0x13, 0x82, 0x04, 0x11, 0xea,
-	0x40, 0xf9, 0xdd, 0xb5, 0xc8, 0x5c, 0xcd, 0xb5, 0xe4, 0x8e, 0x62, 0x54, 0xa2, 0x40, 0x57, 0x6c,
-	0x0e, 0xa0, 0x25, 0x0e, 0xdb, 0xa0, 0x78, 0x3d, 0x3f, 0xc3, 0xfe, 0x48, 0xcd, 0xb7, 0xe4, 0x4e,
-	0xcd, 0x00, 0x51, 0xa0, 0x17, 0x99, 0x40, 0xd0, 0xaa, 0x02, 0x7f, 0x06, 0xd5, 0x73, 0x6c, 0xbb,
-	0xd7, 0x9e, 0x4d, 0xfe, 0x20, 0x0b, 0xb5, 0x20, 0x88, 0x8d, 0x28, 0xd0, 0xab, 0x4e, 0x02, 0xa3,
-	0x34, 0x27, 0x2d, 0xb9, 0xc1, 0x63, 0x55, 0xf9, 0x5a, 0x72, 0x83, 0xc7, 0x28, 0xcd, 0x81, 0xbf,
-	0x82, 0xca, 0xe5, 0x84, 0x78, 0x98, 0xcf, 0xa2, 0x16, 0xc5, 0x80, 0xcd, 0xd5, 0x80, 0x6b, 0xdc,
-	0xd8, 0x88, 0x02, 0xbd, 0x42, 0xe3, 0x2b, 0x4a, 0x14, 0xf0, 0x3f, 0xd0, 0x38, 0xc1, 0x0c, 0x73,
-	0xb7, 0x78, 0xef, 0x25, 0xb1, 0xf7, 0xef, 0x56, 0x26, 0xd9, 0xaa, 0xf1, 0x43, 0x14, 0xe8, 0x3b,
-	0x56, 0x56, 0xb1, 0x4f, 0x1d, 0x9b, 0x11, 0x67, 0xc2, 0x16, 0xe8, 0xa5, 0x59, 0xfb, 0x16, 0xd4,
-	0xb3, 0xd0, 0xeb, 0xbf, 0x8c, 0x1d, 0x90, 0xe7, 0xfb, 0xcb, 0x89, 0x65, 0x94, 0xa2, 0x40, 0xcf,
-	0xbf, 0x21, 0x0b, 0xc4, 0x31, 0x5e, 0xe2, 0x7b, 0xca, 0x27, 0xa5, 0x19, 0x1e, 0x23, 0x8e, 0xb5,
-	0xef, 0x0a, 0x60, 0x9b, 0xbf, 0xdc, 0x77, 0xf1, 0x78, 0xe1, 0xdb, 0x7e, 0x3a, 0x0f, 0xbf, 0x65,
-	0xe2, 0x21, 0x3a, 0xf9, 0x76, 0xd0, 0xc4, 0xea, 0x53, 0x41, 0x43, 0x99, 0x58, 0x65, 0x56, 0x9f,
-	0x7b, 0xf5, 0xea, 0x7f, 0x02, 0xca, 0x05, 0x75, 0x4d, 0x22, 0xda, 0x2f, 0x2f, 0x43, 0xed, 0x72,
-	0x60, 0x69, 0x6f, 0xa1, 0x65, 0x19, 0xee, 0x83, 0x92, 0x81, 0xc7, 0x98, 0x33, 0x0b, 0x82, 0x09,
-	0xa3, 0x40, 0xaf, 0x0f, 0x96, 0x50, 0xcc, 0x8d, 0x29, 0xb0, 0x07, 0xca, 0xc7, 0xd4, 0x22, 0x22,
-	0x9b, 0x8a, 0xa0, 0x6f, 0x45, 0x81, 0xde, 0x30, 0x57, 0x58, 0xcc, 0x5f, 0x93, 0xb8, 0x00, 0x51,
-	0xca, 0x84, 0xa0, 0x98, 0x08, 0xbc, 0x15, 0xb6, 0x16, 0xc4, 0x24, 0x78, 0x02, 0x1a, 0x27, 0x64,
-	0x46, 0xc6, 0x7c, 0x28, 0x44, 0x6e, 0xb1, 0x67, 0xa9, 0x25, 0xa1, 0xdb, 0x8d, 0x02, 0xfd, 0x7b,
-	0x2b, 0x5b, 0x8a, 0xe5, 0x2f, 0x25, 0xf0, 0x08, 0xd4, 0x2e, 0x6f, 0x5d, 0xe2, 0xf5, 0x2d, 0xcb,
-	0x23, 0xbe, 0xaf, 0x96, 0x85, 0xc5, 0x76, 0x14, 0xe8, 0x5b, 0x34, 0x85, 0xc7, 0xfa, 0x0c, 0x99,
-	0xf7, 0xfc, 0xa7, 0x4f, 0xbc, 0x0b, 0xec, 0x10, 0xb5, 0x92, 0xf4, 0x3c, 0x5d, 0x61, 0xeb, 0x9e,
-	0x63, 0x12, 0x7f, 0x8d, 0x0f, 0x7c, 0x4e, 0x18, 0xe6, 0xe1, 0x55, 0x41, 0xf2, 0x9a, 0x99, 0xc2,
-	0xd7, 0xaf, 0xa5, 0xc9, 0x7b, 0x3f, 0x02, 0x90, 0xc4, 0x13, 0x96, 0x41, 0x01, 0x11, 0x6c, 0x35,
-	0x25, 0x58, 0x01, 0xca, 0x5f, 0x9e, 0xcd, 0x48, 0x53, 0xde, 0xfb, 0x37, 0x15, 0x05, 0x58, 0x05,
-	0xa5, 0x53, 0xc2, 0xb8, 0x45, 0x53, 0x82, 0x0d, 0x50, 0xbd, 0xc2, 0x33, 0xd2, 0x37, 0x4d, 0x3a,
-	0x75, 0x59, 0x53, 0x86, 0x75, 0x00, 0x4e, 0x09, 0x8b, 0xef, 0x39, 0xb8, 0x01, 0x2a, 0xc2, 0x45,
-	0xf0, 0xf3, 0x10, 0x82, 0x3a, 0x22, 0x0e, 0x9d, 0x91, 0xf8, 0x67, 0xd3, 0x2c, 0x18, 0x6f, 0xef,
-	0x1f, 0x35, 0xe9, 0xe1, 0x51, 0x93, 0x9e, 0x1f, 0x35, 0xf9, 0x5d, 0xa8, 0xc9, 0x1f, 0x43, 0x4d,
-	0xbe, 0x0b, 0x35, 0xf9, 0x3e, 0xd4, 0xe4, 0x87, 0x50, 0x93, 0x3f, 0x85, 0x9a, 0xfc, 0x39, 0xd4,
-	0xa4, 0xe7, 0x50, 0x93, 0x3f, 0x3c, 0x69, 0xd2, 0xfd, 0x93, 0x26, 0x3d, 0x3c, 0x69, 0xd2, 0x3f,
-	0xc7, 0xa9, 0xbf, 0x64, 0x67, 0x3a, 0x66, 0xf6, 0x8c, 0x78, 0xfe, 0xbc, 0xe7, 0xcc, 0xbb, 0xe6,
-	0x08, 0xdb, 0x6e, 0xd7, 0xa4, 0x1e, 0xe9, 0x0e, 0x69, 0x8f, 0xcf, 0xd9, 0x4b, 0x05, 0xfd, 0x28,
-	0x75, 0x1e, 0x14, 0x45, 0xa6, 0x7f, 0xf9, 0x12, 0x00, 0x00, 0xff, 0xff, 0x8b, 0x5e, 0xf2, 0xf2,
-	0xfa, 0x05, 0x00, 0x00,
+	// 776 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x54, 0xcd, 0x6e, 0xe3, 0x44,
+	0x1c, 0xf7, 0xc4, 0xf9, 0x9c, 0x34, 0x1f, 0x3b, 0x2b, 0xc0, 0xbb, 0x12, 0x76, 0x88, 0x04, 0x8a,
+	0x56, 0x9b, 0x46, 0x94, 0x63, 0xc5, 0x21, 0x6e, 0x51, 0x41, 0xa8, 0xad, 0x98, 0x96, 0x20, 0x21,
+	0x84, 0x34, 0xb1, 0x87, 0xc4, 0x22, 0xf6, 0x44, 0xf6, 0x24, 0x4d, 0x0e, 0x48, 0x3c, 0x02, 0x4f,
+	0xc0, 0x99, 0x57, 0xe0, 0x0d, 0x38, 0xf6, 0x58, 0x09, 0xc9, 0xa2, 0xee, 0x05, 0xf9, 0xd4, 0x47,
+	0x40, 0x33, 0xb6, 0x13, 0x3b, 0x9c, 0xf6, 0x94, 0xcc, 0xef, 0x6b, 0xe6, 0x3f, 0xff, 0xff, 0x18,
+	0xbe, 0x08, 0x38, 0xe1, 0xf4, 0x6c, 0x4e, 0xbc, 0x19, 0x3d, 0x5e, 0xfa, 0x8c, 0x33, 0x54, 0x91,
+	0x3f, 0xaf, 0x87, 0x33, 0x87, 0xcf, 0x57, 0xd3, 0x63, 0x8b, 0xb9, 0xa3, 0x19, 0x9b, 0xb1, 0x91,
+	0x84, 0xa7, 0xab, 0x9f, 0xe4, 0x4a, 0x2e, 0xe4, 0xbf, 0xc4, 0xd5, 0x9f, 0xc0, 0xd6, 0x8d, 0x88,
+	0x1a, 0x5b, 0x16, 0x0d, 0x02, 0x1a, 0xa0, 0x2f, 0x60, 0x33, 0x07, 0x68, 0xa0, 0xa7, 0x0e, 0x9a,
+	0x27, 0x28, 0x51, 0x1f, 0xe7, 0x18, 0xb3, 0x13, 0x87, 0x46, 0x33, 0xd8, 0x03, 0x38, 0xef, 0xeb,
+	0xff, 0xad, 0x16, 0x72, 0xd0, 0x08, 0x96, 0x6f, 0xb7, 0x4b, 0xaa, 0x81, 0x1e, 0x18, 0xb4, 0x4f,
+	0x5e, 0xa4, 0x79, 0x63, 0x8b, 0x3b, 0xcc, 0x13, 0x84, 0x59, 0x8f, 0x43, 0xa3, 0xcc, 0xb7, 0x4b,
+	0x8a, 0xa5, 0x10, 0x19, 0xb0, 0xf2, 0x95, 0x67, 0xd3, 0x8d, 0x56, 0xea, 0x81, 0x41, 0xc5, 0x6c,
+	0xc4, 0xa1, 0x51, 0x71, 0x04, 0x80, 0x13, 0x1c, 0xf5, 0x61, 0xf5, 0x76, 0xf3, 0x25, 0x09, 0xe6,
+	0x9a, 0xda, 0x03, 0x83, 0x23, 0x13, 0xc6, 0xa1, 0x51, 0xe5, 0x12, 0xc1, 0x29, 0x83, 0x3e, 0x85,
+	0xcd, 0x4b, 0xe2, 0x78, 0xb7, 0xbe, 0x43, 0xbf, 0xa6, 0x5b, 0xad, 0x2c, 0x85, 0xf2, 0xe0, 0xee,
+	0x1e, 0xc6, 0x79, 0x4d, 0xde, 0x32, 0x21, 0x0b, 0xad, 0xf2, 0x7f, 0xcb, 0x84, 0x2c, 0x70, 0x5e,
+	0x83, 0x3e, 0x87, 0x8d, 0xeb, 0x25, 0xf5, 0x89, 0xa8, 0x45, 0xab, 0xca, 0x02, 0xbb, 0x69, 0x81,
+	0x3b, 0xdc, 0x6c, 0xc5, 0xa1, 0xd1, 0x60, 0xd9, 0x12, 0xef, 0x1d, 0xe8, 0x47, 0xd8, 0x39, 0x27,
+	0x9c, 0x88, 0xb4, 0xa4, 0xa1, 0x81, 0x56, 0x93, 0xb7, 0xfe, 0x5e, 0x1a, 0x52, 0x64, 0xcd, 0x0f,
+	0xe3, 0xd0, 0x78, 0x65, 0x17, 0x1d, 0x6f, 0x99, 0xeb, 0x70, 0xea, 0x2e, 0xf9, 0x16, 0x1f, 0x86,
+	0xa1, 0x6f, 0x60, 0x7b, 0x6c, 0x59, 0x6c, 0xe5, 0xf1, 0x2c, 0xbe, 0xde, 0x03, 0xb9, 0xf8, 0x22,
+	0x69, 0xa2, 0x38, 0x34, 0xda, 0xa4, 0x80, 0xe1, 0x83, 0x80, 0xfe, 0xef, 0x00, 0xb6, 0x8b, 0xdb,
+	0xbc, 0x7b, 0x83, 0x5f, 0x41, 0x55, 0xf4, 0xa4, 0x24, 0x2f, 0xb8, 0x16, 0x87, 0x86, 0xfa, 0x33,
+	0xdd, 0x62, 0x81, 0x09, 0x4a, 0xdc, 0xbd, 0xba, 0xa7, 0xd6, 0x64, 0x81, 0x05, 0x86, 0x3e, 0x86,
+	0xb5, 0x09, 0xf5, 0x03, 0x71, 0xd3, 0xa2, 0x9b, 0x2d, 0xb3, 0x19, 0x87, 0x46, 0x6d, 0x9d, 0x40,
+	0x38, 0xe3, 0xfa, 0x7f, 0xaa, 0x87, 0x45, 0xa3, 0x4f, 0x60, 0xe5, 0x8a, 0x79, 0x56, 0x72, 0xc2,
+	0xba, 0xd9, 0x8d, 0x43, 0xe3, 0xc8, 0x13, 0x40, 0x22, 0xb0, 0x71, 0x42, 0xa3, 0xb7, 0xb0, 0x66,
+	0x92, 0x05, 0x11, 0xca, 0x92, 0x54, 0xca, 0x0b, 0x99, 0x26, 0x50, 0xa6, 0xcd, 0x24, 0x68, 0x04,
+	0xeb, 0x67, 0xcc, 0xa6, 0xbb, 0x39, 0xac, 0x9b, 0x2f, 0xe3, 0xd0, 0xe8, 0x58, 0x29, 0x96, 0xe9,
+	0x77, 0x22, 0x61, 0xc0, 0x8c, 0x71, 0x69, 0x28, 0xef, 0x0d, 0x7e, 0x8a, 0xed, 0x0c, 0x99, 0x08,
+	0x9d, 0xc3, 0xce, 0x39, 0x5d, 0xd3, 0x85, 0x98, 0x1d, 0x4c, 0xef, 0x88, 0x6f, 0xcb, 0xa1, 0xac,
+	0x9b, 0xaf, 0xe3, 0xd0, 0x78, 0xdf, 0x2e, 0x52, 0x99, 0xfd, 0xd0, 0x82, 0x4e, 0xe1, 0xd1, 0xf5,
+	0x9d, 0x47, 0xfd, 0xb1, 0x6d, 0xfb, 0xe2, 0x5d, 0x57, 0x65, 0xc4, 0x07, 0x71, 0x68, 0xbc, 0x64,
+	0x39, 0x3c, 0xf3, 0x17, 0xc4, 0xe2, 0xcc, 0xdf, 0x06, 0xd4, 0xbf, 0x22, 0x2e, 0xd5, 0x6a, 0xfb,
+	0x33, 0xaf, 0x52, 0x6c, 0x77, 0xe6, 0x4c, 0x24, 0x76, 0x13, 0x05, 0x5f, 0x52, 0x4e, 0xc4, 0xa0,
+	0xca, 0x81, 0x4b, 0x77, 0xb3, 0x72, 0xf8, 0x6e, 0xb7, 0xbc, 0xf8, 0xcd, 0x47, 0x10, 0xee, 0xc7,
+	0x06, 0xd5, 0x61, 0x19, 0x53, 0x62, 0x77, 0x15, 0xd4, 0x80, 0x95, 0xef, 0x7c, 0x87, 0xd3, 0x2e,
+	0x78, 0xf3, 0x43, 0xee, 0xc5, 0xa1, 0x26, 0xac, 0x5d, 0x50, 0x2e, 0x22, 0xba, 0x0a, 0xea, 0xc0,
+	0xe6, 0x0d, 0x59, 0xd3, 0xb4, 0xf7, 0x5d, 0x80, 0xda, 0x10, 0x5e, 0x50, 0x9e, 0xad, 0x4b, 0xa8,
+	0x05, 0x1b, 0x32, 0x45, 0xea, 0x55, 0x84, 0x60, 0x1b, 0x53, 0x97, 0xad, 0x69, 0x36, 0xce, 0xdd,
+	0xb2, 0xf9, 0xcb, 0xfd, 0xa3, 0xae, 0x3c, 0x3c, 0xea, 0xca, 0xf3, 0xa3, 0x0e, 0x7e, 0x8d, 0x74,
+	0xf0, 0x47, 0xa4, 0x83, 0xbf, 0x22, 0x1d, 0xdc, 0x47, 0x3a, 0x78, 0x88, 0x74, 0xf0, 0x4f, 0xa4,
+	0x83, 0x7f, 0x23, 0x5d, 0x79, 0x8e, 0x74, 0xf0, 0xdb, 0x93, 0xae, 0xdc, 0x3f, 0xe9, 0xca, 0xc3,
+	0x93, 0xae, 0x7c, 0x7f, 0x96, 0xfb, 0xf8, 0xba, 0xab, 0x05, 0x77, 0xc4, 0x60, 0x6e, 0x46, 0xee,
+	0x66, 0x68, 0xcd, 0x89, 0xe3, 0x0d, 0x2d, 0xe6, 0xd3, 0xe1, 0x8c, 0x8d, 0x44, 0x9d, 0xa3, 0xdc,
+	0x27, 0xfc, 0x34, 0xf7, 0x7f, 0x5a, 0x95, 0x4f, 0xe7, 0xb3, 0xff, 0x02, 0x00, 0x00, 0xff, 0xff,
+	0x6a, 0xf5, 0x4a, 0xc0, 0xe4, 0x05, 0x00, 0x00,
 }
 
 func (x ActionType) String() string {
@@ -447,14 +448,14 @@ func (x Operation) String() string {
 	}
 	return strconv.Itoa(int(x))
 }
-func (this *StateChanges) Equal(that interface{}) bool {
+func (this *StateAccesses) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*StateChanges)
+	that1, ok := that.(*StateAccesses)
 	if !ok {
-		that2, ok := that.(StateChanges)
+		that2, ok := that.(StateAccesses)
 		if ok {
 			that1 = &that2
 		} else {
@@ -466,24 +467,24 @@ func (this *StateChanges) Equal(that interface{}) bool {
 	} else if this == nil {
 		return false
 	}
-	if len(this.StateChanges) != len(that1.StateChanges) {
+	if len(this.StateAccess) != len(that1.StateAccess) {
 		return false
 	}
-	for i := range this.StateChanges {
-		if !this.StateChanges[i].Equal(that1.StateChanges[i]) {
+	for i := range this.StateAccess {
+		if !this.StateAccess[i].Equal(that1.StateAccess[i]) {
 			return false
 		}
 	}
 	return true
 }
-func (this *StateChange) Equal(that interface{}) bool {
+func (this *StateAccess) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*StateChange)
+	that1, ok := that.(*StateAccess)
 	if !ok {
-		that2, ok := that.(StateChange)
+		that2, ok := that.(StateAccess)
 		if ok {
 			that1 = &that2
 		} else {
@@ -521,6 +522,9 @@ func (this *StateChange) Equal(that interface{}) bool {
 			return false
 		}
 	}
+	if !this.AccountChanges.Equal(that1.AccountChanges) {
+		return false
+	}
 	return true
 }
 func (this *DataTrieChange) Equal(that interface{}) bool {
@@ -551,16 +555,19 @@ func (this *DataTrieChange) Equal(that interface{}) bool {
 	if !bytes.Equal(this.Val, that1.Val) {
 		return false
 	}
+	if this.Version != that1.Version {
+		return false
+	}
 	return true
 }
-func (this *DataAnalysisStateChange) Equal(that interface{}) bool {
+func (this *AccountChanges) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
 	}
 
-	that1, ok := that.(*DataAnalysisStateChange)
+	that1, ok := that.(*AccountChanges)
 	if !ok {
-		that2, ok := that.(DataAnalysisStateChange)
+		that2, ok := that.(AccountChanges)
 		if ok {
 			that1 = &that2
 		} else {
@@ -570,12 +577,6 @@ func (this *DataAnalysisStateChange) Equal(that interface{}) bool {
 	if that1 == nil {
 		return this == nil
 	} else if this == nil {
-		return false
-	}
-	if !this.StateChange.Equal(that1.StateChange) {
-		return false
-	}
-	if this.Operation != that1.Operation {
 		return false
 	}
 	if this.Nonce != that1.Nonce {
@@ -604,24 +605,24 @@ func (this *DataAnalysisStateChange) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *StateChanges) GoString() string {
+func (this *StateAccesses) GoString() string {
 	if this == nil {
 		return "nil"
 	}
 	s := make([]string, 0, 5)
-	s = append(s, "&stateChange.StateChanges{")
-	if this.StateChanges != nil {
-		s = append(s, "StateChanges: "+fmt.Sprintf("%#v", this.StateChanges)+",\n")
+	s = append(s, "&stateChange.StateAccesses{")
+	if this.StateAccess != nil {
+		s = append(s, "StateAccess: "+fmt.Sprintf("%#v", this.StateAccess)+",\n")
 	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
-func (this *StateChange) GoString() string {
+func (this *StateAccess) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 11)
-	s = append(s, "&stateChange.StateChange{")
+	s := make([]string, 0, 12)
+	s = append(s, "&stateChange.StateAccess{")
 	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
 	s = append(s, "Index: "+fmt.Sprintf("%#v", this.Index)+",\n")
 	s = append(s, "TxHash: "+fmt.Sprintf("%#v", this.TxHash)+",\n")
@@ -631,6 +632,9 @@ func (this *StateChange) GoString() string {
 	if this.DataTrieChanges != nil {
 		s = append(s, "DataTrieChanges: "+fmt.Sprintf("%#v", this.DataTrieChanges)+",\n")
 	}
+	if this.AccountChanges != nil {
+		s = append(s, "AccountChanges: "+fmt.Sprintf("%#v", this.AccountChanges)+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -638,24 +642,21 @@ func (this *DataTrieChange) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 7)
+	s := make([]string, 0, 8)
 	s = append(s, "&stateChange.DataTrieChange{")
 	s = append(s, "Type: "+fmt.Sprintf("%#v", this.Type)+",\n")
 	s = append(s, "Key: "+fmt.Sprintf("%#v", this.Key)+",\n")
 	s = append(s, "Val: "+fmt.Sprintf("%#v", this.Val)+",\n")
+	s = append(s, "Version: "+fmt.Sprintf("%#v", this.Version)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
-func (this *DataAnalysisStateChange) GoString() string {
+func (this *AccountChanges) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 14)
-	s = append(s, "&stateChange.DataAnalysisStateChange{")
-	if this.StateChange != nil {
-		s = append(s, "StateChange: "+fmt.Sprintf("%#v", this.StateChange)+",\n")
-	}
-	s = append(s, "Operation: "+fmt.Sprintf("%#v", this.Operation)+",\n")
+	s := make([]string, 0, 12)
+	s = append(s, "&stateChange.AccountChanges{")
 	s = append(s, "Nonce: "+fmt.Sprintf("%#v", this.Nonce)+",\n")
 	s = append(s, "Balance: "+fmt.Sprintf("%#v", this.Balance)+",\n")
 	s = append(s, "CodeHash: "+fmt.Sprintf("%#v", this.CodeHash)+",\n")
@@ -675,7 +676,7 @@ func valueToGoStringStateChange(v interface{}, typ string) string {
 	pv := reflect.Indirect(rv).Interface()
 	return fmt.Sprintf("func(v %v) *%v { return &v } ( %#v )", typ, typ, pv)
 }
-func (m *StateChanges) Marshal() (dAtA []byte, err error) {
+func (m *StateAccesses) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -685,20 +686,20 @@ func (m *StateChanges) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *StateChanges) MarshalTo(dAtA []byte) (int, error) {
+func (m *StateAccesses) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *StateChanges) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *StateAccesses) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
-	if len(m.StateChanges) > 0 {
-		for iNdEx := len(m.StateChanges) - 1; iNdEx >= 0; iNdEx-- {
+	if len(m.StateAccess) > 0 {
+		for iNdEx := len(m.StateAccess) - 1; iNdEx >= 0; iNdEx-- {
 			{
-				size, err := m.StateChanges[iNdEx].MarshalToSizedBuffer(dAtA[:i])
+				size, err := m.StateAccess[iNdEx].MarshalToSizedBuffer(dAtA[:i])
 				if err != nil {
 					return 0, err
 				}
@@ -712,7 +713,7 @@ func (m *StateChanges) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *StateChange) Marshal() (dAtA []byte, err error) {
+func (m *StateAccess) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -722,16 +723,28 @@ func (m *StateChange) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *StateChange) MarshalTo(dAtA []byte) (int, error) {
+func (m *StateAccess) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *StateChange) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *StateAccess) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
 	_ = l
+	if m.AccountChanges != nil {
+		{
+			size, err := m.AccountChanges.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintStateChange(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x42
+	}
 	if len(m.DataTrieChanges) > 0 {
 		for iNdEx := len(m.DataTrieChanges) - 1; iNdEx >= 0; iNdEx-- {
 			{
@@ -805,6 +818,11 @@ func (m *DataTrieChange) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if m.Version != 0 {
+		i = encodeVarintStateChange(dAtA, i, uint64(m.Version))
+		i--
+		dAtA[i] = 0x20
+	}
 	if len(m.Val) > 0 {
 		i -= len(m.Val)
 		copy(dAtA[i:], m.Val)
@@ -827,7 +845,7 @@ func (m *DataTrieChange) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
-func (m *DataAnalysisStateChange) Marshal() (dAtA []byte, err error) {
+func (m *AccountChanges) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
 	n, err := m.MarshalToSizedBuffer(dAtA[:size])
@@ -837,12 +855,12 @@ func (m *DataAnalysisStateChange) Marshal() (dAtA []byte, err error) {
 	return dAtA[:n], nil
 }
 
-func (m *DataAnalysisStateChange) MarshalTo(dAtA []byte) (int, error) {
+func (m *AccountChanges) MarshalTo(dAtA []byte) (int, error) {
 	size := m.Size()
 	return m.MarshalToSizedBuffer(dAtA[:size])
 }
 
-func (m *DataAnalysisStateChange) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+func (m *AccountChanges) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	i := len(dAtA)
 	_ = i
 	var l int
@@ -855,7 +873,7 @@ func (m *DataAnalysisStateChange) MarshalToSizedBuffer(dAtA []byte) (int, error)
 			dAtA[i] = 0
 		}
 		i--
-		dAtA[i] = 0x50
+		dAtA[i] = 0x40
 	}
 	if m.UserName {
 		i--
@@ -865,7 +883,7 @@ func (m *DataAnalysisStateChange) MarshalToSizedBuffer(dAtA []byte) (int, error)
 			dAtA[i] = 0
 		}
 		i--
-		dAtA[i] = 0x48
+		dAtA[i] = 0x38
 	}
 	if m.OwnerAddress {
 		i--
@@ -875,7 +893,7 @@ func (m *DataAnalysisStateChange) MarshalToSizedBuffer(dAtA []byte) (int, error)
 			dAtA[i] = 0
 		}
 		i--
-		dAtA[i] = 0x40
+		dAtA[i] = 0x30
 	}
 	if m.DeveloperReward {
 		i--
@@ -885,7 +903,7 @@ func (m *DataAnalysisStateChange) MarshalToSizedBuffer(dAtA []byte) (int, error)
 			dAtA[i] = 0
 		}
 		i--
-		dAtA[i] = 0x38
+		dAtA[i] = 0x28
 	}
 	if m.RootHash {
 		i--
@@ -895,7 +913,7 @@ func (m *DataAnalysisStateChange) MarshalToSizedBuffer(dAtA []byte) (int, error)
 			dAtA[i] = 0
 		}
 		i--
-		dAtA[i] = 0x30
+		dAtA[i] = 0x20
 	}
 	if m.CodeHash {
 		i--
@@ -905,7 +923,7 @@ func (m *DataAnalysisStateChange) MarshalToSizedBuffer(dAtA []byte) (int, error)
 			dAtA[i] = 0
 		}
 		i--
-		dAtA[i] = 0x28
+		dAtA[i] = 0x18
 	}
 	if m.Balance {
 		i--
@@ -915,7 +933,7 @@ func (m *DataAnalysisStateChange) MarshalToSizedBuffer(dAtA []byte) (int, error)
 			dAtA[i] = 0
 		}
 		i--
-		dAtA[i] = 0x20
+		dAtA[i] = 0x10
 	}
 	if m.Nonce {
 		i--
@@ -925,24 +943,7 @@ func (m *DataAnalysisStateChange) MarshalToSizedBuffer(dAtA []byte) (int, error)
 			dAtA[i] = 0
 		}
 		i--
-		dAtA[i] = 0x18
-	}
-	if m.Operation != 0 {
-		i = encodeVarintStateChange(dAtA, i, uint64(m.Operation))
-		i--
-		dAtA[i] = 0x10
-	}
-	if m.StateChange != nil {
-		{
-			size, err := m.StateChange.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintStateChange(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
+		dAtA[i] = 0x8
 	}
 	return len(dAtA) - i, nil
 }
@@ -958,14 +959,14 @@ func encodeVarintStateChange(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *StateChanges) Size() (n int) {
+func (m *StateAccesses) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if len(m.StateChanges) > 0 {
-		for _, e := range m.StateChanges {
+	if len(m.StateAccess) > 0 {
+		for _, e := range m.StateAccess {
 			l = e.Size()
 			n += 1 + l + sovStateChange(uint64(l))
 		}
@@ -973,7 +974,7 @@ func (m *StateChanges) Size() (n int) {
 	return n
 }
 
-func (m *StateChange) Size() (n int) {
+func (m *StateAccess) Size() (n int) {
 	if m == nil {
 		return 0
 	}
@@ -1006,6 +1007,10 @@ func (m *StateChange) Size() (n int) {
 			n += 1 + l + sovStateChange(uint64(l))
 		}
 	}
+	if m.AccountChanges != nil {
+		l = m.AccountChanges.Size()
+		n += 1 + l + sovStateChange(uint64(l))
+	}
 	return n
 }
 
@@ -1026,22 +1031,18 @@ func (m *DataTrieChange) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovStateChange(uint64(l))
 	}
+	if m.Version != 0 {
+		n += 1 + sovStateChange(uint64(m.Version))
+	}
 	return n
 }
 
-func (m *DataAnalysisStateChange) Size() (n int) {
+func (m *AccountChanges) Size() (n int) {
 	if m == nil {
 		return 0
 	}
 	var l int
 	_ = l
-	if m.StateChange != nil {
-		l = m.StateChange.Size()
-		n += 1 + l + sovStateChange(uint64(l))
-	}
-	if m.Operation != 0 {
-		n += 1 + sovStateChange(uint64(m.Operation))
-	}
 	if m.Nonce {
 		n += 2
 	}
@@ -1075,22 +1076,22 @@ func sovStateChange(x uint64) (n int) {
 func sozStateChange(x uint64) (n int) {
 	return sovStateChange(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
-func (this *StateChanges) String() string {
+func (this *StateAccesses) String() string {
 	if this == nil {
 		return "nil"
 	}
-	repeatedStringForStateChanges := "[]*StateChange{"
-	for _, f := range this.StateChanges {
-		repeatedStringForStateChanges += strings.Replace(f.String(), "StateChange", "StateChange", 1) + ","
+	repeatedStringForStateAccess := "[]*StateAccess{"
+	for _, f := range this.StateAccess {
+		repeatedStringForStateAccess += strings.Replace(f.String(), "StateAccess", "StateAccess", 1) + ","
 	}
-	repeatedStringForStateChanges += "}"
-	s := strings.Join([]string{`&StateChanges{`,
-		`StateChanges:` + repeatedStringForStateChanges + `,`,
+	repeatedStringForStateAccess += "}"
+	s := strings.Join([]string{`&StateAccesses{`,
+		`StateAccess:` + repeatedStringForStateAccess + `,`,
 		`}`,
 	}, "")
 	return s
 }
-func (this *StateChange) String() string {
+func (this *StateAccess) String() string {
 	if this == nil {
 		return "nil"
 	}
@@ -1099,7 +1100,7 @@ func (this *StateChange) String() string {
 		repeatedStringForDataTrieChanges += strings.Replace(f.String(), "DataTrieChange", "DataTrieChange", 1) + ","
 	}
 	repeatedStringForDataTrieChanges += "}"
-	s := strings.Join([]string{`&StateChange{`,
+	s := strings.Join([]string{`&StateAccess{`,
 		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
 		`Index:` + fmt.Sprintf("%v", this.Index) + `,`,
 		`TxHash:` + fmt.Sprintf("%v", this.TxHash) + `,`,
@@ -1107,6 +1108,7 @@ func (this *StateChange) String() string {
 		`MainTrieVal:` + fmt.Sprintf("%v", this.MainTrieVal) + `,`,
 		`Operation:` + fmt.Sprintf("%v", this.Operation) + `,`,
 		`DataTrieChanges:` + repeatedStringForDataTrieChanges + `,`,
+		`AccountChanges:` + strings.Replace(this.AccountChanges.String(), "AccountChanges", "AccountChanges", 1) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -1119,17 +1121,16 @@ func (this *DataTrieChange) String() string {
 		`Type:` + fmt.Sprintf("%v", this.Type) + `,`,
 		`Key:` + fmt.Sprintf("%v", this.Key) + `,`,
 		`Val:` + fmt.Sprintf("%v", this.Val) + `,`,
+		`Version:` + fmt.Sprintf("%v", this.Version) + `,`,
 		`}`,
 	}, "")
 	return s
 }
-func (this *DataAnalysisStateChange) String() string {
+func (this *AccountChanges) String() string {
 	if this == nil {
 		return "nil"
 	}
-	s := strings.Join([]string{`&DataAnalysisStateChange{`,
-		`StateChange:` + strings.Replace(this.StateChange.String(), "StateChange", "StateChange", 1) + `,`,
-		`Operation:` + fmt.Sprintf("%v", this.Operation) + `,`,
+	s := strings.Join([]string{`&AccountChanges{`,
 		`Nonce:` + fmt.Sprintf("%v", this.Nonce) + `,`,
 		`Balance:` + fmt.Sprintf("%v", this.Balance) + `,`,
 		`CodeHash:` + fmt.Sprintf("%v", this.CodeHash) + `,`,
@@ -1150,7 +1151,7 @@ func valueToStringStateChange(v interface{}) string {
 	pv := reflect.Indirect(rv).Interface()
 	return fmt.Sprintf("*%v", pv)
 }
-func (m *StateChanges) Unmarshal(dAtA []byte) error {
+func (m *StateAccesses) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1173,15 +1174,15 @@ func (m *StateChanges) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: StateChanges: wiretype end group for non-group")
+			return fmt.Errorf("proto: StateAccesses: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: StateChanges: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: StateAccesses: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field StateChanges", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field StateAccess", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -1208,8 +1209,8 @@ func (m *StateChanges) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			m.StateChanges = append(m.StateChanges, &StateChange{})
-			if err := m.StateChanges[len(m.StateChanges)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			m.StateAccess = append(m.StateAccess, &StateAccess{})
+			if err := m.StateAccess[len(m.StateAccess)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -1237,7 +1238,7 @@ func (m *StateChanges) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *StateChange) Unmarshal(dAtA []byte) error {
+func (m *StateAccess) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1260,10 +1261,10 @@ func (m *StateChange) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: StateChange: wiretype end group for non-group")
+			return fmt.Errorf("proto: StateAccess: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: StateChange: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: StateAccess: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
@@ -1459,6 +1460,42 @@ func (m *StateChange) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field AccountChanges", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStateChange
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthStateChange
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthStateChange
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.AccountChanges == nil {
+				m.AccountChanges = &AccountChanges{}
+			}
+			if err := m.AccountChanges.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipStateChange(dAtA[iNdEx:])
@@ -1599,6 +1636,25 @@ func (m *DataTrieChange) Unmarshal(dAtA []byte) error {
 				m.Val = []byte{}
 			}
 			iNdEx = postIndex
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Version", wireType)
+			}
+			m.Version = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowStateChange
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Version |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipStateChange(dAtA[iNdEx:])
@@ -1623,7 +1679,7 @@ func (m *DataTrieChange) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
-func (m *DataAnalysisStateChange) Unmarshal(dAtA []byte) error {
+func (m *AccountChanges) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
 	for iNdEx < l {
@@ -1646,68 +1702,13 @@ func (m *DataAnalysisStateChange) Unmarshal(dAtA []byte) error {
 		fieldNum := int32(wire >> 3)
 		wireType := int(wire & 0x7)
 		if wireType == 4 {
-			return fmt.Errorf("proto: DataAnalysisStateChange: wiretype end group for non-group")
+			return fmt.Errorf("proto: AccountChanges: wiretype end group for non-group")
 		}
 		if fieldNum <= 0 {
-			return fmt.Errorf("proto: DataAnalysisStateChange: illegal tag %d (wire type %d)", fieldNum, wire)
+			return fmt.Errorf("proto: AccountChanges: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
 		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field StateChange", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowStateChange
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthStateChange
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthStateChange
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.StateChange == nil {
-				m.StateChange = &StateChange{}
-			}
-			if err := m.StateChange.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field Operation", wireType)
-			}
-			m.Operation = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowStateChange
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.Operation |= Operation(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Nonce", wireType)
 			}
@@ -1727,7 +1728,7 @@ func (m *DataAnalysisStateChange) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.Nonce = bool(v != 0)
-		case 4:
+		case 2:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field Balance", wireType)
 			}
@@ -1747,7 +1748,7 @@ func (m *DataAnalysisStateChange) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.Balance = bool(v != 0)
-		case 5:
+		case 3:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CodeHash", wireType)
 			}
@@ -1767,7 +1768,7 @@ func (m *DataAnalysisStateChange) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.CodeHash = bool(v != 0)
-		case 6:
+		case 4:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field RootHash", wireType)
 			}
@@ -1787,7 +1788,7 @@ func (m *DataAnalysisStateChange) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.RootHash = bool(v != 0)
-		case 7:
+		case 5:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field DeveloperReward", wireType)
 			}
@@ -1807,7 +1808,7 @@ func (m *DataAnalysisStateChange) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.DeveloperReward = bool(v != 0)
-		case 8:
+		case 6:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field OwnerAddress", wireType)
 			}
@@ -1827,7 +1828,7 @@ func (m *DataAnalysisStateChange) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.OwnerAddress = bool(v != 0)
-		case 9:
+		case 7:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field UserName", wireType)
 			}
@@ -1847,7 +1848,7 @@ func (m *DataAnalysisStateChange) Unmarshal(dAtA []byte) error {
 				}
 			}
 			m.UserName = bool(v != 0)
-		case 10:
+		case 8:
 			if wireType != 0 {
 				return fmt.Errorf("proto: wrong wireType = %d for field CodeMetadata", wireType)
 			}

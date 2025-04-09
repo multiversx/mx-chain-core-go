@@ -3,11 +3,11 @@
 package stateChange
 
 // SetTxHash will set the tx hash with a provided value
-func (sc *StateChange) SetTxHash(txHash []byte) {
-	sc.TxHash = txHash
+func (sa *StateAccess) SetTxHash(txHash []byte) {
+	sa.TxHash = txHash
 }
 
 // SetIndex will set the index with a provided value
-func (sc *StateChange) SetIndex(index int32) {
-	sc.Index = index
+func (sa *StateAccess) SetIndex(index int32) {
+	sa.Index = index
 }
