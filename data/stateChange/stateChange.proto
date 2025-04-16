@@ -25,14 +25,13 @@ enum Operation {
 }
 
 message StateAccess {
-  ActionType               Type                    = 1 [(gogoproto.jsontag) = "type"];
-  int32                    Index                   = 2 [(gogoproto.jsontag) = "index"];
-  bytes                    TxHash                  = 3 [(gogoproto.jsontag) = "txHash"];
-  bytes                    MainTrieKey             = 4 [(gogoproto.jsontag) = "mainTrieKey"];
-  bytes                    MainTrieVal             = 5 [(gogoproto.jsontag) = "mainTrieVal"];
-  Operation                Operation               = 6 [(gogoproto.jsontag) = "operation"];
-  repeated DataTrieChange  DataTrieChanges         = 7 [(gogoproto.jsontag) = "dataTrieChanges,omitempty"];
-  AccountChanges           AccountChanges          = 8 [(gogoproto.jsontag) = "accountChanges"];
+  int32                    Index                   = 1 [(gogoproto.jsontag) = "index"];
+  bytes                    TxHash                  = 2 [(gogoproto.jsontag) = "txHash"];
+  bytes                    MainTrieKey             = 3 [(gogoproto.jsontag) = "mainTrieKey"];
+  bytes                    MainTrieVal             = 4 [(gogoproto.jsontag) = "mainTrieVal"];
+  repeated Operation       Operation               = 5 [(gogoproto.jsontag) = "operation"];
+  repeated DataTrieChange  DataTrieChanges         = 6 [(gogoproto.jsontag) = "dataTrieChanges,omitempty"];
+  AccountChanges           AccountChanges          = 7 [(gogoproto.jsontag) = "accountChanges"];
 }
 
 message DataTrieChange {
