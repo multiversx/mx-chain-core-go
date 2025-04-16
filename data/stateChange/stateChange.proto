@@ -22,6 +22,7 @@ enum Operation {
   GetAccount      = 2;
   WriteCode       = 3;
   RemoveDataTrie  = 4;
+  GetDataTrieVal  = 5;
 }
 
 message StateAccess {
