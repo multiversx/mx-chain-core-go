@@ -2,6 +2,8 @@
 
 package stateChange
 
+import "bytes"
+
 const (
 	// NotSet is the default value for state access operation
 	NotSet = uint32(0)
@@ -104,4 +106,44 @@ func GetOperationString(operation uint32) string {
 // MergeOperations combines two uint32 operations using a bitwise OR and returns the resulting value.
 func MergeOperations(operation1, operation2 uint32) uint32 {
 	return operation1 | operation2
+}
+
+// MergeDataTrieChanges combines two lists of DataTrieChange items into a single list, merging changes with overlapping keys.
+func MergeDataTrieChanges(oldDataTrieChanges, newDataTrieChanges []*DataTrieChange) []*DataTrieChange {
+	mergedDataTrieChanges := make([]*DataTrieChange, 0, len(oldDataTrieChanges)+len(newDataTrieChanges))
+	for i := range oldDataTrieChanges {
+		mergedDataTrieChanges = mergeChangeInExistingChanges(mergedDataTrieChanges, oldDataTrieChanges[i])
+	}
+	for i := range newDataTrieChanges {
+		mergedDataTrieChanges = mergeChangeInExistingChanges(mergedDataTrieChanges, newDataTrieChanges[i])
+	}
+
+	return mergedDataTrieChanges
+}
+
+func mergeChangeInExistingChanges(
+	collectedDataTrieChanges []*DataTrieChange,
+	newChange *DataTrieChange,
+) []*DataTrieChange {
+	duplicatedEntry := false
+	for i := range collectedDataTrieChanges {
+		if !bytes.Equal(collectedDataTrieChanges[i].Key, newChange.Key) {
+			continue
+		}
+		if collectedDataTrieChanges[i].Type != newChange.Type {
+			continue
+		}
+		duplicatedEntry = true
+		if newChange.Type == Read {
+			continue
+		}
+		collectedDataTrieChanges[i].Val = newChange.Val
+		collectedDataTrieChanges[i].Version = newChange.Version
+	}
+
+	if !duplicatedEntry {
+		collectedDataTrieChanges = append(collectedDataTrieChanges, newChange)
+	}
+
+	return collectedDataTrieChanges
 }
