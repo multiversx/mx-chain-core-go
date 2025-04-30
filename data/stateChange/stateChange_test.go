@@ -46,6 +46,8 @@ func TestGetOperationString(t *testing.T) {
 	})
 
 	t.Run("should return with early exit", func(t *testing.T) {
+		t.Parallel()
+
 		operationString := GetOperationString(0)
 		expectedOperationString := NotSetString
 		assert.Equal(t, expectedOperationString, operationString)
@@ -64,61 +66,72 @@ func TestMergeOperations(t *testing.T) {
 
 func TestMergeDataTrieChanges(t *testing.T) {
 	t.Parallel()
+	t.Run("should return nil for nil slices", func(t *testing.T) {
+		t.Parallel()
 
-	firstDataTrieChanges := []*DataTrieChange{
-		{
-			Type: Read,
-			Key:  []byte("key1"),
-		},
-		{
-			Type: Write,
-			Key:  []byte("key2"),
-			Val:  []byte("value1"),
-		},
-		{
-			Type: Write,
-			Key:  []byte("key1"),
-			Val:  []byte("value1"),
-		},
-		{
-			Type: Write,
-			Key:  []byte("key1"),
-			Val:  []byte("value2"),
-		},
-	}
-	secondDataTrieChanges := []*DataTrieChange{
-		{
-			Type: Write,
-			Key:  []byte("key1"),
-			Val:  []byte("value2"),
-		},
-		{
-			Type: Read,
-			Key:  []byte("key2"),
-		},
-		{
-			Type:    Write,
-			Key:     []byte("key3"),
-			Val:     []byte("value3"),
-			Version: 1,
-		},
-		{
-			Type: Read,
-			Key:  []byte("key1"),
-		},
-		{
-			Type:    Write,
-			Key:     []byte("key2"),
-			Val:     []byte("value1"),
-			Version: 1,
-		},
-	}
+		mergedDataTrieChanges := MergeDataTrieChanges(nil, nil)
+		assert.Nil(t, mergedDataTrieChanges)
+	})
 
-	mergedDataTrieChanges := MergeDataTrieChanges(firstDataTrieChanges, secondDataTrieChanges)
-	assert.Len(t, mergedDataTrieChanges, 5)
-	assert.Equal(t, firstDataTrieChanges[0], mergedDataTrieChanges[0])
-	assert.Equal(t, secondDataTrieChanges[4], mergedDataTrieChanges[1])
-	assert.Equal(t, secondDataTrieChanges[0], mergedDataTrieChanges[2])
-	assert.Equal(t, secondDataTrieChanges[1], mergedDataTrieChanges[3])
-	assert.Equal(t, secondDataTrieChanges[2], mergedDataTrieChanges[4])
+	t.Run("should work for not nil slices", func(t *testing.T) {
+		t.Parallel()
+
+		firstDataTrieChanges := []*DataTrieChange{
+			{
+				Type: Read,
+				Key:  []byte("key1"),
+			},
+			{
+				Type: Write,
+				Key:  []byte("key2"),
+				Val:  []byte("value1"),
+			},
+			{
+				Type: Write,
+				Key:  []byte("key1"),
+				Val:  []byte("value1"),
+			},
+			{
+				Type: Write,
+				Key:  []byte("key1"),
+				Val:  []byte("value2"),
+			},
+		}
+		secondDataTrieChanges := []*DataTrieChange{
+			{
+				Type: Write,
+				Key:  []byte("key1"),
+				Val:  []byte("value2"),
+			},
+			{
+				Type: Read,
+				Key:  []byte("key2"),
+			},
+			{
+				Type:    Write,
+				Key:     []byte("key3"),
+				Val:     []byte("value3"),
+				Version: 1,
+			},
+			{
+				Type: Read,
+				Key:  []byte("key1"),
+			},
+			{
+				Type:    Write,
+				Key:     []byte("key2"),
+				Val:     []byte("value1"),
+				Version: 1,
+			},
+		}
+
+		mergedDataTrieChanges := MergeDataTrieChanges(firstDataTrieChanges, secondDataTrieChanges)
+		assert.Len(t, mergedDataTrieChanges, 5)
+		assert.Equal(t, firstDataTrieChanges[0], mergedDataTrieChanges[0])
+		assert.Equal(t, secondDataTrieChanges[4], mergedDataTrieChanges[1])
+		assert.Equal(t, secondDataTrieChanges[0], mergedDataTrieChanges[2])
+		assert.Equal(t, secondDataTrieChanges[1], mergedDataTrieChanges[3])
+		assert.Equal(t, secondDataTrieChanges[2], mergedDataTrieChanges[4])
+	})
+
 }

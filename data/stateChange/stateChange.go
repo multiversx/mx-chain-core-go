@@ -114,6 +114,9 @@ func MergeOperations(operation1, operation2 uint32) uint32 {
 
 // MergeDataTrieChanges combines two lists of DataTrieChange items into a single list, merging changes with overlapping keys.
 func MergeDataTrieChanges(oldDataTrieChanges, newDataTrieChanges []*DataTrieChange) []*DataTrieChange {
+	if oldDataTrieChanges == nil && newDataTrieChanges == nil {
+		return nil
+	}
 	mergedDataTrieChanges := make([]*DataTrieChange, 0, len(oldDataTrieChanges)+len(newDataTrieChanges))
 	for i := range oldDataTrieChanges {
 		mergedDataTrieChanges = mergeChangeInExistingChanges(mergedDataTrieChanges, oldDataTrieChanges[i])
