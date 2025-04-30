@@ -94,6 +94,10 @@ func getOperationStringFromUint32(operation uint32) string {
 // GetOperationString converts a uint32 operation to its string representation.
 func GetOperationString(operation uint32) string {
 	operationString := ""
+	if operation == 0 {
+		return NotSetString
+	}
+
 	for _, op := range operations {
 		if operation&op != 0 {
 			operationString += getOperationStringFromUint32(op) + ", "
