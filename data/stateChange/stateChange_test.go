@@ -35,11 +35,21 @@ func TestGetOperationStringFromUint32(t *testing.T) {
 func TestGetOperationString(t *testing.T) {
 	t.Parallel()
 
-	operation := SaveAccount + GetAccount + GetDataTrieValue
-	expectedString := SaveAccountString + ", " + GetAccountString + ", " + GetDataTrieValueString + ", "
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
 
-	operationString := GetOperationString(operation)
-	assert.Equal(t, expectedString, operationString)
+		operation := SaveAccount + GetAccount + GetDataTrieValue
+		expectedString := SaveAccountString + ", " + GetAccountString + ", " + GetDataTrieValueString + ", "
+
+		operationString := GetOperationString(operation)
+		assert.Equal(t, expectedString, operationString)
+	})
+
+	t.Run("should return with early exit", func(t *testing.T) {
+		operationString := GetOperationString(0)
+		expectedOperationString := NotSetString
+		assert.Equal(t, expectedOperationString, operationString)
+	})
 }
 
 func TestMergeOperations(t *testing.T) {
