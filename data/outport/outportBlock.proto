@@ -26,7 +26,7 @@ message OutportBlock {
   repeated uint64              SignersIndexes         = 8 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
   uint64                       HighestFinalBlockNonce = 9 [(gogoproto.jsontag) = "highestFinalBlockNonce"];
   bytes                        HighestFinalBlockHash  = 10 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
-  map <string, StateChanges>   StateChanges           = 11 [(gogoproto.jsontag) = "stateChanges,omitempty"];
+  map <string, StateAccesses>  StateAccesses          = 11 [(gogoproto.jsontag) = "stateAccesses,omitempty"];
 }
 
 message BlockData {
