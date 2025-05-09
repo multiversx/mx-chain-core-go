@@ -8,7 +8,6 @@ option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "block.proto";
-import "headerProof.proto";
 
 // HeaderV2 extends the Header structure with extra fields for version 2
 message HeaderV2 {
@@ -19,7 +18,6 @@ message HeaderV2 {
   uint64                ScheduledGasProvided     = 5 [(gogoproto.jsontag) = "scheduledGasProvided"];
   uint64                ScheduledGasPenalized    = 6 [(gogoproto.jsontag) = "scheduledGasPenalized"];
   uint64                ScheduledGasRefunded     = 7 [(gogoproto.jsontag) = "scheduledGasRefunded"];
-  HeaderProof           PreviousHeaderProof      = 8 [(gogoproto.jsontag) = "previousHeaderProof"];
 }
 
 message MiniBlockReserved {
@@ -33,4 +31,3 @@ message MiniBlockHeaderReserved {
   int32 IndexOfFirstTxProcessed = 3 [(gogoproto.jsontag) = "indexOfFirstTxProcessed"];
   int32 IndexOfLastTxProcessed = 4 [(gogoproto.jsontag) = "indexOfLastTxProcessed"];
 }
-

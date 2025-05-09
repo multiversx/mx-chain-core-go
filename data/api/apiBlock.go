@@ -38,7 +38,6 @@ type Block struct {
 	EpochStartInfo         *EpochStartInfo        `json:"epochStartInfo,omitempty"`
 	EpochStartShardsData   []*EpochStartShardData `json:"epochStartShardsData,omitempty"`
 	ScheduledData          *ScheduledData         `json:"scheduledData,omitempty"`
-	PreviousHeaderProof    *HeaderProof           `json:"previousHeaderProof,omitempty"`
 	Proof                  *HeaderProof           `json:"proof,omitempty"`
 }
 
