@@ -28,6 +28,7 @@ const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 type Metric struct {
 	Key string `protobuf:"bytes,1,opt,name=Key,proto3" json:"Key,omitempty"`
 	// Types that are valid to be assigned to Value:
+	//
 	//	*Metric_ValUint64
 	//	*Metric_ValString
 	Value isMetric_Value `protobuf_oneof:"Value"`
