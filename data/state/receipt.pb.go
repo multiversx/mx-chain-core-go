@@ -8,6 +8,7 @@ import (
 	fmt "fmt"
 	_ "github.com/gogo/protobuf/gogoproto"
 	proto "github.com/gogo/protobuf/proto"
+	github_com_gogo_protobuf_sortkeys "github.com/gogo/protobuf/sortkeys"
 	transaction "github.com/multiversx/mx-chain-core-go/data/transaction"
 	io "io"
 	math "math"
@@ -27,18 +28,57 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
+// SerializedNodeMap represents a map with key node hash and data node bytes
+type SerializedNodeMap struct {
+	SerializedNodes map[string][]byte `protobuf:"bytes,1,rep,name=SerializedNodes,proto3" json:"serializedNodes" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+}
+
+func (m *SerializedNodeMap) Reset()      { *m = SerializedNodeMap{} }
+func (*SerializedNodeMap) ProtoMessage() {}
+func (*SerializedNodeMap) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ace1d6eb38fad2c8, []int{0}
+}
+func (m *SerializedNodeMap) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *SerializedNodeMap) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *SerializedNodeMap) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_SerializedNodeMap.Merge(m, src)
+}
+func (m *SerializedNodeMap) XXX_Size() int {
+	return m.Size()
+}
+func (m *SerializedNodeMap) XXX_DiscardUnknown() {
+	xxx_messageInfo_SerializedNodeMap.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_SerializedNodeMap proto.InternalMessageInfo
+
+func (m *SerializedNodeMap) GetSerializedNodes() map[string][]byte {
+	if m != nil {
+		return m.SerializedNodes
+	}
+	return nil
+}
+
 // Receipt holds information about a receipt
 type Receipt struct {
-	TxHash       []byte               `protobuf:"bytes,1,opt,name=TxHash,proto3" json:"txHash"`
-	Address      []byte               `protobuf:"bytes,2,opt,name=Address,proto3" json:"address"`
-	Events       []*transaction.Event `protobuf:"bytes,3,rep,name=Events,proto3" json:"events"`
-	StateChanges []*StateChange       `protobuf:"bytes,4,rep,name=StateChanges,proto3" json:"stateChanges"`
+	TxHash  []byte               `protobuf:"bytes,1,opt,name=TxHash,proto3" json:"txHash"`
+	Address []byte               `protobuf:"bytes,2,opt,name=Address,proto3" json:"address"`
+	Events  []*transaction.Event `protobuf:"bytes,3,rep,name=Events,proto3" json:"events"`
 }
 
 func (m *Receipt) Reset()      { *m = Receipt{} }
 func (*Receipt) ProtoMessage() {}
 func (*Receipt) Descriptor() ([]byte, []int) {
-	return fileDescriptor_ace1d6eb38fad2c8, []int{0}
+	return fileDescriptor_ace1d6eb38fad2c8, []int{1}
 }
 func (m *Receipt) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -84,44 +124,134 @@ func (m *Receipt) GetEvents() []*transaction.Event {
 	return nil
 }
 
-func (m *Receipt) GetStateChanges() []*StateChange {
-	if m != nil {
-		return m.StateChanges
+// GasUsedInfo holds information about transaction gas used
+type GasUsedInfo struct {
+	DataGasCost     uint64 `protobuf:"varint,1,opt,name=DataGasCost,proto3" json:"dataGasCost"`
+	MoveBalanceCost uint64 `protobuf:"varint,2,opt,name=MoveBalanceCost,proto3" json:"moveBalanceCost"`
+	ExecutionCost   uint64 `protobuf:"varint,3,opt,name=ExecutionCost,proto3" json:"executionCost"`
+}
+
+func (m *GasUsedInfo) Reset()      { *m = GasUsedInfo{} }
+func (*GasUsedInfo) ProtoMessage() {}
+func (*GasUsedInfo) Descriptor() ([]byte, []int) {
+	return fileDescriptor_ace1d6eb38fad2c8, []int{2}
+}
+func (m *GasUsedInfo) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *GasUsedInfo) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
 	}
-	return nil
+	return b[:n], nil
+}
+func (m *GasUsedInfo) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_GasUsedInfo.Merge(m, src)
+}
+func (m *GasUsedInfo) XXX_Size() int {
+	return m.Size()
+}
+func (m *GasUsedInfo) XXX_DiscardUnknown() {
+	xxx_messageInfo_GasUsedInfo.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_GasUsedInfo proto.InternalMessageInfo
+
+func (m *GasUsedInfo) GetDataGasCost() uint64 {
+	if m != nil {
+		return m.DataGasCost
+	}
+	return 0
+}
+
+func (m *GasUsedInfo) GetMoveBalanceCost() uint64 {
+	if m != nil {
+		return m.MoveBalanceCost
+	}
+	return 0
+}
+
+func (m *GasUsedInfo) GetExecutionCost() uint64 {
+	if m != nil {
+		return m.ExecutionCost
+	}
+	return 0
 }
 
 func init() {
+	proto.RegisterType((*SerializedNodeMap)(nil), "proto.SerializedNodeMap")
+	proto.RegisterMapType((map[string][]byte)(nil), "proto.SerializedNodeMap.SerializedNodesEntry")
 	proto.RegisterType((*Receipt)(nil), "proto.Receipt")
+	proto.RegisterType((*GasUsedInfo)(nil), "proto.GasUsedInfo")
 }
 
 func init() { proto.RegisterFile("receipt.proto", fileDescriptor_ace1d6eb38fad2c8) }
 
 var fileDescriptor_ace1d6eb38fad2c8 = []byte{
-	// 328 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x51, 0x3d, 0x6e, 0xc2, 0x30,
-	0x14, 0x8e, 0x4b, 0x1b, 0x24, 0x93, 0x4a, 0x55, 0xa6, 0x88, 0xe1, 0x81, 0x90, 0x2a, 0xb1, 0x04,
-	0xf7, 0xe7, 0x04, 0x80, 0x2a, 0x31, 0xa7, 0x9d, 0xba, 0x99, 0xe0, 0x3a, 0x51, 0x21, 0x46, 0xb6,
-	0x41, 0x8c, 0x3d, 0x42, 0x8f, 0xd1, 0xa3, 0x74, 0xcc, 0xc8, 0x84, 0x8a, 0x59, 0x2a, 0x26, 0x8e,
-	0x50, 0xc9, 0x4e, 0x55, 0x3a, 0xb2, 0xd8, 0x7e, 0xdf, 0x9f, 0xfd, 0xfc, 0xf0, 0xa5, 0x64, 0x29,
-	0xcb, 0xe7, 0xba, 0x37, 0x97, 0x42, 0x8b, 0xf0, 0xc2, 0x6e, 0xcd, 0x98, 0xe7, 0x3a, 0x5b, 0x8c,
-	0x7b, 0xa9, 0x98, 0x11, 0x2e, 0xb8, 0x20, 0x16, 0x1e, 0x2f, 0x5e, 0x6c, 0x65, 0x0b, 0x7b, 0x72,
-	0xae, 0xe6, 0xf0, 0x48, 0x3e, 0x5b, 0x4c, 0x75, 0xbe, 0x64, 0x52, 0xad, 0xc8, 0x6c, 0x15, 0xa7,
-	0x19, 0xcd, 0x8b, 0x38, 0x15, 0x92, 0xc5, 0x5c, 0x90, 0x09, 0xd5, 0x94, 0x28, 0x4d, 0x35, 0x73,
-	0xeb, 0x30, 0xa3, 0x05, 0x67, 0x55, 0x48, 0xff, 0x94, 0x10, 0x2d, 0x69, 0xa1, 0x68, 0xaa, 0x73,
-	0x51, 0x90, 0xa9, 0xe0, 0x2e, 0xa2, 0x53, 0x22, 0x5c, 0x4f, 0x5c, 0x3f, 0x61, 0x07, 0xfb, 0x4f,
-	0xab, 0x11, 0x55, 0x59, 0x84, 0xda, 0xa8, 0x1b, 0x0c, 0xf0, 0x7e, 0xd3, 0xf2, 0xb5, 0x45, 0x92,
-	0x8a, 0x09, 0xaf, 0x71, 0xbd, 0x3f, 0x99, 0x48, 0xa6, 0x54, 0x74, 0x66, 0x45, 0x8d, 0xfd, 0xa6,
-	0x55, 0xa7, 0x0e, 0x4a, 0x7e, 0xb9, 0xf0, 0x06, 0xfb, 0x0f, 0x4b, 0x56, 0x68, 0x15, 0xd5, 0xda,
-	0xb5, 0x6e, 0xe3, 0x2e, 0x70, 0xd7, 0xf5, 0x2c, 0xe8, 0x82, 0x99, 0xe5, 0x93, 0x4a, 0x17, 0x8e,
-	0x70, 0xf0, 0xf8, 0xd7, 0xa0, 0x8a, 0xce, 0xad, 0x2f, 0xac, 0x7c, 0x47, 0xd4, 0xe0, 0x6a, 0xbf,
-	0x69, 0x05, 0x47, 0x9f, 0xa1, 0x92, 0x7f, 0xce, 0xc1, 0x6b, 0xb9, 0x05, 0x6f, 0xbd, 0x05, 0xef,
-	0xb0, 0x05, 0xf4, 0x66, 0x00, 0x7d, 0x18, 0x40, 0x9f, 0x06, 0x50, 0x69, 0x00, 0xad, 0x0d, 0xa0,
-	0x2f, 0x03, 0xe8, 0xdb, 0x80, 0x77, 0x30, 0x80, 0xde, 0x77, 0xe0, 0x95, 0x3b, 0xf0, 0xd6, 0x3b,
-	0xf0, 0x9e, 0x6f, 0x4f, 0x1e, 0xca, 0xd8, 0xb7, 0xef, 0xbb, 0xff, 0x09, 0x00, 0x00, 0xff, 0xff,
-	0xe0, 0x02, 0x6a, 0x6b, 0x15, 0x02, 0x00, 0x00,
+	// 475 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x94, 0x92, 0xb1, 0x6e, 0xd3, 0x40,
+	0x1c, 0xc6, 0x7d, 0x09, 0x4d, 0xc4, 0x39, 0x51, 0xe8, 0xd1, 0x21, 0xca, 0x70, 0x8e, 0x22, 0x21,
+	0x65, 0x71, 0x4c, 0x61, 0x00, 0x21, 0x31, 0xd4, 0x10, 0x15, 0x86, 0x32, 0x1c, 0xb0, 0xb0, 0x5d,
+	0xec, 0x7f, 0x1d, 0xab, 0x8e, 0x2f, 0xf2, 0x9d, 0xa3, 0x94, 0x89, 0x89, 0x99, 0xc7, 0xe0, 0x11,
+	0x78, 0x01, 0x24, 0xc6, 0x8c, 0x99, 0x2c, 0xe2, 0x2c, 0xc8, 0x53, 0x1f, 0x01, 0xe5, 0x1c, 0x44,
+	0x12, 0x58, 0x3a, 0xf9, 0xfe, 0xdf, 0xf7, 0xfd, 0x3e, 0xf9, 0xfe, 0x36, 0x6e, 0x26, 0xe0, 0x41,
+	0x38, 0x55, 0x83, 0x69, 0x22, 0x94, 0x20, 0x47, 0xfa, 0xd1, 0xb1, 0x83, 0x50, 0x8d, 0xd3, 0xd1,
+	0xc0, 0x13, 0x13, 0x27, 0x10, 0x81, 0x70, 0xb4, 0x3c, 0x4a, 0x2f, 0xf5, 0xa4, 0x07, 0x7d, 0x2a,
+	0xa9, 0xce, 0xd9, 0x4e, 0x7c, 0x92, 0x46, 0x2a, 0x9c, 0x41, 0x22, 0xe7, 0xce, 0x64, 0x6e, 0x7b,
+	0x63, 0x1e, 0xc6, 0xb6, 0x27, 0x12, 0xb0, 0x03, 0xe1, 0xf8, 0x5c, 0x71, 0x47, 0x25, 0x3c, 0x96,
+	0xdc, 0x53, 0xa1, 0x88, 0x9d, 0x48, 0x04, 0x65, 0x45, 0xef, 0x3b, 0xc2, 0xc7, 0x6f, 0x21, 0x09,
+	0x79, 0x14, 0x7e, 0x04, 0xff, 0x8d, 0xf0, 0xe1, 0x82, 0x4f, 0x49, 0x84, 0x5b, 0xfb, 0xa2, 0x6c,
+	0xa3, 0x6e, 0xb5, 0x6f, 0x3e, 0xb2, 0x4b, 0x6c, 0xf0, 0x0f, 0x72, 0xa0, 0xc8, 0x61, 0xac, 0x92,
+	0x6b, 0xf7, 0x7e, 0x91, 0x59, 0x2d, 0xb9, 0xef, 0xb0, 0xc3, 0xea, 0x8e, 0x8b, 0x4f, 0xfe, 0x47,
+	0x93, 0x7b, 0xb8, 0x7a, 0x05, 0xd7, 0x6d, 0xd4, 0x45, 0xfd, 0xbb, 0x6c, 0x73, 0x24, 0x27, 0xf8,
+	0x68, 0xc6, 0xa3, 0x14, 0xda, 0x95, 0x2e, 0xea, 0x37, 0x58, 0x39, 0x3c, 0xab, 0x3c, 0x45, 0xbd,
+	0xcf, 0x08, 0xd7, 0x59, 0xb9, 0x52, 0xd2, 0xc3, 0xb5, 0x77, 0xf3, 0x57, 0x5c, 0x8e, 0x35, 0xda,
+	0x70, 0x71, 0x91, 0x59, 0x35, 0xa5, 0x15, 0xb6, 0x75, 0xc8, 0x03, 0x5c, 0x3f, 0xf3, 0xfd, 0x04,
+	0xa4, 0x2c, 0xbb, 0x5c, 0xb3, 0xc8, 0xac, 0x3a, 0x2f, 0x25, 0xf6, 0xc7, 0x23, 0x0f, 0x71, 0x6d,
+	0x38, 0x83, 0x58, 0xc9, 0x76, 0x55, 0xdf, 0xbf, 0xb1, 0xbd, 0xbf, 0x16, 0xcb, 0x62, 0xd0, 0x3e,
+	0xdb, 0xe6, 0x7a, 0xdf, 0x10, 0x36, 0xcf, 0xb9, 0x7c, 0x2f, 0xc1, 0x7f, 0x1d, 0x5f, 0x0a, 0x72,
+	0x8a, 0xcd, 0x97, 0x5c, 0xf1, 0x73, 0x2e, 0x5f, 0x08, 0xa9, 0xf4, 0x1b, 0xdd, 0x71, 0x5b, 0x45,
+	0x66, 0x99, 0xfe, 0x5f, 0x99, 0xed, 0x66, 0xc8, 0x73, 0xdc, 0xba, 0x10, 0x33, 0x70, 0x79, 0xc4,
+	0x63, 0x0f, 0x34, 0x56, 0xd1, 0x98, 0x5e, 0xe7, 0x64, 0xdf, 0x62, 0x87, 0x59, 0xf2, 0x04, 0x37,
+	0x87, 0x73, 0xf0, 0xd2, 0xcd, 0x97, 0xd6, 0x70, 0x55, 0xc3, 0xc7, 0x45, 0x66, 0x35, 0x61, 0xd7,
+	0x60, 0xfb, 0x39, 0xf7, 0x6a, 0xb1, 0xa2, 0xc6, 0x72, 0x45, 0x8d, 0x9b, 0x15, 0x45, 0x9f, 0x72,
+	0x8a, 0xbe, 0xe6, 0x14, 0xfd, 0xc8, 0x29, 0x5a, 0xe4, 0x14, 0x2d, 0x73, 0x8a, 0x7e, 0xe6, 0x14,
+	0xfd, 0xca, 0xa9, 0x71, 0x93, 0x53, 0xf4, 0x65, 0x4d, 0x8d, 0xc5, 0x9a, 0x1a, 0xcb, 0x35, 0x35,
+	0x3e, 0x9c, 0xde, 0xe6, 0x47, 0x94, 0x8a, 0x2b, 0x18, 0xd5, 0xf4, 0x22, 0x1f, 0xff, 0x0e, 0x00,
+	0x00, 0xff, 0xff, 0x67, 0x26, 0xe4, 0xea, 0x09, 0x03, 0x00, 0x00,
 }
 
+func (this *SerializedNodeMap) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*SerializedNodeMap)
+	if !ok {
+		that2, ok := that.(SerializedNodeMap)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if len(this.SerializedNodes) != len(that1.SerializedNodes) {
+		return false
+	}
+	for i := range this.SerializedNodes {
+		if !bytes.Equal(this.SerializedNodes[i], that1.SerializedNodes[i]) {
+			return false
+		}
+	}
+	return true
+}
 func (this *Receipt) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
@@ -155,30 +285,83 @@ func (this *Receipt) Equal(that interface{}) bool {
 			return false
 		}
 	}
-	if len(this.StateChanges) != len(that1.StateChanges) {
-		return false
+	return true
+}
+func (this *GasUsedInfo) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
 	}
-	for i := range this.StateChanges {
-		if !this.StateChanges[i].Equal(that1.StateChanges[i]) {
+
+	that1, ok := that.(*GasUsedInfo)
+	if !ok {
+		that2, ok := that.(GasUsedInfo)
+		if ok {
+			that1 = &that2
+		} else {
 			return false
 		}
 	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.DataGasCost != that1.DataGasCost {
+		return false
+	}
+	if this.MoveBalanceCost != that1.MoveBalanceCost {
+		return false
+	}
+	if this.ExecutionCost != that1.ExecutionCost {
+		return false
+	}
 	return true
+}
+func (this *SerializedNodeMap) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 5)
+	s = append(s, "&state.SerializedNodeMap{")
+	keysForSerializedNodes := make([]string, 0, len(this.SerializedNodes))
+	for k, _ := range this.SerializedNodes {
+		keysForSerializedNodes = append(keysForSerializedNodes, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForSerializedNodes)
+	mapStringForSerializedNodes := "map[string][]byte{"
+	for _, k := range keysForSerializedNodes {
+		mapStringForSerializedNodes += fmt.Sprintf("%#v: %#v,", k, this.SerializedNodes[k])
+	}
+	mapStringForSerializedNodes += "}"
+	if this.SerializedNodes != nil {
+		s = append(s, "SerializedNodes: "+mapStringForSerializedNodes+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
 }
 func (this *Receipt) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 8)
+	s := make([]string, 0, 7)
 	s = append(s, "&state.Receipt{")
 	s = append(s, "TxHash: "+fmt.Sprintf("%#v", this.TxHash)+",\n")
 	s = append(s, "Address: "+fmt.Sprintf("%#v", this.Address)+",\n")
 	if this.Events != nil {
 		s = append(s, "Events: "+fmt.Sprintf("%#v", this.Events)+",\n")
 	}
-	if this.StateChanges != nil {
-		s = append(s, "StateChanges: "+fmt.Sprintf("%#v", this.StateChanges)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *GasUsedInfo) GoString() string {
+	if this == nil {
+		return "nil"
 	}
+	s := make([]string, 0, 7)
+	s = append(s, "&state.GasUsedInfo{")
+	s = append(s, "DataGasCost: "+fmt.Sprintf("%#v", this.DataGasCost)+",\n")
+	s = append(s, "MoveBalanceCost: "+fmt.Sprintf("%#v", this.MoveBalanceCost)+",\n")
+	s = append(s, "ExecutionCost: "+fmt.Sprintf("%#v", this.ExecutionCost)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -190,6 +373,55 @@ func valueToGoStringReceipt(v interface{}, typ string) string {
 	pv := reflect.Indirect(rv).Interface()
 	return fmt.Sprintf("func(v %v) *%v { return &v } ( %#v )", typ, typ, pv)
 }
+func (m *SerializedNodeMap) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *SerializedNodeMap) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *SerializedNodeMap) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.SerializedNodes) > 0 {
+		keysForSerializedNodes := make([]string, 0, len(m.SerializedNodes))
+		for k := range m.SerializedNodes {
+			keysForSerializedNodes = append(keysForSerializedNodes, string(k))
+		}
+		github_com_gogo_protobuf_sortkeys.Strings(keysForSerializedNodes)
+		for iNdEx := len(keysForSerializedNodes) - 1; iNdEx >= 0; iNdEx-- {
+			v := m.SerializedNodes[string(keysForSerializedNodes[iNdEx])]
+			baseI := i
+			if len(v) > 0 {
+				i -= len(v)
+				copy(dAtA[i:], v)
+				i = encodeVarintReceipt(dAtA, i, uint64(len(v)))
+				i--
+				dAtA[i] = 0x12
+			}
+			i -= len(keysForSerializedNodes[iNdEx])
+			copy(dAtA[i:], keysForSerializedNodes[iNdEx])
+			i = encodeVarintReceipt(dAtA, i, uint64(len(keysForSerializedNodes[iNdEx])))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintReceipt(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0xa
+		}
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *Receipt) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -210,20 +442,6 @@ func (m *Receipt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.StateChanges) > 0 {
-		for iNdEx := len(m.StateChanges) - 1; iNdEx >= 0; iNdEx-- {
-			{
-				size, err := m.StateChanges[iNdEx].MarshalToSizedBuffer(dAtA[:i])
-				if err != nil {
-					return 0, err
-				}
-				i -= size
-				i = encodeVarintReceipt(dAtA, i, uint64(size))
-			}
-			i--
-			dAtA[i] = 0x22
-		}
-	}
 	if len(m.Events) > 0 {
 		for iNdEx := len(m.Events) - 1; iNdEx >= 0; iNdEx-- {
 			{
@@ -255,6 +473,44 @@ func (m *Receipt) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	return len(dAtA) - i, nil
 }
 
+func (m *GasUsedInfo) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *GasUsedInfo) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *GasUsedInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.ExecutionCost != 0 {
+		i = encodeVarintReceipt(dAtA, i, uint64(m.ExecutionCost))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.MoveBalanceCost != 0 {
+		i = encodeVarintReceipt(dAtA, i, uint64(m.MoveBalanceCost))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.DataGasCost != 0 {
+		i = encodeVarintReceipt(dAtA, i, uint64(m.DataGasCost))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
 func encodeVarintReceipt(dAtA []byte, offset int, v uint64) int {
 	offset -= sovReceipt(v)
 	base := offset
@@ -266,6 +522,27 @@ func encodeVarintReceipt(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
+func (m *SerializedNodeMap) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if len(m.SerializedNodes) > 0 {
+		for k, v := range m.SerializedNodes {
+			_ = k
+			_ = v
+			l = 0
+			if len(v) > 0 {
+				l = 1 + len(v) + sovReceipt(uint64(len(v)))
+			}
+			mapEntrySize := 1 + len(k) + sovReceipt(uint64(len(k))) + l
+			n += mapEntrySize + 1 + sovReceipt(uint64(mapEntrySize))
+		}
+	}
+	return n
+}
+
 func (m *Receipt) Size() (n int) {
 	if m == nil {
 		return 0
@@ -286,11 +563,23 @@ func (m *Receipt) Size() (n int) {
 			n += 1 + l + sovReceipt(uint64(l))
 		}
 	}
-	if len(m.StateChanges) > 0 {
-		for _, e := range m.StateChanges {
-			l = e.Size()
-			n += 1 + l + sovReceipt(uint64(l))
-		}
+	return n
+}
+
+func (m *GasUsedInfo) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.DataGasCost != 0 {
+		n += 1 + sovReceipt(uint64(m.DataGasCost))
+	}
+	if m.MoveBalanceCost != 0 {
+		n += 1 + sovReceipt(uint64(m.MoveBalanceCost))
+	}
+	if m.ExecutionCost != 0 {
+		n += 1 + sovReceipt(uint64(m.ExecutionCost))
 	}
 	return n
 }
@@ -301,6 +590,26 @@ func sovReceipt(x uint64) (n int) {
 func sozReceipt(x uint64) (n int) {
 	return sovReceipt(uint64((x << 1) ^ uint64((int64(x) >> 63))))
 }
+func (this *SerializedNodeMap) String() string {
+	if this == nil {
+		return "nil"
+	}
+	keysForSerializedNodes := make([]string, 0, len(this.SerializedNodes))
+	for k, _ := range this.SerializedNodes {
+		keysForSerializedNodes = append(keysForSerializedNodes, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForSerializedNodes)
+	mapStringForSerializedNodes := "map[string][]byte{"
+	for _, k := range keysForSerializedNodes {
+		mapStringForSerializedNodes += fmt.Sprintf("%v: %v,", k, this.SerializedNodes[k])
+	}
+	mapStringForSerializedNodes += "}"
+	s := strings.Join([]string{`&SerializedNodeMap{`,
+		`SerializedNodes:` + mapStringForSerializedNodes + `,`,
+		`}`,
+	}, "")
+	return s
+}
 func (this *Receipt) String() string {
 	if this == nil {
 		return "nil"
@@ -310,16 +619,22 @@ func (this *Receipt) String() string {
 		repeatedStringForEvents += strings.Replace(fmt.Sprintf("%v", f), "Event", "transaction.Event", 1) + ","
 	}
 	repeatedStringForEvents += "}"
-	repeatedStringForStateChanges := "[]*StateChange{"
-	for _, f := range this.StateChanges {
-		repeatedStringForStateChanges += strings.Replace(fmt.Sprintf("%v", f), "StateChange", "StateChange", 1) + ","
-	}
-	repeatedStringForStateChanges += "}"
 	s := strings.Join([]string{`&Receipt{`,
 		`TxHash:` + fmt.Sprintf("%v", this.TxHash) + `,`,
 		`Address:` + fmt.Sprintf("%v", this.Address) + `,`,
 		`Events:` + repeatedStringForEvents + `,`,
-		`StateChanges:` + repeatedStringForStateChanges + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *GasUsedInfo) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&GasUsedInfo{`,
+		`DataGasCost:` + fmt.Sprintf("%v", this.DataGasCost) + `,`,
+		`MoveBalanceCost:` + fmt.Sprintf("%v", this.MoveBalanceCost) + `,`,
+		`ExecutionCost:` + fmt.Sprintf("%v", this.ExecutionCost) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -331,6 +646,187 @@ func valueToStringReceipt(v interface{}) string {
 	}
 	pv := reflect.Indirect(rv).Interface()
 	return fmt.Sprintf("*%v", pv)
+}
+func (m *SerializedNodeMap) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowReceipt
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: SerializedNodeMap: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: SerializedNodeMap: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field SerializedNodes", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowReceipt
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthReceipt
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthReceipt
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.SerializedNodes == nil {
+				m.SerializedNodes = make(map[string][]byte)
+			}
+			var mapkey string
+			mapvalue := []byte{}
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowReceipt
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowReceipt
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthReceipt
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthReceipt
+					}
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var mapbyteLen uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowReceipt
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapbyteLen |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intMapbyteLen := int(mapbyteLen)
+					if intMapbyteLen < 0 {
+						return ErrInvalidLengthReceipt
+					}
+					postbytesIndex := iNdEx + intMapbyteLen
+					if postbytesIndex < 0 {
+						return ErrInvalidLengthReceipt
+					}
+					if postbytesIndex > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = make([]byte, mapbyteLen)
+					copy(mapvalue, dAtA[iNdEx:postbytesIndex])
+					iNdEx = postbytesIndex
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipReceipt(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if skippy < 0 {
+						return ErrInvalidLengthReceipt
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.SerializedNodes[mapkey] = mapvalue
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipReceipt(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthReceipt
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthReceipt
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
 }
 func (m *Receipt) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
@@ -463,11 +959,64 @@ func (m *Receipt) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field StateChanges", wireType)
+		default:
+			iNdEx = preIndex
+			skippy, err := skipReceipt(dAtA[iNdEx:])
+			if err != nil {
+				return err
 			}
-			var msglen int
+			if skippy < 0 {
+				return ErrInvalidLengthReceipt
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthReceipt
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *GasUsedInfo) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowReceipt
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: GasUsedInfo: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: GasUsedInfo: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field DataGasCost", wireType)
+			}
+			m.DataGasCost = 0
 			for shift := uint(0); ; shift += 7 {
 				if shift >= 64 {
 					return ErrIntOverflowReceipt
@@ -477,26 +1026,49 @@ func (m *Receipt) Unmarshal(dAtA []byte) error {
 				}
 				b := dAtA[iNdEx]
 				iNdEx++
-				msglen |= int(b&0x7F) << shift
+				m.DataGasCost |= uint64(b&0x7F) << shift
 				if b < 0x80 {
 					break
 				}
 			}
-			if msglen < 0 {
-				return ErrInvalidLengthReceipt
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MoveBalanceCost", wireType)
 			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthReceipt
+			m.MoveBalanceCost = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowReceipt
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.MoveBalanceCost |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
 			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ExecutionCost", wireType)
 			}
-			m.StateChanges = append(m.StateChanges, &StateChange{})
-			if err := m.StateChanges[len(m.StateChanges)-1].Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
+			m.ExecutionCost = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowReceipt
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.ExecutionCost |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
 			}
-			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipReceipt(dAtA[iNdEx:])

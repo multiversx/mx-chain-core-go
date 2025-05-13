@@ -6,8 +6,13 @@ option go_package = "github.com/multiversx/mx-chain-core-go/data/state";
 option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
-import "github.com/multiversx/mx-chain-core-go/data/state/stateChange.proto";
 import "github.com/multiversx/mx-chain-core-go/data/transaction/log.proto";
+
+
+// SerializedNodeMap represents a map with key node hash and data node bytes
+message SerializedNodeMap {
+  map<string, bytes> SerializedNodes = 1 [(gogoproto.jsontag) = "serializedNodes"];
+}
 
 
 // Receipt holds information about a receipt
@@ -15,5 +20,12 @@ message Receipt {
   bytes                TxHash       = 1 [(gogoproto.jsontag) = "txHash"];
   bytes                Address      = 2 [(gogoproto.jsontag) = "address"];
   repeated Event       Events       = 3 [(gogoproto.jsontag) = "events"];
-  repeated StateChange StateChanges = 4 [(gogoproto.jsontag) = "stateChanges"];
+}
+
+
+// GasUsedInfo holds information about transaction gas used
+message GasUsedInfo {
+  uint64 DataGasCost     = 1 [(gogoproto.jsontag) = "dataGasCost"];
+  uint64 MoveBalanceCost = 2 [(gogoproto.jsontag) = "moveBalanceCost"];
+  uint64 ExecutionCost   = 3 [(gogoproto.jsontag) = "executionCost"];
 }
