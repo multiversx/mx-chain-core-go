@@ -19,7 +19,8 @@ message SerializedNodeMap {
 message Receipt {
   bytes                TxHash       = 1 [(gogoproto.jsontag) = "txHash"];
   bytes                Address      = 2 [(gogoproto.jsontag) = "address"];
-  repeated Event       Events       = 3 [(gogoproto.jsontag) = "events"];
+  GasUsedInfo          GasUsedInfo  = 3 [(gogoproto.jsontag) = "gasUsedInfo"];
+  repeated Event       Events       = 4 [(gogoproto.jsontag) = "events"];
 }
 
 
