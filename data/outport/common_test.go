@@ -75,3 +75,16 @@ func TestConvertPubKeys(t *testing.T) {
 		core.MetachainShardId: {Keys: validatorsPubKeys[core.MetachainShardId]},
 	}, ret)
 }
+
+func TestGetHeaderProof(t *testing.T) {
+	t.Parallel()
+
+	receivedProof, err := GetHeaderProof(nil)
+	require.Nil(t, receivedProof)
+	require.Equal(t, errNilHeaderProof, err)
+
+	body := &block.HeaderProof{}
+	receivedProof, err = GetHeaderProof(body)
+	require.Nil(t, err)
+	require.Equal(t, body, receivedProof)
+}

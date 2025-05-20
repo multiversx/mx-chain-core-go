@@ -86,6 +86,19 @@ type HeaderHandler interface {
 	IsInterfaceNil() bool
 }
 
+// HeaderProofHandler defines getters and setters for the header proof
+type HeaderProofHandler interface {
+	GetPubKeysBitmap() []byte
+	GetAggregatedSignature() []byte
+	GetHeaderHash() []byte
+	GetHeaderEpoch() uint32
+	GetHeaderNonce() uint64
+	GetHeaderShardId() uint32
+	GetHeaderRound() uint64
+	GetIsStartOfEpoch() bool
+	IsInterfaceNil() bool
+}
+
 // ShardHeaderHandler defines getters and setters for the shard block header
 type ShardHeaderHandler interface {
 	HeaderHandler
