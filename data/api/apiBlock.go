@@ -38,6 +38,19 @@ type Block struct {
 	EpochStartInfo         *EpochStartInfo        `json:"epochStartInfo,omitempty"`
 	EpochStartShardsData   []*EpochStartShardData `json:"epochStartShardsData,omitempty"`
 	ScheduledData          *ScheduledData         `json:"scheduledData,omitempty"`
+	Proof                  *HeaderProof           `json:"proof,omitempty"`
+}
+
+// HeaderProof is a structure that hold information about header proof
+type HeaderProof struct {
+	PubKeysBitmap       string `json:"pubKeysBitmap,omitempty"`
+	AggregatedSignature string `json:"aggregatedSignature,omitempty"`
+	HeaderHash          string `json:"headerHash,omitempty"`
+	HeaderEpoch         uint32 `json:"headerEpoch,omitempty"`
+	HeaderNonce         uint64 `json:"headerNonce,omitempty"`
+	HeaderShardId       uint32 `json:"headerShardId,omitempty"`
+	HeaderRound         uint64 `json:"headerRound,omitempty"`
+	IsStartOfEpoch      bool   `json:"isStartOfEpoch,omitempty"`
 }
 
 // ScheduledData is a structure that hold information about scheduled events
