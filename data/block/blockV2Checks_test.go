@@ -12,6 +12,7 @@ import (
 var headerV2ExceptionFields = []string{
 	"Header",
 	"ScheduledRootHash",
+	"PreviousHeaderProof",
 }
 
 func TestBlockHeaderV2_Checks(t *testing.T) {
