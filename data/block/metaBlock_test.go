@@ -250,6 +250,17 @@ func TestMetaBlock_SetTimeStamp(t *testing.T) {
 	assert.Equal(t, timestamp, m.GetTimeStamp())
 }
 
+func TestMetaBlock_SetTimeStampMs(t *testing.T) {
+	t.Parallel()
+
+	timestamp := uint64(100000000)
+	m := block.MetaBlock{}
+	err := m.SetTimeStampMs(timestamp)
+
+	assert.Nil(t, err)
+	assert.Equal(t, timestamp, m.GetTimeStampMs())
+}
+
 func TestMetaBlock_SetTxCount(t *testing.T) {
 	t.Parallel()
 

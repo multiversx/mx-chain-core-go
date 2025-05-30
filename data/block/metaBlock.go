@@ -242,6 +242,17 @@ func (m *MetaBlock) SetTimeStamp(ts uint64) error {
 	return nil
 }
 
+// SetTimeStampMs sets header timestamp as milliseconds
+func (m *MetaBlock) SetTimeStampMs(ts uint64) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	m.TimeStampMs = ts
+
+	return nil
+}
+
 // SetTxCount sets the transaction count of the current meta block
 func (m *MetaBlock) SetTxCount(txCount uint32) error {
 	if m == nil {

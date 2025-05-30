@@ -112,4 +112,5 @@ message MetaBlock {
 	 bytes                DevFeesInEpoch           = 24 [(gogoproto.jsontag) = "devFeesInEpoch,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
 	 uint32               TxCount                  = 25 [(gogoproto.jsontag) = "txCount"];
 	 bytes                Reserved                 = 26 [(gogoproto.jsontag) = "reserved,omitempty"];
+	 uint64               TimeStampMs              = 27 [(gogoproto.jsontag) = "timeStampMs,omitempty"];
 }
