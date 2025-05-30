@@ -45,6 +45,7 @@ type HeaderHandler interface {
 	GetChainID() []byte
 	GetSoftwareVersion() []byte
 	GetTimeStamp() uint64
+	GetTimeStampMs() uint64
 	GetTxCount() uint32
 	GetReceiptsHash() []byte
 	GetAccumulatedFees() *big.Int
