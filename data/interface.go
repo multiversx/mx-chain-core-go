@@ -65,6 +65,7 @@ type HeaderHandler interface {
 	SetEpoch(e uint32) error
 	SetRound(r uint64) error
 	SetTimeStamp(ts uint64) error
+	SetTimeStampMs(ts uint64) error
 	SetRootHash(rHash []byte) error
 	SetPrevHash(pvHash []byte) error
 	SetPrevRandSeed(pvRandSeed []byte) error
