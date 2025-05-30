@@ -276,6 +276,17 @@ func TestHeader_SetTimeStamp(t *testing.T) {
 	assert.Equal(t, timeStamp, h.GetTimeStamp())
 }
 
+func TestHeader_SetTimeStampMs(t *testing.T) {
+	t.Parallel()
+
+	timeStamp := uint64(100000000)
+	h := block.Header{}
+	err := h.SetTimeStampMs(timeStamp)
+
+	assert.Nil(t, err)
+	assert.Equal(t, timeStamp, h.GetTimeStampMs())
+}
+
 func TestHeader_SetAccumulatedFees(t *testing.T) {
 	t.Parallel()
 

@@ -162,6 +162,16 @@ func (h *Header) SetTimeStamp(ts uint64) error {
 	return nil
 }
 
+// SetTimeStampMs sets header timestamp as milliseconds
+func (h *Header) SetTimeStampMs(ts uint64) error {
+	if h == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	h.TimeStampMs = ts
+	return nil
+}
+
 // SetAccumulatedFees sets the accumulated fees in the header
 func (h *Header) SetAccumulatedFees(value *big.Int) error {
 	if h == nil {

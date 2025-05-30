@@ -315,6 +315,15 @@ func (hv2 *HeaderV2) SetTimeStamp(ts uint64) error {
 	return hv2.Header.SetTimeStamp(ts)
 }
 
+// SetTimeStampMs sets header timestamp as milliseconds
+func (hv2 *HeaderV2) SetTimeStampMs(ts uint64) error {
+	if hv2 == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return hv2.Header.SetTimeStampMs(ts)
+}
+
 // SetAccumulatedFees sets the accumulated fees in the header
 func (hv2 *HeaderV2) SetAccumulatedFees(value *big.Int) error {
 	if hv2 == nil {
