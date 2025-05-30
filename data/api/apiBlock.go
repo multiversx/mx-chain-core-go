@@ -33,6 +33,7 @@ type Block struct {
 	ReceiptsHash           string                 `json:"receiptsHash,omitempty"`
 	Reserved               []byte                 `json:"reserved,omitempty"`
 	Timestamp              time.Duration          `json:"timestamp,omitempty"`
+	TimestampMs            time.Duration          `json:"timestampMs,omitempty"`
 	NotarizedBlocks        []*NotarizedBlock      `json:"notarizedBlocks,omitempty"`
 	MiniBlocks             []*MiniBlock           `json:"miniBlocks,omitempty"`
 	EpochStartInfo         *EpochStartInfo        `json:"epochStartInfo,omitempty"`
