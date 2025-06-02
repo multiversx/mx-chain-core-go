@@ -45,7 +45,6 @@ type HeaderHandler interface {
 	GetChainID() []byte
 	GetSoftwareVersion() []byte
 	GetTimeStamp() uint64
-	GetTimeStampMs() uint64
 	GetTxCount() uint32
 	GetReceiptsHash() []byte
 	GetAccumulatedFees() *big.Int
@@ -66,7 +65,6 @@ type HeaderHandler interface {
 	SetEpoch(e uint32) error
 	SetRound(r uint64) error
 	SetTimeStamp(ts uint64) error
-	SetTimeStampMs(ts uint64) error
 	SetRootHash(rHash []byte) error
 	SetPrevHash(pvHash []byte) error
 	SetPrevRandSeed(pvRandSeed []byte) error

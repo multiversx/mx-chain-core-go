@@ -136,15 +136,6 @@ func (hv2 *HeaderV2) GetTimeStamp() uint64 {
 	return hv2.Header.GetTimeStamp()
 }
 
-// GetTimeStampMs returns the header timestamp in milliseconds
-func (hv2 *HeaderV2) GetTimeStampMs() uint64 {
-	if hv2 == nil {
-		return 0
-	}
-
-	return hv2.Header.GetTimeStampMs()
-}
-
 // GetTxCount returns the number of txs included in the block
 func (hv2 *HeaderV2) GetTxCount() uint32 {
 	if hv2 == nil {
@@ -322,15 +313,6 @@ func (hv2 *HeaderV2) SetTimeStamp(ts uint64) error {
 	}
 
 	return hv2.Header.SetTimeStamp(ts)
-}
-
-// SetTimeStampMs sets header timestamp as milliseconds
-func (hv2 *HeaderV2) SetTimeStampMs(ts uint64) error {
-	if hv2 == nil {
-		return data.ErrNilPointerReceiver
-	}
-
-	return hv2.Header.SetTimeStampMs(ts)
 }
 
 // SetAccumulatedFees sets the accumulated fees in the header

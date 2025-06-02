@@ -86,7 +86,6 @@ message Header  {
   bytes                    AccumulatedFees = 22 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
   bytes                    DeveloperFees = 23 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
   bytes                    Reserved = 24 [(gogoproto.jsontag) = "reserved,omitempty"];
-  uint64                   TimeStampMs = 25 [(gogoproto.jsontag) = "timeStampMs,omitempty"];
 }
 
 message Body {
