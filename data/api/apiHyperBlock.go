@@ -20,6 +20,7 @@ type Hyperblock struct {
 	AccumulatedFeesInEpoch string                              `json:"accumulatedFeesInEpoch,omitempty"`
 	DeveloperFeesInEpoch   string                              `json:"developerFeesInEpoch,omitempty"`
 	Timestamp              time.Duration                       `json:"timestamp,omitempty"`
+	TimestampMs            time.Duration                       `json:"timestampMs,omitempty"`
 	EpochStartInfo         *EpochStartInfo                     `json:"epochStartInfo,omitempty"`
 	EpochStartShardsData   []*EpochStartShardData              `json:"epochStartShardsData,omitempty"`
 	ShardBlocks            []*NotarizedBlock                   `json:"shardBlocks"`
