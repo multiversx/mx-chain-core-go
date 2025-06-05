@@ -106,6 +106,7 @@ message RoundInfo {
   uint32          ShardId          = 4 [(gogoproto.jsontag) = "shardId"];
   uint32          Epoch            = 5 [(gogoproto.jsontag) = "epoch"];
   uint64          Timestamp        = 6 [(gogoproto.jsontag) = "timestamp"];
+  uint64          TimestampMs      = 7 [(gogoproto.jsontag) = "timestampMs"];
 }
 
 message RoundsInfo {

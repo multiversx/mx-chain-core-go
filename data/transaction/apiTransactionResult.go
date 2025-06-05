@@ -47,6 +47,7 @@ type ApiTransactionResult struct {
 	HyperblockNonce                   uint64                    `json:"hyperblockNonce,omitempty"`
 	HyperblockHash                    string                    `json:"hyperblockHash,omitempty"`
 	Timestamp                         int64                     `json:"timestamp,omitempty"`
+	TimestampMs                       int64                     `json:"timestampMs,omitempty"`
 	Receipt                           *ApiReceipt               `json:"receipt,omitempty"`
 	SmartContractResults              []*ApiSmartContractResult `json:"smartContractResults,omitempty"`
 	Logs                              *ApiLogs                  `json:"logs,omitempty"`
