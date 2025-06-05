@@ -1,8 +1,6 @@
 package api
 
 import (
-	"time"
-
 	"github.com/multiversx/mx-chain-core-go/data/transaction"
 )
 
@@ -19,8 +17,8 @@ type Hyperblock struct {
 	DeveloperFees          string                              `json:"developerFees,omitempty"`
 	AccumulatedFeesInEpoch string                              `json:"accumulatedFeesInEpoch,omitempty"`
 	DeveloperFeesInEpoch   string                              `json:"developerFeesInEpoch,omitempty"`
-	Timestamp              time.Duration                       `json:"timestamp,omitempty"`
-	TimestampMs            time.Duration                       `json:"timestampMs,omitempty"`
+	Timestamp              int64                               `json:"timestamp,omitempty"`
+	TimestampMs            int64                               `json:"timestampMs,omitempty"`
 	EpochStartInfo         *EpochStartInfo                     `json:"epochStartInfo,omitempty"`
 	EpochStartShardsData   []*EpochStartShardData              `json:"epochStartShardsData,omitempty"`
 	ShardBlocks            []*NotarizedBlock                   `json:"shardBlocks"`
