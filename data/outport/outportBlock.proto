@@ -38,6 +38,7 @@ message BlockData {
   Body               Body                 = 5 [(gogoproto.jsontag) = "body,omitempty"];
   repeated MiniBlock IntraShardMiniBlocks = 6 [(gogoproto.jsontag) = "intraShardMiniBlocks,omitempty"];
   HeaderProof        HeaderProof          = 7 [(gogoproto.jsontag) = "proof,omitempty"];
+  uint64             TimestampMs          = 8 [(gogoproto.jsontag) = "timestampMs"];
 }
 
 message TransactionPool {
