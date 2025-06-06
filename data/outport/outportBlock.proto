@@ -38,7 +38,7 @@ message BlockData {
   Body               Body                 = 5 [(gogoproto.jsontag) = "body,omitempty"];
   repeated MiniBlock IntraShardMiniBlocks = 6 [(gogoproto.jsontag) = "intraShardMiniBlocks,omitempty"];
   HeaderProof        HeaderProof          = 7 [(gogoproto.jsontag) = "proof,omitempty"];
-  uint64             TimestampMs          = 8 [(gogoproto.jsontag) = "timestampMs"];
+  uint64             TimestampMs          = 8 [(gogoproto.jsontag) = "timestampMs,omitempty"];
 }
 
 message TransactionPool {
@@ -129,6 +129,7 @@ message Accounts {
   uint32 ShardID                              = 1 [(gogoproto.jsontag) = "shardID"];
   uint64 BlockTimestamp                       = 2 [(gogoproto.jsontag) = "blockTimestamp"];
   map<string, AlteredAccount> AlteredAccounts = 3 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
+  uint64 BlockTimestampMs                     = 4 [(gogoproto.jsontag) = "blockTimestampMs,omitempty"];
 }
 
 message FinalizedBlock {
