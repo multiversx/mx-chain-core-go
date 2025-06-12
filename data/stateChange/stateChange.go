@@ -104,6 +104,11 @@ func GetOperationString(operation uint32) string {
 		}
 	}
 
+	// remove trailing comma and space
+	if len(operationString) > 2 {
+		operationString = operationString[:len(operationString)-2]
+	}
+
 	return operationString
 }
 

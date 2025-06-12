@@ -39,7 +39,7 @@ func TestGetOperationString(t *testing.T) {
 		t.Parallel()
 
 		operation := SaveAccount + GetAccount + GetDataTrieValue
-		expectedString := SaveAccountString + ", " + GetAccountString + ", " + GetDataTrieValueString + ", "
+		expectedString := SaveAccountString + ", " + GetAccountString + ", " + GetDataTrieValueString
 
 		operationString := GetOperationString(operation)
 		assert.Equal(t, expectedString, operationString)
