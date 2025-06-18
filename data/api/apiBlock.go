@@ -2,7 +2,6 @@ package api
 
 import (
 	"math/big"
-	"time"
 
 	"github.com/multiversx/mx-chain-core-go/data/alteredAccount"
 	"github.com/multiversx/mx-chain-core-go/data/transaction"
@@ -32,7 +31,8 @@ type Block struct {
 	SoftwareVersion        string                 `json:"softwareVersion,omitempty"`
 	ReceiptsHash           string                 `json:"receiptsHash,omitempty"`
 	Reserved               []byte                 `json:"reserved,omitempty"`
-	Timestamp              time.Duration          `json:"timestamp,omitempty"`
+	Timestamp              int64                  `json:"timestamp,omitempty"`
+	TimestampMs            int64                  `json:"timestampMs,omitempty"`
 	NotarizedBlocks        []*NotarizedBlock      `json:"notarizedBlocks,omitempty"`
 	MiniBlocks             []*MiniBlock           `json:"miniBlocks,omitempty"`
 	EpochStartInfo         *EpochStartInfo        `json:"epochStartInfo,omitempty"`
