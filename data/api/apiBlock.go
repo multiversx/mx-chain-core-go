@@ -2,7 +2,6 @@ package api
 
 import (
 	"math/big"
-	"time"
 
 	"github.com/multiversx/mx-chain-core-go/data/alteredAccount"
 	"github.com/multiversx/mx-chain-core-go/data/transaction"
@@ -32,12 +31,26 @@ type Block struct {
 	SoftwareVersion        string                 `json:"softwareVersion,omitempty"`
 	ReceiptsHash           string                 `json:"receiptsHash,omitempty"`
 	Reserved               []byte                 `json:"reserved,omitempty"`
-	Timestamp              time.Duration          `json:"timestamp,omitempty"`
+	Timestamp              int64                  `json:"timestamp,omitempty"`
+	TimestampMs            int64                  `json:"timestampMs,omitempty"`
 	NotarizedBlocks        []*NotarizedBlock      `json:"notarizedBlocks,omitempty"`
 	MiniBlocks             []*MiniBlock           `json:"miniBlocks,omitempty"`
 	EpochStartInfo         *EpochStartInfo        `json:"epochStartInfo,omitempty"`
 	EpochStartShardsData   []*EpochStartShardData `json:"epochStartShardsData,omitempty"`
 	ScheduledData          *ScheduledData         `json:"scheduledData,omitempty"`
+	Proof                  *HeaderProof           `json:"proof,omitempty"`
+}
+
+// HeaderProof is a structure that hold information about header proof
+type HeaderProof struct {
+	PubKeysBitmap       string `json:"pubKeysBitmap,omitempty"`
+	AggregatedSignature string `json:"aggregatedSignature,omitempty"`
+	HeaderHash          string `json:"headerHash,omitempty"`
+	HeaderEpoch         uint32 `json:"headerEpoch,omitempty"`
+	HeaderNonce         uint64 `json:"headerNonce,omitempty"`
+	HeaderShardId       uint32 `json:"headerShardId,omitempty"`
+	HeaderRound         uint64 `json:"headerRound,omitempty"`
+	IsStartOfEpoch      bool   `json:"isStartOfEpoch,omitempty"`
 }
 
 // ScheduledData is a structure that hold information about scheduled events
