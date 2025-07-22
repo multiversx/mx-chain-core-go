@@ -65,7 +65,7 @@ message ExecutionResult {
   uint64 HeaderNonce                        = 2 [(gogoproto.jsontag) = "headerNonce"];
   uint64 HeaderRound                        = 3 [(gogoproto.jsontag) = "headerRound"];
   bytes  RootHash                           = 4 [(gogoproto.jsontag) = "rootHash"];
-  bytes  ReceiptsHash                       = 5 [(gogoproto.jsontag) = "ReceiptsHash"];
+  bytes  ReceiptsHash                       = 5 [(gogoproto.jsontag) = "receiptsHash"];
   repeated MiniBlockHeader MiniBlockHeaders = 6 [(gogoproto.jsontag) = "miniBlockHeaders", (gogoproto.nullable) = false];
   bytes DeveloperFees                       = 7 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
   bytes AccumulatedFees                     = 8 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
