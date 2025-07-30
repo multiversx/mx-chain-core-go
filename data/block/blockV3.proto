@@ -35,10 +35,8 @@ message HeaderV3 {
   bytes                    ReceiptsHash        = 16 [(gogoproto.jsontag) = "receiptsHash,omitempty"];
   bytes                    ChainID             = 17 [(gogoproto.jsontag) = "chainID,omitempty"];
   bytes                    SoftwareVersion     = 18 [(gogoproto.jsontag) = "softwareVersion,omitempty"];
-  bytes                    AccumulatedFees     = 19 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-  bytes                    DeveloperFees       = 20 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-  bytes                    Reserved            = 21 [(gogoproto.jsontag) = "reserved,omitempty"];
-  uint32                   GasLimit            = 22 [(gogoproto.jsontag) = "gasLimit,omitempty"];
-  ExecutionResultInfo      LastExecutionResult = 23 [(gogoproto.jsontag) = "lastExecutionResult,omitempty"];
-  repeated ExecutionResult ExecutionResults    = 24 [(gogoproto.jsontag) = "executionResults,omitempty"];
+  bytes                    Reserved            = 19 [(gogoproto.jsontag) = "reserved,omitempty"];
+  uint32                   GasLimit            = 20 [(gogoproto.jsontag) = "gasLimit,omitempty"];
+  ExecutionResultInfo      LastExecutionResult = 21 [(gogoproto.jsontag) = "lastExecutionResult,omitempty"];
+  repeated ExecutionResult ExecutionResults    = 22 [(gogoproto.jsontag) = "executionResults,omitempty"];
 }
