@@ -366,6 +366,7 @@ func (hv3 *HeaderV3) GetDeveloperFees() *big.Int {
 	return big.NewInt(0)
 }
 
+// IsInterfaceNil returns true if there is no value under the interface
 func (hv3 *HeaderV3) IsInterfaceNil() bool {
 	return hv3 == nil
 }
