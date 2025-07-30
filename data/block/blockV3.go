@@ -25,12 +25,13 @@ func (hv3 *HeaderV3) GetSignature() []byte {
 	return nil
 }
 
+// GetTimeStamp returns the timestamp
 func (hv3 *HeaderV3) GetTimeStamp() uint64 {
 	if hv3 == nil {
 		return 0
 	}
 
-	return hv3.TimeStampMs
+	return hv3.TimestampMs
 }
 
 // GetMiniBlockHeadersWithDst as a map of hashes and sender IDs
@@ -170,7 +171,7 @@ func (hv3 *HeaderV3) SetTimeStamp(ts uint64) error {
 		return data.ErrNilPointerReceiver
 	}
 
-	hv3.TimeStampMs = ts
+	hv3.TimestampMs = ts
 	return nil
 }
 

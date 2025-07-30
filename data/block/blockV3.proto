@@ -12,7 +12,7 @@ import "block.proto";
 // ExecutionResultInfo defines the structure that holds the information about the execution result
 message ExecutionResultInfo {
   bytes NotarizedOnHeaderHash         = 1 [(gogoproto.jsontag) = "notarizedOnHeaderHash,omitempty"];
-  BaseExecutionResult ExecutionResult = 2 [(gogoproto.jsontag) = "executionResult,omitempty"];;
+  BaseExecutionResult ExecutionResult = 2 [(gogoproto.jsontag) = "executionResult,omitempty"];
 }
 
 // HeaderV3 defines the structure of the header V3
@@ -22,7 +22,7 @@ message HeaderV3 {
   bytes                    PrevRandSeed        = 3 [(gogoproto.jsontag) = "prevRandSeed,omitempty"];
   bytes                    RandSeed            = 4 [(gogoproto.jsontag) = "randSeed,omitempty"];
   uint32                   ShardID             = 5 [(gogoproto.jsontag) = "shardID"];
-  uint64                   TimeStampMs         = 6 [(gogoproto.jsontag) = "timeStampMs,omitempty"];
+  uint64                   TimestampMs         = 6 [(gogoproto.jsontag) = "timestampMs,omitempty"];
   uint64                   Round               = 7 [(gogoproto.jsontag) = "round"];
   uint32                   Epoch               = 8 [(gogoproto.jsontag) = "epoch"];
   Type                     BlockBodyType       = 9 [(gogoproto.jsontag) = "blockBodyType"];
