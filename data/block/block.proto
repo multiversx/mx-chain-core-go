@@ -59,17 +59,23 @@ message PeerChange {
   uint32 ShardIdDest = 2 [(gogoproto.jsontag) = "shardIdDest"];
 }
 
+// BaseExecutionResult defines the dto that will hold base information about execution result
+message BaseExecutionResult {
+  bytes  HeaderHash  = 1 [(gogoproto.jsontag) = "headerHash"];
+  uint64 HeaderNonce = 2 [(gogoproto.jsontag) = "headerNonce"];
+  uint64 HeaderRound = 3 [(gogoproto.jsontag) = "headerRound"];
+  bytes  RootHash    = 4 [(gogoproto.jsontag) = "rootHash"];
+}
+
 // ExecutionResult defines the dto that will hold information about execution result
 message ExecutionResult {
-  bytes  HeaderHash                         = 1 [(gogoproto.jsontag) = "headerHash"];
-  uint64 HeaderNonce                        = 2 [(gogoproto.jsontag) = "headerNonce"];
-  uint64 HeaderRound                        = 3 [(gogoproto.jsontag) = "headerRound"];
-  bytes  RootHash                           = 4 [(gogoproto.jsontag) = "rootHash"];
-  bytes  ReceiptsHash                       = 5 [(gogoproto.jsontag) = "receiptsHash"];
-  repeated MiniBlockHeader MiniBlockHeaders = 6 [(gogoproto.jsontag) = "miniBlockHeaders", (gogoproto.nullable) = false];
-  bytes DeveloperFees                       = 7 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-  bytes AccumulatedFees                     = 8 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-  uint64 GasUsed                            = 9 [(gogoproto.jsontag) = "gasUsed"];
+  BaseExecutionResult      BaseExecutionResult = 1 [(gogoproto.jsontag) = "baseExecutionResult"];
+  bytes                    ReceiptsHash        = 2 [(gogoproto.jsontag) = "receiptsHash"];
+  repeated MiniBlockHeader MiniBlockHeaders    = 3 [(gogoproto.jsontag) = "miniBlockHeaders", (gogoproto.nullable) = false];
+  bytes                    DeveloperFees       = 4 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  bytes                    AccumulatedFees     = 5 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  uint64                   GasUsed             = 6 [(gogoproto.jsontag) = "gasUsed"];
+  uint64                   ExecutedTxCount     = 7 [(gogoproto.jsontag) = "executedTxCount"];
 }
 
 // Header holds the metadata of a block. This is the part that is being hashed and run through consensus.
