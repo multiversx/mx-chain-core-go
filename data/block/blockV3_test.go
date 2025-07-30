@@ -41,7 +41,7 @@ func TestHeaderV3_GetTimeStamp(t *testing.T) {
 	t.Run("should work", func(t *testing.T) {
 		t.Parallel()
 		timestamp := uint64(12345)
-		hv3 := &block.HeaderV3{TimeStampMs: timestamp}
+		hv3 := &block.HeaderV3{TimestampMs: timestamp}
 		require.Equal(t, timestamp, hv3.GetTimeStamp())
 	})
 }
@@ -280,7 +280,7 @@ func TestHeaderV3_SetTimeStamp(t *testing.T) {
 		t.Parallel()
 		hv3 := &block.HeaderV3{}
 		require.NoError(t, hv3.SetTimeStamp(12345))
-		require.Equal(t, uint64(12345), hv3.TimeStampMs)
+		require.Equal(t, uint64(12345), hv3.TimestampMs)
 	})
 }
 
@@ -535,7 +535,7 @@ func TestHeaderV3_ShallowClone(t *testing.T) {
 			Nonce:           42,
 			Epoch:           2,
 			Round:           100,
-			TimeStampMs:     12345,
+			TimestampMs:     12345,
 			PrevHash:        []byte("prev hash"),
 			PrevRandSeed:    []byte("prev rand seed"),
 			RandSeed:        []byte("rand seed"),
