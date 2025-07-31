@@ -1,4 +1,4 @@
-// This file holds the data structures related with the functionality of a shard block V2
+// This file holds the data structures related with the functionality of a meta block V2
 syntax = "proto3";
 
 package proto;
@@ -24,14 +24,14 @@ message MetaBlockV2 {
   bytes                        PrevHash            = 8 [(gogoproto.jsontag) = "prevHash,omitempty"];
   bytes                        PrevRandSeed        = 9 [(gogoproto.jsontag) = "prevRandSeed,omitempty"];
   bytes                        RandSeed            = 10 [(gogoproto.jsontag) = "randSeed,omitempty"];
-  repeated MiniBlockHeader     MiniBlockHeaders    = 12 [(gogoproto.jsontag) = "miniBlockHeaders", (gogoproto.nullable) = false];
-  EpochStart                   EpochStart          = 13 [(gogoproto.jsontag) = "epochStart,omitempty", (gogoproto.nullable) = false];
-  bytes                        ChainID             = 14 [(gogoproto.jsontag) = "chainID,omitempty"];
-  bytes                        SoftwareVersion     = 15 [(gogoproto.jsontag) = "softwareVersion,omitempty"];
-  bytes                        Reserved            = 16 [(gogoproto.jsontag) = "reserved,omitempty"];
-  uint64                       GasLimit            = 17 [(gogoproto.jsontag) = "gasLimit,omitempty"];
-  ExecutionResultMetaInfo      LastExecutionResult = 18 [(gogoproto.jsontag) = "lastExecutionResult,omitempty"];
-  repeated ExecutionResultMeta ExecutionResults    = 19  [(gogoproto.jsontag) = "executionResults,omitempty"];;
+  repeated MiniBlockHeader     MiniBlockHeaders    = 11 [(gogoproto.jsontag) = "miniBlockHeaders", (gogoproto.nullable) = false];
+  EpochStart                   EpochStart          = 12 [(gogoproto.jsontag) = "epochStart,omitempty", (gogoproto.nullable) = false];
+  bytes                        ChainID             = 13 [(gogoproto.jsontag) = "chainID,omitempty"];
+  bytes                        SoftwareVersion     = 14 [(gogoproto.jsontag) = "softwareVersion,omitempty"];
+  bytes                        Reserved            = 15 [(gogoproto.jsontag) = "reserved,omitempty"];
+  uint64                       GasLimit            = 16 [(gogoproto.jsontag) = "gasLimit,omitempty"];
+  ExecutionResultMetaInfo      LastExecutionResult = 17 [(gogoproto.jsontag) = "lastExecutionResult,omitempty"];
+  repeated ExecutionResultMeta ExecutionResults    = 18 [(gogoproto.jsontag) = "executionResults,omitempty"];
 
 }
 
@@ -56,5 +56,5 @@ message BaseExecutionResultMeta {
   bytes               AccumulatedFees     = 3 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
   bytes               DeveloperFees       = 4 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
   uint64              GasUsed             = 5 [(gogoproto.jsontag) = "gasUsed,omitempty"];
-  uint64              ExecutedTxCount     = 6[(gogoproto.jsontag) = "executedTxCount,omitempty"];
+  uint64              ExecutedTxCount     = 6 [(gogoproto.jsontag) = "executedTxCount,omitempty"];
 }
