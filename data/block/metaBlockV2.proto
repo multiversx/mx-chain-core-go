@@ -17,7 +17,7 @@ message MetaBlockV2 {
   uint64                       Nonce               = 1 [(gogoproto.jsontag) = "nonce"];
   uint32                       Epoch               = 2 [(gogoproto.jsontag) = "epoch"];
   uint64                       Round               = 3 [(gogoproto.jsontag) = "round"];
-  uint64                       TimeStampMs         = 4 [(gogoproto.jsontag) = "timeStampMs,omitempty"];
+  uint64                       TimestampMs         = 4 [(gogoproto.jsontag) = "timestampMs,omitempty"];
   repeated ShardData           ShardInfo           = 5 [(gogoproto.jsontag) = "shardInfo", (gogoproto.nullable) = false];
   repeated PeerData            PeerInfo            = 6 [(gogoproto.jsontag) = "peerInfo", (gogoproto.nullable) = false];
   bytes                        LeaderSignature     = 7 [(gogoproto.jsontag) = "leaderSignature,omitempty"];

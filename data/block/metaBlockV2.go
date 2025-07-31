@@ -34,10 +34,10 @@ func (m *MetaBlockV2) GetSignature() []byte {
 
 // GetTimeStamp returns the timestamp
 func (m *MetaBlockV2) GetTimeStamp() uint64 {
-	if m != nil {
+	if m == nil {
 		return 0
 	}
-	return m.TimeStampMs
+	return m.TimestampMs
 }
 
 // GetReceiptsHash always returns nil
@@ -230,7 +230,7 @@ func (m *MetaBlockV2) SetTimeStamp(ts uint64) error {
 		return data.ErrNilPointerReceiver
 	}
 
-	m.TimeStampMs = ts
+	m.TimestampMs = ts
 
 	return nil
 }
