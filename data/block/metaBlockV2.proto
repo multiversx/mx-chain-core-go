@@ -1,0 +1,57 @@
+// This file holds the data structures related with the functionality of a shard block V2
+syntax = "proto3";
+
+package proto;
+
+option go_package = "block";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "block.proto";
+import "metaBlock.proto";
+
+
+
+message MetaBlockV2 {
+  uint64                           Nonce                    = 1 [(gogoproto.jsontag) = "nonce"];
+  uint32                           Epoch                    = 2 [(gogoproto.jsontag) = "epoch"];
+  uint64                           Round                    = 3 [(gogoproto.jsontag) = "round"];
+  uint64                           TimeStampMs                = 4 [(gogoproto.jsontag) = "timeStampMs,omitempty"];
+  repeated ShardData               ShardInfo         = 5 [(gogoproto.jsontag) = "shardInfo", (gogoproto.nullable) = false];
+  repeated PeerData                PeerInfo          = 6 [(gogoproto.jsontag) = "peerInfo", (gogoproto.nullable) = false];
+  bytes                            LeaderSignature          = 7 [(gogoproto.jsontag) = "leaderSignature,omitempty"];
+  bytes                            PrevHash                 = 8 [(gogoproto.jsontag) = "prevHash,omitempty"];
+  bytes                            PrevRandSeed             = 9 [(gogoproto.jsontag) = "prevRandSeed,omitempty"];
+  bytes                            RandSeed                 = 10 [(gogoproto.jsontag) = "randSeed,omitempty"];
+  bytes                            ValidatorStatsRootHash   = 11 [(gogoproto.jsontag) = "validatorStatsRootHash,omitempty"];
+  repeated MiniBlockHeader         MiniBlockHeaders  = 12 [(gogoproto.jsontag) = "miniBlockHeaders", (gogoproto.nullable) = false];
+  EpochStart                       EpochStart               = 13 [(gogoproto.jsontag) = "epochStart,omitempty", (gogoproto.nullable) = false];
+  bytes                            ChainID                  = 14 [(gogoproto.jsontag) = "chainID,omitempty"];
+  bytes                            SoftwareVersion          = 15 [(gogoproto.jsontag) = "softwareVersion,omitempty"];
+  bytes                            Reserved                 = 16 [(gogoproto.jsontag) = "reserved,omitempty"];
+  uint64                           GasLimit = 17 [(gogoproto.jsontag) = "gasLimit,omitempty"];
+  ExecutionResultMetaInfo          LastExecutionResult = 18 [(gogoproto.jsontag) = "lastExecutionResult,omitempty"];
+  repeated BaseExecutionResultMeta ExecutionResults = 19  [(gogoproto.jsontag) = "executionResults,omitempty"];;
+
+}
+
+message ExecutionResultMetaInfo {
+  bytes                    NotarizedAtHeaderHash = 1 [(gogoproto.jsontag) = "notarizedAtHeaderHash,omitempty"];
+  BaseExecutionResultMeta  BaseExecutionResultMeta = 2 [(gogoproto.jsontag) = "baseExecutionResultMeta,omitempty"];
+}
+
+message BaseExecutionResultMeta {
+  BaseExecutionResult  BaseExecutionResult = 1 [(gogoproto.jsontag) = "baseExecutionResult,omitempty"];
+  bytes                ValidatorStatsRootHash = 2 [(gogoproto.jsontag) = "validatorStatsRootHash,omitempty"];
+  bytes                AccumulatedFeesInEpoch = 3 [(gogoproto.jsontag) = "accumulatedFeesInEpoch,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  bytes                DevFeesInEpoch = 4 [(gogoproto.jsontag) = "devFeesInEpoch,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+}
+
+message ExecutionResultMeta {
+  BaseExecutionResultMeta BaseExecutionResultMeta = 1 [(gogoproto.jsontag) = "baseExecutionResultMeta,omitempty"];
+  bytes                   ReceiptsHash = 2 [(gogoproto.jsontag) = "receiptsHash,omitempty"];
+  bytes                   AccumulatedFees = 3 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  bytes                   DeveloperFees = 4 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  uint64                  GasUsed = 5 [(gogoproto.jsontag) = "gasUsed,omitempty"];
+  uint64                  ExecutedTxCount = 6[(gogoproto.jsontag) = "executedTxCount,omitempty"];
+}
