@@ -46,8 +46,9 @@ type MetaBlockV2 struct {
 	SoftwareVersion     []byte                   `protobuf:"bytes,14,opt,name=SoftwareVersion,proto3" json:"softwareVersion,omitempty"`
 	Reserved            []byte                   `protobuf:"bytes,15,opt,name=Reserved,proto3" json:"reserved,omitempty"`
 	GasLimit            uint64                   `protobuf:"varint,16,opt,name=GasLimit,proto3" json:"gasLimit,omitempty"`
-	LastExecutionResult *ExecutionResultMetaInfo `protobuf:"bytes,17,opt,name=LastExecutionResult,proto3" json:"lastExecutionResult,omitempty"`
-	ExecutionResults    []*ExecutionResultMeta   `protobuf:"bytes,18,rep,name=ExecutionResults,proto3" json:"executionResults,omitempty"`
+	TxCount             uint32                   `protobuf:"varint,17,opt,name=TxCount,proto3" json:"txCount"`
+	LastExecutionResult *ExecutionResultMetaInfo `protobuf:"bytes,18,opt,name=LastExecutionResult,proto3" json:"lastExecutionResult,omitempty"`
+	ExecutionResults    []*ExecutionResultMeta   `protobuf:"bytes,19,rep,name=ExecutionResults,proto3" json:"executionResults,omitempty"`
 }
 
 func (m *MetaBlockV2) Reset()      { *m = MetaBlockV2{} }
@@ -190,6 +191,13 @@ func (m *MetaBlockV2) GetGasLimit() uint64 {
 	return 0
 }
 
+func (m *MetaBlockV2) GetTxCount() uint32 {
+	if m != nil {
+		return m.TxCount
+	}
+	return 0
+}
+
 func (m *MetaBlockV2) GetLastExecutionResult() *ExecutionResultMetaInfo {
 	if m != nil {
 		return m.LastExecutionResult
@@ -206,8 +214,8 @@ func (m *MetaBlockV2) GetExecutionResults() []*ExecutionResultMeta {
 
 // ExecutionResultMetaInfo contains a base execution result and the header hash when the results was notarized
 type ExecutionResultMetaInfo struct {
-	NotarizedAtHeaderHash   []byte                   `protobuf:"bytes,1,opt,name=NotarizedAtHeaderHash,proto3" json:"notarizedAtHeaderHash,omitempty"`
-	BaseExecutionResultMeta *BaseExecutionResultMeta `protobuf:"bytes,2,opt,name=BaseExecutionResultMeta,proto3" json:"baseExecutionResultMeta,omitempty"`
+	NotarizedAtHeaderHash []byte           `protobuf:"bytes,1,opt,name=NotarizedAtHeaderHash,proto3" json:"notarizedAtHeaderHash,omitempty"`
+	ExecutionResult       *ExecutionResult `protobuf:"bytes,2,opt,name=ExecutionResult,proto3" json:"baseExecutionResultMeta,omitempty"`
 }
 
 func (m *ExecutionResultMetaInfo) Reset()      { *m = ExecutionResultMetaInfo{} }
@@ -245,19 +253,19 @@ func (m *ExecutionResultMetaInfo) GetNotarizedAtHeaderHash() []byte {
 	return nil
 }
 
-func (m *ExecutionResultMetaInfo) GetBaseExecutionResultMeta() *BaseExecutionResultMeta {
+func (m *ExecutionResultMetaInfo) GetExecutionResult() *ExecutionResult {
 	if m != nil {
-		return m.BaseExecutionResultMeta
+		return m.ExecutionResult
 	}
 	return nil
 }
 
 // ExecutionResultMeta contains a base execution result meta and extra fields for meta
 type ExecutionResultMeta struct {
-	BaseExecutionResultMeta *BaseExecutionResultMeta `protobuf:"bytes,1,opt,name=BaseExecutionResultMeta,proto3" json:"baseExecutionResultMeta,omitempty"`
-	ValidatorStatsRootHash  []byte                   `protobuf:"bytes,2,opt,name=ValidatorStatsRootHash,proto3" json:"validatorStatsRootHash,omitempty"`
-	AccumulatedFeesInEpoch  *math_big.Int            `protobuf:"bytes,3,opt,name=AccumulatedFeesInEpoch,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"accumulatedFeesInEpoch,omitempty"`
-	DevFeesInEpoch          *math_big.Int            `protobuf:"bytes,4,opt,name=DevFeesInEpoch,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"devFeesInEpoch,omitempty"`
+	ExecutionResult        *ExecutionResult `protobuf:"bytes,1,opt,name=ExecutionResult,proto3" json:"baseExecutionResultMeta,omitempty"`
+	ValidatorStatsRootHash []byte           `protobuf:"bytes,2,opt,name=ValidatorStatsRootHash,proto3" json:"validatorStatsRootHash,omitempty"`
+	AccumulatedFeesInEpoch *math_big.Int    `protobuf:"bytes,3,opt,name=AccumulatedFeesInEpoch,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"accumulatedFeesInEpoch,omitempty"`
+	DevFeesInEpoch         *math_big.Int    `protobuf:"bytes,4,opt,name=DevFeesInEpoch,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"devFeesInEpoch,omitempty"`
 }
 
 func (m *ExecutionResultMeta) Reset()      { *m = ExecutionResultMeta{} }
@@ -288,9 +296,9 @@ func (m *ExecutionResultMeta) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_ExecutionResultMeta proto.InternalMessageInfo
 
-func (m *ExecutionResultMeta) GetBaseExecutionResultMeta() *BaseExecutionResultMeta {
+func (m *ExecutionResultMeta) GetExecutionResult() *ExecutionResult {
 	if m != nil {
-		return m.BaseExecutionResultMeta
+		return m.ExecutionResult
 	}
 	return nil
 }
@@ -316,162 +324,74 @@ func (m *ExecutionResultMeta) GetDevFeesInEpoch() *math_big.Int {
 	return nil
 }
 
-// BaseExecutionResultMeta contains a base execution result and extra fields for meta
-type BaseExecutionResultMeta struct {
-	BaseExecutionResult *BaseExecutionResult `protobuf:"bytes,1,opt,name=BaseExecutionResult,proto3" json:"baseExecutionResult,omitempty"`
-	ReceiptsHash        []byte               `protobuf:"bytes,2,opt,name=ReceiptsHash,proto3" json:"receiptsHash,omitempty"`
-	AccumulatedFees     *math_big.Int        `protobuf:"bytes,3,opt,name=AccumulatedFees,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"accumulatedFees,omitempty"`
-	DeveloperFees       *math_big.Int        `protobuf:"bytes,4,opt,name=DeveloperFees,proto3,casttypewith=math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster" json:"developerFees,omitempty"`
-	GasUsed             uint64               `protobuf:"varint,5,opt,name=GasUsed,proto3" json:"gasUsed,omitempty"`
-	ExecutedTxCount     uint64               `protobuf:"varint,6,opt,name=ExecutedTxCount,proto3" json:"executedTxCount,omitempty"`
-}
-
-func (m *BaseExecutionResultMeta) Reset()      { *m = BaseExecutionResultMeta{} }
-func (*BaseExecutionResultMeta) ProtoMessage() {}
-func (*BaseExecutionResultMeta) Descriptor() ([]byte, []int) {
-	return fileDescriptor_b785f995c647775f, []int{3}
-}
-func (m *BaseExecutionResultMeta) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *BaseExecutionResultMeta) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	b = b[:cap(b)]
-	n, err := m.MarshalToSizedBuffer(b)
-	if err != nil {
-		return nil, err
-	}
-	return b[:n], nil
-}
-func (m *BaseExecutionResultMeta) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_BaseExecutionResultMeta.Merge(m, src)
-}
-func (m *BaseExecutionResultMeta) XXX_Size() int {
-	return m.Size()
-}
-func (m *BaseExecutionResultMeta) XXX_DiscardUnknown() {
-	xxx_messageInfo_BaseExecutionResultMeta.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_BaseExecutionResultMeta proto.InternalMessageInfo
-
-func (m *BaseExecutionResultMeta) GetBaseExecutionResult() *BaseExecutionResult {
-	if m != nil {
-		return m.BaseExecutionResult
-	}
-	return nil
-}
-
-func (m *BaseExecutionResultMeta) GetReceiptsHash() []byte {
-	if m != nil {
-		return m.ReceiptsHash
-	}
-	return nil
-}
-
-func (m *BaseExecutionResultMeta) GetAccumulatedFees() *math_big.Int {
-	if m != nil {
-		return m.AccumulatedFees
-	}
-	return nil
-}
-
-func (m *BaseExecutionResultMeta) GetDeveloperFees() *math_big.Int {
-	if m != nil {
-		return m.DeveloperFees
-	}
-	return nil
-}
-
-func (m *BaseExecutionResultMeta) GetGasUsed() uint64 {
-	if m != nil {
-		return m.GasUsed
-	}
-	return 0
-}
-
-func (m *BaseExecutionResultMeta) GetExecutedTxCount() uint64 {
-	if m != nil {
-		return m.ExecutedTxCount
-	}
-	return 0
-}
-
 func init() {
 	proto.RegisterType((*MetaBlockV2)(nil), "proto.MetaBlockV2")
 	proto.RegisterType((*ExecutionResultMetaInfo)(nil), "proto.ExecutionResultMetaInfo")
 	proto.RegisterType((*ExecutionResultMeta)(nil), "proto.ExecutionResultMeta")
-	proto.RegisterType((*BaseExecutionResultMeta)(nil), "proto.BaseExecutionResultMeta")
 }
 
 func init() { proto.RegisterFile("metaBlockV2.proto", fileDescriptor_b785f995c647775f) }
 
 var fileDescriptor_b785f995c647775f = []byte{
-	// 1029 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xbc, 0x56, 0x41, 0x4f, 0xe3, 0x46,
-	0x14, 0xce, 0xec, 0x12, 0x16, 0x26, 0xb0, 0x84, 0xa1, 0xc0, 0x6c, 0xd4, 0xb5, 0xb3, 0xb4, 0x95,
-	0x38, 0x14, 0x22, 0xd1, 0xe3, 0xaa, 0xad, 0x30, 0x50, 0x16, 0x09, 0xb6, 0x2b, 0x67, 0x8b, 0xd4,
-	0x6a, 0x2f, 0x93, 0xf8, 0x91, 0x58, 0x8d, 0x3d, 0x91, 0x67, 0x9c, 0xd2, 0x5e, 0xda, 0x73, 0xa5,
-	0x56, 0xfb, 0x27, 0x2a, 0x55, 0x55, 0x7f, 0xc8, 0x1e, 0x39, 0x72, 0x72, 0x4b, 0xe8, 0xa1, 0xf2,
-	0x69, 0x2f, 0xbd, 0x57, 0x1e, 0x9b, 0x64, 0x62, 0x9c, 0xde, 0xe8, 0x89, 0xf8, 0x7b, 0xdf, 0xf7,
-	0xbd, 0xe7, 0x37, 0xcf, 0xf3, 0xc0, 0xcb, 0x1e, 0x48, 0x66, 0xf5, 0x78, 0xfb, 0xeb, 0xd3, 0x9d,
-	0xed, 0x7e, 0xc0, 0x25, 0x27, 0x65, 0xf5, 0xa7, 0xb6, 0xd5, 0x71, 0x65, 0x37, 0x6c, 0x6d, 0xb7,
-	0xb9, 0xd7, 0xe8, 0xf0, 0x0e, 0x6f, 0x28, 0xb8, 0x15, 0x9e, 0xa9, 0x27, 0xf5, 0xa0, 0x7e, 0xa5,
-	0xaa, 0x5a, 0xa5, 0x95, 0x98, 0x64, 0x0f, 0x4b, 0x23, 0xd7, 0x14, 0xd8, 0xf8, 0x79, 0x1e, 0x57,
-	0x4e, 0xc6, 0x99, 0x88, 0x89, 0xcb, 0xcf, 0xb9, 0xdf, 0x06, 0x8a, 0xea, 0x68, 0x73, 0xc6, 0x9a,
-	0x8f, 0x23, 0xb3, 0xec, 0x27, 0x80, 0x9d, 0xe2, 0x09, 0xe1, 0xa0, 0xcf, 0xdb, 0x5d, 0x7a, 0xaf,
-	0x8e, 0x36, 0x17, 0x53, 0x02, 0x24, 0x80, 0x9d, 0xe2, 0x09, 0xc1, 0xe6, 0xa1, 0xef, 0xd0, 0xfb,
-	0x63, 0x87, 0x20, 0x01, 0xec, 0x14, 0x27, 0x4f, 0x71, 0xe5, 0xa5, 0xeb, 0x41, 0x53, 0x32, 0xaf,
-	0x7f, 0x22, 0xe8, 0x8c, 0xa2, 0x3d, 0x8a, 0x23, 0x73, 0x55, 0x8e, 0xe1, 0x0f, 0xb9, 0xe7, 0x4a,
-	0xf0, 0xfa, 0xf2, 0x5b, 0x5b, 0x67, 0x93, 0x5d, 0x3c, 0xdf, 0xec, 0xb2, 0xc0, 0x39, 0xf2, 0xcf,
-	0x38, 0x2d, 0xd7, 0xef, 0x6f, 0x56, 0x76, 0xaa, 0xe9, 0xab, 0x6c, 0x2b, 0x7c, 0x9f, 0x49, 0x66,
-	0x2d, 0xbf, 0x89, 0xcc, 0x52, 0x1c, 0x99, 0xf3, 0xe2, 0x86, 0x6a, 0x8f, 0x55, 0xe4, 0x63, 0x3c,
-	0xf7, 0x02, 0x20, 0x50, 0x0e, 0xb3, 0xca, 0x61, 0x29, 0x73, 0x48, 0x60, 0x65, 0x50, 0xcd, 0x0c,
-	0xe6, 0xfa, 0x19, 0xd1, 0x1e, 0x49, 0xc8, 0x21, 0x5e, 0x3a, 0x06, 0xe6, 0x40, 0xd0, 0x74, 0x3b,
-	0x3e, 0x93, 0x61, 0x00, 0xf4, 0x41, 0x1d, 0x6d, 0x2e, 0x58, 0x8f, 0xe3, 0xc8, 0x7c, 0xd4, 0x9b,
-	0x0c, 0x69, 0xaf, 0x91, 0x57, 0x91, 0x1d, 0x3c, 0xf7, 0x22, 0x80, 0xc1, 0x33, 0x26, 0xba, 0x74,
-	0x4e, 0x39, 0xac, 0xc5, 0x91, 0x49, 0xfa, 0x19, 0xa6, 0x49, 0x47, 0x3c, 0xf2, 0x09, 0x5e, 0x48,
-	0x7e, 0xdb, 0xcc, 0x77, 0x9a, 0x00, 0x0e, 0x9d, 0x57, 0xba, 0x5a, 0x1c, 0x99, 0x6b, 0x7d, 0x0d,
-	0xd7, 0xb4, 0x13, 0xfc, 0x24, 0xe7, 0x48, 0x8b, 0xc7, 0x39, 0x83, 0xdb, 0xba, 0x11, 0x8f, 0xbc,
-	0xc2, 0xd5, 0x13, 0xd7, 0x77, 0xd5, 0x84, 0x3c, 0x53, 0xef, 0x20, 0x68, 0x45, 0xf5, 0x6d, 0x2d,
-	0xeb, 0x5b, 0x2e, 0x6c, 0xd1, 0xac, 0x7d, 0x55, 0x2f, 0xa7, 0xb3, 0x6f, 0x39, 0x91, 0xcf, 0x31,
-	0x56, 0x73, 0xd3, 0x94, 0x2c, 0x90, 0x74, 0xa1, 0x8e, 0x36, 0x2b, 0x3b, 0xcb, 0x99, 0xef, 0x38,
-	0x60, 0xbd, 0x9b, 0x59, 0xbe, 0x03, 0x23, 0x4c, 0x2b, 0x56, 0xb3, 0x20, 0x0d, 0xfc, 0x60, 0xaf,
-	0xcb, 0x5c, 0xff, 0x68, 0x9f, 0x2e, 0xaa, 0x37, 0x5c, 0x8d, 0x23, 0x73, 0xb9, 0x9d, 0x42, 0x9a,
-	0xe6, 0x86, 0x95, 0x1c, 0x68, 0x93, 0x9f, 0xc9, 0x6f, 0x58, 0x00, 0xa7, 0x10, 0x08, 0x97, 0xfb,
-	0xf4, 0xe1, 0xf8, 0x40, 0xc5, 0x64, 0x48, 0x3f, 0xd0, 0x9c, 0x4a, 0x35, 0x17, 0x04, 0x04, 0x03,
-	0x70, 0xe8, 0x92, 0xd6, 0xdc, 0x0c, 0x9b, 0x68, 0x6e, 0x86, 0x25, 0x9a, 0x43, 0x26, 0x8e, 0x5d,
-	0xcf, 0x95, 0xb4, 0xaa, 0xbe, 0x04, 0xa5, 0xe9, 0x64, 0x98, 0xae, 0xb9, 0xe1, 0x11, 0x81, 0x57,
-	0x8e, 0x99, 0x90, 0x07, 0xe7, 0xd0, 0x0e, 0xa5, 0xcb, 0x7d, 0x1b, 0x44, 0xd8, 0x93, 0x74, 0x59,
-	0xf5, 0xce, 0xb8, 0xe9, 0xdd, 0x64, 0x34, 0xf9, 0xc6, 0x93, 0xf1, 0xb5, 0x9e, 0xc4, 0x91, 0xf9,
-	0xb8, 0x77, 0x5b, 0xae, 0x65, 0x2a, 0x72, 0x27, 0x67, 0xb8, 0x9a, 0x83, 0x04, 0x25, 0x6a, 0x0a,
-	0x6a, 0xd3, 0x33, 0x5a, 0x46, 0x1c, 0x99, 0x35, 0xc8, 0xe9, 0xb4, 0x54, 0xb7, 0x3c, 0x37, 0xfe,
-	0x41, 0x78, 0x7d, 0x4a, 0xed, 0xe4, 0x4b, 0xbc, 0xfa, 0x9c, 0x4b, 0x16, 0xb8, 0xdf, 0x81, 0xb3,
-	0x2b, 0xd3, 0x09, 0x52, 0x9f, 0x0f, 0x52, 0xdd, 0x7e, 0x2f, 0x8e, 0x4c, 0xd3, 0x2f, 0x22, 0x68,
-	0x19, 0x8b, 0x1d, 0xc8, 0xf7, 0x78, 0xdd, 0x62, 0x02, 0x0a, 0x32, 0xab, 0x8b, 0x6e, 0xdc, 0xd7,
-	0x29, 0x2c, 0xeb, 0x83, 0x38, 0x32, 0x9f, 0xb4, 0x8a, 0x83, 0x5a, 0xfa, 0x69, 0x59, 0x36, 0x7e,
-	0x9f, 0xc1, 0x2b, 0x05, 0xf8, 0x7f, 0x15, 0x86, 0xfe, 0x8f, 0xc2, 0xc8, 0x2b, 0xbc, 0x76, 0xca,
-	0x7a, 0xae, 0xc3, 0x24, 0x0f, 0x9a, 0x92, 0x49, 0x61, 0x73, 0x2e, 0x55, 0xd7, 0xef, 0xa9, 0xae,
-	0xbf, 0x1f, 0x47, 0x66, 0x7d, 0x50, 0xc8, 0xd0, 0xec, 0xa7, 0x78, 0x90, 0x5f, 0x10, 0x5e, 0xdb,
-	0x6d, 0xb7, 0x43, 0x2f, 0xec, 0x31, 0x09, 0xce, 0x67, 0x00, 0xe2, 0xc8, 0x4f, 0x17, 0xcc, 0x7d,
-	0x65, 0xef, 0x25, 0xf6, 0xac, 0x90, 0x31, 0xb6, 0xff, 0xed, 0x0f, 0xf3, 0xc0, 0x63, 0xb2, 0xdb,
-	0x68, 0xb9, 0x9d, 0xed, 0x23, 0x5f, 0x3e, 0xd5, 0x56, 0xa4, 0x17, 0xf6, 0xa4, 0x3b, 0x80, 0x40,
-	0x9c, 0x37, 0xbc, 0xf3, 0x2d, 0x75, 0x0f, 0x6c, 0xb5, 0x79, 0x00, 0x5b, 0x1d, 0xde, 0x70, 0x98,
-	0x64, 0xdb, 0x96, 0xdb, 0x39, 0xf2, 0xe5, 0x1e, 0x13, 0x12, 0x02, 0x7b, 0x4a, 0x31, 0xe4, 0x27,
-	0x84, 0x1f, 0xee, 0xc3, 0x40, 0xaf, 0x6f, 0x46, 0xd5, 0x07, 0x71, 0x64, 0x52, 0x67, 0x22, 0x72,
-	0x17, 0x75, 0xe5, 0x92, 0x6f, 0xfc, 0x35, 0x33, 0x75, 0x2e, 0x08, 0xc7, 0x2b, 0x05, 0xa1, 0x6c,
-	0x5c, 0x6a, 0xd3, 0xc7, 0x25, 0xbd, 0x1b, 0x0a, 0x46, 0x45, 0xbf, 0x1b, 0x0a, 0x74, 0xc9, 0x56,
-	0xb2, 0xa1, 0x0d, 0x6e, 0x5f, 0x0a, 0x6d, 0x30, 0xd4, 0x56, 0x0a, 0x34, 0x5c, 0xdf, 0x4a, 0x3a,
-	0x9f, 0xbc, 0x46, 0x78, 0x29, 0xd7, 0xf7, 0xec, 0xf4, 0xcf, 0x92, 0x2b, 0x38, 0x77, 0xfa, 0x77,
-	0xd1, 0xde, 0x7c, 0x7a, 0xf2, 0x23, 0xc2, 0x8b, 0xfb, 0x30, 0x80, 0x1e, 0xef, 0x43, 0xa0, 0x0a,
-	0x4a, 0x8f, 0xdb, 0x89, 0x23, 0x73, 0xdd, 0xd1, 0x03, 0x77, 0x51, 0xce, 0x64, 0xea, 0x64, 0xa5,
-	0x1d, 0x32, 0xf1, 0x85, 0x00, 0x87, 0x96, 0xd5, 0x8e, 0x50, 0x2b, 0xad, 0x93, 0x42, 0xfa, 0x4a,
-	0xcb, 0x58, 0xc9, 0x4a, 0x4b, 0xcf, 0x08, 0x9c, 0x97, 0xe7, 0x7b, 0x3c, 0xf4, 0x25, 0x9d, 0x55,
-	0x42, 0xb5, 0xd2, 0x60, 0x32, 0xa4, 0xaf, 0xb4, 0x9c, 0xca, 0xfa, 0xf4, 0xe2, 0xca, 0x28, 0x5d,
-	0x5e, 0x19, 0xa5, 0xb7, 0x57, 0x06, 0xfa, 0x61, 0x68, 0xa0, 0x5f, 0x87, 0x06, 0x7a, 0x33, 0x34,
-	0xd0, 0xc5, 0xd0, 0x40, 0x97, 0x43, 0x03, 0xfd, 0x39, 0x34, 0xd0, 0xdf, 0x43, 0xa3, 0xf4, 0x76,
-	0x68, 0xa0, 0xd7, 0xd7, 0x46, 0xe9, 0xe2, 0xda, 0x28, 0x5d, 0x5e, 0x1b, 0xa5, 0xaf, 0xca, 0xea,
-	0xdf, 0xce, 0xd6, 0xac, 0x9a, 0xb6, 0x8f, 0xfe, 0x0d, 0x00, 0x00, 0xff, 0xff, 0x00, 0x7d, 0x9a,
-	0x85, 0xcf, 0x0a, 0x00, 0x00,
+	// 915 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xb4, 0x56, 0x41, 0x6f, 0xdb, 0x36,
+	0x1b, 0x36, 0x93, 0xb8, 0x89, 0xe9, 0xb4, 0xb6, 0x99, 0x2f, 0xfe, 0x58, 0x63, 0x15, 0xdd, 0x6c,
+	0x05, 0x7c, 0x58, 0x6c, 0x20, 0x3b, 0x16, 0xdb, 0x10, 0x25, 0x59, 0x6b, 0x20, 0xe9, 0x0a, 0xb9,
+	0x08, 0xb0, 0xa1, 0x17, 0x5a, 0x62, 0x64, 0x61, 0x96, 0x68, 0x48, 0x94, 0x97, 0xed, 0xb4, 0x3f,
+	0x30, 0x60, 0x87, 0xfd, 0x85, 0x01, 0xc3, 0xee, 0xfb, 0x0f, 0x3d, 0xe6, 0x98, 0xcb, 0xb4, 0xc5,
+	0xb9, 0x0c, 0x3a, 0xf5, 0x27, 0x0c, 0xa2, 0x64, 0x9b, 0x56, 0x94, 0x63, 0x4f, 0x16, 0x9f, 0xf7,
+	0x79, 0x9e, 0xf7, 0xe5, 0xcb, 0x97, 0x96, 0x60, 0xc3, 0x65, 0x82, 0xea, 0x63, 0x6e, 0x7e, 0x77,
+	0x7e, 0xd0, 0x9d, 0xf8, 0x5c, 0x70, 0x54, 0x96, 0x3f, 0xad, 0x7d, 0xdb, 0x11, 0xa3, 0x70, 0xd8,
+	0x35, 0xb9, 0xdb, 0xb3, 0xb9, 0xcd, 0x7b, 0x12, 0x1e, 0x86, 0x17, 0x72, 0x25, 0x17, 0xf2, 0x29,
+	0x55, 0xb5, 0xaa, 0xc3, 0xc4, 0x24, 0x5b, 0xd4, 0x16, 0xae, 0x29, 0xb0, 0xf7, 0x67, 0x05, 0x56,
+	0xcf, 0x96, 0x99, 0x10, 0x81, 0xe5, 0x57, 0xdc, 0x33, 0x19, 0x06, 0x6d, 0xd0, 0xd9, 0xd0, 0x2b,
+	0x71, 0x44, 0xca, 0x5e, 0x02, 0x18, 0x29, 0x9e, 0x10, 0x4e, 0x26, 0xdc, 0x1c, 0xe1, 0xb5, 0x36,
+	0xe8, 0x3c, 0x4c, 0x09, 0x2c, 0x01, 0x8c, 0x14, 0x4f, 0x08, 0x06, 0x0f, 0x3d, 0x0b, 0xaf, 0x2f,
+	0x1d, 0xfc, 0x04, 0x30, 0x52, 0x1c, 0x3d, 0x87, 0xd5, 0x37, 0x8e, 0xcb, 0x06, 0x82, 0xba, 0x93,
+	0xb3, 0x00, 0x6f, 0x48, 0xda, 0xe3, 0x38, 0x22, 0xbb, 0x62, 0x09, 0x7f, 0xca, 0x5d, 0x47, 0x30,
+	0x77, 0x22, 0x7e, 0x30, 0x54, 0x36, 0x3a, 0x84, 0x95, 0xc1, 0x88, 0xfa, 0x56, 0xdf, 0xbb, 0xe0,
+	0xb8, 0xdc, 0x5e, 0xef, 0x54, 0x0f, 0xea, 0xe9, 0x56, 0xba, 0x12, 0x3f, 0xa6, 0x82, 0xea, 0x8d,
+	0x77, 0x11, 0x29, 0xc5, 0x11, 0xa9, 0x04, 0x73, 0xaa, 0xb1, 0x54, 0xa1, 0xcf, 0xe1, 0xd6, 0x6b,
+	0xc6, 0x7c, 0xe9, 0xf0, 0x40, 0x3a, 0xd4, 0x32, 0x87, 0x04, 0x96, 0x06, 0xf5, 0xcc, 0x60, 0x6b,
+	0x92, 0x11, 0x8d, 0x85, 0x04, 0xbd, 0x80, 0xb5, 0x53, 0x46, 0x2d, 0xe6, 0x0f, 0x1c, 0xdb, 0xa3,
+	0x22, 0xf4, 0x19, 0xde, 0x6c, 0x83, 0xce, 0xb6, 0xfe, 0x24, 0x8e, 0xc8, 0xe3, 0xf1, 0x6a, 0x48,
+	0xd9, 0x46, 0x5e, 0x85, 0x0e, 0xe0, 0xd6, 0x6b, 0x9f, 0x4d, 0x5f, 0xd2, 0x60, 0x84, 0xb7, 0xa4,
+	0x43, 0x33, 0x8e, 0x08, 0x9a, 0x64, 0x98, 0x22, 0x5d, 0xf0, 0xd0, 0x17, 0x70, 0x3b, 0x79, 0x36,
+	0xa8, 0x67, 0x0d, 0x18, 0xb3, 0x70, 0x45, 0xea, 0x5a, 0x71, 0x44, 0x9a, 0x13, 0x05, 0x57, 0xb4,
+	0x2b, 0xfc, 0x24, 0xe7, 0x42, 0x0b, 0x97, 0x39, 0xfd, 0xbb, 0xba, 0x05, 0x0f, 0xbd, 0x85, 0xf5,
+	0x33, 0xc7, 0x73, 0xe4, 0x84, 0xbc, 0x94, 0x7b, 0x08, 0x70, 0x55, 0xf6, 0xad, 0x99, 0xf5, 0x2d,
+	0x17, 0xd6, 0x71, 0xd6, 0xbe, 0xba, 0x9b, 0xd3, 0x19, 0x77, 0x9c, 0xd0, 0xd7, 0x10, 0xca, 0xb9,
+	0x19, 0x08, 0xea, 0x0b, 0xbc, 0xdd, 0x06, 0x9d, 0xea, 0x41, 0x23, 0xf3, 0x5d, 0x06, 0xf4, 0x8f,
+	0x32, 0xcb, 0xff, 0xb1, 0x05, 0xa6, 0x14, 0xab, 0x58, 0xa0, 0x1e, 0xdc, 0x3c, 0x1a, 0x51, 0xc7,
+	0xeb, 0x1f, 0xe3, 0x87, 0x72, 0x87, 0xbb, 0x71, 0x44, 0x1a, 0x66, 0x0a, 0x29, 0x9a, 0x39, 0x2b,
+	0x39, 0xd0, 0x01, 0xbf, 0x10, 0xdf, 0x53, 0x9f, 0x9d, 0x33, 0x3f, 0x70, 0xb8, 0x87, 0x1f, 0x2d,
+	0x0f, 0x34, 0x58, 0x0d, 0xa9, 0x07, 0x9a, 0x53, 0xc9, 0xe6, 0xb2, 0x80, 0xf9, 0x53, 0x66, 0xe1,
+	0x9a, 0xd2, 0xdc, 0x0c, 0x5b, 0x69, 0x6e, 0x86, 0x25, 0x9a, 0x17, 0x34, 0x38, 0x75, 0x5c, 0x47,
+	0xe0, 0xba, 0xbc, 0x09, 0x52, 0x63, 0x67, 0x98, 0xaa, 0x99, 0xf3, 0xd0, 0x33, 0xb8, 0xf9, 0xe6,
+	0xf2, 0x88, 0x87, 0x9e, 0xc0, 0x0d, 0x79, 0x09, 0xab, 0x71, 0x44, 0x36, 0x45, 0x0a, 0x19, 0xf3,
+	0x18, 0x0a, 0xe0, 0xce, 0x29, 0x0d, 0xc4, 0xc9, 0x25, 0x33, 0x43, 0xe1, 0x70, 0xcf, 0x60, 0x41,
+	0x38, 0x16, 0x18, 0xc9, 0x16, 0x6b, 0xf3, 0x16, 0xaf, 0x46, 0x93, 0xbf, 0x82, 0x64, 0xca, 0xf5,
+	0xa7, 0x71, 0x44, 0x9e, 0x8c, 0xef, 0xca, 0x95, 0x82, 0x8a, 0xdc, 0xd1, 0x05, 0xac, 0xe7, 0xa0,
+	0x00, 0xef, 0xc8, 0x61, 0x69, 0xdd, 0x9f, 0x51, 0xd7, 0xe2, 0x88, 0xb4, 0x58, 0x4e, 0xa7, 0xa4,
+	0xba, 0xe3, 0xb9, 0xf7, 0x17, 0x80, 0xff, 0xbf, 0xa7, 0x76, 0xf4, 0x0d, 0xdc, 0x7d, 0xc5, 0x05,
+	0xf5, 0x9d, 0x1f, 0x99, 0x75, 0x28, 0xd2, 0x41, 0x93, 0xb7, 0x0c, 0xc8, 0x43, 0xf9, 0x38, 0x8e,
+	0x08, 0xf1, 0x8a, 0x08, 0x4a, 0xc6, 0x62, 0x07, 0x64, 0xc3, 0x5a, 0xbe, 0x9f, 0x6b, 0xb2, 0x9f,
+	0xcd, 0xe2, 0xdd, 0xe9, 0xcf, 0xe2, 0x88, 0x3c, 0x1d, 0xd2, 0x80, 0x15, 0x14, 0xab, 0xce, 0x52,
+	0x2e, 0xbc, 0xf7, 0xeb, 0x06, 0xdc, 0x29, 0x90, 0x14, 0x15, 0x00, 0x3e, 0x44, 0x01, 0xe8, 0x2d,
+	0x6c, 0x9e, 0xd3, 0xb1, 0x63, 0x51, 0xc1, 0xfd, 0x81, 0xa0, 0x22, 0x30, 0x38, 0x17, 0xb2, 0x8b,
+	0x6b, 0xb2, 0x8b, 0x9f, 0xc4, 0x11, 0x69, 0x4f, 0x0b, 0x19, 0x8a, 0xed, 0x3d, 0x1e, 0xe8, 0x37,
+	0x00, 0x9b, 0x87, 0xa6, 0x19, 0xba, 0xe1, 0x98, 0x0a, 0x66, 0x7d, 0xc5, 0x58, 0xd0, 0xf7, 0xd2,
+	0xf7, 0xca, 0xba, 0xb4, 0x77, 0x13, 0x7b, 0x5a, 0xc8, 0x58, 0xda, 0xff, 0xf1, 0x37, 0x39, 0x71,
+	0xa9, 0x18, 0xf5, 0x86, 0x8e, 0xdd, 0xed, 0x7b, 0xe2, 0xb9, 0xf2, 0x66, 0x74, 0xc3, 0xb1, 0x70,
+	0xa6, 0xcc, 0x0f, 0x2e, 0x7b, 0xee, 0xe5, 0xbe, 0xbc, 0xfe, 0xfb, 0x26, 0xf7, 0xd9, 0xbe, 0xcd,
+	0x7b, 0x16, 0x15, 0xb4, 0xab, 0x3b, 0x76, 0xdf, 0x13, 0x47, 0x34, 0x10, 0xcc, 0x37, 0xee, 0x29,
+	0x06, 0xfd, 0x0c, 0xe0, 0xa3, 0x63, 0x36, 0x55, 0xeb, 0xdb, 0x90, 0xf5, 0xb1, 0x38, 0x22, 0xd8,
+	0x5a, 0x89, 0x7c, 0x88, 0xba, 0x72, 0xc9, 0xf5, 0x2f, 0xaf, 0x6e, 0xb4, 0xd2, 0xf5, 0x8d, 0x56,
+	0x7a, 0x7f, 0xa3, 0x81, 0x9f, 0x66, 0x1a, 0xf8, 0x7d, 0xa6, 0x81, 0x77, 0x33, 0x0d, 0x5c, 0xcd,
+	0x34, 0x70, 0x3d, 0xd3, 0xc0, 0x3f, 0x33, 0x0d, 0xfc, 0x3b, 0xd3, 0x4a, 0xef, 0x67, 0x1a, 0xf8,
+	0xe5, 0x56, 0x2b, 0x5d, 0xdd, 0x6a, 0xa5, 0xeb, 0x5b, 0xad, 0xf4, 0x6d, 0x59, 0x7e, 0x06, 0x0c,
+	0x1f, 0xc8, 0x29, 0xf9, 0xec, 0xbf, 0x00, 0x00, 0x00, 0xff, 0xff, 0x56, 0xda, 0x3a, 0xaa, 0x5f,
+	0x08, 0x00, 0x00,
 }
 
 func (this *MetaBlockV2) Equal(that interface{}) bool {
@@ -556,6 +476,9 @@ func (this *MetaBlockV2) Equal(that interface{}) bool {
 	if this.GasLimit != that1.GasLimit {
 		return false
 	}
+	if this.TxCount != that1.TxCount {
+		return false
+	}
 	if !this.LastExecutionResult.Equal(that1.LastExecutionResult) {
 		return false
 	}
@@ -591,7 +514,7 @@ func (this *ExecutionResultMetaInfo) Equal(that interface{}) bool {
 	if !bytes.Equal(this.NotarizedAtHeaderHash, that1.NotarizedAtHeaderHash) {
 		return false
 	}
-	if !this.BaseExecutionResultMeta.Equal(that1.BaseExecutionResultMeta) {
+	if !this.ExecutionResult.Equal(that1.ExecutionResult) {
 		return false
 	}
 	return true
@@ -615,7 +538,7 @@ func (this *ExecutionResultMeta) Equal(that interface{}) bool {
 	} else if this == nil {
 		return false
 	}
-	if !this.BaseExecutionResultMeta.Equal(that1.BaseExecutionResultMeta) {
+	if !this.ExecutionResult.Equal(that1.ExecutionResult) {
 		return false
 	}
 	if !bytes.Equal(this.ValidatorStatsRootHash, that1.ValidatorStatsRootHash) {
@@ -635,56 +558,11 @@ func (this *ExecutionResultMeta) Equal(that interface{}) bool {
 	}
 	return true
 }
-func (this *BaseExecutionResultMeta) Equal(that interface{}) bool {
-	if that == nil {
-		return this == nil
-	}
-
-	that1, ok := that.(*BaseExecutionResultMeta)
-	if !ok {
-		that2, ok := that.(BaseExecutionResultMeta)
-		if ok {
-			that1 = &that2
-		} else {
-			return false
-		}
-	}
-	if that1 == nil {
-		return this == nil
-	} else if this == nil {
-		return false
-	}
-	if !this.BaseExecutionResult.Equal(that1.BaseExecutionResult) {
-		return false
-	}
-	if !bytes.Equal(this.ReceiptsHash, that1.ReceiptsHash) {
-		return false
-	}
-	{
-		__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
-		if !__caster.Equal(this.AccumulatedFees, that1.AccumulatedFees) {
-			return false
-		}
-	}
-	{
-		__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
-		if !__caster.Equal(this.DeveloperFees, that1.DeveloperFees) {
-			return false
-		}
-	}
-	if this.GasUsed != that1.GasUsed {
-		return false
-	}
-	if this.ExecutedTxCount != that1.ExecutedTxCount {
-		return false
-	}
-	return true
-}
 func (this *MetaBlockV2) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 22)
+	s := make([]string, 0, 23)
 	s = append(s, "&block.MetaBlockV2{")
 	s = append(s, "Nonce: "+fmt.Sprintf("%#v", this.Nonce)+",\n")
 	s = append(s, "Epoch: "+fmt.Sprintf("%#v", this.Epoch)+",\n")
@@ -720,6 +598,7 @@ func (this *MetaBlockV2) GoString() string {
 	s = append(s, "SoftwareVersion: "+fmt.Sprintf("%#v", this.SoftwareVersion)+",\n")
 	s = append(s, "Reserved: "+fmt.Sprintf("%#v", this.Reserved)+",\n")
 	s = append(s, "GasLimit: "+fmt.Sprintf("%#v", this.GasLimit)+",\n")
+	s = append(s, "TxCount: "+fmt.Sprintf("%#v", this.TxCount)+",\n")
 	if this.LastExecutionResult != nil {
 		s = append(s, "LastExecutionResult: "+fmt.Sprintf("%#v", this.LastExecutionResult)+",\n")
 	}
@@ -736,8 +615,8 @@ func (this *ExecutionResultMetaInfo) GoString() string {
 	s := make([]string, 0, 6)
 	s = append(s, "&block.ExecutionResultMetaInfo{")
 	s = append(s, "NotarizedAtHeaderHash: "+fmt.Sprintf("%#v", this.NotarizedAtHeaderHash)+",\n")
-	if this.BaseExecutionResultMeta != nil {
-		s = append(s, "BaseExecutionResultMeta: "+fmt.Sprintf("%#v", this.BaseExecutionResultMeta)+",\n")
+	if this.ExecutionResult != nil {
+		s = append(s, "ExecutionResult: "+fmt.Sprintf("%#v", this.ExecutionResult)+",\n")
 	}
 	s = append(s, "}")
 	return strings.Join(s, "")
@@ -748,29 +627,12 @@ func (this *ExecutionResultMeta) GoString() string {
 	}
 	s := make([]string, 0, 8)
 	s = append(s, "&block.ExecutionResultMeta{")
-	if this.BaseExecutionResultMeta != nil {
-		s = append(s, "BaseExecutionResultMeta: "+fmt.Sprintf("%#v", this.BaseExecutionResultMeta)+",\n")
+	if this.ExecutionResult != nil {
+		s = append(s, "ExecutionResult: "+fmt.Sprintf("%#v", this.ExecutionResult)+",\n")
 	}
 	s = append(s, "ValidatorStatsRootHash: "+fmt.Sprintf("%#v", this.ValidatorStatsRootHash)+",\n")
 	s = append(s, "AccumulatedFeesInEpoch: "+fmt.Sprintf("%#v", this.AccumulatedFeesInEpoch)+",\n")
 	s = append(s, "DevFeesInEpoch: "+fmt.Sprintf("%#v", this.DevFeesInEpoch)+",\n")
-	s = append(s, "}")
-	return strings.Join(s, "")
-}
-func (this *BaseExecutionResultMeta) GoString() string {
-	if this == nil {
-		return "nil"
-	}
-	s := make([]string, 0, 10)
-	s = append(s, "&block.BaseExecutionResultMeta{")
-	if this.BaseExecutionResult != nil {
-		s = append(s, "BaseExecutionResult: "+fmt.Sprintf("%#v", this.BaseExecutionResult)+",\n")
-	}
-	s = append(s, "ReceiptsHash: "+fmt.Sprintf("%#v", this.ReceiptsHash)+",\n")
-	s = append(s, "AccumulatedFees: "+fmt.Sprintf("%#v", this.AccumulatedFees)+",\n")
-	s = append(s, "DeveloperFees: "+fmt.Sprintf("%#v", this.DeveloperFees)+",\n")
-	s = append(s, "GasUsed: "+fmt.Sprintf("%#v", this.GasUsed)+",\n")
-	s = append(s, "ExecutedTxCount: "+fmt.Sprintf("%#v", this.ExecutedTxCount)+",\n")
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -815,7 +677,7 @@ func (m *MetaBlockV2) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 			i--
 			dAtA[i] = 0x1
 			i--
-			dAtA[i] = 0x92
+			dAtA[i] = 0x9a
 		}
 	}
 	if m.LastExecutionResult != nil {
@@ -830,7 +692,14 @@ func (m *MetaBlockV2) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x1
 		i--
-		dAtA[i] = 0x8a
+		dAtA[i] = 0x92
+	}
+	if m.TxCount != 0 {
+		i = encodeVarintMetaBlockV2(dAtA, i, uint64(m.TxCount))
+		i--
+		dAtA[i] = 0x1
+		i--
+		dAtA[i] = 0x88
 	}
 	if m.GasLimit != 0 {
 		i = encodeVarintMetaBlockV2(dAtA, i, uint64(m.GasLimit))
@@ -983,9 +852,9 @@ func (m *ExecutionResultMetaInfo) MarshalToSizedBuffer(dAtA []byte) (int, error)
 	_ = i
 	var l int
 	_ = l
-	if m.BaseExecutionResultMeta != nil {
+	if m.ExecutionResult != nil {
 		{
-			size, err := m.BaseExecutionResultMeta.MarshalToSizedBuffer(dAtA[:i])
+			size, err := m.ExecutionResult.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -1054,83 +923,9 @@ func (m *ExecutionResultMeta) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		i--
 		dAtA[i] = 0x12
 	}
-	if m.BaseExecutionResultMeta != nil {
+	if m.ExecutionResult != nil {
 		{
-			size, err := m.BaseExecutionResultMeta.MarshalToSizedBuffer(dAtA[:i])
-			if err != nil {
-				return 0, err
-			}
-			i -= size
-			i = encodeVarintMetaBlockV2(dAtA, i, uint64(size))
-		}
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
-}
-
-func (m *BaseExecutionResultMeta) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *BaseExecutionResultMeta) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *BaseExecutionResultMeta) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if m.ExecutedTxCount != 0 {
-		i = encodeVarintMetaBlockV2(dAtA, i, uint64(m.ExecutedTxCount))
-		i--
-		dAtA[i] = 0x30
-	}
-	if m.GasUsed != 0 {
-		i = encodeVarintMetaBlockV2(dAtA, i, uint64(m.GasUsed))
-		i--
-		dAtA[i] = 0x28
-	}
-	{
-		__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
-		size := __caster.Size(m.DeveloperFees)
-		i -= size
-		if _, err := __caster.MarshalTo(m.DeveloperFees, dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintMetaBlockV2(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x22
-	{
-		__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
-		size := __caster.Size(m.AccumulatedFees)
-		i -= size
-		if _, err := __caster.MarshalTo(m.AccumulatedFees, dAtA[i:]); err != nil {
-			return 0, err
-		}
-		i = encodeVarintMetaBlockV2(dAtA, i, uint64(size))
-	}
-	i--
-	dAtA[i] = 0x1a
-	if len(m.ReceiptsHash) > 0 {
-		i -= len(m.ReceiptsHash)
-		copy(dAtA[i:], m.ReceiptsHash)
-		i = encodeVarintMetaBlockV2(dAtA, i, uint64(len(m.ReceiptsHash)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if m.BaseExecutionResult != nil {
-		{
-			size, err := m.BaseExecutionResult.MarshalToSizedBuffer(dAtA[:i])
+			size, err := m.ExecutionResult.MarshalToSizedBuffer(dAtA[:i])
 			if err != nil {
 				return 0, err
 			}
@@ -1223,6 +1018,9 @@ func (m *MetaBlockV2) Size() (n int) {
 	if m.GasLimit != 0 {
 		n += 2 + sovMetaBlockV2(uint64(m.GasLimit))
 	}
+	if m.TxCount != 0 {
+		n += 2 + sovMetaBlockV2(uint64(m.TxCount))
+	}
 	if m.LastExecutionResult != nil {
 		l = m.LastExecutionResult.Size()
 		n += 2 + l + sovMetaBlockV2(uint64(l))
@@ -1246,8 +1044,8 @@ func (m *ExecutionResultMetaInfo) Size() (n int) {
 	if l > 0 {
 		n += 1 + l + sovMetaBlockV2(uint64(l))
 	}
-	if m.BaseExecutionResultMeta != nil {
-		l = m.BaseExecutionResultMeta.Size()
+	if m.ExecutionResult != nil {
+		l = m.ExecutionResult.Size()
 		n += 1 + l + sovMetaBlockV2(uint64(l))
 	}
 	return n
@@ -1259,8 +1057,8 @@ func (m *ExecutionResultMeta) Size() (n int) {
 	}
 	var l int
 	_ = l
-	if m.BaseExecutionResultMeta != nil {
-		l = m.BaseExecutionResultMeta.Size()
+	if m.ExecutionResult != nil {
+		l = m.ExecutionResult.Size()
 		n += 1 + l + sovMetaBlockV2(uint64(l))
 	}
 	l = len(m.ValidatorStatsRootHash)
@@ -1276,39 +1074,6 @@ func (m *ExecutionResultMeta) Size() (n int) {
 		__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
 		l = __caster.Size(m.DevFeesInEpoch)
 		n += 1 + l + sovMetaBlockV2(uint64(l))
-	}
-	return n
-}
-
-func (m *BaseExecutionResultMeta) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	if m.BaseExecutionResult != nil {
-		l = m.BaseExecutionResult.Size()
-		n += 1 + l + sovMetaBlockV2(uint64(l))
-	}
-	l = len(m.ReceiptsHash)
-	if l > 0 {
-		n += 1 + l + sovMetaBlockV2(uint64(l))
-	}
-	{
-		__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
-		l = __caster.Size(m.AccumulatedFees)
-		n += 1 + l + sovMetaBlockV2(uint64(l))
-	}
-	{
-		__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
-		l = __caster.Size(m.DeveloperFees)
-		n += 1 + l + sovMetaBlockV2(uint64(l))
-	}
-	if m.GasUsed != 0 {
-		n += 1 + sovMetaBlockV2(uint64(m.GasUsed))
-	}
-	if m.ExecutedTxCount != 0 {
-		n += 1 + sovMetaBlockV2(uint64(m.ExecutedTxCount))
 	}
 	return n
 }
@@ -1360,6 +1125,7 @@ func (this *MetaBlockV2) String() string {
 		`SoftwareVersion:` + fmt.Sprintf("%v", this.SoftwareVersion) + `,`,
 		`Reserved:` + fmt.Sprintf("%v", this.Reserved) + `,`,
 		`GasLimit:` + fmt.Sprintf("%v", this.GasLimit) + `,`,
+		`TxCount:` + fmt.Sprintf("%v", this.TxCount) + `,`,
 		`LastExecutionResult:` + strings.Replace(this.LastExecutionResult.String(), "ExecutionResultMetaInfo", "ExecutionResultMetaInfo", 1) + `,`,
 		`ExecutionResults:` + repeatedStringForExecutionResults + `,`,
 		`}`,
@@ -1372,7 +1138,7 @@ func (this *ExecutionResultMetaInfo) String() string {
 	}
 	s := strings.Join([]string{`&ExecutionResultMetaInfo{`,
 		`NotarizedAtHeaderHash:` + fmt.Sprintf("%v", this.NotarizedAtHeaderHash) + `,`,
-		`BaseExecutionResultMeta:` + strings.Replace(this.BaseExecutionResultMeta.String(), "BaseExecutionResultMeta", "BaseExecutionResultMeta", 1) + `,`,
+		`ExecutionResult:` + strings.Replace(fmt.Sprintf("%v", this.ExecutionResult), "ExecutionResult", "ExecutionResult", 1) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -1382,25 +1148,10 @@ func (this *ExecutionResultMeta) String() string {
 		return "nil"
 	}
 	s := strings.Join([]string{`&ExecutionResultMeta{`,
-		`BaseExecutionResultMeta:` + strings.Replace(this.BaseExecutionResultMeta.String(), "BaseExecutionResultMeta", "BaseExecutionResultMeta", 1) + `,`,
+		`ExecutionResult:` + strings.Replace(fmt.Sprintf("%v", this.ExecutionResult), "ExecutionResult", "ExecutionResult", 1) + `,`,
 		`ValidatorStatsRootHash:` + fmt.Sprintf("%v", this.ValidatorStatsRootHash) + `,`,
 		`AccumulatedFeesInEpoch:` + fmt.Sprintf("%v", this.AccumulatedFeesInEpoch) + `,`,
 		`DevFeesInEpoch:` + fmt.Sprintf("%v", this.DevFeesInEpoch) + `,`,
-		`}`,
-	}, "")
-	return s
-}
-func (this *BaseExecutionResultMeta) String() string {
-	if this == nil {
-		return "nil"
-	}
-	s := strings.Join([]string{`&BaseExecutionResultMeta{`,
-		`BaseExecutionResult:` + strings.Replace(fmt.Sprintf("%v", this.BaseExecutionResult), "BaseExecutionResult", "BaseExecutionResult", 1) + `,`,
-		`ReceiptsHash:` + fmt.Sprintf("%v", this.ReceiptsHash) + `,`,
-		`AccumulatedFees:` + fmt.Sprintf("%v", this.AccumulatedFees) + `,`,
-		`DeveloperFees:` + fmt.Sprintf("%v", this.DeveloperFees) + `,`,
-		`GasUsed:` + fmt.Sprintf("%v", this.GasUsed) + `,`,
-		`ExecutedTxCount:` + fmt.Sprintf("%v", this.ExecutedTxCount) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -1911,6 +1662,25 @@ func (m *MetaBlockV2) Unmarshal(dAtA []byte) error {
 				}
 			}
 		case 17:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field TxCount", wireType)
+			}
+			m.TxCount = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowMetaBlockV2
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.TxCount |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 18:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field LastExecutionResult", wireType)
 			}
@@ -1946,7 +1716,7 @@ func (m *MetaBlockV2) Unmarshal(dAtA []byte) error {
 				return err
 			}
 			iNdEx = postIndex
-		case 18:
+		case 19:
 			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field ExecutionResults", wireType)
 			}
@@ -2069,7 +1839,7 @@ func (m *ExecutionResultMetaInfo) Unmarshal(dAtA []byte) error {
 			iNdEx = postIndex
 		case 2:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field BaseExecutionResultMeta", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ExecutionResult", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -2096,10 +1866,10 @@ func (m *ExecutionResultMetaInfo) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.BaseExecutionResultMeta == nil {
-				m.BaseExecutionResultMeta = &BaseExecutionResultMeta{}
+			if m.ExecutionResult == nil {
+				m.ExecutionResult = &ExecutionResult{}
 			}
-			if err := m.BaseExecutionResultMeta.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.ExecutionResult.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2158,7 +1928,7 @@ func (m *ExecutionResultMeta) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field BaseExecutionResultMeta", wireType)
+				return fmt.Errorf("proto: wrong wireType = %d for field ExecutionResult", wireType)
 			}
 			var msglen int
 			for shift := uint(0); ; shift += 7 {
@@ -2185,10 +1955,10 @@ func (m *ExecutionResultMeta) Unmarshal(dAtA []byte) error {
 			if postIndex > l {
 				return io.ErrUnexpectedEOF
 			}
-			if m.BaseExecutionResultMeta == nil {
-				m.BaseExecutionResultMeta = &BaseExecutionResultMeta{}
+			if m.ExecutionResult == nil {
+				m.ExecutionResult = &ExecutionResult{}
 			}
-			if err := m.BaseExecutionResultMeta.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+			if err := m.ExecutionResult.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err
 			}
 			iNdEx = postIndex
@@ -2302,243 +2072,6 @@ func (m *ExecutionResultMeta) Unmarshal(dAtA []byte) error {
 				}
 			}
 			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipMetaBlockV2(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if skippy < 0 {
-				return ErrInvalidLengthMetaBlockV2
-			}
-			if (iNdEx + skippy) < 0 {
-				return ErrInvalidLengthMetaBlockV2
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
-}
-func (m *BaseExecutionResultMeta) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowMetaBlockV2
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: BaseExecutionResultMeta: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: BaseExecutionResultMeta: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field BaseExecutionResult", wireType)
-			}
-			var msglen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMetaBlockV2
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				msglen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if msglen < 0 {
-				return ErrInvalidLengthMetaBlockV2
-			}
-			postIndex := iNdEx + msglen
-			if postIndex < 0 {
-				return ErrInvalidLengthMetaBlockV2
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			if m.BaseExecutionResult == nil {
-				m.BaseExecutionResult = &BaseExecutionResult{}
-			}
-			if err := m.BaseExecutionResult.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-				return err
-			}
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ReceiptsHash", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMetaBlockV2
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthMetaBlockV2
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMetaBlockV2
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ReceiptsHash = append(m.ReceiptsHash[:0], dAtA[iNdEx:postIndex]...)
-			if m.ReceiptsHash == nil {
-				m.ReceiptsHash = []byte{}
-			}
-			iNdEx = postIndex
-		case 3:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field AccumulatedFees", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMetaBlockV2
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthMetaBlockV2
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMetaBlockV2
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			{
-				__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
-				if tmp, err := __caster.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-					return err
-				} else {
-					m.AccumulatedFees = tmp
-				}
-			}
-			iNdEx = postIndex
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field DeveloperFees", wireType)
-			}
-			var byteLen int
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMetaBlockV2
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				byteLen |= int(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			if byteLen < 0 {
-				return ErrInvalidLengthMetaBlockV2
-			}
-			postIndex := iNdEx + byteLen
-			if postIndex < 0 {
-				return ErrInvalidLengthMetaBlockV2
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			{
-				__caster := &github_com_multiversx_mx_chain_core_go_data.BigIntCaster{}
-				if tmp, err := __caster.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
-					return err
-				} else {
-					m.DeveloperFees = tmp
-				}
-			}
-			iNdEx = postIndex
-		case 5:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field GasUsed", wireType)
-			}
-			m.GasUsed = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMetaBlockV2
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.GasUsed |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 6:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ExecutedTxCount", wireType)
-			}
-			m.ExecutedTxCount = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowMetaBlockV2
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.ExecutedTxCount |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
 		default:
 			iNdEx = preIndex
 			skippy, err := skipMetaBlockV2(dAtA[iNdEx:])
