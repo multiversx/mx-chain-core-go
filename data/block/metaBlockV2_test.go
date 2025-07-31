@@ -73,7 +73,7 @@ func TestMetaBlockV2_GetMiniBlockHeadersWithDst(t *testing.T) {
 func TestMetaBlockV2_GetOrderedCrossMiniblocksWithDst(t *testing.T) {
 	t.Parallel()
 
-	metaHdr := &block.MetaBlock{Round: 6}
+	metaHdr := &block.MetaBlockV2{Round: 6}
 	metaHdr.ShardInfo = make([]block.ShardData, 0)
 
 	shardMBHeader1 := make([]block.MiniBlockHeader, 0)
@@ -537,8 +537,7 @@ func TestMetaBlockV2_ShallowClone(t *testing.T) {
 
 	t.Run("should work", func(t *testing.T) {
 		t.Parallel()
-		mb2 := &block.HeaderV3{
-			ShardID:         1,
+		mb2 := &block.MetaBlockV2{
 			Nonce:           42,
 			Epoch:           2,
 			Round:           100,
@@ -552,7 +551,7 @@ func TestMetaBlockV2_ShallowClone(t *testing.T) {
 		clone := mb2.ShallowClone()
 		require.NotNil(t, clone)
 		require.Equal(t, mb2, clone)
-		require.False(t, &mb2.MiniBlockHeaders == &clone.(*block.HeaderV3).MiniBlockHeaders)
+		require.False(t, &mb2.MiniBlockHeaders == &clone.(*block.MetaBlockV2).MiniBlockHeaders)
 	})
 }
 
@@ -568,7 +567,7 @@ func TestMetaBlockV2_CheckFieldsForNil(t *testing.T) {
 
 	t.Run("nil prev hash", func(t *testing.T) {
 		t.Parallel()
-		mb2 := &block.HeaderV3{
+		mb2 := &block.MetaBlockV2{
 			PrevHash: nil,
 		}
 		err := mb2.CheckFieldsForNil()
@@ -578,7 +577,7 @@ func TestMetaBlockV2_CheckFieldsForNil(t *testing.T) {
 
 	t.Run("nil prev rand seed", func(t *testing.T) {
 		t.Parallel()
-		mb2 := &block.HeaderV3{
+		mb2 := &block.MetaBlockV2{
 			PrevHash:     []byte("prev hash"),
 			PrevRandSeed: nil,
 		}
@@ -589,7 +588,7 @@ func TestMetaBlockV2_CheckFieldsForNil(t *testing.T) {
 
 	t.Run("nil rand seed", func(t *testing.T) {
 		t.Parallel()
-		mb2 := &block.HeaderV3{
+		mb2 := &block.MetaBlockV2{
 			PrevHash:     []byte("prev hash"),
 			PrevRandSeed: []byte("prev rand seed"),
 			RandSeed:     nil,
@@ -601,7 +600,7 @@ func TestMetaBlockV2_CheckFieldsForNil(t *testing.T) {
 
 	t.Run("nil leader sig", func(t *testing.T) {
 		t.Parallel()
-		mb2 := &block.HeaderV3{
+		mb2 := &block.MetaBlockV2{
 			PrevHash:        []byte("prev hash"),
 			PrevRandSeed:    []byte("prev rand seed"),
 			RandSeed:        []byte("rand seed"),
@@ -614,11 +613,12 @@ func TestMetaBlockV2_CheckFieldsForNil(t *testing.T) {
 
 	t.Run("nil software version", func(t *testing.T) {
 		t.Parallel()
-		mb2 := &block.HeaderV3{
+		mb2 := &block.MetaBlockV2{
 			PrevHash:        []byte("prev hash"),
 			PrevRandSeed:    []byte("prev rand seed"),
 			RandSeed:        []byte("rand seed"),
 			LeaderSignature: []byte("leader signature"),
+			ChainID:         []byte("chain"),
 			SoftwareVersion: nil,
 		}
 		err := mb2.CheckFieldsForNil()
@@ -626,30 +626,15 @@ func TestMetaBlockV2_CheckFieldsForNil(t *testing.T) {
 		require.True(t, strings.Contains(err.Error(), "SoftwareVersion"))
 	})
 
-	t.Run("nil last exec result", func(t *testing.T) {
-		t.Parallel()
-		mb2 := &block.HeaderV3{
-			PrevHash:            []byte("prev hash"),
-			PrevRandSeed:        []byte("prev rand seed"),
-			RandSeed:            []byte("rand seed"),
-			LeaderSignature:     []byte("leader signature"),
-			SoftwareVersion:     []byte("v1.0.0"),
-			LastExecutionResult: nil,
-		}
-		err := mb2.CheckFieldsForNil()
-		require.True(t, errors.Is(err, data.ErrNilValue))
-		require.True(t, strings.Contains(err.Error(), "LastExecutionResult"))
-	})
-
 	t.Run("valid header", func(t *testing.T) {
 		t.Parallel()
-		mb2 := &block.HeaderV3{
-			PrevHash:            []byte("prev hash"),
-			PrevRandSeed:        []byte("prev rand seed"),
-			RandSeed:            []byte("rand seed"),
-			LeaderSignature:     []byte("leader sig"),
-			SoftwareVersion:     []byte("v1.0.0"),
-			LastExecutionResult: &block.ExecutionResultInfo{},
+		mb2 := &block.MetaBlockV2{
+			PrevHash:        []byte("prev hash"),
+			PrevRandSeed:    []byte("prev rand seed"),
+			RandSeed:        []byte("rand seed"),
+			LeaderSignature: []byte("leader sig"),
+			SoftwareVersion: []byte("v1.0.0"),
+			ChainID:         []byte("chain"),
 		}
 		err := mb2.CheckFieldsForNil()
 		require.NoError(t, err)

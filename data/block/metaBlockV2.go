@@ -408,6 +408,9 @@ func (m *MetaBlockV2) CheckFieldsForNil() error {
 	if m.RandSeed == nil {
 		return fmt.Errorf("%w in MetaBlockV2.RandSeed", data.ErrNilValue)
 	}
+	if m.LeaderSignature == nil {
+		return fmt.Errorf("%w in MetaBlockV2.LeaderSignature", data.ErrNilValue)
+	}
 	if m.ChainID == nil {
 		return fmt.Errorf("%w in MetaBlockV2.ChainID", data.ErrNilValue)
 	}
