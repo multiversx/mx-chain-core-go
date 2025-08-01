@@ -640,6 +640,21 @@ func (hv2 *HeaderV2) GetAdditionalData() headerVersionData.HeaderAdditionalData 
 	return additionalVersionData
 }
 
+// GetGasLimit always returns 0
+func (hv2 *HeaderV2) GetGasLimit() uint32 {
+	return 0
+}
+
+// GetLastExecutionResultHandler always returns nil
+func (hv2 *HeaderV2) GetLastExecutionResultHandler() data.ShardExecutionResultInfo {
+	return nil
+}
+
+// GetExecutionResultsHandlers always returns nil
+func (hv2 *HeaderV2) GetExecutionResultsHandlers() []data.ExecutionResultHandler {
+	return nil
+}
+
 // CheckFieldsForNil checks a predefined set of fields for nil values
 func (hv2 *HeaderV2) CheckFieldsForNil() error {
 	if hv2 == nil {

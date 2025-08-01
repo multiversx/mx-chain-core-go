@@ -367,6 +367,80 @@ func (hv3 *HeaderV3) GetDeveloperFees() *big.Int {
 	return big.NewInt(0)
 }
 
+// SetEpochStartMetaHash sets the epoch start metaBlock hash
+func (hv3 *HeaderV3) SetEpochStartMetaHash(hash []byte) error {
+	if hv3 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	hv3.EpochStartMetaHash = hash
+	return nil
+}
+
+// GetBlockBodyTypeInt32 returns the block body type as int32
+func (hv3 *HeaderV3) GetBlockBodyTypeInt32() int32 {
+	if hv3 == nil {
+		return -1
+	}
+
+	return int32(hv3.GetBlockBodyType())
+}
+
+// SetMetaBlockHashes sets the metaBlock hashes
+func (hv3 *HeaderV3) SetMetaBlockHashes(hashes [][]byte) error {
+	if hv3 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	hv3.MetaBlockHashes = hashes
+	return nil
+}
+
+// MapMiniBlockHashesToShards is a map of mini block hashes and sender IDs
+func (hv3 *HeaderV3) MapMiniBlockHashesToShards() map[string]uint32 {
+	if hv3 == nil {
+		return nil
+	}
+
+	hashDst := make(map[string]uint32)
+	for _, val := range hv3.MiniBlockHeaders {
+		hashDst[string(val.Hash)] = val.SenderShardID
+	}
+	return hashDst
+}
+
+// SetBlockBodyTypeInt32 sets the blockBodyType in the header
+func (hv3 *HeaderV3) SetBlockBodyTypeInt32(blockBodyType int32) error {
+	if hv3 == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	hv3.BlockBodyType = Type(blockBodyType)
+
+	return nil
+}
+
+// GetLastExecutionResultHandler returns the last execution result
+func (hv3 *HeaderV3) GetLastExecutionResultHandler() data.ShardExecutionResultInfo {
+	if hv3 == nil {
+		return nil
+	}
+
+	return hv3.LastExecutionResult
+}
+
+// GetExecutionResultsHandlers returns the execution results
+func (hv3 *HeaderV3) GetExecutionResultsHandlers() []data.ExecutionResultHandler {
+	if hv3 == nil {
+		return nil
+	}
+
+	executionResultsHandlers := make([]data.ExecutionResultHandler, 0, len(hv3.GetExecutionResults()))
+	for _, execResult := range hv3.GetExecutionResults() {
+		executionResultsHandlers = append(executionResultsHandlers, execResult)
+	}
+
+	return executionResultsHandlers
+}
+
 // IsInterfaceNil returns true if there is no value under the interface
 func (hv3 *HeaderV3) IsInterfaceNil() bool {
 	return hv3 == nil
