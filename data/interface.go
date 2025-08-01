@@ -99,6 +99,28 @@ type HeaderProofHandler interface {
 	IsInterfaceNil() bool
 }
 
+// ExecutionResultHandler defines getters and setters for the execution result
+type ExecutionResultHandler interface {
+	GetHeaderHash() []byte
+	GetHeaderNonce() []byte
+	GetHeaderRound() []byte
+	GetRootHash() []byte
+	GetReceiptsHash() []byte
+	GetMiniBlockHeaders() []MiniBlockHeaderHandler
+	GetDeveloperFees() *big.Int
+	GetAccumulatedFees() *big.Int
+	GetGasUsed() uint64
+	GetExecutedTxCount() uint32
+}
+
+// MetaExecutionResultHandler defines getter and setters for the meta execution result
+type MetaExecutionResultHandler interface {
+	ExecutionResultHandler
+	GetValidatorStatsRootHash() []byte
+	GetAccumulatedFeesInEpoch() *big.Int
+	GetDevFeesInEpoch() *big.Int
+}
+
 // ShardHeaderHandler defines getters and setters for the shard block header
 type ShardHeaderHandler interface {
 	HeaderHandler
