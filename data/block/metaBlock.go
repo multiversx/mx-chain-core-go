@@ -15,6 +15,16 @@ import (
 var _ = data.HeaderHandler(&MetaBlock{})
 var _ = data.MetaHeaderHandler(&MetaBlock{})
 
+// GetLastExecutionResultHandler returns nil
+func (m *MetaBlock) GetLastExecutionResultHandler() data.MetaExecutionResultInfoHandler {
+	return nil
+}
+
+// GetExecutionResultsHandlers return nil
+func (m *MetaBlock) GetExecutionResultsHandlers() []data.MetaExecutionResultHandler {
+	return nil
+}
+
 // GetShardID returns the metachain shard id
 func (m *MetaBlock) GetShardID() uint32 {
 	return core.MetachainShardId
