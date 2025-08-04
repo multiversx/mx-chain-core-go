@@ -594,6 +594,21 @@ func (h *Header) GetAdditionalData() headerVersionData.HeaderAdditionalData {
 	return nil
 }
 
+// GetGasLimit always returns 0
+func (h *Header) GetGasLimit() uint32 {
+	return 0
+}
+
+// GetLastExecutionResultHandler always returns nil
+func (h *Header) GetLastExecutionResultHandler() data.ShardExecutionResultInfo {
+	return nil
+}
+
+// GetExecutionResultsHandlers always returns nil
+func (h *Header) GetExecutionResultsHandlers() []data.ExecutionResultHandler {
+	return nil
+}
+
 // CheckFieldsForNil checks a predefined set of fields for nil values
 func (h *Header) CheckFieldsForNil() error {
 	if h == nil {
