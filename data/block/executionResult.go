@@ -46,7 +46,8 @@ func (eer *ExecutionResult) GetMiniBlockHeadersHandlers() []data.MiniBlockHeader
 
 	mbs := make([]data.MiniBlockHeaderHandler, 0, len(eer.GetMiniBlockHeaders()))
 	for _, mb := range eer.GetMiniBlockHeaders() {
-		mbs = append(mbs, &mb)
+		mbCopy := mb
+		mbs = append(mbs, &mbCopy)
 	}
 
 	return mbs
