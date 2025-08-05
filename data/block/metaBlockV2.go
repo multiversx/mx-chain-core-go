@@ -106,17 +106,17 @@ func (m *MetaBlockV2) SetShardInfoHandlers(shardInfo []data.ShardDataHandler) er
 	return nil
 }
 
-// SetValidatorStatsRootHash will do nothing
+// SetValidatorStatsRootHash returns nil
 func (m *MetaBlockV2) SetValidatorStatsRootHash(_ []byte) error {
 	return nil
 }
 
-// SetDevFeesInEpoch will do nothing
+// SetDevFeesInEpoch returns nil
 func (m *MetaBlockV2) SetDevFeesInEpoch(_ *big.Int) error {
 	return nil
 }
 
-// SetAccumulatedFeesInEpoch will do nothing
+// SetAccumulatedFeesInEpoch returns nil
 func (m *MetaBlockV2) SetAccumulatedFeesInEpoch(_ *big.Int) error {
 	return nil
 }
