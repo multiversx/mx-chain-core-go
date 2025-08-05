@@ -40,26 +40,32 @@ func (bm *BaseMetaExecutionResult) GetRootHash() []byte {
 	return bm.BaseExecutionResult.GetRootHash()
 }
 
+// GetHeaderHash returns the header hash
 func (mes *MetaExecutionResult) GetHeaderHash() []byte {
 	return mes.ExecutionResult.GetHeaderHash()
 }
 
+// GetHeaderNonce will return the header nonce
 func (mes *MetaExecutionResult) GetHeaderNonce() uint64 {
 	return mes.ExecutionResult.GetHeaderNonce()
 }
 
+// GetHeaderRound will return the header round
 func (mes *MetaExecutionResult) GetHeaderRound() uint64 {
 	return mes.ExecutionResult.GetHeaderRound()
 }
 
+// GetRootHash will return the header root hash
 func (mes *MetaExecutionResult) GetRootHash() []byte {
 	return mes.ExecutionResult.GetRootHash()
 }
 
+// GetValidatorStatsRootHash will return the validatos statistics root hash
 func (mes *MetaExecutionResult) GetValidatorStatsRootHash() []byte {
 	return mes.ExecutionResult.GetValidatorStatsRootHash()
 }
 
+// GetAccumulatedFeesInEpoch will return the accumulated fees in epoch
 func (mes *MetaExecutionResult) GetAccumulatedFeesInEpoch() *big.Int {
 	return mes.ExecutionResult.GetAccumulatedFeesInEpoch()
 }

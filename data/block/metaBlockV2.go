@@ -23,8 +23,8 @@ func (m *MetaBlockV2) GetExecutionResultsHandlers() []data.MetaExecutionResultHa
 	}
 
 	executionResultsHandlers := make([]data.MetaExecutionResultHandler, len(m.ExecutionResults))
-	for _, executionResult := range m.ExecutionResults {
-		executionResultsHandlers = append(executionResultsHandlers, executionResult)
+	for i, executionResult := range m.ExecutionResults {
+		executionResultsHandlers[i] = executionResult
 	}
 
 	return executionResultsHandlers
@@ -39,21 +39,21 @@ func (m *MetaBlockV2) GetLastExecutionResultHandler() data.MetaExecutionResultIn
 	return m.LastExecutionResult
 }
 
-// GetValidatorStatsRootHash will return the validators statistics root hash
+// GetValidatorStatsRootHash returns nil
 func (m *MetaBlockV2) GetValidatorStatsRootHash() []byte {
 	//TODO should we return the validators statistics root the last notarized execution result ?
 	// OR should be have the validatorStatsRootHash as field on MetaBlocKV2
-	return m.LastExecutionResult.ExecutionResult.ValidatorStatsRootHash
+	return nil
 }
 
-// GetDevFeesInEpoch will return the developers fees from the current epoch
+// GetDevFeesInEpoch returns nil
 func (m *MetaBlockV2) GetDevFeesInEpoch() *big.Int {
 	if m == nil {
 		return big.NewInt(0)
 	}
 
 	// TODO is correct to return the DevFeesInEpoch from the last execution result ?
-	return m.LastExecutionResult.ExecutionResult.DevFeesInEpoch
+	return nil
 }
 
 // GetEpochStartHandler will return the epoch start data
@@ -65,7 +65,7 @@ func (m *MetaBlockV2) GetEpochStartHandler() data.EpochStartHandler {
 	return &m.EpochStart
 }
 
-// GetShardInfoHandlers - gets the shardInfo as an array of ShardDataHandler
+// GetShardInfoHandlers gets the shardInfo as an array of ShardDataHandler
 func (m *MetaBlockV2) GetShardInfoHandlers() []data.ShardDataHandler {
 	if m == nil || m.ShardInfo == nil {
 		return nil
