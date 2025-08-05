@@ -12,6 +12,115 @@ import (
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
 )
 
+// don't break the interface
+var _ = data.HeaderHandler(&MetaBlockV2{})
+var _ = data.MetaHeaderHandler(&MetaBlockV2{})
+
+// GetExecutionResultsHandlers will return the meta execution result handlers
+func (m *MetaBlockV2) GetExecutionResultsHandlers() []data.MetaExecutionResultHandler {
+	if m == nil {
+		return nil
+	}
+
+	executionResultsHandlers := make([]data.MetaExecutionResultHandler, len(m.ExecutionResults))
+	for i, executionResult := range m.ExecutionResults {
+		executionResultsHandlers[i] = executionResult
+	}
+
+	return executionResultsHandlers
+}
+
+// GetLastExecutionResultHandler will return the last execution result handler
+func (m *MetaBlockV2) GetLastExecutionResultHandler() data.MetaExecutionResultInfoHandler {
+	if m == nil {
+		return nil
+	}
+
+	return m.LastExecutionResult
+}
+
+// GetValidatorStatsRootHash returns nil
+func (m *MetaBlockV2) GetValidatorStatsRootHash() []byte {
+	//TODO should we return the validators statistics root the last notarized execution result ?
+	// OR should be have the validatorStatsRootHash as field on MetaBlocKV2
+	return nil
+}
+
+// GetDevFeesInEpoch returns nil
+func (m *MetaBlockV2) GetDevFeesInEpoch() *big.Int {
+	if m == nil {
+		return big.NewInt(0)
+	}
+
+	// TODO is correct to return the DevFeesInEpoch from the last execution result ?
+	return nil
+}
+
+// GetEpochStartHandler will return the epoch start data
+func (m *MetaBlockV2) GetEpochStartHandler() data.EpochStartHandler {
+	if m == nil {
+		return nil
+	}
+
+	return &m.EpochStart
+}
+
+// GetShardInfoHandlers gets the shardInfo as an array of ShardDataHandler
+func (m *MetaBlockV2) GetShardInfoHandlers() []data.ShardDataHandler {
+	if m == nil || m.ShardInfo == nil {
+		return nil
+	}
+
+	shardInfoHandlers := make([]data.ShardDataHandler, len(m.ShardInfo))
+	for i := range m.ShardInfo {
+		shardInfoHandlers[i] = &m.ShardInfo[i]
+	}
+
+	return shardInfoHandlers
+}
+
+// SetShardInfoHandlers will set the provided shard info
+func (m *MetaBlockV2) SetShardInfoHandlers(shardInfo []data.ShardDataHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	if shardInfo == nil {
+		m.ShardInfo = nil
+		return nil
+	}
+
+	sInfo := make([]ShardData, len(shardInfo))
+	for i := range shardInfo {
+		shData, ok := shardInfo[i].(*ShardData)
+		if !ok {
+			return data.ErrInvalidTypeAssertion
+		}
+		if shData == nil {
+			return data.ErrNilPointerDereference
+		}
+		sInfo[i] = *shData
+	}
+
+	m.ShardInfo = sInfo
+
+	return nil
+}
+
+// SetValidatorStatsRootHash returns nil
+func (m *MetaBlockV2) SetValidatorStatsRootHash(_ []byte) error {
+	return nil
+}
+
+// SetDevFeesInEpoch returns nil
+func (m *MetaBlockV2) SetDevFeesInEpoch(_ *big.Int) error {
+	return nil
+}
+
+// SetAccumulatedFeesInEpoch returns nil
+func (m *MetaBlockV2) SetAccumulatedFeesInEpoch(_ *big.Int) error {
+	return nil
+}
+
 // GetShardID returns the metachain shard id
 func (m *MetaBlockV2) GetShardID() uint32 {
 	return core.MetachainShardId
