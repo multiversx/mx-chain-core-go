@@ -99,6 +99,55 @@ type HeaderProofHandler interface {
 	IsInterfaceNil() bool
 }
 
+// BaseExecutionResultHandler defines getters and setters for the base execution result
+type BaseExecutionResultHandler interface {
+	GetHeaderHash() []byte
+	GetHeaderNonce() uint64
+	GetHeaderRound() uint64
+	GetRootHash() []byte
+}
+
+// ExecutionResultHandler defines getters and setters for the execution result
+type ExecutionResultHandler interface {
+	BaseExecutionResultHandler
+	GetReceiptsHash() []byte
+	GetMiniBlockHeadersHandlers() []MiniBlockHeaderHandler
+	GetDeveloperFees() *big.Int
+	GetAccumulatedFees() *big.Int
+	GetGasUsed() uint64
+	GetExecutedTxCount() uint64
+}
+
+// ShardExecutionResultInfo defines the getters for shard execution result info
+type ShardExecutionResultInfo interface {
+	GetNotarizedOnHeaderHash() []byte
+	GetExecutionResultHandler() BaseExecutionResultHandler
+}
+
+// MetaExecutionResultInfoHandler defines the getter for meta execution result info
+type MetaExecutionResultInfoHandler interface {
+	GetNotarizedOnHeaderHash() []byte
+	GetExecutionResultHandler() BaseMetaExecutionResultHandler
+}
+
+// BaseMetaExecutionResultHandler defines getter and setters for a base meta execution result
+type BaseMetaExecutionResultHandler interface {
+	BaseExecutionResultHandler
+	GetValidatorStatsRootHash() []byte
+	GetAccumulatedFeesInEpoch() *big.Int
+	GetDevFeesInEpoch() *big.Int
+}
+
+// MetaExecutionResultHandler defines getter for a meta execution result
+type MetaExecutionResultHandler interface {
+	BaseMetaExecutionResultHandler
+	GetReceiptsHash() []byte
+	GetDeveloperFees() *big.Int
+	GetAccumulatedFees() *big.Int
+	GetGasUsed() uint64
+	GetExecutedTxCount() uint64
+}
+
 // ShardHeaderHandler defines getters and setters for the shard block header
 type ShardHeaderHandler interface {
 	HeaderHandler
@@ -109,6 +158,9 @@ type ShardHeaderHandler interface {
 	SetMetaBlockHashes(hashes [][]byte) error
 	MapMiniBlockHashesToShards() map[string]uint32
 	SetBlockBodyTypeInt32(blockBodyType int32) error
+	GetGasLimit() uint32
+	GetLastExecutionResultHandler() ShardExecutionResultInfo
+	GetExecutionResultsHandlers() []ExecutionResultHandler
 }
 
 // MetaHeaderHandler defines getters and setters for the meta block header
@@ -122,6 +174,8 @@ type MetaHeaderHandler interface {
 	SetDevFeesInEpoch(value *big.Int) error
 	SetShardInfoHandlers(shardInfo []ShardDataHandler) error
 	SetAccumulatedFeesInEpoch(value *big.Int) error
+	GetLastExecutionResultHandler() MetaExecutionResultInfoHandler
+	GetExecutionResultsHandlers() []MetaExecutionResultHandler
 }
 
 // MiniBlockHeaderHandler defines setters and getters for miniBlock headers
