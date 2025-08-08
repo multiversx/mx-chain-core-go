@@ -133,7 +133,7 @@ type ShardExecutionResultInfo interface {
 
 // MetaExecutionResultInfoHandler defines the getter for meta execution result info
 type MetaExecutionResultInfoHandler interface {
-	GetNotarizedOnHeaderHash() []byte
+	GetNotarizedAtHeaderHash() []byte
 	GetExecutionResultHandler() BaseMetaExecutionResultHandler
 	Equal(other interface{}) bool
 	IsInterfaceNil() bool

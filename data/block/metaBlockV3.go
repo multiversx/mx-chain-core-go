@@ -460,7 +460,7 @@ func (m *MetaBlockV3) SetMiniBlockHeaderHandlers(mbHeaderHandlers []data.MiniBlo
 }
 
 // SetReceiptsHash always returns nil
-func (m *MetaBlockV3) SetReceiptsHash(hash []byte) error {
+func (m *MetaBlockV3) SetReceiptsHash(_ []byte) error {
 	return data.ErrFieldNotSupported
 }
 

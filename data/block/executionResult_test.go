@@ -224,6 +224,24 @@ func TestExecutionResult_GetExecutedTxCount(t *testing.T) {
 	})
 }
 
+func TestExecutionResult_IsInterfaceNil(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		er := (*ExecutionResult)(nil)
+		assert.True(t, er.IsInterfaceNil())
+	})
+
+	t.Run("non-nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		er := &ExecutionResult{}
+		assert.False(t, er.IsInterfaceNil())
+	})
+}
+
 func TestExecutionResultInfo_GetExecutionResultHandler(t *testing.T) {
 	t.Parallel()
 
@@ -246,5 +264,41 @@ func TestExecutionResultInfo_GetExecutionResultHandler(t *testing.T) {
 
 		result := eri.GetExecutionResultHandler()
 		assert.Equal(t, ber, result)
+	})
+}
+
+func TestExecutionResultInfo_IsInterfaceNil(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		eri := (*ExecutionResultInfo)(nil)
+		assert.True(t, eri.IsInterfaceNil())
+	})
+
+	t.Run("non-nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		eri := &ExecutionResultInfo{}
+		assert.False(t, eri.IsInterfaceNil())
+	})
+}
+
+func TestBaseExecutionResult_IsInterfaceNil(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		ber := (*BaseExecutionResult)(nil)
+		assert.True(t, ber.IsInterfaceNil())
+	})
+
+	t.Run("non-nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		ber := &BaseExecutionResult{}
+		assert.False(t, ber.IsInterfaceNil())
 	})
 }

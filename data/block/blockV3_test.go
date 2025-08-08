@@ -6,9 +6,10 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/block"
-	"github.com/stretchr/testify/require"
 )
 
 func TestHeaderV3_GetRootHash(t *testing.T) {
@@ -669,4 +670,20 @@ func TestHeaderV3_IsInterfaceNil(t *testing.T) {
 
 	hv3 = &block.HeaderV3{}
 	require.False(t, hv3.IsInterfaceNil())
+}
+
+func TestHeaderV3_IsHeaderV3(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+		var hv3 *block.HeaderV3
+		require.False(t, hv3.IsHeaderV3())
+	})
+
+	t.Run("should return true for HeaderV3", func(t *testing.T) {
+		t.Parallel()
+		hv3 := &block.HeaderV3{}
+		require.True(t, hv3.IsHeaderV3())
+	})
 }
