@@ -20,6 +20,11 @@ func (mm *MetaExecutionResultInfo) GetExecutionResultHandler() data.BaseMetaExec
 	return mm.ExecutionResult
 }
 
+// IsInterfaceNil returns true if there is no value under the interface
+func (mm *MetaExecutionResultInfo) IsInterfaceNil() bool {
+	return mm == nil
+}
+
 // GetHeaderHash will return the header hash
 func (bm *BaseMetaExecutionResult) GetHeaderHash() []byte {
 	return bm.BaseExecutionResult.GetHeaderHash()
@@ -72,4 +77,14 @@ func (mes *MetaExecutionResult) GetAccumulatedFeesInEpoch() *big.Int {
 
 func (mes *MetaExecutionResult) GetDevFeesInEpoch() *big.Int {
 	return mes.ExecutionResult.GetDevFeesInEpoch()
+}
+
+// IsInterfaceNil returns true if there is no value under the interface
+func (mes *MetaExecutionResult) IsInterfaceNil() bool {
+	return mes == nil
+}
+
+// IsInterfaceNil returns true if there is no value under the interface
+func (bme *BaseMetaExecutionResult) IsInterfaceNil() bool {
+	return bme == nil
 }
