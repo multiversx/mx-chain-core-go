@@ -83,6 +83,7 @@ type HeaderHandler interface {
 	IsStartOfEpochBlock() bool
 	ShallowClone() HeaderHandler
 	CheckFieldsForNil() error
+	IsHeaderV3() bool
 	IsInterfaceNil() bool
 }
 
@@ -105,6 +106,8 @@ type BaseExecutionResultHandler interface {
 	GetHeaderNonce() uint64
 	GetHeaderRound() uint64
 	GetRootHash() []byte
+	Equal(other interface{}) bool
+	IsInterfaceNil() bool
 }
 
 // ExecutionResultHandler defines getters and setters for the execution result
@@ -116,18 +119,24 @@ type ExecutionResultHandler interface {
 	GetAccumulatedFees() *big.Int
 	GetGasUsed() uint64
 	GetExecutedTxCount() uint64
+	Equal(other interface{}) bool
+	IsInterfaceNil() bool
 }
 
 // ShardExecutionResultInfo defines the getters for shard execution result info
 type ShardExecutionResultInfo interface {
 	GetNotarizedOnHeaderHash() []byte
 	GetExecutionResultHandler() BaseExecutionResultHandler
+	Equal(other interface{}) bool
+	IsInterfaceNil() bool
 }
 
 // MetaExecutionResultInfoHandler defines the getter for meta execution result info
 type MetaExecutionResultInfoHandler interface {
-	GetNotarizedOnHeaderHash() []byte
+	GetNotarizedAtHeaderHash() []byte
 	GetExecutionResultHandler() BaseMetaExecutionResultHandler
+	Equal(other interface{}) bool
+	IsInterfaceNil() bool
 }
 
 // BaseMetaExecutionResultHandler defines getter and setters for a base meta execution result
@@ -136,6 +145,8 @@ type BaseMetaExecutionResultHandler interface {
 	GetValidatorStatsRootHash() []byte
 	GetAccumulatedFeesInEpoch() *big.Int
 	GetDevFeesInEpoch() *big.Int
+	Equal(other interface{}) bool
+	IsInterfaceNil() bool
 }
 
 // MetaExecutionResultHandler defines getter for a meta execution result
@@ -146,6 +157,7 @@ type MetaExecutionResultHandler interface {
 	GetAccumulatedFees() *big.Int
 	GetGasUsed() uint64
 	GetExecutedTxCount() uint64
+	IsInterfaceNil() bool
 }
 
 // ShardHeaderHandler defines getters and setters for the shard block header

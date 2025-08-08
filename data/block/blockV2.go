@@ -674,3 +674,8 @@ func (hv2 *HeaderV2) CheckFieldsForNil() error {
 
 	return nil
 }
+
+// IsHeaderV3 returns false as this is not a v3 header
+func (hv2 *HeaderV2) IsHeaderV3() bool {
+	return false
+}

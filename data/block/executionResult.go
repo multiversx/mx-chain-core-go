@@ -53,6 +53,11 @@ func (eer *ExecutionResult) GetMiniBlockHeadersHandlers() []data.MiniBlockHeader
 	return mbs
 }
 
+// IsInterfaceNil returns true if there is no value under the interface
+func (eer *ExecutionResult) IsInterfaceNil() bool {
+	return eer == nil
+}
+
 // GetExecutionResultHandler returns the execution result handler
 func (eri *ExecutionResultInfo) GetExecutionResultHandler() data.BaseExecutionResultHandler {
 	if eri == nil {
@@ -60,4 +65,14 @@ func (eri *ExecutionResultInfo) GetExecutionResultHandler() data.BaseExecutionRe
 	}
 
 	return eri.ExecutionResult
+}
+
+// IsInterfaceNil returns true if there is no value under the interface
+func (eri *ExecutionResultInfo) IsInterfaceNil() bool {
+	return eri == nil
+}
+
+// IsInterfaceNil returns true if there is no value under the interface
+func (ber *BaseExecutionResult) IsInterfaceNil() bool {
+	return ber == nil
 }

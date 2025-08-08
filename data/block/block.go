@@ -641,3 +641,8 @@ func (h *Header) CheckFieldsForNil() error {
 
 	return nil
 }
+
+// IsHeaderV3 returns false as the first header version is not v3
+func (h *Header) IsHeaderV3() bool {
+	return false
+}
