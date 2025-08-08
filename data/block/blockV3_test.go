@@ -185,14 +185,14 @@ func TestHeaderV3_SetAccumulatedFees(t *testing.T) {
 	t.Parallel()
 	hv3 := &block.HeaderV3{}
 	err := hv3.SetAccumulatedFees(big.NewInt(100))
-	require.NoError(t, err)
+	require.Equal(t, data.ErrFieldNotSupported, err)
 }
 
 func TestHeaderV3_SetDeveloperFees(t *testing.T) {
 	t.Parallel()
 	hv3 := &block.HeaderV3{}
 	err := hv3.SetDeveloperFees(big.NewInt(50))
-	require.NoError(t, err)
+	require.Equal(t, data.ErrFieldNotSupported, err)
 }
 
 func TestHeaderV3_SetShardID(t *testing.T) {
@@ -289,7 +289,7 @@ func TestHeaderV3_SetRootHash(t *testing.T) {
 	t.Parallel()
 	hv3 := &block.HeaderV3{}
 	err := hv3.SetRootHash([]byte("root"))
-	require.NoError(t, err)
+	require.Equal(t, data.ErrFieldNotSupported, err)
 }
 
 func TestHeaderV3_SetPrevHash(t *testing.T) {
@@ -353,14 +353,14 @@ func TestHeaderV3_SetPubKeysBitmap(t *testing.T) {
 	t.Parallel()
 	hv3 := &block.HeaderV3{}
 	err := hv3.SetPubKeysBitmap([]byte("bitmap"))
-	require.NoError(t, err)
+	require.Equal(t, data.ErrFieldNotSupported, err)
 }
 
 func TestHeaderV3_SetSignature(t *testing.T) {
 	t.Parallel()
 	hv3 := &block.HeaderV3{}
 	err := hv3.SetSignature([]byte("signature"))
-	require.NoError(t, err)
+	require.Equal(t, data.ErrFieldNotSupported, err)
 }
 
 func TestHeaderV3_SetLeaderSignature(t *testing.T) {
@@ -493,7 +493,7 @@ func TestHeaderV3_SetScheduledRootHash(t *testing.T) {
 	t.Parallel()
 	hv3 := &block.HeaderV3{}
 	err := hv3.SetScheduledRootHash([]byte("scheduled"))
-	require.NoError(t, err)
+	require.Equal(t, data.ErrFieldNotSupported, err)
 }
 
 func TestHeaderV3_ValidateHeaderVersion(t *testing.T) {
@@ -507,7 +507,7 @@ func TestHeaderV3_SetAdditionalData(t *testing.T) {
 	t.Parallel()
 	hv3 := &block.HeaderV3{}
 	err := hv3.SetAdditionalData(nil)
-	require.NoError(t, err)
+	require.Equal(t, data.ErrFieldNotSupported, err)
 }
 
 func TestHeaderV3_IsStartOfEpochBlock(t *testing.T) {
@@ -653,13 +653,13 @@ func TestHeaderV3_CheckFieldsForNil(t *testing.T) {
 func TestHeaderV3_GetAccumulatedFees(t *testing.T) {
 	t.Parallel()
 	hv3 := &block.HeaderV3{}
-	require.Equal(t, big.NewInt(0), hv3.GetAccumulatedFees())
+	require.Nil(t, hv3.GetAccumulatedFees())
 }
 
 func TestHeaderV3_GetDeveloperFees(t *testing.T) {
 	t.Parallel()
 	hv3 := &block.HeaderV3{}
-	require.Equal(t, big.NewInt(0), hv3.GetDeveloperFees())
+	require.Nil(t, hv3.GetDeveloperFees())
 }
 
 func TestHeaderV3_IsInterfaceNil(t *testing.T) {
