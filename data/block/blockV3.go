@@ -441,6 +441,11 @@ func (hv3 *HeaderV3) GetExecutionResultsHandlers() []data.ExecutionResultHandler
 	return executionResultsHandlers
 }
 
+// IsHeaderV3 checks if the header is of type HeaderV3
+func (hv3 *HeaderV3) IsHeaderV3() bool {
+	return hv3 != nil
+}
+
 // IsInterfaceNil returns true if there is no value under the interface
 func (hv3 *HeaderV3) IsInterfaceNil() bool {
 	return hv3 == nil
