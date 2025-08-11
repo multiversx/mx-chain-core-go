@@ -52,7 +52,7 @@ func TestMetaBlockV3_GetLastExecutionResultHandler(t *testing.T) {
 		t.Parallel()
 		mb2 := &block.MetaBlockV3{
 			LastExecutionResult: &block.MetaExecutionResultInfo{
-				NotarizedAtHeaderHash: []byte("notarizedHash"),
+				NotarizedOnHeaderHash: []byte("notarizedHash"),
 				ExecutionResult: &block.BaseMetaExecutionResult{
 					BaseExecutionResult: &block.BaseExecutionResult{HeaderHash: []byte("hash1")},
 				},
