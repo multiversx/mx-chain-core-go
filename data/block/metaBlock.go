@@ -16,12 +16,12 @@ var _ = data.HeaderHandler(&MetaBlock{})
 var _ = data.MetaHeaderHandler(&MetaBlock{})
 
 // GetLastExecutionResultHandler returns nil
-func (m *MetaBlock) GetLastExecutionResultHandler() data.MetaExecutionResultInfoHandler {
+func (m *MetaBlock) GetLastExecutionResultHandler() data.LastExecutionResultHandler {
 	return nil
 }
 
-// GetExecutionResultsHandlers return nil
-func (m *MetaBlock) GetExecutionResultsHandlers() []data.MetaExecutionResultHandler {
+// GetExecutionResultsHandlers returns nil
+func (m *MetaBlock) GetExecutionResultsHandlers() []data.BaseExecutionResultHandler {
 	return nil
 }
 

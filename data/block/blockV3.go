@@ -419,7 +419,7 @@ func (hv3 *HeaderV3) SetBlockBodyTypeInt32(blockBodyType int32) error {
 }
 
 // GetLastExecutionResultHandler returns the last execution result
-func (hv3 *HeaderV3) GetLastExecutionResultHandler() data.ShardExecutionResultInfo {
+func (hv3 *HeaderV3) GetLastExecutionResultHandler() data.LastExecutionResultHandler {
 	if hv3 == nil {
 		return nil
 	}
@@ -428,12 +428,12 @@ func (hv3 *HeaderV3) GetLastExecutionResultHandler() data.ShardExecutionResultIn
 }
 
 // GetExecutionResultsHandlers returns the execution results
-func (hv3 *HeaderV3) GetExecutionResultsHandlers() []data.ExecutionResultHandler {
+func (hv3 *HeaderV3) GetExecutionResultsHandlers() []data.BaseExecutionResultHandler {
 	if hv3 == nil {
 		return nil
 	}
 
-	executionResultsHandlers := make([]data.ExecutionResultHandler, 0, len(hv3.GetExecutionResults()))
+	executionResultsHandlers := make([]data.BaseExecutionResultHandler, 0, len(hv3.GetExecutionResults()))
 	for _, execResult := range hv3.GetExecutionResults() {
 		executionResultsHandlers = append(executionResultsHandlers, execResult)
 	}
