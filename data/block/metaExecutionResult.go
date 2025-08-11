@@ -101,7 +101,7 @@ func (mes *MetaExecutionResult) GetRootHash() []byte {
 	return mes.ExecutionResult.GetRootHash()
 }
 
-// GetValidatorStatsRootHash returns the validatos statistics root hash
+// GetValidatorStatsRootHash returns the validators statistics root hash
 func (mes *MetaExecutionResult) GetValidatorStatsRootHash() []byte {
 	if mes == nil {
 		return nil
