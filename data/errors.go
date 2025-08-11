@@ -84,3 +84,6 @@ var ErrWrongTransactionsTypeSize = errors.New("wrong transactions type size")
 
 // ErrNilReservedField signals that a nil reserved field was provided
 var ErrNilReservedField = errors.New("reserved field is nil")
+
+// ErrFieldNotSupported signals that a field is not supported
+var ErrFieldNotSupported = errors.New("field not supported")

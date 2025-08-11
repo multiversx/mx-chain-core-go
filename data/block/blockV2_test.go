@@ -5,11 +5,12 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/block"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
-	"github.com/stretchr/testify/require"
 )
 
 func TestHeaderV2_GetEpochNilPointerReceiverOrInnerHeader(t *testing.T) {
@@ -1241,5 +1242,23 @@ func TestHeaderV2_SetBlockBodyTypeInt32(t *testing.T) {
 		err = header.SetBlockBodyTypeInt32(int32(block.TxBlock))
 		require.Nil(t, err)
 		require.Equal(t, int32(block.TxBlock), header.GetBlockBodyTypeInt32())
+	})
+}
+
+func TestHeaderV2_IsHeaderV3(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var h *block.HeaderV2
+		require.False(t, h.IsHeaderV3())
+	})
+	t.Run("valid receiver", func(t *testing.T) {
+		h := &block.HeaderV2{
+			Header: &block.Header{},
+		}
+
+		require.False(t, h.IsHeaderV3())
 	})
 }
