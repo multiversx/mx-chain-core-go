@@ -12,7 +12,7 @@ import "metaBlock.proto";
 
 
 
-// MetaBlockV3 holds all the fields needed for a meta block v2. This is the part that is being hashed and run through consensus.
+// MetaBlockV3 holds all the fields needed for a meta block v3. This is the part that is being hashed and run through consensus.
 message MetaBlockV3 {
   uint64                       Nonce               = 1 [(gogoproto.jsontag) = "nonce"];
   uint32                       Epoch               = 2 [(gogoproto.jsontag) = "epoch"];
