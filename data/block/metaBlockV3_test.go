@@ -31,7 +31,7 @@ func TestMetaBlockV3_GetExecutionResultsHandlers(t *testing.T) {
 				{ExecutionResult: &block.BaseMetaExecutionResult{BaseExecutionResult: &block.BaseExecutionResult{HeaderHash: []byte("hash2")}}},
 			},
 		}
-		expected := []data.MetaExecutionResultHandler{
+		expected := []data.BaseExecutionResultHandler{
 			mb2.ExecutionResults[0], mb2.ExecutionResults[1],
 		}
 		result := mb2.GetExecutionResultsHandlers()
