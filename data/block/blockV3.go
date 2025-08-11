@@ -117,12 +117,12 @@ func (hv3 *HeaderV3) HasScheduledMiniBlocks() bool {
 
 // SetAccumulatedFees always returns nil
 func (hv3 *HeaderV3) SetAccumulatedFees(_ *big.Int) error {
-	return nil
+	return data.ErrFieldNotSupported
 }
 
 // SetDeveloperFees always returns nil
 func (hv3 *HeaderV3) SetDeveloperFees(_ *big.Int) error {
-	return nil
+	return data.ErrFieldNotSupported
 }
 
 // SetShardID sets header shard ID
@@ -177,7 +177,7 @@ func (hv3 *HeaderV3) SetTimeStamp(ts uint64) error {
 
 // SetRootHash always returns nil
 func (hv3 *HeaderV3) SetRootHash(_ []byte) error {
-	return nil
+	return data.ErrFieldNotSupported
 }
 
 // SetPrevHash sets prev hash
@@ -212,12 +212,12 @@ func (hv3 *HeaderV3) SetRandSeed(randSeed []byte) error {
 
 // SetPubKeysBitmap always returns nil
 func (hv3 *HeaderV3) SetPubKeysBitmap(_ []byte) error {
-	return nil
+	return data.ErrFieldNotSupported
 }
 
 // SetSignature always returns nil
 func (hv3 *HeaderV3) SetSignature(_ []byte) error {
-	return nil
+	return data.ErrFieldNotSupported
 }
 
 // SetLeaderSignature sets the leader's signature
@@ -298,7 +298,7 @@ func (hv3 *HeaderV3) SetReceiptsHash(hash []byte) error {
 
 // SetScheduledRootHash always returns nil
 func (hv3 *HeaderV3) SetScheduledRootHash(_ []byte) error {
-	return nil
+	return data.ErrFieldNotSupported
 }
 
 // ValidateHeaderVersion always returns nil
@@ -308,7 +308,7 @@ func (hv3 *HeaderV3) ValidateHeaderVersion() error {
 
 // SetAdditionalData always returns nil
 func (hv3 *HeaderV3) SetAdditionalData(_ headerVersionData.HeaderAdditionalData) error {
-	return nil
+	return data.ErrFieldNotSupported
 }
 
 // IsStartOfEpochBlock verifies if the block is of type start of epoch
@@ -359,12 +359,12 @@ func (hv3 *HeaderV3) CheckFieldsForNil() error {
 
 // GetAccumulatedFees always returns 0
 func (hv3 *HeaderV3) GetAccumulatedFees() *big.Int {
-	return big.NewInt(0)
+	return nil
 }
 
 // GetDeveloperFees always returns 0
 func (hv3 *HeaderV3) GetDeveloperFees() *big.Int {
-	return big.NewInt(0)
+	return nil
 }
 
 // SetEpochStartMetaHash sets the epoch start metaBlock hash
@@ -439,6 +439,11 @@ func (hv3 *HeaderV3) GetExecutionResultsHandlers() []data.ExecutionResultHandler
 	}
 
 	return executionResultsHandlers
+}
+
+// IsHeaderV3 checks if the header is of type HeaderV3
+func (hv3 *HeaderV3) IsHeaderV3() bool {
+	return hv3 != nil
 }
 
 // IsInterfaceNil returns true if there is no value under the interface

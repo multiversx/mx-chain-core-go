@@ -576,3 +576,8 @@ func (m *MetaBlock) CheckFieldsForNil() error {
 
 	return nil
 }
+
+// IsHeaderV3 returns false as the initial version of metablock is not V3
+func (m *MetaBlock) IsHeaderV3() bool {
+	return false
+}

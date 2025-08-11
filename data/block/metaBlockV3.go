@@ -1,4 +1,4 @@
-//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf  --gogoslick_out=. metaBlockV2.proto
+//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf  --gogoslick_out=. metaBlockV3.proto
 
 package block
 
@@ -13,11 +13,11 @@ import (
 )
 
 // don't break the interface
-var _ = data.HeaderHandler(&MetaBlockV2{})
-var _ = data.MetaHeaderHandler(&MetaBlockV2{})
+var _ = data.HeaderHandler(&MetaBlockV3{})
+var _ = data.MetaHeaderHandler(&MetaBlockV3{})
 
 // GetExecutionResultsHandlers will return the meta execution result handlers
-func (m *MetaBlockV2) GetExecutionResultsHandlers() []data.MetaExecutionResultHandler {
+func (m *MetaBlockV3) GetExecutionResultsHandlers() []data.MetaExecutionResultHandler {
 	if m == nil {
 		return nil
 	}
@@ -31,7 +31,7 @@ func (m *MetaBlockV2) GetExecutionResultsHandlers() []data.MetaExecutionResultHa
 }
 
 // GetLastExecutionResultHandler will return the last execution result handler
-func (m *MetaBlockV2) GetLastExecutionResultHandler() data.MetaExecutionResultInfoHandler {
+func (m *MetaBlockV3) GetLastExecutionResultHandler() data.MetaExecutionResultInfoHandler {
 	if m == nil {
 		return nil
 	}
@@ -40,24 +40,20 @@ func (m *MetaBlockV2) GetLastExecutionResultHandler() data.MetaExecutionResultIn
 }
 
 // GetValidatorStatsRootHash returns nil
-func (m *MetaBlockV2) GetValidatorStatsRootHash() []byte {
-	//TODO should we return the validators statistics root the last notarized execution result ?
-	// OR should be have the validatorStatsRootHash as field on MetaBlocKV2
+func (m *MetaBlockV3) GetValidatorStatsRootHash() []byte {
+	// TODO should we return the validators statistics root the last notarized execution result ?
+	// OR should be have the validatorStatsRootHash as field on MetaBlockV3
 	return nil
 }
 
 // GetDevFeesInEpoch returns nil
-func (m *MetaBlockV2) GetDevFeesInEpoch() *big.Int {
-	if m == nil {
-		return big.NewInt(0)
-	}
-
+func (m *MetaBlockV3) GetDevFeesInEpoch() *big.Int {
 	// TODO is correct to return the DevFeesInEpoch from the last execution result ?
 	return nil
 }
 
 // GetEpochStartHandler will return the epoch start data
-func (m *MetaBlockV2) GetEpochStartHandler() data.EpochStartHandler {
+func (m *MetaBlockV3) GetEpochStartHandler() data.EpochStartHandler {
 	if m == nil {
 		return nil
 	}
@@ -66,7 +62,7 @@ func (m *MetaBlockV2) GetEpochStartHandler() data.EpochStartHandler {
 }
 
 // GetShardInfoHandlers gets the shardInfo as an array of ShardDataHandler
-func (m *MetaBlockV2) GetShardInfoHandlers() []data.ShardDataHandler {
+func (m *MetaBlockV3) GetShardInfoHandlers() []data.ShardDataHandler {
 	if m == nil || m.ShardInfo == nil {
 		return nil
 	}
@@ -80,7 +76,7 @@ func (m *MetaBlockV2) GetShardInfoHandlers() []data.ShardDataHandler {
 }
 
 // SetShardInfoHandlers will set the provided shard info
-func (m *MetaBlockV2) SetShardInfoHandlers(shardInfo []data.ShardDataHandler) error {
+func (m *MetaBlockV3) SetShardInfoHandlers(shardInfo []data.ShardDataHandler) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
@@ -107,42 +103,42 @@ func (m *MetaBlockV2) SetShardInfoHandlers(shardInfo []data.ShardDataHandler) er
 }
 
 // SetValidatorStatsRootHash returns nil
-func (m *MetaBlockV2) SetValidatorStatsRootHash(_ []byte) error {
-	return nil
+func (m *MetaBlockV3) SetValidatorStatsRootHash(_ []byte) error {
+	return data.ErrFieldNotSupported
 }
 
 // SetDevFeesInEpoch returns nil
-func (m *MetaBlockV2) SetDevFeesInEpoch(_ *big.Int) error {
-	return nil
+func (m *MetaBlockV3) SetDevFeesInEpoch(_ *big.Int) error {
+	return data.ErrFieldNotSupported
 }
 
 // SetAccumulatedFeesInEpoch returns nil
-func (m *MetaBlockV2) SetAccumulatedFeesInEpoch(_ *big.Int) error {
-	return nil
+func (m *MetaBlockV3) SetAccumulatedFeesInEpoch(_ *big.Int) error {
+	return data.ErrFieldNotSupported
 }
 
 // GetShardID returns the metachain shard id
-func (m *MetaBlockV2) GetShardID() uint32 {
+func (m *MetaBlockV3) GetShardID() uint32 {
 	return core.MetachainShardId
 }
 
 // GetRootHash always returns nil
-func (m *MetaBlockV2) GetRootHash() []byte {
+func (m *MetaBlockV3) GetRootHash() []byte {
 	return nil
 }
 
 // GetPubKeysBitmap always returns nil
-func (m *MetaBlockV2) GetPubKeysBitmap() []byte {
+func (m *MetaBlockV3) GetPubKeysBitmap() []byte {
 	return nil
 }
 
 // GetSignature always returns nil
-func (m *MetaBlockV2) GetSignature() []byte {
+func (m *MetaBlockV3) GetSignature() []byte {
 	return nil
 }
 
 // GetTimeStamp returns the timestamp
-func (m *MetaBlockV2) GetTimeStamp() uint64 {
+func (m *MetaBlockV3) GetTimeStamp() uint64 {
 	if m == nil {
 		return 0
 	}
@@ -150,22 +146,22 @@ func (m *MetaBlockV2) GetTimeStamp() uint64 {
 }
 
 // GetReceiptsHash always returns nil
-func (m *MetaBlockV2) GetReceiptsHash() []byte {
+func (m *MetaBlockV3) GetReceiptsHash() []byte {
 	return nil
 }
 
 // GetAccumulatedFees always returns 0
-func (m *MetaBlockV2) GetAccumulatedFees() *big.Int {
-	return big.NewInt(0)
+func (m *MetaBlockV3) GetAccumulatedFees() *big.Int {
+	return nil
 }
 
 // GetDeveloperFees always returns 0
-func (m *MetaBlockV2) GetDeveloperFees() *big.Int {
-	return big.NewInt(0)
+func (m *MetaBlockV3) GetDeveloperFees() *big.Int {
+	return nil
 }
 
 // GetMiniBlockHeadersWithDst as a map of hashes and sender IDs
-func (m *MetaBlockV2) GetMiniBlockHeadersWithDst(destID uint32) map[string]uint32 {
+func (m *MetaBlockV3) GetMiniBlockHeadersWithDst(destID uint32) map[string]uint32 {
 	if m == nil {
 		return nil
 	}
@@ -197,7 +193,7 @@ func (m *MetaBlockV2) GetMiniBlockHeadersWithDst(destID uint32) map[string]uint3
 
 // GetOrderedCrossMiniblocksWithDst gets all cross miniblocks with the given destination shard ID, ordered in a
 // chronological way, taking into consideration the round in which they were created/executed in the sender shard
-func (m *MetaBlockV2) GetOrderedCrossMiniblocksWithDst(destID uint32) []*data.MiniBlockInfo {
+func (m *MetaBlockV3) GetOrderedCrossMiniblocksWithDst(destID uint32) []*data.MiniBlockInfo {
 	if m == nil {
 		return nil
 	}
@@ -241,7 +237,7 @@ func (m *MetaBlockV2) GetOrderedCrossMiniblocksWithDst(destID uint32) []*data.Mi
 }
 
 // GetMiniBlockHeadersHashes gets the miniblock hashes
-func (m *MetaBlockV2) GetMiniBlockHeadersHashes() [][]byte {
+func (m *MetaBlockV3) GetMiniBlockHeadersHashes() [][]byte {
 	if m == nil {
 		return nil
 	}
@@ -255,7 +251,7 @@ func (m *MetaBlockV2) GetMiniBlockHeadersHashes() [][]byte {
 }
 
 // GetMiniBlockHeaderHandlers returns the miniBlock headers as an array of miniBlock header handlers
-func (m *MetaBlockV2) GetMiniBlockHeaderHandlers() []data.MiniBlockHeaderHandler {
+func (m *MetaBlockV3) GetMiniBlockHeaderHandlers() []data.MiniBlockHeaderHandler {
 	if m == nil {
 		return nil
 	}
@@ -271,37 +267,37 @@ func (m *MetaBlockV2) GetMiniBlockHeaderHandlers() []data.MiniBlockHeaderHandler
 }
 
 // HasScheduledSupport returns false
-func (m *MetaBlockV2) HasScheduledSupport() bool {
+func (m *MetaBlockV3) HasScheduledSupport() bool {
 	return false
 }
 
 // GetAdditionalData gets the additional version-related data for the header
-func (m *MetaBlockV2) GetAdditionalData() headerVersionData.HeaderAdditionalData {
+func (m *MetaBlockV3) GetAdditionalData() headerVersionData.HeaderAdditionalData {
 	return nil
 }
 
 // HasScheduledMiniBlocks returns false
-func (m *MetaBlockV2) HasScheduledMiniBlocks() bool {
+func (m *MetaBlockV3) HasScheduledMiniBlocks() bool {
 	return false
 }
 
 // SetAccumulatedFees will do nothing
-func (m *MetaBlockV2) SetAccumulatedFees(_ *big.Int) error {
-	return nil
+func (m *MetaBlockV3) SetAccumulatedFees(_ *big.Int) error {
+	return data.ErrFieldNotSupported
 }
 
 // SetDeveloperFees will do nothing
-func (m *MetaBlockV2) SetDeveloperFees(_ *big.Int) error {
-	return nil
+func (m *MetaBlockV3) SetDeveloperFees(_ *big.Int) error {
+	return data.ErrFieldNotSupported
 }
 
 // SetShardID will do nothing
-func (m *MetaBlockV2) SetShardID(_ uint32) error {
+func (m *MetaBlockV3) SetShardID(_ uint32) error {
 	return nil
 }
 
 // SetNonce sets header nonce
-func (m *MetaBlockV2) SetNonce(n uint64) error {
+func (m *MetaBlockV3) SetNonce(n uint64) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
@@ -312,7 +308,7 @@ func (m *MetaBlockV2) SetNonce(n uint64) error {
 }
 
 // SetEpoch sets header epoch
-func (m *MetaBlockV2) SetEpoch(e uint32) error {
+func (m *MetaBlockV3) SetEpoch(e uint32) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
@@ -323,7 +319,7 @@ func (m *MetaBlockV2) SetEpoch(e uint32) error {
 }
 
 // SetRound sets header rounds
-func (m *MetaBlockV2) SetRound(r uint64) error {
+func (m *MetaBlockV3) SetRound(r uint64) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
@@ -334,7 +330,7 @@ func (m *MetaBlockV2) SetRound(r uint64) error {
 }
 
 // SetTimeStamp sets header timestamp
-func (m *MetaBlockV2) SetTimeStamp(ts uint64) error {
+func (m *MetaBlockV3) SetTimeStamp(ts uint64) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
@@ -345,12 +341,12 @@ func (m *MetaBlockV2) SetTimeStamp(ts uint64) error {
 }
 
 // SetRootHash will do nothing
-func (m *MetaBlockV2) SetRootHash(_ []byte) error {
-	return nil
+func (m *MetaBlockV3) SetRootHash(_ []byte) error {
+	return data.ErrFieldNotSupported
 }
 
 // SetPrevHash sets prev hash
-func (m *MetaBlockV2) SetPrevHash(pvHash []byte) error {
+func (m *MetaBlockV3) SetPrevHash(pvHash []byte) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
@@ -361,7 +357,7 @@ func (m *MetaBlockV2) SetPrevHash(pvHash []byte) error {
 }
 
 // SetPrevRandSeed sets the previous randomness seed
-func (m *MetaBlockV2) SetPrevRandSeed(pvRandSeed []byte) error {
+func (m *MetaBlockV3) SetPrevRandSeed(pvRandSeed []byte) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
@@ -372,7 +368,7 @@ func (m *MetaBlockV2) SetPrevRandSeed(pvRandSeed []byte) error {
 }
 
 // SetRandSeed sets the current random seed
-func (m *MetaBlockV2) SetRandSeed(randSeed []byte) error {
+func (m *MetaBlockV3) SetRandSeed(randSeed []byte) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
@@ -383,17 +379,17 @@ func (m *MetaBlockV2) SetRandSeed(randSeed []byte) error {
 }
 
 // SetPubKeysBitmap always returns nil
-func (m *MetaBlockV2) SetPubKeysBitmap(_ []byte) error {
-	return nil
+func (m *MetaBlockV3) SetPubKeysBitmap(_ []byte) error {
+	return data.ErrFieldNotSupported
 }
 
 // SetSignature always returns nil
-func (m *MetaBlockV2) SetSignature(_ []byte) error {
-	return nil
+func (m *MetaBlockV3) SetSignature(_ []byte) error {
+	return data.ErrFieldNotSupported
 }
 
 // SetLeaderSignature will set the leader's signature
-func (m *MetaBlockV2) SetLeaderSignature(sg []byte) error {
+func (m *MetaBlockV3) SetLeaderSignature(sg []byte) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
@@ -404,7 +400,7 @@ func (m *MetaBlockV2) SetLeaderSignature(sg []byte) error {
 }
 
 // SetChainID sets the chain ID on which this block is valid on
-func (m *MetaBlockV2) SetChainID(chainID []byte) error {
+func (m *MetaBlockV3) SetChainID(chainID []byte) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
@@ -415,7 +411,7 @@ func (m *MetaBlockV2) SetChainID(chainID []byte) error {
 }
 
 // SetSoftwareVersion sets the software version of the block
-func (m *MetaBlockV2) SetSoftwareVersion(version []byte) error {
+func (m *MetaBlockV3) SetSoftwareVersion(version []byte) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
@@ -426,7 +422,7 @@ func (m *MetaBlockV2) SetSoftwareVersion(version []byte) error {
 }
 
 // SetTxCount sets the transaction count of the current meta block
-func (m *MetaBlockV2) SetTxCount(txCount uint32) error {
+func (m *MetaBlockV3) SetTxCount(txCount uint32) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
@@ -437,7 +433,7 @@ func (m *MetaBlockV2) SetTxCount(txCount uint32) error {
 }
 
 // SetMiniBlockHeaderHandlers sets the miniBlock headers from the given miniBlock header handlers
-func (m *MetaBlockV2) SetMiniBlockHeaderHandlers(mbHeaderHandlers []data.MiniBlockHeaderHandler) error {
+func (m *MetaBlockV3) SetMiniBlockHeaderHandlers(mbHeaderHandlers []data.MiniBlockHeaderHandler) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
@@ -464,27 +460,27 @@ func (m *MetaBlockV2) SetMiniBlockHeaderHandlers(mbHeaderHandlers []data.MiniBlo
 }
 
 // SetReceiptsHash always returns nil
-func (m *MetaBlockV2) SetReceiptsHash(hash []byte) error {
-	return nil
+func (m *MetaBlockV3) SetReceiptsHash(_ []byte) error {
+	return data.ErrFieldNotSupported
 }
 
 // SetScheduledRootHash not supported on the first version of metablock
-func (m *MetaBlockV2) SetScheduledRootHash(_ []byte) error {
+func (m *MetaBlockV3) SetScheduledRootHash(_ []byte) error {
 	return data.ErrScheduledRootHashNotSupported
 }
 
 // ValidateHeaderVersion - always valid
-func (m *MetaBlockV2) ValidateHeaderVersion() error {
+func (m *MetaBlockV3) ValidateHeaderVersion() error {
 	return nil
 }
 
 // SetAdditionalData sets the additional version-related data
-func (m *MetaBlockV2) SetAdditionalData(_ headerVersionData.HeaderAdditionalData) error {
-	return nil
+func (m *MetaBlockV3) SetAdditionalData(_ headerVersionData.HeaderAdditionalData) error {
+	return data.ErrFieldNotSupported
 }
 
 // IsStartOfEpochBlock verifies if the block is of type start of epoch
-func (m *MetaBlockV2) IsStartOfEpochBlock() bool {
+func (m *MetaBlockV3) IsStartOfEpochBlock() bool {
 	if m == nil {
 		return false
 	}
@@ -493,7 +489,7 @@ func (m *MetaBlockV2) IsStartOfEpochBlock() bool {
 }
 
 // ShallowClone will return a clone of the object
-func (m *MetaBlockV2) ShallowClone() data.HeaderHandler {
+func (m *MetaBlockV3) ShallowClone() data.HeaderHandler {
 	if m == nil {
 		return nil
 	}
@@ -504,33 +500,38 @@ func (m *MetaBlockV2) ShallowClone() data.HeaderHandler {
 }
 
 // CheckFieldsForNil checks a predefined set of fields for nil values
-func (m *MetaBlockV2) CheckFieldsForNil() error {
+func (m *MetaBlockV3) CheckFieldsForNil() error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
 	if m.PrevHash == nil {
-		return fmt.Errorf("%w in MetaBlockV2.PrevHash", data.ErrNilValue)
+		return fmt.Errorf("%w in MetaBlockV3.PrevHash", data.ErrNilValue)
 	}
 	if m.PrevRandSeed == nil {
-		return fmt.Errorf("%w in MetaBlockV2.PrevRandSeed", data.ErrNilValue)
+		return fmt.Errorf("%w in MetaBlockV3.PrevRandSeed", data.ErrNilValue)
 	}
 	if m.RandSeed == nil {
-		return fmt.Errorf("%w in MetaBlockV2.RandSeed", data.ErrNilValue)
+		return fmt.Errorf("%w in MetaBlockV3.RandSeed", data.ErrNilValue)
 	}
 	if m.LeaderSignature == nil {
-		return fmt.Errorf("%w in MetaBlockV2.LeaderSignature", data.ErrNilValue)
+		return fmt.Errorf("%w in MetaBlockV3.LeaderSignature", data.ErrNilValue)
 	}
 	if m.ChainID == nil {
-		return fmt.Errorf("%w in MetaBlockV2.ChainID", data.ErrNilValue)
+		return fmt.Errorf("%w in MetaBlockV3.ChainID", data.ErrNilValue)
 	}
 	if m.SoftwareVersion == nil {
-		return fmt.Errorf("%w in MetaBlockV2.SoftwareVersion", data.ErrNilValue)
+		return fmt.Errorf("%w in MetaBlockV3.SoftwareVersion", data.ErrNilValue)
 	}
 
 	return nil
 }
 
+// IsHeaderV3 checks if the header is of type MetaBlockV3
+func (m *MetaBlockV3) IsHeaderV3() bool {
+	return m != nil
+}
+
 // IsInterfaceNil returns true if there is no value under the interface
-func (m *MetaBlockV2) IsInterfaceNil() bool {
+func (m *MetaBlockV3) IsInterfaceNil() bool {
 	return m == nil
 }
