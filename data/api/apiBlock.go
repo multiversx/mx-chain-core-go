@@ -41,7 +41,7 @@ type Block struct {
 	Proof                  *HeaderProof           `json:"proof,omitempty"`
 }
 
-// HeaderProof is a structure that hold information about header proof
+// HeaderProof is a structure that holds information about header proof
 type HeaderProof struct {
 	PubKeysBitmap       string `json:"pubKeysBitmap,omitempty"`
 	AggregatedSignature string `json:"aggregatedSignature,omitempty"`
@@ -51,6 +51,29 @@ type HeaderProof struct {
 	HeaderShardId       uint32 `json:"headerShardId,omitempty"`
 	HeaderRound         uint64 `json:"headerRound,omitempty"`
 	IsStartOfEpoch      bool   `json:"isStartOfEpoch,omitempty"`
+}
+
+// ExecutionResultInfo is a structure that holds information about an execution result and some extra field
+type ExecutionResultInfo struct {
+	ExecutionResult       ExecutionResult `json:"executionResult"`
+	NotarizedAtHeaderHash string          `json:"notarizedAtHeaderHash"`
+}
+
+// ExecutionResult is a structure that holds information about execution results
+type ExecutionResult struct {
+	HeaderHash             string       `json:"headerHash"`
+	HeaderNonce            uint64       `json:"headerNonce"`
+	HeaderRound            uint64       `json:"headerRound"`
+	RootHash               string       `json:"rootHash"`
+	ReceiptsHash           string       `json:"receiptsHash"`
+	MiniBlocks             []*MiniBlock `json:"miniBlocks,omitempty"`
+	DeveloperFees          string       `json:"developerFees,omitempty"`
+	AccumulatedFees        string       `json:"accumulatedFees,omitempty"`
+	GasUsed                uint64       `json:"gasUsed,omitempty"`
+	ExecutedTxCount        uint64       `json:"executedTxCount,omitempty"`
+	ValidatorStatsRootHash string       `json:"validatorStatsRootHash,omitempty"`
+	AccumulatedFeesInEpoch string       `json:"accumulatedFeesInEpoch,omitempty"`
+	DevFeesInEpoch         string       `json:"devFeesInEpoch,omitempty"`
 }
 
 // ScheduledData is a structure that hold information about scheduled events
