@@ -60,9 +60,18 @@ func (bm *BaseMetaExecutionResult) GetRootHash() []byte {
 	return bm.BaseExecutionResult.GetRootHash()
 }
 
+// GetHeaderEpoch return the header epoch
+func (bm *BaseMetaExecutionResult) GetHeaderEpoch() uint32 {
+	if bm == nil {
+		return 0
+	}
+
+	return bm.BaseExecutionResult.HeaderEpoch
+}
+
 // IsInterfaceNil returns true if there is no value under the interface
-func (bme *BaseMetaExecutionResult) IsInterfaceNil() bool {
-	return bme == nil
+func (bm *BaseMetaExecutionResult) IsInterfaceNil() bool {
+	return bm == nil
 }
 
 // GetHeaderHash returns the header hash
@@ -99,6 +108,15 @@ func (mes *MetaExecutionResult) GetRootHash() []byte {
 	}
 
 	return mes.ExecutionResult.GetRootHash()
+}
+
+// GetHeaderEpoch return the header epoch
+func (mes *MetaExecutionResult) GetHeaderEpoch() uint32 {
+	if mes == nil {
+		return 0
+	}
+
+	return mes.ExecutionResult.GetHeaderEpoch()
 }
 
 // GetValidatorStatsRootHash returns the validators statistics root hash
