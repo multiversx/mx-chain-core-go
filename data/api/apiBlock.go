@@ -64,6 +64,7 @@ type ExecutionResult struct {
 	HeaderHash             string       `json:"headerHash"`
 	HeaderNonce            uint64       `json:"headerNonce"`
 	HeaderRound            uint64       `json:"headerRound"`
+	HeaderEpoch            uint32       `json:"headerEpoch"`
 	RootHash               string       `json:"rootHash"`
 	ReceiptsHash           string       `json:"receiptsHash"`
 	MiniBlocks             []*MiniBlock `json:"miniBlocks,omitempty"`
