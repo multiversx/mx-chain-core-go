@@ -15,6 +15,16 @@ import (
 var _ = data.HeaderHandler(&MetaBlock{})
 var _ = data.MetaHeaderHandler(&MetaBlock{})
 
+// GetLastExecutionResultHandler returns nil
+func (m *MetaBlock) GetLastExecutionResultHandler() data.LastExecutionResultHandler {
+	return nil
+}
+
+// GetExecutionResultsHandlers returns nil
+func (m *MetaBlock) GetExecutionResultsHandlers() []data.BaseExecutionResultHandler {
+	return nil
+}
+
 // GetShardID returns the metachain shard id
 func (m *MetaBlock) GetShardID() uint32 {
 	return core.MetachainShardId
@@ -565,4 +575,9 @@ func (m *MetaBlock) CheckFieldsForNil() error {
 	}
 
 	return nil
+}
+
+// IsHeaderV3 returns false as the initial version of metablock is not V3
+func (m *MetaBlock) IsHeaderV3() bool {
+	return false
 }

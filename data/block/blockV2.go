@@ -640,6 +640,21 @@ func (hv2 *HeaderV2) GetAdditionalData() headerVersionData.HeaderAdditionalData 
 	return additionalVersionData
 }
 
+// GetGasLimit always returns 0
+func (hv2 *HeaderV2) GetGasLimit() uint32 {
+	return 0
+}
+
+// GetLastExecutionResultHandler always returns nil
+func (hv2 *HeaderV2) GetLastExecutionResultHandler() data.LastExecutionResultHandler {
+	return nil
+}
+
+// GetExecutionResultsHandlers always returns nil
+func (hv2 *HeaderV2) GetExecutionResultsHandlers() []data.BaseExecutionResultHandler {
+	return nil
+}
+
 // CheckFieldsForNil checks a predefined set of fields for nil values
 func (hv2 *HeaderV2) CheckFieldsForNil() error {
 	if hv2 == nil {
@@ -658,4 +673,9 @@ func (hv2 *HeaderV2) CheckFieldsForNil() error {
 	}
 
 	return nil
+}
+
+// IsHeaderV3 returns false as this is not a v3 header
+func (hv2 *HeaderV2) IsHeaderV3() bool {
+	return false
 }

@@ -594,6 +594,21 @@ func (h *Header) GetAdditionalData() headerVersionData.HeaderAdditionalData {
 	return nil
 }
 
+// GetGasLimit always returns 0
+func (h *Header) GetGasLimit() uint32 {
+	return 0
+}
+
+// GetExecutionResultsHandlers always returns nil
+func (h *Header) GetExecutionResultsHandlers() []data.BaseExecutionResultHandler {
+	return nil
+}
+
+// GetLastExecutionResultHandler always returns nil
+func (h *Header) GetLastExecutionResultHandler() data.LastExecutionResultHandler {
+	return nil
+}
+
 // CheckFieldsForNil checks a predefined set of fields for nil values
 func (h *Header) CheckFieldsForNil() error {
 	if h == nil {
@@ -625,4 +640,9 @@ func (h *Header) CheckFieldsForNil() error {
 	}
 
 	return nil
+}
+
+// IsHeaderV3 returns false as the first header version is not v3
+func (h *Header) IsHeaderV3() bool {
+	return false
 }
