@@ -646,12 +646,12 @@ func (hv2 *HeaderV2) GetGasLimit() uint32 {
 }
 
 // GetLastExecutionResultHandler always returns nil
-func (hv2 *HeaderV2) GetLastExecutionResultHandler() data.ShardExecutionResultInfo {
+func (hv2 *HeaderV2) GetLastExecutionResultHandler() data.LastExecutionResultHandler {
 	return nil
 }
 
 // GetExecutionResultsHandlers always returns nil
-func (hv2 *HeaderV2) GetExecutionResultsHandlers() []data.ExecutionResultHandler {
+func (hv2 *HeaderV2) GetExecutionResultsHandlers() []data.BaseExecutionResultHandler {
 	return nil
 }
 

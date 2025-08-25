@@ -6,7 +6,7 @@ import (
 	"github.com/multiversx/mx-chain-core-go/data"
 )
 
-var _ = data.MetaExecutionResultInfoHandler(&MetaExecutionResultInfo{})
+var _ = data.LastMetaExecutionResultHandler(&MetaExecutionResultInfo{})
 var _ = data.BaseMetaExecutionResultHandler(&BaseMetaExecutionResult{})
 var _ = data.MetaExecutionResultHandler(&MetaExecutionResult{})
 

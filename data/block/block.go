@@ -599,13 +599,13 @@ func (h *Header) GetGasLimit() uint32 {
 	return 0
 }
 
-// GetLastExecutionResultHandler always returns nil
-func (h *Header) GetLastExecutionResultHandler() data.ShardExecutionResultInfo {
+// GetExecutionResultsHandlers always returns nil
+func (h *Header) GetExecutionResultsHandlers() []data.BaseExecutionResultHandler {
 	return nil
 }
 
-// GetExecutionResultsHandlers always returns nil
-func (h *Header) GetExecutionResultsHandlers() []data.ExecutionResultHandler {
+// GetLastExecutionResultHandler always returns nil
+func (h *Header) GetLastExecutionResultHandler() data.LastExecutionResultHandler {
 	return nil
 }
 

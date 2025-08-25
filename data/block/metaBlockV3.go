@@ -16,13 +16,13 @@ import (
 var _ = data.HeaderHandler(&MetaBlockV3{})
 var _ = data.MetaHeaderHandler(&MetaBlockV3{})
 
-// GetExecutionResultsHandlers will return the meta execution result handlers
-func (m *MetaBlockV3) GetExecutionResultsHandlers() []data.MetaExecutionResultHandler {
+// GetExecutionResultsHandlers will return the execution result handlers
+func (m *MetaBlockV3) GetExecutionResultsHandlers() []data.BaseExecutionResultHandler {
 	if m == nil {
 		return nil
 	}
 
-	executionResultsHandlers := make([]data.MetaExecutionResultHandler, len(m.ExecutionResults))
+	executionResultsHandlers := make([]data.BaseExecutionResultHandler, len(m.ExecutionResults))
 	for i, executionResult := range m.ExecutionResults {
 		executionResultsHandlers[i] = executionResult
 	}
@@ -31,7 +31,7 @@ func (m *MetaBlockV3) GetExecutionResultsHandlers() []data.MetaExecutionResultHa
 }
 
 // GetLastExecutionResultHandler will return the last execution result handler
-func (m *MetaBlockV3) GetLastExecutionResultHandler() data.MetaExecutionResultInfoHandler {
+func (m *MetaBlockV3) GetLastExecutionResultHandler() data.LastExecutionResultHandler {
 	if m == nil {
 		return nil
 	}
