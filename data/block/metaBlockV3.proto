@@ -1,4 +1,4 @@
-// This file holds the data structures related with the functionality of a meta block V3
+// This file holds the data structures related to the functionality of a meta block V3
 syntax = "proto3";
 
 package proto;
