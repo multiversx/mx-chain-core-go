@@ -38,6 +38,15 @@ func (eer *ExecutionResult) GetRootHash() []byte {
 	return eer.BaseExecutionResult.GetRootHash()
 }
 
+// GetHeaderEpoch returns the header epoch
+func (eer *ExecutionResult) GetHeaderEpoch() uint32 {
+	if eer == nil {
+		return 0
+	}
+
+	return eer.BaseExecutionResult.HeaderEpoch
+}
+
 // GetMiniBlockHeadersHandlers returns the miniblock headers handlers
 func (eer *ExecutionResult) GetMiniBlockHeadersHandlers() []data.MiniBlockHeaderHandler {
 	if eer == nil {
