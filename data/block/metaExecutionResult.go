@@ -83,6 +83,21 @@ func (mes *MetaExecutionResult) GetHeaderHash() []byte {
 	return mes.ExecutionResult.GetHeaderHash()
 }
 
+// GetMiniBlockHeadersHandlers returns the miniblock headers handlers
+func (mes *MetaExecutionResult) GetMiniBlockHeadersHandlers() []data.MiniBlockHeaderHandler {
+	if mes == nil {
+		return nil
+	}
+
+	mbs := make([]data.MiniBlockHeaderHandler, 0, len(mes.GetMiniBlockHeaders()))
+	for _, mb := range mes.GetMiniBlockHeaders() {
+		mbCopy := mb
+		mbs = append(mbs, &mbCopy)
+	}
+
+	return mbs
+}
+
 // GetHeaderNonce returns the header nonce
 func (mes *MetaExecutionResult) GetHeaderNonce() uint64 {
 	if mes == nil {

@@ -148,6 +148,7 @@ type BaseMetaExecutionResultHandler interface {
 // MetaExecutionResultHandler defines getter for a meta execution result
 type MetaExecutionResultHandler interface {
 	BaseMetaExecutionResultHandler
+	GetMiniBlockHeadersHandlers() []MiniBlockHeaderHandler
 	GetReceiptsHash() []byte
 	GetDeveloperFees() *big.Int
 	GetAccumulatedFees() *big.Int
