@@ -190,6 +190,7 @@ type MetaHeaderHandler interface {
 	GetEpochStartHandler() EpochStartHandler
 	GetDevFeesInEpoch() *big.Int
 	GetShardInfoHandlers() []ShardDataHandler
+	GetAccumulatedFeesInEpoch() *big.Int
 	SetValidatorStatsRootHash(rHash []byte) error
 	SetDevFeesInEpoch(value *big.Int) error
 	SetShardInfoHandlers(shardInfo []ShardDataHandler) error
