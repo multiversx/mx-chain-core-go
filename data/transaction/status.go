@@ -14,6 +14,8 @@ const (
 	TxStatusInvalid TxStatus = "invalid"
 	// TxStatusRewardReverted represents the identifier for a reverted reward transaction
 	TxStatusRewardReverted TxStatus = "reward-reverted"
+	// TxStatusNotExecutable represent the identifier for a not executable transaction in current block
+	TxStatusNotExecutable TxStatus = "not-executable-in-block"
 )
 
 // String returns the string representation of the status
