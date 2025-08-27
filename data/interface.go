@@ -113,6 +113,7 @@ type BaseExecutionResultHandler interface {
 	GetHeaderHash() []byte
 	GetHeaderNonce() uint64
 	GetHeaderRound() uint64
+	GetHeaderEpoch() uint32
 	GetRootHash() []byte
 	Equal(other interface{}) bool
 	IsInterfaceNil() bool
@@ -147,6 +148,7 @@ type BaseMetaExecutionResultHandler interface {
 // MetaExecutionResultHandler defines getter for a meta execution result
 type MetaExecutionResultHandler interface {
 	BaseMetaExecutionResultHandler
+	GetMiniBlockHeadersHandlers() []MiniBlockHeaderHandler
 	GetReceiptsHash() []byte
 	GetDeveloperFees() *big.Int
 	GetAccumulatedFees() *big.Int
@@ -188,6 +190,7 @@ type MetaHeaderHandler interface {
 	GetEpochStartHandler() EpochStartHandler
 	GetDevFeesInEpoch() *big.Int
 	GetShardInfoHandlers() []ShardDataHandler
+	GetAccumulatedFeesInEpoch() *big.Int
 	SetValidatorStatsRootHash(rHash []byte) error
 	SetDevFeesInEpoch(value *big.Int) error
 	SetShardInfoHandlers(shardInfo []ShardDataHandler) error

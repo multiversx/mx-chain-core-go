@@ -60,9 +60,18 @@ func (bm *BaseMetaExecutionResult) GetRootHash() []byte {
 	return bm.BaseExecutionResult.GetRootHash()
 }
 
+// GetHeaderEpoch return the header epoch
+func (bm *BaseMetaExecutionResult) GetHeaderEpoch() uint32 {
+	if bm == nil {
+		return 0
+	}
+
+	return bm.BaseExecutionResult.HeaderEpoch
+}
+
 // IsInterfaceNil returns true if there is no value under the interface
-func (bme *BaseMetaExecutionResult) IsInterfaceNil() bool {
-	return bme == nil
+func (bm *BaseMetaExecutionResult) IsInterfaceNil() bool {
+	return bm == nil
 }
 
 // GetHeaderHash returns the header hash
@@ -72,6 +81,21 @@ func (mes *MetaExecutionResult) GetHeaderHash() []byte {
 	}
 
 	return mes.ExecutionResult.GetHeaderHash()
+}
+
+// GetMiniBlockHeadersHandlers returns the miniblock headers handlers
+func (mes *MetaExecutionResult) GetMiniBlockHeadersHandlers() []data.MiniBlockHeaderHandler {
+	if mes == nil {
+		return nil
+	}
+
+	mbs := make([]data.MiniBlockHeaderHandler, 0, len(mes.GetMiniBlockHeaders()))
+	for _, mb := range mes.GetMiniBlockHeaders() {
+		mbCopy := mb
+		mbs = append(mbs, &mbCopy)
+	}
+
+	return mbs
 }
 
 // GetHeaderNonce returns the header nonce
@@ -99,6 +123,15 @@ func (mes *MetaExecutionResult) GetRootHash() []byte {
 	}
 
 	return mes.ExecutionResult.GetRootHash()
+}
+
+// GetHeaderEpoch return the header epoch
+func (mes *MetaExecutionResult) GetHeaderEpoch() uint32 {
+	if mes == nil {
+		return 0
+	}
+
+	return mes.ExecutionResult.GetHeaderEpoch()
 }
 
 // GetValidatorStatsRootHash returns the validators statistics root hash

@@ -52,6 +52,11 @@ func (m *MetaBlockV3) GetDevFeesInEpoch() *big.Int {
 	return nil
 }
 
+// GetAccumulatedFeesInEpoch returns nil
+func (m *MetaBlockV3) GetAccumulatedFeesInEpoch() *big.Int {
+	return nil
+}
+
 // GetEpochStartHandler will return the epoch start data
 func (m *MetaBlockV3) GetEpochStartHandler() data.EpochStartHandler {
 	if m == nil {
