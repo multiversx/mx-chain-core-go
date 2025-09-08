@@ -16,7 +16,6 @@ enum ActionType {
   Write = 1;
 }
 
-
 message StateAccess {
   ActionType               Type                    = 1 [(gogoproto.jsontag) = "type"];
   int32                    Index                   = 2 [(gogoproto.jsontag) = "index"];
@@ -25,7 +24,7 @@ message StateAccess {
   bytes                    MainTrieVal             = 5 [(gogoproto.jsontag) = "mainTrieVal"];
   uint32                   Operation               = 6 [(gogoproto.jsontag) = "operation"];
   repeated DataTrieChange  DataTrieChanges         = 7 [(gogoproto.jsontag) = "dataTrieChanges,omitempty"];
-  AccountChanges           AccountChanges          = 8 [(gogoproto.jsontag) = "accountChanges"];
+  uint32                   AccountChanges          = 8 [(gogoproto.jsontag) = "accountChanges"];
 }
 
 message DataTrieChange {
@@ -33,15 +32,4 @@ message DataTrieChange {
   bytes       Key     = 2 [(gogoproto.jsontag) = "key"];
   bytes       Val     = 3 [(gogoproto.jsontag) = "val"];
   uint32      Version = 4 [(gogoproto.jsontag) = "version"];
-}
-
-message AccountChanges {
-  bool        Nonce           = 1 [(gogoproto.jsontag) = "nonceChanged"];
-  bool        Balance         = 2 [(gogoproto.jsontag) = "balanceChanged"];
-  bool        CodeHash        = 3 [(gogoproto.jsontag) = "codeHashChanged"];
-  bool        RootHash        = 4 [(gogoproto.jsontag) = "rootHashChanged"];
-  bool        DeveloperReward = 5 [(gogoproto.jsontag) = "developerRewardChanged"];
-  bool        OwnerAddress    = 6 [(gogoproto.jsontag) = "ownerAddressChanged"];
-  bool        UserName        = 7 [(gogoproto.jsontag) = "userNameChanged"];
-  bool        CodeMetadata    = 8 [(gogoproto.jsontag) = "codeMetadataChanged"];
 }
