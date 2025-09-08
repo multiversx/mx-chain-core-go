@@ -21,6 +21,7 @@ const (
 	CodeMetadataChanged = uint32(128)
 )
 
+// AddAccountChange adds a change to the current changes and returns the updated changes
 func AddAccountChange(changes uint32, change uint32) uint32 {
 	return changes | change
 }
