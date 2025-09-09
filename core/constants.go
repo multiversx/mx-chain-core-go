@@ -6,10 +6,14 @@ type HeaderType string
 const (
 	// MetaHeader defines the type of *block.MetaBlock
 	MetaHeader HeaderType = "MetaBlock"
+	// MetaHeaderV3 defines the type of *block.MetaBlockV3
+	MetaHeaderV3 HeaderType = "MetaBlockV3"
 	// ShardHeaderV1 defines the type of *block.Header
 	ShardHeaderV1 HeaderType = "Header"
 	// ShardHeaderV2 defines the type of *block.HeaderV2
 	ShardHeaderV2 HeaderType = "HeaderV2"
+	// ShardHeaderV3 defines the type of *block.HeaderV3
+	ShardHeaderV3 HeaderType = "HeaderV3"
 )
 
 // NodeType represents the node's role in the network

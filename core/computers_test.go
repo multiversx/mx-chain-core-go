@@ -514,6 +514,8 @@ func TestGetHeaderType(t *testing.T) {
 	require.Equal(t, core.HeaderType(""), core.GetHeaderType(nilHeader))
 
 	require.Equal(t, core.MetaHeader, core.GetHeaderType(&block.MetaBlock{}))
+	require.Equal(t, core.MetaHeaderV3, core.GetHeaderType(&block.MetaBlockV3{}))
 	require.Equal(t, core.ShardHeaderV1, core.GetHeaderType(&block.Header{}))
 	require.Equal(t, core.ShardHeaderV2, core.GetHeaderType(&block.HeaderV2{}))
+	require.Equal(t, core.ShardHeaderV3, core.GetHeaderType(&block.HeaderV3{}))
 }

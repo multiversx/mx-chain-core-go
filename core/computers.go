@@ -186,16 +186,26 @@ func IsValidESDTRole(role string) bool {
 	}
 }
 
-// GetHeaderType will return the type of the provided header
+// GetHeaderType returns the type of the provided header
 func GetHeaderType(header data.HeaderHandler) HeaderType {
-	switch {
-	case check.IfNil(header):
+	if check.IfNil(header) {
 		return ""
-	case header.GetShardID() == MetachainShardId:
+	}
+
+	if header.GetShardID() == MetachainShardId {
+		if header.IsHeaderV3() {
+			return MetaHeaderV3
+		}
 		return MetaHeader
-	case check.IfNil(header.GetAdditionalData()):
-		return ShardHeaderV1
-	default:
+	}
+
+	// Shard headers
+	if header.IsHeaderV3() {
+		return ShardHeaderV3
+	}
+	if header.GetAdditionalData() != nil {
 		return ShardHeaderV2
 	}
+
+	return ShardHeaderV1
 }
