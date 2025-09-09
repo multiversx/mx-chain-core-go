@@ -41,14 +41,11 @@ func (m *MetaBlockV3) GetLastExecutionResultHandler() data.LastExecutionResultHa
 
 // GetValidatorStatsRootHash returns nil
 func (m *MetaBlockV3) GetValidatorStatsRootHash() []byte {
-	// TODO should we return the validators statistics root the last notarized execution result ?
-	// OR should be have the validatorStatsRootHash as field on MetaBlockV3
 	return nil
 }
 
 // GetDevFeesInEpoch returns nil
 func (m *MetaBlockV3) GetDevFeesInEpoch() *big.Int {
-	// TODO is correct to return the DevFeesInEpoch from the last execution result ?
 	return nil
 }
 

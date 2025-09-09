@@ -43,7 +43,7 @@ type Block struct {
 	ExecutionResults       []*ExecutionResult     `json:"executionResults,omitempty"`
 }
 
-// HeaderProof is a structure that holds information about header proof
+// HeaderProof is a structure that hold information about header proof
 type HeaderProof struct {
 	PubKeysBitmap       string `json:"pubKeysBitmap,omitempty"`
 	AggregatedSignature string `json:"aggregatedSignature,omitempty"`
