@@ -3,12 +3,13 @@ package block_test
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/block"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestMetaBlock_GetEpoch(t *testing.T) {
@@ -401,4 +402,17 @@ func TestMetaBlock_HasScheduledMiniBlocks(t *testing.T) {
 	metaBlock.MiniBlockHeaders = []block.MiniBlockHeader{*mbHeader}
 
 	require.True(t, metaBlock.HasScheduledMiniBlocks())
+}
+
+func TestMetaBlock_IsHeaderV3(t *testing.T) {
+	t.Parallel()
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+		var hv3 *block.HeaderV3
+		require.False(t, hv3.IsHeaderV3())
+	})
+	t.Run("non nil receiver", func(t *testing.T) {
+		metaBlock := &block.MetaBlock{}
+		require.False(t, metaBlock.IsHeaderV3())
+	})
 }

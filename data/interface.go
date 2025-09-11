@@ -57,6 +57,8 @@ type HeaderHandler interface {
 	HasScheduledSupport() bool
 	GetAdditionalData() headerVersionData.HeaderAdditionalData
 	HasScheduledMiniBlocks() bool
+	GetLastExecutionResultHandler() LastExecutionResultHandler
+	GetExecutionResultsHandlers() []BaseExecutionResultHandler
 
 	SetAccumulatedFees(value *big.Int) error
 	SetDeveloperFees(value *big.Int) error
@@ -83,6 +85,7 @@ type HeaderHandler interface {
 	IsStartOfEpochBlock() bool
 	ShallowClone() HeaderHandler
 	CheckFieldsForNil() error
+	IsHeaderV3() bool
 	IsInterfaceNil() bool
 }
 
@@ -99,6 +102,72 @@ type HeaderProofHandler interface {
 	IsInterfaceNil() bool
 }
 
+// LastExecutionResultHandler defines the interface for the last execution result
+type LastExecutionResultHandler interface {
+	Equal(other interface{}) bool
+	IsInterfaceNil() bool
+}
+
+// BaseExecutionResultHandler defines getters and setters for the base execution result
+type BaseExecutionResultHandler interface {
+	GetHeaderHash() []byte
+	GetHeaderNonce() uint64
+	GetHeaderRound() uint64
+	GetRootHash() []byte
+	Equal(other interface{}) bool
+	IsInterfaceNil() bool
+}
+
+// LastShardExecutionResultHandler defines the getters for shard execution result info
+type LastShardExecutionResultHandler interface {
+	GetNotarizedOnHeaderHash() []byte
+	GetExecutionResultHandler() BaseExecutionResultHandler
+	Equal(other interface{}) bool
+	IsInterfaceNil() bool
+}
+
+// LastMetaExecutionResultHandler defines the getter for meta execution result info
+type LastMetaExecutionResultHandler interface {
+	GetNotarizedOnHeaderHash() []byte
+	GetExecutionResultHandler() BaseMetaExecutionResultHandler
+	Equal(other interface{}) bool
+	IsInterfaceNil() bool
+}
+
+// BaseMetaExecutionResultHandler defines getter and setters for a base meta execution result
+type BaseMetaExecutionResultHandler interface {
+	BaseExecutionResultHandler
+	GetValidatorStatsRootHash() []byte
+	GetAccumulatedFeesInEpoch() *big.Int
+	GetDevFeesInEpoch() *big.Int
+	Equal(other interface{}) bool
+	IsInterfaceNil() bool
+}
+
+// MetaExecutionResultHandler defines getter for a meta execution result
+type MetaExecutionResultHandler interface {
+	BaseMetaExecutionResultHandler
+	GetReceiptsHash() []byte
+	GetDeveloperFees() *big.Int
+	GetAccumulatedFees() *big.Int
+	GetGasUsed() uint64
+	GetExecutedTxCount() uint64
+	IsInterfaceNil() bool
+}
+
+// ExecutionResultHandler defines getters and setters for the execution result
+type ExecutionResultHandler interface {
+	BaseExecutionResultHandler
+	GetReceiptsHash() []byte
+	GetMiniBlockHeadersHandlers() []MiniBlockHeaderHandler
+	GetDeveloperFees() *big.Int
+	GetAccumulatedFees() *big.Int
+	GetGasUsed() uint64
+	GetExecutedTxCount() uint64
+	Equal(other interface{}) bool
+	IsInterfaceNil() bool
+}
+
 // ShardHeaderHandler defines getters and setters for the shard block header
 type ShardHeaderHandler interface {
 	HeaderHandler
@@ -109,6 +178,7 @@ type ShardHeaderHandler interface {
 	SetMetaBlockHashes(hashes [][]byte) error
 	MapMiniBlockHashesToShards() map[string]uint32
 	SetBlockBodyTypeInt32(blockBodyType int32) error
+	GetGasLimit() uint32
 }
 
 // MetaHeaderHandler defines getters and setters for the meta block header

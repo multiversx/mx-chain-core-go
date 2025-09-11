@@ -5,11 +5,12 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/block"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestHeader_GetEpoch(t *testing.T) {
@@ -867,5 +868,22 @@ func TestHeader_SetBlockBodyTypeInt32(t *testing.T) {
 		err = header.SetBlockBodyTypeInt32(int32(block.TxBlock))
 		require.Nil(t, err)
 		require.Equal(t, block.TxBlock, header.BlockBodyType)
+	})
+}
+
+func TestHeader_IsHeaderV3(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.Header
+		require.False(t, header.IsHeaderV3())
+	})
+
+	t.Run("valid receiver", func(t *testing.T) {
+		t.Parallel()
+		header := &block.Header{}
+		require.False(t, header.IsHeaderV3())
 	})
 }
