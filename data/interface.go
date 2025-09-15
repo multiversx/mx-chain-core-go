@@ -81,8 +81,8 @@ type HeaderHandler interface {
 	SetReceiptsHash(hash []byte) error
 	SetScheduledRootHash(rootHash []byte) error
 	SetAdditionalData(headerVersionData headerVersionData.HeaderAdditionalData) error
-	// SetLastExecutionResultHandler(resultHandler LastExecutionResultHandler) error
-	// SetExecutionResultsHandlers(resultHandlers []BaseExecutionResultHandler) error
+	SetLastExecutionResultHandler(resultHandler LastExecutionResultHandler) error
+	SetExecutionResultsHandlers(resultHandlers []BaseExecutionResultHandler) error
 
 	ValidateHeaderVersion() error
 	IsStartOfEpochBlock() bool
