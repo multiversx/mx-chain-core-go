@@ -44,8 +44,8 @@ message BaseMetaExecutionResult {
 
 // MetaExecutionResultInfo contains a base meta execution result and the header hash when the results was notarized
 message MetaExecutionResultInfo {
-  uint64                   NotarizedInRound = 1 [(gogoproto.jsontag) = "notarizedOnHeaderHash,omitempty"];
-  BaseMetaExecutionResult  ExecutionResult  = 2 [(gogoproto.jsontag) = "baseExecutionResultMeta,omitempty"];
+  uint64                   NotarizedInRound = 1 [(gogoproto.jsontag) = "notarizedInRound,omitempty"];
+  BaseMetaExecutionResult  ExecutionResult  = 2 [(gogoproto.jsontag) = "executionResult,omitempty"];
 }
 
 // MetaExecutionResult contains a base execution result meta and extra fields for meta
