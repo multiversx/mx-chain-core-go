@@ -80,8 +80,11 @@ type HeaderHandler interface {
 	SetMiniBlockHeaderHandlers(mbHeaderHandlers []MiniBlockHeaderHandler) error
 	SetReceiptsHash(hash []byte) error
 	SetScheduledRootHash(rootHash []byte) error
-	ValidateHeaderVersion() error
 	SetAdditionalData(headerVersionData headerVersionData.HeaderAdditionalData) error
+	// SetLastExecutionResultHandler(resultHandler LastExecutionResultHandler) error
+	// SetExecutionResultsHandlers(resultHandlers []BaseExecutionResultHandler) error
+
+	ValidateHeaderVersion() error
 	IsStartOfEpochBlock() bool
 	ShallowClone() HeaderHandler
 	CheckFieldsForNil() error

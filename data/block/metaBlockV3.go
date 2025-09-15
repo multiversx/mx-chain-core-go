@@ -30,6 +30,32 @@ func (m *MetaBlockV3) GetExecutionResultsHandlers() []data.BaseExecutionResultHa
 	return executionResultsHandlers
 }
 
+// SetExecutionResultsHandlers will set the provided execution results
+func (m *MetaBlockV3) SetExecutionResultsHandlers(execResults []data.BaseExecutionResultHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	if len(execResults) == 0 {
+		m.ExecutionResults = nil
+		return nil
+	}
+
+	executionResults := make([]*MetaExecutionResult, len(execResults))
+	for i, execResult := range execResults {
+		execResultV3, ok := execResult.(*MetaExecutionResult)
+		if !ok {
+			return data.ErrInvalidTypeAssertion
+		}
+		if execResultV3 == nil {
+			return data.ErrNilPointerDereference
+		}
+		executionResults[i] = execResultV3
+	}
+
+	m.ExecutionResults = executionResults
+	return nil
+}
+
 // GetLastExecutionResultHandler will return the last execution result handler
 func (m *MetaBlockV3) GetLastExecutionResultHandler() data.LastExecutionResultHandler {
 	if m == nil {
@@ -37,6 +63,24 @@ func (m *MetaBlockV3) GetLastExecutionResultHandler() data.LastExecutionResultHa
 	}
 
 	return m.LastExecutionResult
+}
+
+// SetLastExecutionResultHandler will set the provided last execution result
+func (m *MetaBlockV3) SetLastExecutionResultHandler(lastExecResult data.LastExecutionResultHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	if lastExecResult == nil {
+		return data.ErrNilPointerDereference
+	}
+
+	lastExecResultV3, ok := lastExecResult.(*MetaExecutionResultInfo)
+	if !ok {
+		return data.ErrInvalidTypeAssertion
+	}
+
+	m.LastExecutionResult = lastExecResultV3
+	return nil
 }
 
 // GetValidatorStatsRootHash returns nil

@@ -427,6 +427,24 @@ func (hv3 *HeaderV3) GetLastExecutionResultHandler() data.LastExecutionResultHan
 	return hv3.LastExecutionResult
 }
 
+// SetLastExecutionResultHandler sets the last execution result
+func (hv3 *HeaderV3) SetLastExecutionResultHandler(lastExecResult data.LastExecutionResultHandler) error {
+	if hv3 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	if lastExecResult == nil {
+		return data.ErrNilPointerDereference
+	}
+
+	lastExecResultV3, ok := lastExecResult.(*ExecutionResultInfo)
+	if !ok {
+		return data.ErrInvalidTypeAssertion
+	}
+
+	hv3.LastExecutionResult = lastExecResultV3
+	return nil
+}
+
 // GetExecutionResultsHandlers returns the execution results
 func (hv3 *HeaderV3) GetExecutionResultsHandlers() []data.BaseExecutionResultHandler {
 	if hv3 == nil {
@@ -439,6 +457,32 @@ func (hv3 *HeaderV3) GetExecutionResultsHandlers() []data.BaseExecutionResultHan
 	}
 
 	return executionResultsHandlers
+}
+
+// SetExecutionResultsHandlers sets the execution results
+func (hv3 *HeaderV3) SetExecutionResultsHandlers(execResults []data.BaseExecutionResultHandler) error {
+	if hv3 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	if len(execResults) == 0 {
+		hv3.ExecutionResults = nil
+		return nil
+	}
+
+	executionResults := make([]*ExecutionResult, len(execResults))
+	for i, execResult := range execResults {
+		execResultV3, ok := execResult.(*ExecutionResult)
+		if !ok {
+			return data.ErrInvalidTypeAssertion
+		}
+		if execResultV3 == nil {
+			return data.ErrNilPointerDereference
+		}
+		executionResults[i] = execResultV3
+	}
+
+	hv3.ExecutionResults = executionResults
+	return nil
 }
 
 // IsHeaderV3 checks if the header is of type HeaderV3
