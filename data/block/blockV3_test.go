@@ -687,3 +687,95 @@ func TestHeaderV3_IsHeaderV3(t *testing.T) {
 		require.True(t, hv3.IsHeaderV3())
 	})
 }
+
+func TestHeaderV3_SetLastExecutionResultHandler(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.HeaderV3
+		require.Equal(t, data.ErrNilPointerReceiver, header.SetLastExecutionResultHandler(nil))
+	})
+
+	t.Run("nil exec result", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.HeaderV3{}
+		require.Equal(t, data.ErrNilPointerDereference, header.SetLastExecutionResultHandler(nil))
+	})
+
+	t.Run("cast fails", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.HeaderV3{}
+		require.Equal(t, data.ErrInvalidTypeAssertion, header.SetLastExecutionResultHandler(&block.HeaderV3{}))
+	})
+
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.HeaderV3{}
+		execResult := &block.ExecutionResultInfo{}
+		require.NoError(t, header.SetLastExecutionResultHandler(execResult))
+		require.Equal(t, execResult, header.GetLastExecutionResult())
+	})
+}
+
+func TestHeaderV3_SetExecutionResultsHandlers(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.HeaderV3
+		require.Equal(t, data.ErrNilPointerReceiver, header.SetExecutionResultsHandlers(nil))
+	})
+
+	t.Run("empty slice", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.HeaderV3{}
+		require.NoError(t, header.SetExecutionResultsHandlers(nil))
+		require.Nil(t, header.GetExecutionResults())
+	})
+
+	t.Run("invalid cast", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.HeaderV3{}
+		handlers := []data.BaseExecutionResultHandler{
+			&block.ExecutionResult{},     // ok
+			&block.MetaExecutionResult{}, // cast fails
+		}
+		require.Equal(t, data.ErrInvalidTypeAssertion, header.SetExecutionResultsHandlers(handlers))
+	})
+
+	t.Run("nil handler", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.HeaderV3{}
+		nilHandler := (*block.ExecutionResult)(nil)
+		handlers := []data.BaseExecutionResultHandler{
+			&block.ExecutionResult{}, // ok
+			nilHandler,               // nil
+		}
+		require.Equal(t, data.ErrNilPointerDereference, header.SetExecutionResultsHandlers(handlers))
+	})
+
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.HeaderV3{}
+		handlers := []data.BaseExecutionResultHandler{
+			&block.ExecutionResult{
+				ReceiptsHash: []byte("receiptsHash1"),
+			},
+			&block.ExecutionResult{
+				ReceiptsHash: []byte("receiptsHash2"),
+			},
+		}
+		require.NoError(t, header.SetExecutionResultsHandlers(handlers))
+		require.Equal(t, handlers, header.GetExecutionResultsHandlers())
+	})
+}

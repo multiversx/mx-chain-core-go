@@ -406,13 +406,53 @@ func TestMetaBlock_HasScheduledMiniBlocks(t *testing.T) {
 
 func TestMetaBlock_IsHeaderV3(t *testing.T) {
 	t.Parallel()
+
 	t.Run("nil receiver", func(t *testing.T) {
 		t.Parallel()
-		var hv3 *block.HeaderV3
+
+		var hv3 *block.MetaBlock
 		require.False(t, hv3.IsHeaderV3())
 	})
 	t.Run("non nil receiver", func(t *testing.T) {
+		t.Parallel()
+
 		metaBlock := &block.MetaBlock{}
 		require.False(t, metaBlock.IsHeaderV3())
+	})
+}
+
+func TestMetaBlock_SetLastExecutionResultHandler(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.MetaBlock
+		require.Equal(t, data.ErrNilPointerReceiver, header.SetLastExecutionResultHandler(nil))
+	})
+
+	t.Run("valid receiver", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.MetaBlock{}
+		require.Equal(t, data.ErrFieldNotSupported, header.SetLastExecutionResultHandler(nil))
+	})
+}
+
+func TestMetaBlock_SetExecutionResultsHandlers(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.MetaBlock
+		require.Equal(t, data.ErrNilPointerReceiver, header.SetExecutionResultsHandlers(nil))
+	})
+
+	t.Run("valid receiver", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.MetaBlock{}
+		require.Equal(t, data.ErrFieldNotSupported, header.SetExecutionResultsHandlers(nil))
 	})
 }

@@ -4,6 +4,7 @@ import (
 	"math/big"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
@@ -137,6 +138,28 @@ func TestBaseMetaExecutionResult_GetRootHash(t *testing.T) {
 			},
 		}
 		require.Equal(t, expectedValue, bm.GetRootHash())
+	})
+}
+
+func TestBaseMetaExecutionResult_GetGasUsed(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		er := (*BaseMetaExecutionResult)(nil)
+		assert.Equal(t, uint64(0), er.GetGasUsed())
+	})
+
+	t.Run("with gas used", func(t *testing.T) {
+		t.Parallel()
+
+		er := &BaseMetaExecutionResult{
+			BaseExecutionResult: &BaseExecutionResult{
+				GasUsed: 50000,
+			},
+		}
+		assert.Equal(t, uint64(50000), er.GetGasUsed())
 	})
 }
 
@@ -372,6 +395,30 @@ func TestMetaExecutionResult_GetAccumulatedFeesInEpoch(t *testing.T) {
 			},
 		}
 		require.Equal(t, expectedValue, mes.GetAccumulatedFeesInEpoch())
+	})
+}
+
+func TestMetaExecutionResult_GetGasUsed(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		er := (*MetaExecutionResult)(nil)
+		assert.Equal(t, uint64(0), er.GetGasUsed())
+	})
+
+	t.Run("with gas used", func(t *testing.T) {
+		t.Parallel()
+
+		er := &MetaExecutionResult{
+			ExecutionResult: &BaseMetaExecutionResult{
+				BaseExecutionResult: &BaseExecutionResult{
+					GasUsed: 50000,
+				},
+			},
+		}
+		assert.Equal(t, uint64(50000), er.GetGasUsed())
 	})
 }
 
