@@ -1,0 +1,58 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "block";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "block.proto";
+
+// BaseExecutionResult defines the dto that will hold base information about execution result
+message BaseExecutionResult {
+  bytes  HeaderHash  = 1 [(gogoproto.jsontag) = "headerHash"];
+  uint64 HeaderNonce = 2 [(gogoproto.jsontag) = "headerNonce"];
+  uint64 HeaderRound = 3 [(gogoproto.jsontag) = "headerRound"];
+  bytes  RootHash    = 4 [(gogoproto.jsontag) = "rootHash"];
+  uint64 GasUsed     = 5 [(gogoproto.jsontag) = "gasUsed"];
+}
+
+// ExecutionResultInfo defines the structure that holds the information about the execution result
+message ExecutionResultInfo {
+  uint64              NotarizedInRound = 1 [(gogoproto.jsontag) = "notarizedOnHeaderHash,omitempty"];
+  BaseExecutionResult ExecutionResult  = 2 [(gogoproto.jsontag) = "executionResult,omitempty"];
+}
+
+// ExecutionResult defines the dto that will hold information about execution result
+message ExecutionResult {
+  BaseExecutionResult      BaseExecutionResult = 1 [(gogoproto.jsontag) = "baseExecutionResult"];
+  bytes                    ReceiptsHash        = 2 [(gogoproto.jsontag) = "receiptsHash"];
+  repeated MiniBlockHeader MiniBlockHeaders    = 3 [(gogoproto.jsontag) = "miniBlockHeaders", (gogoproto.nullable) = false];
+  bytes                    DeveloperFees       = 4 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  bytes                    AccumulatedFees     = 5 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  uint64                   ExecutedTxCount     = 6 [(gogoproto.jsontag) = "executedTxCount"];
+}
+
+// BaseMetaExecutionResult contains a base execution result and somen extra fields
+message BaseMetaExecutionResult {
+  BaseExecutionResult BaseExecutionResult     = 1 [(gogoproto.jsontag) = "baseExecutionResult,omitempty"];
+  bytes               ValidatorStatsRootHash  = 2 [(gogoproto.jsontag) = "validatorStatsRootHash,omitempty"];
+  bytes               AccumulatedFeesInEpoch  = 3 [(gogoproto.jsontag) = "accumulatedFeesInEpoch,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  bytes               DevFeesInEpoch          = 4 [(gogoproto.jsontag) = "devFeesInEpoch,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+}
+
+
+// MetaExecutionResultInfo contains a base meta execution result and the header hash when the results was notarized
+message MetaExecutionResultInfo {
+  uint64                   NotarizedInRound = 1 [(gogoproto.jsontag) = "notarizedOnHeaderHash,omitempty"];
+  BaseMetaExecutionResult  ExecutionResult  = 2 [(gogoproto.jsontag) = "baseExecutionResultMeta,omitempty"];
+}
+
+// MetaExecutionResult contains a base execution result meta and extra fields for meta
+message MetaExecutionResult {
+  BaseMetaExecutionResult  ExecutionResult = 1 [(gogoproto.jsontag) = "executionResult,omitempty"];
+  bytes                    ReceiptsHash    = 2 [(gogoproto.jsontag) = "receiptsHash,omitempty"];
+  bytes                    DeveloperFees   = 3 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  bytes                    AccumulatedFees = 4 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  uint64                   ExecutedTxCount = 5 [(gogoproto.jsontag) = "executedTxCount"];
+}

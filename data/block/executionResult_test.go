@@ -200,7 +200,9 @@ func TestExecutionResult_GetGasUsed(t *testing.T) {
 		t.Parallel()
 
 		er := &ExecutionResult{
-			GasUsed: 50000,
+			BaseExecutionResult: &BaseExecutionResult{
+				GasUsed: 50000,
+			},
 		}
 		assert.Equal(t, uint64(50000), er.GetGasUsed())
 	})

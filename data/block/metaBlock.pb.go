@@ -70,8 +70,8 @@ func (PeerAction) EnumDescriptor() ([]byte, []int) {
 }
 
 // PeerData holds information about actions taken by a peer:
-//  - a peer can register with an amount to become a validator
-//  - a peer can choose to deregister and get back the deposited value
+//   - a peer can register with an amount to become a validator
+//   - a peer can choose to deregister and get back the deposited value
 type PeerData struct {
 	Address     []byte        `protobuf:"bytes,1,opt,name=Address,proto3" json:"address,omitempty"`
 	PublicKey   []byte        `protobuf:"bytes,2,opt,name=PublicKey,proto3" json:"publicKey,omitempty"`

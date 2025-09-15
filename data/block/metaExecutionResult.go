@@ -60,6 +60,15 @@ func (bm *BaseMetaExecutionResult) GetRootHash() []byte {
 	return bm.BaseExecutionResult.GetRootHash()
 }
 
+// GetGasUsed returns the gas used
+func (bm *BaseMetaExecutionResult) GetGasUsed() uint64 {
+	if bm == nil {
+		return 0
+	}
+
+	return bm.BaseExecutionResult.GetGasUsed()
+}
+
 // IsInterfaceNil returns true if there is no value under the interface
 func (bme *BaseMetaExecutionResult) IsInterfaceNil() bool {
 	return bme == nil
@@ -126,6 +135,15 @@ func (mes *MetaExecutionResult) GetDevFeesInEpoch() *big.Int {
 	}
 
 	return mes.ExecutionResult.GetDevFeesInEpoch()
+}
+
+// GetGasUsed returns the gas used
+func (mes *MetaExecutionResult) GetGasUsed() uint64 {
+	if mes == nil {
+		return 0
+	}
+
+	return mes.ExecutionResult.GetGasUsed()
 }
 
 // IsInterfaceNil returns true if there is no value under the interface

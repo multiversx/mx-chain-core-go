@@ -1,6 +1,10 @@
+//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf  --gogoslick_out=. executionResult.proto
+
 package block
 
-import "github.com/multiversx/mx-chain-core-go/data"
+import (
+	"github.com/multiversx/mx-chain-core-go/data"
+)
 
 // GetHeaderHash returns the header hash
 func (eer *ExecutionResult) GetHeaderHash() []byte {
@@ -36,6 +40,15 @@ func (eer *ExecutionResult) GetRootHash() []byte {
 	}
 
 	return eer.BaseExecutionResult.GetRootHash()
+}
+
+// GetGasUsed returns the gas used
+func (eer *ExecutionResult) GetGasUsed() uint64 {
+	if eer == nil {
+		return 0
+	}
+
+	return eer.BaseExecutionResult.GasUsed
 }
 
 // GetMiniBlockHeadersHandlers returns the miniblock headers handlers
