@@ -17,7 +17,7 @@ message BaseExecutionResult {
   uint64 GasUsed     = 5 [(gogoproto.jsontag) = "gasUsed"];
 }
 
-// ExecutionResultInfo defines the structure that holds the information about the execution result
+// ExecutionResultInfo contains a base execution result and the header round when the results was notarized
 message ExecutionResultInfo {
   uint64              NotarizedInRound = 1 [(gogoproto.jsontag) = "notarizedInRound,omitempty"];
   BaseExecutionResult ExecutionResult  = 2 [(gogoproto.jsontag) = "executionResult,omitempty"];
@@ -33,7 +33,7 @@ message ExecutionResult {
   uint64                   ExecutedTxCount     = 6 [(gogoproto.jsontag) = "executedTxCount"];
 }
 
-// BaseMetaExecutionResult contains a base execution result and some extra fields
+// BaseMetaExecutionResult contains a base execution result and additional validator and fee-related fields
 message BaseMetaExecutionResult {
   BaseExecutionResult BaseExecutionResult     = 1 [(gogoproto.jsontag) = "baseExecutionResult,omitempty"];
   bytes               ValidatorStatsRootHash  = 2 [(gogoproto.jsontag) = "validatorStatsRootHash,omitempty"];
@@ -42,13 +42,13 @@ message BaseMetaExecutionResult {
 }
 
 
-// MetaExecutionResultInfo contains a base meta execution result and the header hash when the results was notarized
+// MetaExecutionResultInfo contains a base meta execution result and the header round when the results was notarized
 message MetaExecutionResultInfo {
   uint64                   NotarizedInRound = 1 [(gogoproto.jsontag) = "notarizedInRound,omitempty"];
   BaseMetaExecutionResult  ExecutionResult  = 2 [(gogoproto.jsontag) = "executionResult,omitempty"];
 }
 
-// MetaExecutionResult contains a base execution result meta and extra fields for meta
+// MetaExecutionResult contains a base meta execution result and extra fields for meta block results
 message MetaExecutionResult {
   BaseMetaExecutionResult  ExecutionResult = 1 [(gogoproto.jsontag) = "executionResult,omitempty"];
   bytes                    ReceiptsHash    = 2 [(gogoproto.jsontag) = "receiptsHash,omitempty"];

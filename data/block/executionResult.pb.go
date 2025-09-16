@@ -100,7 +100,7 @@ func (m *BaseExecutionResult) GetGasUsed() uint64 {
 	return 0
 }
 
-// ExecutionResultInfo defines the structure that holds the information about the execution result
+// ExecutionResultInfo contains a base execution result and the header round when the results was notarized
 type ExecutionResultInfo struct {
 	NotarizedInRound uint64               `protobuf:"varint,1,opt,name=NotarizedInRound,proto3" json:"notarizedInRound,omitempty"`
 	ExecutionResult  *BaseExecutionResult `protobuf:"bytes,2,opt,name=ExecutionResult,proto3" json:"executionResult,omitempty"`
@@ -228,7 +228,7 @@ func (m *ExecutionResult) GetExecutedTxCount() uint64 {
 	return 0
 }
 
-// BaseMetaExecutionResult contains a base execution result and some extra fields
+// BaseMetaExecutionResult contains a base execution result and additional validator and fee-related fields
 type BaseMetaExecutionResult struct {
 	BaseExecutionResult    *BaseExecutionResult `protobuf:"bytes,1,opt,name=BaseExecutionResult,proto3" json:"baseExecutionResult,omitempty"`
 	ValidatorStatsRootHash []byte               `protobuf:"bytes,2,opt,name=ValidatorStatsRootHash,proto3" json:"validatorStatsRootHash,omitempty"`
@@ -292,7 +292,7 @@ func (m *BaseMetaExecutionResult) GetDevFeesInEpoch() *math_big.Int {
 	return nil
 }
 
-// MetaExecutionResultInfo contains a base meta execution result and the header hash when the results was notarized
+// MetaExecutionResultInfo contains a base meta execution result and the header round when the results was notarized
 type MetaExecutionResultInfo struct {
 	NotarizedInRound uint64                   `protobuf:"varint,1,opt,name=NotarizedInRound,proto3" json:"notarizedInRound,omitempty"`
 	ExecutionResult  *BaseMetaExecutionResult `protobuf:"bytes,2,opt,name=ExecutionResult,proto3" json:"executionResult,omitempty"`
@@ -340,7 +340,7 @@ func (m *MetaExecutionResultInfo) GetExecutionResult() *BaseMetaExecutionResult 
 	return nil
 }
 
-// MetaExecutionResult contains a base execution result meta and extra fields for meta
+// MetaExecutionResult contains a base meta execution result and extra fields for meta block results
 type MetaExecutionResult struct {
 	ExecutionResult *BaseMetaExecutionResult `protobuf:"bytes,1,opt,name=ExecutionResult,proto3" json:"executionResult,omitempty"`
 	ReceiptsHash    []byte                   `protobuf:"bytes,2,opt,name=ReceiptsHash,proto3" json:"receiptsHash,omitempty"`
