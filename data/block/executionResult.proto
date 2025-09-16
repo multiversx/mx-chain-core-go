@@ -19,7 +19,7 @@ message BaseExecutionResult {
 
 // ExecutionResultInfo defines the structure that holds the information about the execution result
 message ExecutionResultInfo {
-  uint64              NotarizedInRound = 1 [(gogoproto.jsontag) = "notarizedOnHeaderHash,omitempty"];
+  uint64              NotarizedInRound = 1 [(gogoproto.jsontag) = "notarizedInRound,omitempty"];
   BaseExecutionResult ExecutionResult  = 2 [(gogoproto.jsontag) = "executionResult,omitempty"];
 }
 
@@ -33,7 +33,7 @@ message ExecutionResult {
   uint64                   ExecutedTxCount     = 6 [(gogoproto.jsontag) = "executedTxCount"];
 }
 
-// BaseMetaExecutionResult contains a base execution result and somen extra fields
+// BaseMetaExecutionResult contains a base execution result and some extra fields
 message BaseMetaExecutionResult {
   BaseExecutionResult BaseExecutionResult     = 1 [(gogoproto.jsontag) = "baseExecutionResult,omitempty"];
   bytes               ValidatorStatsRootHash  = 2 [(gogoproto.jsontag) = "validatorStatsRootHash,omitempty"];
