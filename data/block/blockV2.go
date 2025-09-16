@@ -655,6 +655,24 @@ func (hv2 *HeaderV2) GetExecutionResultsHandlers() []data.BaseExecutionResultHan
 	return nil
 }
 
+// SetLastExecutionResultHandler always returns an error as v2 Header has no support for execution results
+func (hv2 *HeaderV2) SetLastExecutionResultHandler(_ data.LastExecutionResultHandler) error {
+	if hv2 == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return data.ErrFieldNotSupported
+}
+
+// SetExecutionResultsHandlers always returns an error as v2 Header has no support for execution results
+func (hv2 *HeaderV2) SetExecutionResultsHandlers(_ []data.BaseExecutionResultHandler) error {
+	if hv2 == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return data.ErrFieldNotSupported
+}
+
 // CheckFieldsForNil checks a predefined set of fields for nil values
 func (hv2 *HeaderV2) CheckFieldsForNil() error {
 	if hv2 == nil {

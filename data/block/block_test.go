@@ -887,3 +887,39 @@ func TestHeader_IsHeaderV3(t *testing.T) {
 		require.False(t, header.IsHeaderV3())
 	})
 }
+
+func TestHeader_SetLastExecutionResultHandler(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.Header
+		require.Equal(t, data.ErrNilPointerReceiver, header.SetLastExecutionResultHandler(nil))
+	})
+
+	t.Run("valid receiver", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.Header{}
+		require.Equal(t, data.ErrFieldNotSupported, header.SetLastExecutionResultHandler(nil))
+	})
+}
+
+func TestHeader_SetExecutionResultsHandlers(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.Header
+		require.Equal(t, data.ErrNilPointerReceiver, header.SetExecutionResultsHandlers(nil))
+	})
+
+	t.Run("valid receiver", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.Header{}
+		require.Equal(t, data.ErrFieldNotSupported, header.SetExecutionResultsHandlers(nil))
+	})
+}

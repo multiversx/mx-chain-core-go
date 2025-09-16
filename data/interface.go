@@ -80,8 +80,11 @@ type HeaderHandler interface {
 	SetMiniBlockHeaderHandlers(mbHeaderHandlers []MiniBlockHeaderHandler) error
 	SetReceiptsHash(hash []byte) error
 	SetScheduledRootHash(rootHash []byte) error
-	ValidateHeaderVersion() error
 	SetAdditionalData(headerVersionData headerVersionData.HeaderAdditionalData) error
+	SetLastExecutionResultHandler(resultHandler LastExecutionResultHandler) error
+	SetExecutionResultsHandlers(resultHandlers []BaseExecutionResultHandler) error
+
+	ValidateHeaderVersion() error
 	IsStartOfEpochBlock() bool
 	ShallowClone() HeaderHandler
 	CheckFieldsForNil() error
@@ -114,13 +117,14 @@ type BaseExecutionResultHandler interface {
 	GetHeaderNonce() uint64
 	GetHeaderRound() uint64
 	GetRootHash() []byte
+	GetGasUsed() uint64
 	Equal(other interface{}) bool
 	IsInterfaceNil() bool
 }
 
 // LastShardExecutionResultHandler defines the getters for shard execution result info
 type LastShardExecutionResultHandler interface {
-	GetNotarizedOnHeaderHash() []byte
+	GetNotarizedInRound() uint64
 	GetExecutionResultHandler() BaseExecutionResultHandler
 	Equal(other interface{}) bool
 	IsInterfaceNil() bool
@@ -128,7 +132,7 @@ type LastShardExecutionResultHandler interface {
 
 // LastMetaExecutionResultHandler defines the getter for meta execution result info
 type LastMetaExecutionResultHandler interface {
-	GetNotarizedOnHeaderHash() []byte
+	GetNotarizedInRound() uint64
 	GetExecutionResultHandler() BaseMetaExecutionResultHandler
 	Equal(other interface{}) bool
 	IsInterfaceNil() bool
@@ -150,7 +154,6 @@ type MetaExecutionResultHandler interface {
 	GetReceiptsHash() []byte
 	GetDeveloperFees() *big.Int
 	GetAccumulatedFees() *big.Int
-	GetGasUsed() uint64
 	GetExecutedTxCount() uint64
 	IsInterfaceNil() bool
 }
@@ -162,7 +165,6 @@ type ExecutionResultHandler interface {
 	GetMiniBlockHeadersHandlers() []MiniBlockHeaderHandler
 	GetDeveloperFees() *big.Int
 	GetAccumulatedFees() *big.Int
-	GetGasUsed() uint64
 	GetExecutedTxCount() uint64
 	Equal(other interface{}) bool
 	IsInterfaceNil() bool

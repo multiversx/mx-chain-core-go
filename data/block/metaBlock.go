@@ -25,6 +25,24 @@ func (m *MetaBlock) GetExecutionResultsHandlers() []data.BaseExecutionResultHand
 	return nil
 }
 
+// SetLastExecutionResultHandler always returns an error as MetaBlock has no support for execution results
+func (m *MetaBlock) SetLastExecutionResultHandler(_ data.LastExecutionResultHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return data.ErrFieldNotSupported
+}
+
+// SetExecutionResultsHandlers always returns an error as MetaBlock has no support for execution results
+func (m *MetaBlock) SetExecutionResultsHandlers(_ []data.BaseExecutionResultHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return data.ErrFieldNotSupported
+}
+
 // GetShardID returns the metachain shard id
 func (m *MetaBlock) GetShardID() uint32 {
 	return core.MetachainShardId

@@ -8,12 +8,7 @@ option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "block.proto";
-
-// ExecutionResultInfo defines the structure that holds the information about the execution result
-message ExecutionResultInfo {
-  bytes NotarizedOnHeaderHash         = 1 [(gogoproto.jsontag) = "notarizedOnHeaderHash,omitempty"];
-  BaseExecutionResult ExecutionResult = 2 [(gogoproto.jsontag) = "executionResult,omitempty"];
-}
+import "executionResult.proto";
 
 // HeaderV3 defines the structure of the header V3
 message HeaderV3 {

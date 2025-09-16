@@ -52,7 +52,7 @@ func TestMetaBlockV3_GetLastExecutionResultHandler(t *testing.T) {
 		t.Parallel()
 		mb2 := &block.MetaBlockV3{
 			LastExecutionResult: &block.MetaExecutionResultInfo{
-				NotarizedOnHeaderHash: []byte("notarizedHash"),
+				NotarizedInRound: 100,
 				ExecutionResult: &block.BaseMetaExecutionResult{
 					BaseExecutionResult: &block.BaseExecutionResult{HeaderHash: []byte("hash1")},
 				},
@@ -947,4 +947,96 @@ func TestMetaBlockV3_IsInterfaceNil(t *testing.T) {
 
 	mb2 = &block.MetaBlockV3{}
 	require.False(t, mb2.IsInterfaceNil())
+}
+
+func TestMetaBlockV3_SetLastExecutionResultHandler(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.MetaBlockV3
+		require.Equal(t, data.ErrNilPointerReceiver, header.SetLastExecutionResultHandler(nil))
+	})
+
+	t.Run("nil exec result", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.MetaBlockV3{}
+		require.Equal(t, data.ErrNilPointerDereference, header.SetLastExecutionResultHandler(nil))
+	})
+
+	t.Run("cast fails", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.MetaBlockV3{}
+		require.Equal(t, data.ErrInvalidTypeAssertion, header.SetLastExecutionResultHandler(&block.MetaBlockV3{}))
+	})
+
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.MetaBlockV3{}
+		execResult := &block.MetaExecutionResultInfo{}
+		require.NoError(t, header.SetLastExecutionResultHandler(execResult))
+		require.Equal(t, execResult, header.GetLastExecutionResult())
+	})
+}
+
+func TestMetaBlockV3_SetExecutionResultsHandlers(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.MetaBlockV3
+		require.Equal(t, data.ErrNilPointerReceiver, header.SetExecutionResultsHandlers(nil))
+	})
+
+	t.Run("empty slice", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.MetaBlockV3{}
+		require.NoError(t, header.SetExecutionResultsHandlers(nil))
+		require.Nil(t, header.GetExecutionResults())
+	})
+
+	t.Run("invalid cast", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.MetaBlockV3{}
+		handlers := []data.BaseExecutionResultHandler{
+			&block.MetaExecutionResult{}, // ok
+			&block.ExecutionResult{},     // cast fails
+		}
+		require.Equal(t, data.ErrInvalidTypeAssertion, header.SetExecutionResultsHandlers(handlers))
+	})
+
+	t.Run("nil handler", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.MetaBlockV3{}
+		nilHandler := (*block.MetaExecutionResult)(nil)
+		handlers := []data.BaseExecutionResultHandler{
+			&block.MetaExecutionResult{}, // ok
+			nilHandler,                   // nil
+		}
+		require.Equal(t, data.ErrNilPointerDereference, header.SetExecutionResultsHandlers(handlers))
+	})
+
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.MetaBlockV3{}
+		handlers := []data.BaseExecutionResultHandler{
+			&block.MetaExecutionResult{
+				ReceiptsHash: []byte("receiptsHash1"),
+			},
+			&block.MetaExecutionResult{
+				ReceiptsHash: []byte("receiptsHash2"),
+			},
+		}
+		require.NoError(t, header.SetExecutionResultsHandlers(handlers))
+		require.Equal(t, handlers, header.GetExecutionResultsHandlers())
+	})
 }

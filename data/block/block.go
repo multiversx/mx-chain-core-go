@@ -1,4 +1,5 @@
-//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf  --gogoslick_out=$GOPATH/src block.proto
+//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf  --gogoslick_out=. block.proto
+
 package block
 
 import (
@@ -607,6 +608,24 @@ func (h *Header) GetExecutionResultsHandlers() []data.BaseExecutionResultHandler
 // GetLastExecutionResultHandler always returns nil
 func (h *Header) GetLastExecutionResultHandler() data.LastExecutionResultHandler {
 	return nil
+}
+
+// SetLastExecutionResultHandler always returns an error as v1 Header has no support for execution results
+func (h *Header) SetLastExecutionResultHandler(_ data.LastExecutionResultHandler) error {
+	if h == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return data.ErrFieldNotSupported
+}
+
+// SetExecutionResultsHandlers always returns an error as v1 Header has no support for execution results
+func (h *Header) SetExecutionResultsHandlers(_ []data.BaseExecutionResultHandler) error {
+	if h == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return data.ErrFieldNotSupported
 }
 
 // CheckFieldsForNil checks a predefined set of fields for nil values
