@@ -51,6 +51,15 @@ func (eer *ExecutionResult) GetGasUsed() uint64 {
 	return eer.BaseExecutionResult.GasUsed
 }
 
+// GetHeaderEpoch returns the header epoch
+func (eer *ExecutionResult) GetHeaderEpoch() uint32 {
+	if eer == nil {
+		return 0
+	}
+
+	return eer.BaseExecutionResult.HeaderEpoch
+}
+
 // GetMiniBlockHeadersHandlers returns the miniblock headers handlers
 func (eer *ExecutionResult) GetMiniBlockHeadersHandlers() []data.MiniBlockHeaderHandler {
 	if eer == nil {
