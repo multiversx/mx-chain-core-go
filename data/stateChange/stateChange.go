@@ -159,3 +159,13 @@ func mergeChangeInExistingChanges(
 
 	return collectedDataTrieChanges
 }
+
+// DataTrieOperation represents the type for data trie operations
+type DataTrieOperation uint32
+
+const (
+	// NotSpecified is the default value for data trie operation
+	NotSpecified DataTrieOperation = 0
+	// Delete is the value for delete operation on data trie
+	Delete DataTrieOperation = 1
+)
