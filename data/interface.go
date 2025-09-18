@@ -116,6 +116,7 @@ type BaseExecutionResultHandler interface {
 	GetHeaderHash() []byte
 	GetHeaderNonce() uint64
 	GetHeaderRound() uint64
+	GetHeaderEpoch() uint32
 	GetRootHash() []byte
 	GetGasUsed() uint64
 	Equal(other interface{}) bool
