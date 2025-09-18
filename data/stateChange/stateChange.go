@@ -151,6 +151,7 @@ func mergeChangeInExistingChanges(
 		}
 		collectedDataTrieChanges[i].Val = newChange.Val
 		collectedDataTrieChanges[i].Version = newChange.Version
+		collectedDataTrieChanges[i].Operation = newChange.Operation
 	}
 
 	if !duplicatedEntry {
