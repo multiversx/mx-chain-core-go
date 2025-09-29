@@ -51,6 +51,15 @@ func (bm *BaseMetaExecutionResult) GetHeaderRound() uint64 {
 	return bm.BaseExecutionResult.GetHeaderRound()
 }
 
+// GetHeaderEpoch return the header epoch
+func (bm *BaseMetaExecutionResult) GetHeaderEpoch() uint32 {
+	if bm == nil {
+		return 0
+	}
+
+	return bm.BaseExecutionResult.HeaderEpoch
+}
+
 // GetRootHash returns the header root hash
 func (bm *BaseMetaExecutionResult) GetRootHash() []byte {
 	if bm == nil {
@@ -70,8 +79,8 @@ func (bm *BaseMetaExecutionResult) GetGasUsed() uint64 {
 }
 
 // IsInterfaceNil returns true if there is no value under the interface
-func (bme *BaseMetaExecutionResult) IsInterfaceNil() bool {
-	return bme == nil
+func (bm *BaseMetaExecutionResult) IsInterfaceNil() bool {
+	return bm == nil
 }
 
 // GetHeaderHash returns the header hash
@@ -90,6 +99,21 @@ func (mes *MetaExecutionResult) GetHeaderNonce() uint64 {
 	}
 
 	return mes.ExecutionResult.GetHeaderNonce()
+}
+
+// GetMiniBlockHeadersHandlers returns the miniblock headers handlers
+func (mes *MetaExecutionResult) GetMiniBlockHeadersHandlers() []data.MiniBlockHeaderHandler {
+	if mes == nil {
+		return nil
+	}
+
+	mbs := make([]data.MiniBlockHeaderHandler, 0, len(mes.GetMiniBlockHeaders()))
+	for _, mb := range mes.GetMiniBlockHeaders() {
+		mbCopy := mb
+		mbs = append(mbs, &mbCopy)
+	}
+
+	return mbs
 }
 
 // GetHeaderRound returns the header round
@@ -144,6 +168,15 @@ func (mes *MetaExecutionResult) GetGasUsed() uint64 {
 	}
 
 	return mes.ExecutionResult.GetGasUsed()
+}
+
+// GetHeaderEpoch return the header epoch
+func (mes *MetaExecutionResult) GetHeaderEpoch() uint32 {
+	if mes == nil {
+		return 0
+	}
+
+	return mes.ExecutionResult.GetHeaderEpoch()
 }
 
 // IsInterfaceNil returns true if there is no value under the interface
