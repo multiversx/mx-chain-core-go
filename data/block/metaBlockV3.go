@@ -65,6 +65,11 @@ func (m *MetaBlockV3) GetLastExecutionResultHandler() data.LastExecutionResultHa
 	return m.LastExecutionResult
 }
 
+// GetAccumulatedFeesInEpoch returns nil
+func (m *MetaBlockV3) GetAccumulatedFeesInEpoch() *big.Int {
+	return nil
+}
+
 // SetLastExecutionResultHandler will set the provided last execution result
 func (m *MetaBlockV3) SetLastExecutionResultHandler(lastExecResult data.LastExecutionResultHandler) error {
 	if m == nil {

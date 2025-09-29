@@ -13,8 +13,9 @@ message BaseExecutionResult {
   bytes  HeaderHash  = 1 [(gogoproto.jsontag) = "headerHash"];
   uint64 HeaderNonce = 2 [(gogoproto.jsontag) = "headerNonce"];
   uint64 HeaderRound = 3 [(gogoproto.jsontag) = "headerRound"];
-  bytes  RootHash    = 4 [(gogoproto.jsontag) = "rootHash"];
-  uint64 GasUsed     = 5 [(gogoproto.jsontag) = "gasUsed"];
+  uint32 HeaderEpoch = 4 [(gogoproto.jsontag) = "headerEpoch"];
+  bytes  RootHash    = 5 [(gogoproto.jsontag) = "rootHash"];
+  uint64 GasUsed     = 6 [(gogoproto.jsontag) = "gasUsed"];
 }
 
 // ExecutionResultInfo contains a base execution result and the header round when the results was notarized
@@ -50,9 +51,10 @@ message MetaExecutionResultInfo {
 
 // MetaExecutionResult contains a base meta execution result and extra fields for meta block results
 message MetaExecutionResult {
-  BaseMetaExecutionResult  ExecutionResult = 1 [(gogoproto.jsontag) = "executionResult,omitempty"];
-  bytes                    ReceiptsHash    = 2 [(gogoproto.jsontag) = "receiptsHash,omitempty"];
-  bytes                    DeveloperFees   = 3 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-  bytes                    AccumulatedFees = 4 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
-  uint64                   ExecutedTxCount = 5 [(gogoproto.jsontag) = "executedTxCount"];
+  BaseMetaExecutionResult  ExecutionResult  = 1 [(gogoproto.jsontag) = "executionResult,omitempty"];
+  repeated MiniBlockHeader MiniBlockHeaders = 2 [(gogoproto.jsontag) = "miniBlockHeaders", (gogoproto.nullable) = false];
+  bytes                    ReceiptsHash     = 3 [(gogoproto.jsontag) = "receiptsHash,omitempty"];
+  bytes                    DeveloperFees    = 4 [(gogoproto.jsontag) = "developerFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  bytes                    AccumulatedFees  = 5 [(gogoproto.jsontag) = "accumulatedFees,omitempty", (gogoproto.casttypewith) = "math/big.Int;github.com/multiversx/mx-chain-core-go/data.BigIntCaster"];
+  uint64                   ExecutedTxCount  = 6 [(gogoproto.jsontag) = "executedTxCount"];
 }
