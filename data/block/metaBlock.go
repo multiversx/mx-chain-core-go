@@ -597,7 +597,6 @@ func (m *MetaBlock) CheckFieldsForNil() error {
 
 // SetEpochChangeProposed will do nothing
 func (m *MetaBlock) SetEpochChangeProposed(_ bool) {
-	return
 }
 
 // IsEpochChangeProposed always returns false
