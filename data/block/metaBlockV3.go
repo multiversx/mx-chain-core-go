@@ -575,6 +575,16 @@ func (m *MetaBlockV3) CheckFieldsForNil() error {
 	return nil
 }
 
+// SetEpochChangeProposed will set the provided value EpochStartProposed field
+func (m *MetaBlockV3) SetEpochChangeProposed(value bool) {
+	m.EpochChangeProposed = value
+}
+
+// IsEpochChangeProposed returns true if the current meta block v3 proposes an epoch change event
+func (m *MetaBlockV3) IsEpochChangeProposed() bool {
+	return m.EpochChangeProposed
+}
+
 // IsHeaderV3 checks if the header is of type MetaBlockV3
 func (m *MetaBlockV3) IsHeaderV3() bool {
 	return m != nil

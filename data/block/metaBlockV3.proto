@@ -24,7 +24,7 @@ message MetaBlockV3 {
   bytes                        PrevRandSeed        = 9 [(gogoproto.jsontag) = "prevRandSeed,omitempty"];
   bytes                        RandSeed            = 10 [(gogoproto.jsontag) = "randSeed,omitempty"];
   repeated MiniBlockHeader     MiniBlockHeaders    = 11 [(gogoproto.jsontag) = "miniBlockHeaders", (gogoproto.nullable) = false];
-  bool                         EpochStartProposed  = 12 [(gogoproto.jsontag) = "epochStartProposed"];
+  bool                         EpochChangeProposed  = 12 [(gogoproto.jsontag) = "epochChangeProposed"];
   EpochStart                   EpochStart          = 13 [(gogoproto.jsontag) = "epochStart,omitempty", (gogoproto.nullable) = false];
   bytes                        ChainID             = 14 [(gogoproto.jsontag) = "chainID,omitempty"];
   bytes                        SoftwareVersion     = 15 [(gogoproto.jsontag) = "softwareVersion,omitempty"];

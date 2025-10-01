@@ -595,6 +595,16 @@ func (m *MetaBlock) CheckFieldsForNil() error {
 	return nil
 }
 
+// SetEpochChangeProposed will do nothing
+func (m *MetaBlock) SetEpochChangeProposed(_ bool) {
+	return
+}
+
+// IsEpochChangeProposed always returns false
+func (m *MetaBlock) IsEpochChangeProposed() bool {
+	return false
+}
+
 // IsHeaderV3 returns false as the initial version of metablock is not V3
 func (m *MetaBlock) IsHeaderV3() bool {
 	return false
