@@ -101,7 +101,7 @@ func (mes *MetaExecutionResult) GetHeaderNonce() uint64 {
 	return mes.ExecutionResult.GetHeaderNonce()
 }
 
-// GetMiniBlockHeadersHandlers returns the miniblock headers handlers
+// GetMiniBlockHeadersHandlers returns the mini block headers handlers
 func (mes *MetaExecutionResult) GetMiniBlockHeadersHandlers() []data.MiniBlockHeaderHandler {
 	if mes == nil {
 		return nil
@@ -114,6 +114,32 @@ func (mes *MetaExecutionResult) GetMiniBlockHeadersHandlers() []data.MiniBlockHe
 	}
 
 	return mbs
+}
+
+// SetMiniBlockHeadersHandlers sets the mini block headers handlers
+func (mes *MetaExecutionResult) SetMiniBlockHeadersHandlers(mbs []data.MiniBlockHeaderHandler) error {
+	if mes == nil {
+		return data.ErrNilPointerReceiver
+	}
+	if len(mbs) == 0 {
+		mes.MiniBlockHeaders = nil
+		return nil
+	}
+
+	miniBlockHeaders := make([]MiniBlockHeader, len(mbs))
+	for i, mb := range mbs {
+		mbHeader, ok := mb.(*MiniBlockHeader)
+		if !ok {
+			return data.ErrInvalidTypeAssertion
+		}
+		if mbHeader == nil {
+			return data.ErrNilPointerDereference
+		}
+		miniBlockHeaders[i] = *mbHeader
+	}
+
+	mes.MiniBlockHeaders = miniBlockHeaders
+	return nil
 }
 
 // GetHeaderRound returns the header round

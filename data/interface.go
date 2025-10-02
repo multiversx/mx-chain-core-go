@@ -153,6 +153,7 @@ type BaseMetaExecutionResultHandler interface {
 type MetaExecutionResultHandler interface {
 	BaseMetaExecutionResultHandler
 	GetMiniBlockHeadersHandlers() []MiniBlockHeaderHandler
+	SetMiniBlockHeadersHandlers(mbs []MiniBlockHeaderHandler) error
 	GetReceiptsHash() []byte
 	GetDeveloperFees() *big.Int
 	GetAccumulatedFees() *big.Int
@@ -165,6 +166,7 @@ type ExecutionResultHandler interface {
 	BaseExecutionResultHandler
 	GetReceiptsHash() []byte
 	GetMiniBlockHeadersHandlers() []MiniBlockHeaderHandler
+	SetMiniBlockHeadersHandlers(mbs []MiniBlockHeaderHandler) error
 	GetDeveloperFees() *big.Int
 	GetAccumulatedFees() *big.Int
 	GetExecutedTxCount() uint64
