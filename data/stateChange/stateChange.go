@@ -145,13 +145,15 @@ func mergeChangeInExistingChanges(
 		if collectedDataTrieChanges[i].Type != newChange.Type {
 			continue
 		}
+		if collectedDataTrieChanges[i].Operation != newChange.Operation {
+			continue
+		}
 		duplicatedEntry = true
 		if newChange.Type == Read {
 			continue
 		}
 		collectedDataTrieChanges[i].Val = newChange.Val
 		collectedDataTrieChanges[i].Version = newChange.Version
-		collectedDataTrieChanges[i].Operation = newChange.Operation
 	}
 
 	if !duplicatedEntry {
