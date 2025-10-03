@@ -20,7 +20,6 @@ enum Type {
   PeerBlock = 60;
   SmartContractResultBlock = 90;
   InvalidBlock = 120;
-  UnExecutableBlock = 130;
   ReceiptBlock = 150;
   RewardsBlock = 255;
 }
