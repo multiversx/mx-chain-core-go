@@ -8,7 +8,7 @@ import (
 
 // GetHeaderHash returns the header hash
 func (eer *ExecutionResult) GetHeaderHash() []byte {
-	if eer == nil {
+	if eer == nil || eer.BaseExecutionResult == nil {
 		return nil
 	}
 
@@ -17,7 +17,7 @@ func (eer *ExecutionResult) GetHeaderHash() []byte {
 
 // GetHeaderNonce returns the header nonce
 func (eer *ExecutionResult) GetHeaderNonce() uint64 {
-	if eer == nil {
+	if eer == nil || eer.BaseExecutionResult == nil {
 		return 0
 	}
 
@@ -26,7 +26,7 @@ func (eer *ExecutionResult) GetHeaderNonce() uint64 {
 
 // GetHeaderRound returns the header round
 func (eer *ExecutionResult) GetHeaderRound() uint64 {
-	if eer == nil {
+	if eer == nil || eer.BaseExecutionResult == nil {
 		return 0
 	}
 
@@ -35,7 +35,7 @@ func (eer *ExecutionResult) GetHeaderRound() uint64 {
 
 // GetRootHash returns the root hash
 func (eer *ExecutionResult) GetRootHash() []byte {
-	if eer == nil {
+	if eer == nil || eer.BaseExecutionResult == nil {
 		return nil
 	}
 
@@ -44,7 +44,7 @@ func (eer *ExecutionResult) GetRootHash() []byte {
 
 // GetGasUsed returns the gas used
 func (eer *ExecutionResult) GetGasUsed() uint64 {
-	if eer == nil {
+	if eer == nil || eer.BaseExecutionResult == nil {
 		return 0
 	}
 
@@ -53,14 +53,14 @@ func (eer *ExecutionResult) GetGasUsed() uint64 {
 
 // GetHeaderEpoch returns the header epoch
 func (eer *ExecutionResult) GetHeaderEpoch() uint32 {
-	if eer == nil {
+	if eer == nil || eer.BaseExecutionResult == nil {
 		return 0
 	}
 
 	return eer.BaseExecutionResult.HeaderEpoch
 }
 
-// GetMiniBlockHeadersHandlers returns the miniblock headers handlers
+// GetMiniBlockHeadersHandlers returns the mini block headers handlers
 func (eer *ExecutionResult) GetMiniBlockHeadersHandlers() []data.MiniBlockHeaderHandler {
 	if eer == nil {
 		return nil
@@ -73,6 +73,33 @@ func (eer *ExecutionResult) GetMiniBlockHeadersHandlers() []data.MiniBlockHeader
 	}
 
 	return mbs
+}
+
+// SetMiniBlockHeadersHandlers sets the mini block headers handlers
+func (eer *ExecutionResult) SetMiniBlockHeadersHandlers(mbs []data.MiniBlockHeaderHandler) error {
+	if eer == nil {
+		return data.ErrNilPointerReceiver
+	}
+	if len(mbs) == 0 {
+		eer.MiniBlockHeaders = nil
+		return nil
+	}
+
+	miniBlockHeaders := make([]MiniBlockHeader, len(mbs))
+	for i, mb := range mbs {
+		mbHeader, ok := mb.(*MiniBlockHeader)
+		if !ok {
+			return data.ErrInvalidTypeAssertion
+		}
+		if mbHeader == nil {
+			return data.ErrNilPointerDereference
+		}
+
+		miniBlockHeaders[i] = *mbHeader
+	}
+
+	eer.MiniBlockHeaders = miniBlockHeaders
+	return nil
 }
 
 // IsInterfaceNil returns true if there is no value under the interface
