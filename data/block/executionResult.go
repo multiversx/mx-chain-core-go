@@ -8,7 +8,7 @@ import (
 
 // GetHeaderHash returns the header hash
 func (eer *ExecutionResult) GetHeaderHash() []byte {
-	if eer == nil {
+	if eer == nil || eer.BaseExecutionResult == nil {
 		return nil
 	}
 
@@ -17,7 +17,7 @@ func (eer *ExecutionResult) GetHeaderHash() []byte {
 
 // GetHeaderNonce returns the header nonce
 func (eer *ExecutionResult) GetHeaderNonce() uint64 {
-	if eer == nil {
+	if eer == nil || eer.BaseExecutionResult == nil {
 		return 0
 	}
 
@@ -26,7 +26,7 @@ func (eer *ExecutionResult) GetHeaderNonce() uint64 {
 
 // GetHeaderRound returns the header round
 func (eer *ExecutionResult) GetHeaderRound() uint64 {
-	if eer == nil {
+	if eer == nil || eer.BaseExecutionResult == nil {
 		return 0
 	}
 
@@ -35,7 +35,7 @@ func (eer *ExecutionResult) GetHeaderRound() uint64 {
 
 // GetRootHash returns the root hash
 func (eer *ExecutionResult) GetRootHash() []byte {
-	if eer == nil {
+	if eer == nil || eer.BaseExecutionResult == nil {
 		return nil
 	}
 
@@ -44,7 +44,7 @@ func (eer *ExecutionResult) GetRootHash() []byte {
 
 // GetGasUsed returns the gas used
 func (eer *ExecutionResult) GetGasUsed() uint64 {
-	if eer == nil {
+	if eer == nil || eer.BaseExecutionResult == nil {
 		return 0
 	}
 
@@ -53,7 +53,7 @@ func (eer *ExecutionResult) GetGasUsed() uint64 {
 
 // GetHeaderEpoch returns the header epoch
 func (eer *ExecutionResult) GetHeaderEpoch() uint32 {
-	if eer == nil {
+	if eer == nil || eer.BaseExecutionResult == nil {
 		return 0
 	}
 
