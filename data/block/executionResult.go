@@ -94,6 +94,7 @@ func (eer *ExecutionResult) SetMiniBlockHeadersHandlers(mbs []data.MiniBlockHead
 		if mbHeader == nil {
 			return data.ErrNilPointerDereference
 		}
+
 		miniBlockHeaders[i] = *mbHeader
 	}
 

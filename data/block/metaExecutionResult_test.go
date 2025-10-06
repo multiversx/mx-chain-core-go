@@ -6,6 +6,8 @@ import (
 
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
+
+	"github.com/multiversx/mx-chain-core-go/data"
 )
 
 func TestMetaExecutionResultInfo_GetExecutionResultHandler(t *testing.T) {
@@ -276,6 +278,30 @@ func TestMetaExecutionResult_GetHeaderRound(t *testing.T) {
 	})
 }
 
+func TestMetaExecutionResult_GetHeaderEpoch(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		er := (*MetaExecutionResult)(nil)
+		assert.Equal(t, uint32(0), er.GetHeaderEpoch())
+	})
+
+	t.Run("ok", func(t *testing.T) {
+		t.Parallel()
+
+		er := &MetaExecutionResult{
+			ExecutionResult: &BaseMetaExecutionResult{
+				BaseExecutionResult: &BaseExecutionResult{
+					HeaderEpoch: 10,
+				},
+			},
+		}
+		assert.Equal(t, uint32(10), er.GetHeaderEpoch())
+	})
+}
+
 func TestMetaExecutionResult_GetRootHash(t *testing.T) {
 	t.Parallel()
 
@@ -365,6 +391,102 @@ func TestMetaExecutionResult_GetDevFeesInEpoch(t *testing.T) {
 			},
 		}
 		require.Equal(t, expectedValue, mes.GetDevFeesInEpoch())
+	})
+}
+
+func TestMetaExecutionResult_GetMiniBlockHeadersHandlers(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		er := (*MetaExecutionResult)(nil)
+		assert.Nil(t, er.GetMiniBlockHeadersHandlers())
+	})
+
+	t.Run("no miniblocks", func(t *testing.T) {
+		t.Parallel()
+
+		er := &MetaExecutionResult{
+			MiniBlockHeaders: nil,
+		}
+		assert.Empty(t, er.GetMiniBlockHeadersHandlers())
+	})
+
+	t.Run("with miniblocks", func(t *testing.T) {
+		t.Parallel()
+
+		mb1 := MiniBlockHeader{Hash: []byte("hash1")}
+		mb2 := MiniBlockHeader{Hash: []byte("hash2")}
+		er := &MetaExecutionResult{
+			MiniBlockHeaders: []MiniBlockHeader{mb1, mb2},
+		}
+
+		handlers := er.GetMiniBlockHeadersHandlers()
+		assert.Len(t, handlers, 2)
+		assert.Equal(t, mb1.Hash, handlers[0].GetHash())
+		assert.Equal(t, mb2.Hash, handlers[1].GetHash())
+	})
+}
+
+func TestMetaExecutionResult_SetMiniBlockHeadersHandlers(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		er := (*MetaExecutionResult)(nil)
+		err := er.SetMiniBlockHeadersHandlers(nil)
+		assert.Equal(t, data.ErrNilPointerReceiver, err)
+	})
+
+	t.Run("empty slice", func(t *testing.T) {
+		t.Parallel()
+
+		er := &MetaExecutionResult{
+			MiniBlockHeaders: []MiniBlockHeader{{Hash: []byte("old")}},
+		}
+		err := er.SetMiniBlockHeadersHandlers([]data.MiniBlockHeaderHandler{})
+		assert.NoError(t, err)
+		assert.Nil(t, er.MiniBlockHeaders)
+	})
+	t.Run("with nil slice", func(t *testing.T) {
+		t.Parallel()
+
+		er := &MetaExecutionResult{
+			MiniBlockHeaders: []MiniBlockHeader{{Hash: []byte("old")}},
+		}
+		err := er.SetMiniBlockHeadersHandlers(nil)
+		assert.NoError(t, err)
+		assert.Nil(t, er.MiniBlockHeaders)
+	})
+	t.Run("with invalid mini block header handlers", func(t *testing.T) {
+		t.Parallel()
+
+		er := &MetaExecutionResult{}
+		err := er.SetMiniBlockHeadersHandlers([]data.MiniBlockHeaderHandler{nil})
+		assert.Equal(t, data.ErrInvalidTypeAssertion, err)
+		assert.Nil(t, er.MiniBlockHeaders)
+	})
+	t.Run("with nil mini block header handler", func(t *testing.T) {
+		t.Parallel()
+
+		er := &MetaExecutionResult{}
+		err := er.SetMiniBlockHeadersHandlers([]data.MiniBlockHeaderHandler{(*MiniBlockHeader)(nil)})
+		assert.Equal(t, data.ErrNilPointerDereference, err)
+		assert.Nil(t, er.MiniBlockHeaders)
+	})
+	t.Run("with valid miniblocks", func(t *testing.T) {
+		t.Parallel()
+
+		mb1 := &MiniBlockHeader{Hash: []byte("hash1")}
+		mb2 := &MiniBlockHeader{Hash: []byte("hash2")}
+		handlers := []data.MiniBlockHeaderHandler{mb1, mb2}
+
+		er := &MetaExecutionResult{}
+		err := er.SetMiniBlockHeadersHandlers(handlers)
+		assert.NoError(t, err)
+		assert.Len(t, er.MiniBlockHeaders, 2)
+		assert.Equal(t, mb1.Hash, er.MiniBlockHeaders[0].Hash)
+		assert.Equal(t, mb2.Hash, er.MiniBlockHeaders[1].Hash)
 	})
 }
 
