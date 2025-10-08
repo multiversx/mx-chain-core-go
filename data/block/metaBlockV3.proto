@@ -24,14 +24,15 @@ message MetaBlockV3 {
   bytes                        PrevRandSeed        = 9 [(gogoproto.jsontag) = "prevRandSeed,omitempty"];
   bytes                        RandSeed            = 10 [(gogoproto.jsontag) = "randSeed,omitempty"];
   repeated MiniBlockHeader     MiniBlockHeaders    = 11 [(gogoproto.jsontag) = "miniBlockHeaders", (gogoproto.nullable) = false];
-  EpochStart                   EpochStart          = 12 [(gogoproto.jsontag) = "epochStart,omitempty", (gogoproto.nullable) = false];
-  bytes                        ChainID             = 13 [(gogoproto.jsontag) = "chainID,omitempty"];
-  bytes                        SoftwareVersion     = 14 [(gogoproto.jsontag) = "softwareVersion,omitempty"];
-  bytes                        Reserved            = 15 [(gogoproto.jsontag) = "reserved,omitempty"];
-  uint64                       GasLimit            = 16 [(gogoproto.jsontag) = "gasLimit,omitempty"];
-  uint32                       TxCount             = 17 [(gogoproto.jsontag) = "txCount"];
-  MetaExecutionResultInfo      LastExecutionResult = 18 [(gogoproto.jsontag) = "lastExecutionResult,omitempty"];
-  repeated MetaExecutionResult ExecutionResults    = 19 [(gogoproto.jsontag) = "executionResults,omitempty"];
+  bool                         EpochChangeProposed  = 12 [(gogoproto.jsontag) = "epochChangeProposed"];
+  EpochStart                   EpochStart          = 13 [(gogoproto.jsontag) = "epochStart,omitempty", (gogoproto.nullable) = false];
+  bytes                        ChainID             = 14 [(gogoproto.jsontag) = "chainID,omitempty"];
+  bytes                        SoftwareVersion     = 15 [(gogoproto.jsontag) = "softwareVersion,omitempty"];
+  bytes                        Reserved            = 16 [(gogoproto.jsontag) = "reserved,omitempty"];
+  uint64                       GasLimit            = 17 [(gogoproto.jsontag) = "gasLimit,omitempty"];
+  uint32                       TxCount             = 18 [(gogoproto.jsontag) = "txCount"];
+  MetaExecutionResultInfo      LastExecutionResult = 19 [(gogoproto.jsontag) = "lastExecutionResult,omitempty"];
+  repeated MetaExecutionResult ExecutionResults    = 20 [(gogoproto.jsontag) = "executionResults,omitempty"];
 
 }
 

@@ -199,6 +199,8 @@ type MetaHeaderHandler interface {
 	SetDevFeesInEpoch(value *big.Int) error
 	SetShardInfoHandlers(shardInfo []ShardDataHandler) error
 	SetAccumulatedFeesInEpoch(value *big.Int) error
+	SetEpochChangeProposed(value bool)
+	IsEpochChangeProposed() bool
 }
 
 // MiniBlockHeaderHandler defines setters and getters for miniBlock headers
