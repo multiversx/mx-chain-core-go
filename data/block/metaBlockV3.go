@@ -580,6 +580,27 @@ func (m *MetaBlockV3) SetEpochChangeProposed(value bool) {
 	m.EpochChangeProposed = value
 }
 
+// SetEpochStartHandler sets the epoch start handler
+func (m *MetaBlockV3) SetEpochStartHandler(epochStartHandler data.EpochStartHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	if epochStartHandler == nil {
+		return nil
+	}
+
+	es, ok := epochStartHandler.(*EpochStart)
+	if !ok {
+		return data.ErrInvalidTypeAssertion
+	}
+	if es == nil {
+		return data.ErrNilPointerDereference
+	}
+	m.EpochStart = *es
+
+	return nil
+}
+
 // IsEpochChangeProposed returns true if the current meta block v3 proposes an epoch change event
 func (m *MetaBlockV3) IsEpochChangeProposed() bool {
 	return m.EpochChangeProposed
