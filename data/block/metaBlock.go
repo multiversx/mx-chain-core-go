@@ -599,6 +599,27 @@ func (m *MetaBlock) CheckFieldsForNil() error {
 func (m *MetaBlock) SetEpochChangeProposed(_ bool) {
 }
 
+// SetEpochStartHandler sets the epoch start handler
+func (m *MetaBlock) SetEpochStartHandler(epochStartHandler data.EpochStartHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	if epochStartHandler == nil {
+		return nil
+	}
+
+	es, ok := epochStartHandler.(*EpochStart)
+	if !ok {
+		return data.ErrInvalidTypeAssertion
+	}
+	if es == nil {
+		return data.ErrNilPointerDereference
+	}
+	m.EpochStart = *es
+
+	return nil
+}
+
 // IsEpochChangeProposed always returns false
 func (m *MetaBlock) IsEpochChangeProposed() bool {
 	return false

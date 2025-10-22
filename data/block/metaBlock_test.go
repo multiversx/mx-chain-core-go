@@ -456,3 +456,37 @@ func TestMetaBlock_SetExecutionResultsHandlers(t *testing.T) {
 		require.Equal(t, data.ErrFieldNotSupported, header.SetExecutionResultsHandlers(nil))
 	})
 }
+
+func TestMetaBlock_SetEpochStartHandler(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.MetaBlock
+		require.Equal(t, data.ErrNilPointerReceiver, header.SetEpochStartHandler(nil))
+	})
+	t.Run("valid receiver, nil epochStartHandler should return nil", func(t *testing.T) {
+		t.Parallel()
+		header := &block.MetaBlock{}
+		require.Nil(t, header.SetEpochStartHandler(nil))
+		require.Len(t, header.EpochStart.LastFinalizedHeaders, 0)
+	})
+	t.Run("valid receiver, nil EpochStart for epochStartHandler should return error", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.MetaBlock{}
+		var nilValue *block.EpochStart
+		err := header.SetEpochStartHandler(nilValue)
+		require.Equal(t, data.ErrNilPointerDereference, err)
+	})
+	t.Run("valid receiver, non-nil epochStartHandler should set the field", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.MetaBlock{}
+		epochStartHandler := &block.EpochStart{}
+		err := header.SetEpochStartHandler(epochStartHandler)
+		require.Nil(t, err)
+		require.Equal(t, epochStartHandler, header.GetEpochStartHandler())
+	})
+}
