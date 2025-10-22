@@ -14,6 +14,7 @@ import "github.com/multiversx/mx-chain-core-go/data/smartContractResult/smartCon
 import "github.com/multiversx/mx-chain-core-go/data/receipt/receipt.proto";
 import "github.com/multiversx/mx-chain-core-go/data/rewardTx/rewardTx.proto";
 import "github.com/multiversx/mx-chain-core-go/data/alteredAccount/alteredAccount.proto";
+import "github.com/multiversx/mx-chain-core-go/data/stateChange/stateChange.proto";
 
 message OutportBlock {
   uint32                       ShardID                = 1 [(gogoproto.jsontag) = "shardID,omitempty"];
@@ -28,6 +29,7 @@ message OutportBlock {
   bytes                        HighestFinalBlockHash  = 10 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
   uint64                       LeaderIndex            = 11 [(gogoproto.jsontag) = "leaderIndex"];
   bytes                        LeaderBLSKey           = 12 [(gogoproto.jsontag) = "leaderKey,omitempty"];
+  map <string, StateAccesses>  StateAccesses          = 13 [(gogoproto.jsontag) = "stateAccesses,omitempty"];
 }
 
 message BlockData {
