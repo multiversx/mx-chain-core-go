@@ -33,7 +33,14 @@ message MetaBlockV3 {
   uint32                       TxCount             = 18 [(gogoproto.jsontag) = "txCount"];
   MetaExecutionResultInfo      LastExecutionResult = 19 [(gogoproto.jsontag) = "lastExecutionResult,omitempty"];
   repeated MetaExecutionResult ExecutionResults    = 20 [(gogoproto.jsontag) = "executionResults,omitempty"];
-
+  repeated ShardDataProposal ShardInfoProposal     = 21 [(gogoproto.jsontag) = "shardInfoProposal", (gogoproto.nullable) = false];
 }
 
-
+// ShardDataProposal holds the block information proposed by the shards
+message ShardDataProposal {
+  bytes  HeaderHash = 1 [(gogoproto.jsontag) = "headerHash,omitempty"];
+  uint64 Round      = 2 [(gogoproto.jsontag) = "round,omitempty"];
+  uint64 Nonce      = 3 [(gogoproto.jsontag) = "nonce,omitempty"];
+  uint32 ShardID    = 4 [(gogoproto.jsontag) = "shardID,omitempty"];
+  uint32 Epoch      = 5 [(gogoproto.jsontag) = "epoch,omitempty"];
+}
