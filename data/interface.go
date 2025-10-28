@@ -200,6 +200,7 @@ type MetaHeaderHandler interface {
 	SetShardInfoHandlers(shardInfo []ShardDataHandler) error
 	SetAccumulatedFeesInEpoch(value *big.Int) error
 	SetEpochChangeProposed(value bool)
+	SetEpochStartHandler(epochStartHandler EpochStartHandler) error
 	IsEpochChangeProposed() bool
 }
 
