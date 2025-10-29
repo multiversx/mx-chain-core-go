@@ -6,6 +6,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 
 	"github.com/multiversx/mx-chain-core-go/data"
@@ -778,4 +779,260 @@ func TestHeaderV3_SetExecutionResultsHandlers(t *testing.T) {
 		require.NoError(t, header.SetExecutionResultsHandlers(handlers))
 		require.Equal(t, handlers, header.GetExecutionResultsHandlers())
 	})
+}
+
+func TestHeaderV3_checkBaseExecutionResultsIntegrity(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil base exec result", func(t *testing.T) {
+		t.Parallel()
+
+		hv3 := &block.HeaderV3{}
+		err := hv3.CheckBaseExecutionResultIntegrity(nil)
+		require.Equal(t, data.ErrNilPointerDereference, err)
+	})
+	t.Run("nil base exec result with reflect", func(t *testing.T) {
+		t.Parallel()
+
+		hv3 := &block.HeaderV3{
+			Round: 2,
+			LastExecutionResult: &block.ExecutionResultInfo{
+				NotarizedInRound: 1,
+			},
+			ExecutionResults: []*block.ExecutionResult{
+				&block.ExecutionResult{},
+			},
+		}
+		err := hv3.CheckBaseExecutionResultIntegrity(hv3.LastExecutionResult.ExecutionResult)
+		require.Equal(t, data.ErrNilPointerDereference, err)
+		err = hv3.CheckBaseExecutionResultIntegrity(hv3.ExecutionResults[0].BaseExecutionResult)
+		require.Equal(t, data.ErrNilPointerDereference, err)
+	})
+
+	t.Run("invalid base execution result header hash", func(t *testing.T) {
+		t.Parallel()
+
+		hv3 := &block.HeaderV3{
+			Nonce: 1,
+			Round: 1,
+			Epoch: 1,
+		}
+		baseExecResult := &block.BaseExecutionResult{
+			HeaderHash: []byte{},
+		}
+		err := hv3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.True(t, errors.Is(err, data.ErrNilValue))
+		require.True(t, strings.Contains(err.Error(), "HeaderHash"))
+	})
+
+	t.Run("invalid base execution result header nonce", func(t *testing.T) {
+		t.Parallel()
+
+		hv3 := &block.HeaderV3{
+			Nonce: 1,
+			Round: 1,
+			Epoch: 1,
+		}
+		baseExecResult := &block.BaseExecutionResult{
+			HeaderHash:  []byte("header hash"),
+			HeaderNonce: 1,
+		}
+		err := hv3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.NotNil(t, err)
+		require.True(t, strings.Contains(err.Error(), "HeaderNonce"))
+
+		baseExecResult.HeaderNonce = 2
+		err = hv3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.NotNil(t, err)
+		require.True(t, strings.Contains(err.Error(), "HeaderNonce"))
+	})
+
+	t.Run("invalid base execution result header round", func(t *testing.T) {
+		t.Parallel()
+
+		hv3 := &block.HeaderV3{
+			Nonce: 2,
+			Round: 1,
+			Epoch: 1,
+		}
+		baseExecResult := &block.BaseExecutionResult{
+			HeaderHash:  []byte("header hash"),
+			HeaderNonce: 1,
+			HeaderRound: 1,
+		}
+		err := hv3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.NotNil(t, err)
+		require.True(t, strings.Contains(err.Error(), "HeaderRound"))
+
+		baseExecResult.HeaderRound = 2
+		err = hv3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.NotNil(t, err)
+		require.True(t, strings.Contains(err.Error(), "HeaderRound"))
+	})
+
+	t.Run("invalid base execution result header epoch", func(t *testing.T) {
+		t.Parallel()
+
+		hv3 := &block.HeaderV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 1,
+		}
+		baseExecResult := &block.BaseExecutionResult{
+			HeaderHash:  []byte("header hash"),
+			HeaderNonce: 1,
+			HeaderRound: 1,
+			HeaderEpoch: 2,
+		}
+		err := hv3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.NotNil(t, err)
+		require.True(t, strings.Contains(err.Error(), "HeaderEpoch"))
+	})
+
+	t.Run("invalid base execution result root hash", func(t *testing.T) {
+		t.Parallel()
+
+		hv3 := &block.HeaderV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		baseExecResult := &block.BaseExecutionResult{
+			HeaderHash:  []byte("header hash"),
+			HeaderNonce: 1,
+			HeaderRound: 1,
+			HeaderEpoch: 1,
+		}
+		err := hv3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.True(t, errors.Is(err, data.ErrNilValue))
+		require.True(t, strings.Contains(err.Error(), "RootHash"))
+
+		baseExecResult.RootHash = []byte{}
+		err = hv3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.True(t, errors.Is(err, data.ErrNilValue))
+		require.True(t, strings.Contains(err.Error(), "RootHash"))
+	})
+
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
+		hv3 := &block.HeaderV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		baseExecResult := &block.BaseExecutionResult{
+			HeaderHash:  []byte("header hash"),
+			HeaderNonce: 1,
+			HeaderRound: 1,
+			HeaderEpoch: 1,
+			RootHash:    []byte("root hash"),
+		}
+		err := hv3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.NoError(t, err)
+	})
+
+}
+
+func TestHeaderV3_checkExecutionResultsIntegrity(t *testing.T) {
+	t.Parallel()
+
+}
+
+func TestHeaderV3_CheckLastExecutionResultIntegrity(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil header", func(t *testing.T) {
+		hv3 := &block.HeaderV3{}
+		err := hv3.CheckLastExecutionResultIntegrity()
+		require.True(t, errors.Is(err, data.ErrNilValue))
+		require.True(t, strings.Contains(err.Error(), "LastExecutionResult"))
+	})
+	t.Run("invalid last execution result base exec result", func(t *testing.T) {
+		t.Parallel()
+
+		hv3 := &block.HeaderV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+			LastExecutionResult: &block.ExecutionResultInfo{
+				NotarizedInRound: 1,
+			},
+		}
+		err := hv3.CheckLastExecutionResultIntegrity()
+		require.ErrorIs(t, err, data.ErrNilPointerDereference)
+	})
+
+	t.Run("invalid last execution result notarized round", func(t *testing.T) {
+		t.Parallel()
+
+		hv3 := createValidHeaderV3ToTest()
+		assert.Equal(t, 1200, int(hv3.Round))
+		hv3.LastExecutionResult.NotarizedInRound = uint64(1500)
+		err := hv3.CheckLastExecutionResultIntegrity()
+		require.Error(t, err)
+		require.Contains(t, err.Error(), "LastExecutionResult.NotarizedInRound")
+	})
+
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
+		hv3 := createValidHeaderV3ToTest()
+		err := hv3.CheckLastExecutionResultIntegrity()
+		require.NoError(t, err)
+	})
+}
+func TestHeaderV3_CheckFieldsIntegrity(t *testing.T) {
+	t.Parallel()
+	hv3 := &block.HeaderV3{
+		Nonce: 2,
+		Round: 2,
+		Epoch: 2,
+	}
+	_ = hv3.CheckFieldsIntegrity()
+
+}
+
+func createValidHeaderV3ToTest() *block.HeaderV3 {
+	return &block.HeaderV3{
+		Nonce:           100,
+		Round:           1200,
+		Epoch:           1,
+		PrevHash:        []byte("prev hash"),
+		PrevRandSeed:    []byte("prev rand seed"),
+		RandSeed:        []byte("rand seed"),
+		LeaderSignature: []byte("leader signature"),
+		SoftwareVersion: []byte("v1.0.0"),
+
+		ExecutionResults: []*block.ExecutionResult{
+			&block.ExecutionResult{
+				BaseExecutionResult: &block.BaseExecutionResult{
+					HeaderHash:  []byte("header hash"),
+					HeaderNonce: 100,
+					HeaderRound: 1198,
+					HeaderEpoch: 1,
+					RootHash:    []byte("root hash"),
+				},
+			},
+			&block.ExecutionResult{
+				BaseExecutionResult: &block.BaseExecutionResult{
+					HeaderHash:  []byte("header hash"),
+					HeaderNonce: 101,
+					HeaderRound: 1001,
+					HeaderEpoch: 0,
+					RootHash:    []byte("root hash"),
+				},
+			},
+		},
+		LastExecutionResult: &block.ExecutionResultInfo{
+			ExecutionResult: &block.BaseExecutionResult{
+				HeaderHash:  []byte("header hash"),
+				HeaderNonce: 99,
+				HeaderRound: 1000,
+				HeaderEpoch: 0,
+				RootHash:    []byte("root hash"),
+			},
+			NotarizedInRound: 1194,
+		},
+	}
 }

@@ -5,6 +5,7 @@ package block
 import (
 	"fmt"
 	"math/big"
+	reflect "reflect"
 
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
@@ -352,6 +353,108 @@ func (hv3 *HeaderV3) CheckFieldsForNil() error {
 	}
 	if hv3.LastExecutionResult == nil {
 		return fmt.Errorf("%w in Header.LastExecutionResult", data.ErrNilValue)
+	}
+
+	return nil
+}
+
+// CheckFieldsIntegrity checks the integrity of the fields
+func (hv3 *HeaderV3) CheckFieldsIntegrity() error {
+	if hv3 == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	isGenesisRound := hv3.GetNonce() == 0
+	if !isGenesisRound {
+		err := hv3.checkLastExecutionResultIntegrity()
+		if err != nil {
+			return err
+		}
+
+		if hv3.Round <= hv3.LastExecutionResult.NotarizedInRound {
+			return fmt.Errorf("Header.Round (%d) must be greater than LastExecutionResult.NotarizedInRound (%d)", hv3.Round, hv3.LastExecutionResult.NotarizedInRound)
+		}
+	}
+
+	if len(hv3.ExecutionResults) > 0 {
+		err := hv3.checkExecutionResultsIntegrity()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// checkLastExecutionResultIntegrity checks the integrity of the last execution result against the header it is associated with
+func (hv3 *HeaderV3) checkLastExecutionResultIntegrity() error {
+	if hv3.LastExecutionResult == nil {
+		return fmt.Errorf("%w in Header.LastExecutionResult", data.ErrNilValue)
+	}
+
+	if hv3.Round <= hv3.LastExecutionResult.NotarizedInRound {
+		return fmt.Errorf("LastExecutionResult.NotarizedInRound (%d) must be less than Header.Round (%d)", hv3.LastExecutionResult.NotarizedInRound, hv3.Round)
+	}
+
+	return hv3.checkBaseExecutionResultIntegrity(hv3.LastExecutionResult.ExecutionResult)
+}
+
+// checkExecutionResultsIntegrity checks the integrity of the execution results against the header they are associated with
+func (hv3 *HeaderV3) checkExecutionResultsIntegrity() error {
+
+	for i, execResult := range hv3.ExecutionResults {
+		if execResult == nil {
+			return fmt.Errorf("%w in Header.ExecutionResults at index %d", data.ErrNilValue, i)
+		}
+
+		err := hv3.checkBaseExecutionResultIntegrity(execResult.BaseExecutionResult)
+		if err != nil {
+			return fmt.Errorf("execution result integrity check failed at index %d: %w", i, err)
+		}
+
+		isGenesisRound := execResult.GetHeaderNonce() == 0
+		if isGenesisRound {
+			continue
+		}
+
+		// TODO verify this
+		if execResult.GetHeaderNonce() <= hv3.LastExecutionResult.ExecutionResult.GetHeaderNonce() {
+			return fmt.Errorf("BaseExecutionResult.HeaderNonce (%d) must be greater than or equal to LastExecutionResult.ExecutionResult.HeaderNonce (%d)", execResult.GetHeaderNonce(), hv3.LastExecutionResult.ExecutionResult.GetHeaderNonce())
+		}
+
+		// TODO verify this
+		if execResult.GetHeaderRound() <= hv3.LastExecutionResult.ExecutionResult.GetHeaderRound() {
+			return fmt.Errorf("BaseExecutionResult.HeaderRound (%d) must be greater than LastExecutionResult.ExecutionResult.HeaderRound (%d)", execResult.GetHeaderRound(), hv3.LastExecutionResult.ExecutionResult.GetHeaderRound())
+		}
+	}
+
+	return nil
+}
+
+// checkBaseExecutionResultIntegrity checks the integrity of a base execution result against the header it is associated with
+func (hv3 *HeaderV3) checkBaseExecutionResultIntegrity(ownBaseExecutionResult data.BaseExecutionResultHandler) error {
+	if ownBaseExecutionResult == nil || reflect.ValueOf(ownBaseExecutionResult).IsNil() {
+		return data.ErrNilPointerDereference
+	}
+
+	if len(ownBaseExecutionResult.GetHeaderHash()) == 0 {
+		return fmt.Errorf("%w in BaseExecutionResult.HeaderHash", data.ErrNilValue)
+	}
+
+	if ownBaseExecutionResult.GetHeaderNonce() >= hv3.Nonce {
+		return fmt.Errorf("BaseExecutionResult.HeaderNonce (%d) must be less than Header.Nonce (%d)", ownBaseExecutionResult.GetHeaderNonce(), hv3.Nonce)
+	}
+
+	if ownBaseExecutionResult.GetHeaderRound() >= hv3.Round {
+		return fmt.Errorf("BaseExecutionResult.HeaderRound (%d) must be less than Header.Round (%d)", ownBaseExecutionResult.GetHeaderRound(), hv3.Round)
+	}
+
+	if ownBaseExecutionResult.GetHeaderEpoch() > hv3.Epoch {
+		return fmt.Errorf("BaseExecutionResult.HeaderEpoch (%d) must be less than or equal to Header.Epoch (%d)", ownBaseExecutionResult.GetHeaderEpoch(), hv3.Epoch)
+	}
+
+	if len(ownBaseExecutionResult.GetRootHash()) == 0 {
+		return fmt.Errorf("%w in BaseExecutionResult.RootHash", data.ErrNilValue)
 	}
 
 	return nil
