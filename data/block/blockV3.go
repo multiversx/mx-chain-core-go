@@ -373,6 +373,14 @@ func (hv3 *HeaderV3) CheckFieldsIntegrity() error {
 		return data.ErrNilPointerReceiver
 	}
 
+	if len(hv3.ReceiptsHash) != 0 {
+		return fmt.Errorf("%w in Header.ReceiptsHash", data.ErrNotNilValue)
+	}
+
+	if len(hv3.Reserved) != 0 {
+		return fmt.Errorf("%w in Header.Reserved", data.ErrNotNilValue)
+	}
+
 	isGenesisRound := hv3.GetNonce() == 0
 	if isGenesisRound {
 		return nil

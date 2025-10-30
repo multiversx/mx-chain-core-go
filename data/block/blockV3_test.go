@@ -1038,6 +1038,22 @@ func TestHeaderV3_CheckFieldsIntegrity(t *testing.T) {
 		err := hv3.CheckFieldsIntegrity()
 		require.Equal(t, data.ErrNilPointerReceiver, err)
 	})
+	t.Run("not nil receipt hash field", func(t *testing.T) {
+		t.Parallel()
+		hv3 := createValidHeaderV3ToTest()
+		hv3.ReceiptsHash = []byte("not nil receipts hash")
+		err := hv3.CheckFieldsIntegrity()
+		require.Error(t, err)
+		require.ErrorIs(t, err, data.ErrNotNilValue)
+	})
+	t.Run("not nil reserved field", func(t *testing.T) {
+		t.Parallel()
+		hv3 := createValidHeaderV3ToTest()
+		hv3.Reserved = []byte("not nil reserved")
+		err := hv3.CheckFieldsIntegrity()
+		require.Error(t, err)
+		require.ErrorIs(t, err, data.ErrNotNilValue)
+	})
 	t.Run("genesis round should work", func(t *testing.T) {
 		t.Parallel()
 		hv3 := createValidHeaderV3ToTestForGenesisRound()
