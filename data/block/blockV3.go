@@ -336,12 +336,6 @@ func (hv3 *HeaderV3) CheckFieldsForNil() error {
 	if hv3 == nil {
 		return data.ErrNilPointerReceiver
 	}
-	if hv3.PrevHash == nil {
-		return fmt.Errorf("%w in Header.PrevHash", data.ErrNilValue)
-	}
-	if hv3.PrevRandSeed == nil {
-		return fmt.Errorf("%w in Header.PrevRandSeed", data.ErrNilValue)
-	}
 	if hv3.RandSeed == nil {
 		return fmt.Errorf("%w in Header.RandSeed", data.ErrNilValue)
 	}
@@ -351,6 +345,19 @@ func (hv3 *HeaderV3) CheckFieldsForNil() error {
 	if hv3.SoftwareVersion == nil {
 		return fmt.Errorf("%w in Header.SoftwareVersion", data.ErrNilValue)
 	}
+
+	isGenesisRound := hv3.GetNonce() == 0
+	if isGenesisRound {
+		return nil
+	}
+
+	if hv3.PrevHash == nil {
+		return fmt.Errorf("%w in Header.PrevHash", data.ErrNilValue)
+	}
+	if hv3.PrevRandSeed == nil {
+		return fmt.Errorf("%w in Header.PrevRandSeed", data.ErrNilValue)
+	}
+
 	if hv3.LastExecutionResult == nil {
 		return fmt.Errorf("%w in Header.LastExecutionResult", data.ErrNilValue)
 	}
@@ -359,21 +366,25 @@ func (hv3 *HeaderV3) CheckFieldsForNil() error {
 }
 
 // CheckFieldsIntegrity checks the integrity of the fields
+// It checks a predefined set of fields for nil values or invalid values.
+// It also checks the integrity of LastExecutionResult and ExecutionResults against the header
 func (hv3 *HeaderV3) CheckFieldsIntegrity() error {
 	if hv3 == nil {
 		return data.ErrNilPointerReceiver
 	}
 
 	isGenesisRound := hv3.GetNonce() == 0
-	if !isGenesisRound {
-		err := hv3.checkLastExecutionResultIntegrity()
-		if err != nil {
-			return err
-		}
+	if isGenesisRound {
+		return nil
+	}
 
-		if hv3.Round <= hv3.LastExecutionResult.NotarizedInRound {
-			return fmt.Errorf("Header.Round (%d) must be greater than LastExecutionResult.NotarizedInRound (%d)", hv3.Round, hv3.LastExecutionResult.NotarizedInRound)
-		}
+	err := hv3.checkLastExecutionResultIntegrity()
+	if err != nil {
+		return err
+	}
+
+	if hv3.Round <= hv3.LastExecutionResult.NotarizedInRound {
+		return fmt.Errorf("Header.Round (%d) must be greater than LastExecutionResult.NotarizedInRound (%d)", hv3.Round, hv3.LastExecutionResult.NotarizedInRound)
 	}
 
 	if len(hv3.ExecutionResults) > 0 {
@@ -392,10 +403,6 @@ func (hv3 *HeaderV3) checkLastExecutionResultIntegrity() error {
 		return fmt.Errorf("%w in Header.LastExecutionResult", data.ErrNilValue)
 	}
 
-	if hv3.Round <= hv3.LastExecutionResult.NotarizedInRound {
-		return fmt.Errorf("LastExecutionResult.NotarizedInRound (%d) must be less than Header.Round (%d)", hv3.LastExecutionResult.NotarizedInRound, hv3.Round)
-	}
-
 	return hv3.checkBaseExecutionResultIntegrity(hv3.LastExecutionResult.ExecutionResult)
 }
 
@@ -403,28 +410,13 @@ func (hv3 *HeaderV3) checkLastExecutionResultIntegrity() error {
 func (hv3 *HeaderV3) checkExecutionResultsIntegrity() error {
 
 	for i, execResult := range hv3.ExecutionResults {
-		if execResult == nil {
+		if execResult == nil || reflect.ValueOf(execResult).IsNil() {
 			return fmt.Errorf("%w in Header.ExecutionResults at index %d", data.ErrNilValue, i)
 		}
 
 		err := hv3.checkBaseExecutionResultIntegrity(execResult.BaseExecutionResult)
 		if err != nil {
 			return fmt.Errorf("execution result integrity check failed at index %d: %w", i, err)
-		}
-
-		isGenesisRound := execResult.GetHeaderNonce() == 0
-		if isGenesisRound {
-			continue
-		}
-
-		// TODO verify this
-		if execResult.GetHeaderNonce() <= hv3.LastExecutionResult.ExecutionResult.GetHeaderNonce() {
-			return fmt.Errorf("BaseExecutionResult.HeaderNonce (%d) must be greater than or equal to LastExecutionResult.ExecutionResult.HeaderNonce (%d)", execResult.GetHeaderNonce(), hv3.LastExecutionResult.ExecutionResult.GetHeaderNonce())
-		}
-
-		// TODO verify this
-		if execResult.GetHeaderRound() <= hv3.LastExecutionResult.ExecutionResult.GetHeaderRound() {
-			return fmt.Errorf("BaseExecutionResult.HeaderRound (%d) must be greater than LastExecutionResult.ExecutionResult.HeaderRound (%d)", execResult.GetHeaderRound(), hv3.LastExecutionResult.ExecutionResult.GetHeaderRound())
 		}
 	}
 
@@ -434,7 +426,7 @@ func (hv3 *HeaderV3) checkExecutionResultsIntegrity() error {
 // checkBaseExecutionResultIntegrity checks the integrity of a base execution result against the header it is associated with
 func (hv3 *HeaderV3) checkBaseExecutionResultIntegrity(ownBaseExecutionResult data.BaseExecutionResultHandler) error {
 	if ownBaseExecutionResult == nil || reflect.ValueOf(ownBaseExecutionResult).IsNil() {
-		return data.ErrNilPointerDereference
+		return data.ErrNilValue
 	}
 
 	if len(ownBaseExecutionResult.GetHeaderHash()) == 0 {

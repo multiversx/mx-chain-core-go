@@ -564,7 +564,11 @@ func TestHeaderV3_CheckFieldsForNil(t *testing.T) {
 	t.Run("nil prev hash", func(t *testing.T) {
 		t.Parallel()
 		hv3 := &block.HeaderV3{
-			PrevHash: nil,
+			Nonce:           1,
+			RandSeed:        []byte("rand seed"),
+			LeaderSignature: []byte("leader signature"),
+			SoftwareVersion: []byte("v1.0.0"),
+			PrevHash:        nil,
 		}
 		err := hv3.CheckFieldsForNil()
 		require.True(t, errors.Is(err, data.ErrNilValue))
@@ -574,8 +578,12 @@ func TestHeaderV3_CheckFieldsForNil(t *testing.T) {
 	t.Run("nil prev rand seed", func(t *testing.T) {
 		t.Parallel()
 		hv3 := &block.HeaderV3{
-			PrevHash:     []byte("prev hash"),
-			PrevRandSeed: nil,
+			Nonce:           1,
+			RandSeed:        []byte("rand seed"),
+			LeaderSignature: []byte("leader signature"),
+			SoftwareVersion: []byte("v1.0.0"),
+			PrevHash:        []byte("prev hash"),
+			PrevRandSeed:    nil,
 		}
 		err := hv3.CheckFieldsForNil()
 		require.True(t, errors.Is(err, data.ErrNilValue))
@@ -585,6 +593,7 @@ func TestHeaderV3_CheckFieldsForNil(t *testing.T) {
 	t.Run("nil rand seed", func(t *testing.T) {
 		t.Parallel()
 		hv3 := &block.HeaderV3{
+			Nonce:        1,
 			PrevHash:     []byte("prev hash"),
 			PrevRandSeed: []byte("prev rand seed"),
 			RandSeed:     nil,
@@ -597,6 +606,7 @@ func TestHeaderV3_CheckFieldsForNil(t *testing.T) {
 	t.Run("nil leader sig", func(t *testing.T) {
 		t.Parallel()
 		hv3 := &block.HeaderV3{
+			Nonce:           1,
 			PrevHash:        []byte("prev hash"),
 			PrevRandSeed:    []byte("prev rand seed"),
 			RandSeed:        []byte("rand seed"),
@@ -610,6 +620,7 @@ func TestHeaderV3_CheckFieldsForNil(t *testing.T) {
 	t.Run("nil software version", func(t *testing.T) {
 		t.Parallel()
 		hv3 := &block.HeaderV3{
+			Nonce:           1,
 			PrevHash:        []byte("prev hash"),
 			PrevRandSeed:    []byte("prev rand seed"),
 			RandSeed:        []byte("rand seed"),
@@ -624,6 +635,7 @@ func TestHeaderV3_CheckFieldsForNil(t *testing.T) {
 	t.Run("nil last exec result", func(t *testing.T) {
 		t.Parallel()
 		hv3 := &block.HeaderV3{
+			Nonce:               1,
 			PrevHash:            []byte("prev hash"),
 			PrevRandSeed:        []byte("prev rand seed"),
 			RandSeed:            []byte("rand seed"),
@@ -636,9 +648,22 @@ func TestHeaderV3_CheckFieldsForNil(t *testing.T) {
 		require.True(t, strings.Contains(err.Error(), "LastExecutionResult"))
 	})
 
+	t.Run("valid header for genesis", func(t *testing.T) {
+		t.Parallel()
+		hv3 := &block.HeaderV3{
+			Nonce:           0,
+			RandSeed:        []byte("rand seed"),
+			LeaderSignature: []byte("leader sig"),
+			SoftwareVersion: []byte("v1.0.0"),
+		}
+		err := hv3.CheckFieldsForNil()
+		require.NoError(t, err)
+	})
+
 	t.Run("valid header", func(t *testing.T) {
 		t.Parallel()
 		hv3 := &block.HeaderV3{
+			Nonce:               1,
 			PrevHash:            []byte("prev hash"),
 			PrevRandSeed:        []byte("prev rand seed"),
 			RandSeed:            []byte("rand seed"),
@@ -789,7 +814,7 @@ func TestHeaderV3_checkBaseExecutionResultsIntegrity(t *testing.T) {
 
 		hv3 := &block.HeaderV3{}
 		err := hv3.CheckBaseExecutionResultIntegrity(nil)
-		require.Equal(t, data.ErrNilPointerDereference, err)
+		require.Equal(t, data.ErrNilValue, err)
 	})
 	t.Run("nil base exec result with reflect", func(t *testing.T) {
 		t.Parallel()
@@ -804,9 +829,9 @@ func TestHeaderV3_checkBaseExecutionResultsIntegrity(t *testing.T) {
 			},
 		}
 		err := hv3.CheckBaseExecutionResultIntegrity(hv3.LastExecutionResult.ExecutionResult)
-		require.Equal(t, data.ErrNilPointerDereference, err)
+		require.Equal(t, data.ErrNilValue, err)
 		err = hv3.CheckBaseExecutionResultIntegrity(hv3.ExecutionResults[0].BaseExecutionResult)
-		require.Equal(t, data.ErrNilPointerDereference, err)
+		require.Equal(t, data.ErrNilValue, err)
 	})
 
 	t.Run("invalid base execution result header hash", func(t *testing.T) {
@@ -936,13 +961,46 @@ func TestHeaderV3_checkBaseExecutionResultsIntegrity(t *testing.T) {
 
 func TestHeaderV3_checkExecutionResultsIntegrity(t *testing.T) {
 	t.Parallel()
+	t.Run("nil execution result", func(t *testing.T) {
+		t.Parallel()
 
+		hv3 := &block.HeaderV3{}
+		hv3.ExecutionResults = make([]*block.ExecutionResult, 1)
+		assert.Equal(t, hv3.ExecutionResults[0].IsInterfaceNil(), true)
+		err := hv3.CheckExecutionResultsIntegrity()
+		require.Error(t, err)
+		require.ErrorIs(t, err, data.ErrNilValue)
+	})
+	t.Run("invalid execution result base exec result", func(t *testing.T) {
+		t.Parallel()
+
+		hv3 := createValidHeaderV3ToTest()
+		hv3.ExecutionResults[0].BaseExecutionResult = nil
+		err := hv3.CheckExecutionResultsIntegrity()
+		require.ErrorIs(t, err, data.ErrNilValue)
+	})
+	t.Run("invalid execution result base exec result first one good", func(t *testing.T) {
+		t.Parallel()
+
+		hv3 := createValidHeaderV3ToTest()
+		hv3.ExecutionResults[1].BaseExecutionResult = nil
+		err := hv3.CheckExecutionResultsIntegrity()
+		require.ErrorIs(t, err, data.ErrNilValue)
+	})
+
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
+		hv3 := createValidHeaderV3ToTest()
+		err := hv3.CheckExecutionResultsIntegrity()
+		require.NoError(t, err)
+	})
 }
 
 func TestHeaderV3_CheckLastExecutionResultIntegrity(t *testing.T) {
 	t.Parallel()
 
-	t.Run("nil header", func(t *testing.T) {
+	t.Run("nil last execution result", func(t *testing.T) {
 		hv3 := &block.HeaderV3{}
 		err := hv3.CheckLastExecutionResultIntegrity()
 		require.True(t, errors.Is(err, data.ErrNilValue))
@@ -960,18 +1018,7 @@ func TestHeaderV3_CheckLastExecutionResultIntegrity(t *testing.T) {
 			},
 		}
 		err := hv3.CheckLastExecutionResultIntegrity()
-		require.ErrorIs(t, err, data.ErrNilPointerDereference)
-	})
-
-	t.Run("invalid last execution result notarized round", func(t *testing.T) {
-		t.Parallel()
-
-		hv3 := createValidHeaderV3ToTest()
-		assert.Equal(t, 1200, int(hv3.Round))
-		hv3.LastExecutionResult.NotarizedInRound = uint64(1500)
-		err := hv3.CheckLastExecutionResultIntegrity()
-		require.Error(t, err)
-		require.Contains(t, err.Error(), "LastExecutionResult.NotarizedInRound")
+		require.ErrorIs(t, err, data.ErrNilValue)
 	})
 
 	t.Run("should work", func(t *testing.T) {
@@ -982,20 +1029,67 @@ func TestHeaderV3_CheckLastExecutionResultIntegrity(t *testing.T) {
 		require.NoError(t, err)
 	})
 }
+
 func TestHeaderV3_CheckFieldsIntegrity(t *testing.T) {
 	t.Parallel()
-	hv3 := &block.HeaderV3{
-		Nonce: 2,
-		Round: 2,
-		Epoch: 2,
-	}
-	_ = hv3.CheckFieldsIntegrity()
-
+	t.Run("nil header", func(t *testing.T) {
+		t.Parallel()
+		var hv3 *block.HeaderV3
+		err := hv3.CheckFieldsIntegrity()
+		require.Equal(t, data.ErrNilPointerReceiver, err)
+	})
+	t.Run("genesis round should work", func(t *testing.T) {
+		t.Parallel()
+		hv3 := createValidHeaderV3ToTestForGenesisRound()
+		err := hv3.CheckFieldsIntegrity()
+		require.NoError(t, err)
+	})
+	t.Run("nil last execution result", func(t *testing.T) {
+		t.Parallel()
+		hv3 := &block.HeaderV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		err := hv3.CheckFieldsIntegrity()
+		require.Error(t, err)
+		require.ErrorIs(t, err, data.ErrNilValue)
+	})
+	t.Run("invalid execution results", func(t *testing.T) {
+		t.Parallel()
+		hv3 := createValidHeaderV3ToTest()
+		hv3.ExecutionResults[0].BaseExecutionResult = nil
+		err := hv3.CheckFieldsIntegrity()
+		require.Error(t, err)
+		require.ErrorIs(t, err, data.ErrNilValue)
+	})
+	t.Run("invalid last execution result", func(t *testing.T) {
+		t.Parallel()
+		hv3 := createValidHeaderV3ToTest()
+		hv3.LastExecutionResult.ExecutionResult = nil
+		err := hv3.CheckFieldsIntegrity()
+		require.Error(t, err)
+		require.ErrorIs(t, err, data.ErrNilValue)
+	})
+	t.Run("invalid round in last execution result", func(t *testing.T) {
+		t.Parallel()
+		hv3 := createValidHeaderV3ToTest()
+		hv3.LastExecutionResult.NotarizedInRound = 1300
+		err := hv3.CheckFieldsIntegrity()
+		require.Error(t, err)
+		require.Contains(t, err.Error(), "LastExecutionResult.NotarizedInRound")
+	})
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+		hv3 := createValidHeaderV3ToTest()
+		err := hv3.CheckFieldsIntegrity()
+		require.NoError(t, err)
+	})
 }
 
 func createValidHeaderV3ToTest() *block.HeaderV3 {
 	return &block.HeaderV3{
-		Nonce:           100,
+		Nonce:           101,
 		Round:           1200,
 		Epoch:           1,
 		PrevHash:        []byte("prev hash"),
@@ -1008,18 +1102,27 @@ func createValidHeaderV3ToTest() *block.HeaderV3 {
 			&block.ExecutionResult{
 				BaseExecutionResult: &block.BaseExecutionResult{
 					HeaderHash:  []byte("header hash"),
-					HeaderNonce: 100,
-					HeaderRound: 1198,
-					HeaderEpoch: 1,
+					HeaderNonce: 98,
+					HeaderRound: 1001,
+					HeaderEpoch: 0,
 					RootHash:    []byte("root hash"),
 				},
 			},
 			&block.ExecutionResult{
 				BaseExecutionResult: &block.BaseExecutionResult{
 					HeaderHash:  []byte("header hash"),
-					HeaderNonce: 101,
-					HeaderRound: 1001,
+					HeaderNonce: 99,
+					HeaderRound: 1020,
 					HeaderEpoch: 0,
+					RootHash:    []byte("root hash"),
+				},
+			},
+			&block.ExecutionResult{
+				BaseExecutionResult: &block.BaseExecutionResult{
+					HeaderHash:  []byte("header hash"),
+					HeaderNonce: 100,
+					HeaderRound: 1100,
+					HeaderEpoch: 1,
 					RootHash:    []byte("root hash"),
 				},
 			},
@@ -1027,12 +1130,23 @@ func createValidHeaderV3ToTest() *block.HeaderV3 {
 		LastExecutionResult: &block.ExecutionResultInfo{
 			ExecutionResult: &block.BaseExecutionResult{
 				HeaderHash:  []byte("header hash"),
-				HeaderNonce: 99,
-				HeaderRound: 1000,
-				HeaderEpoch: 0,
+				HeaderNonce: 100,
+				HeaderRound: 1100,
+				HeaderEpoch: 1,
 				RootHash:    []byte("root hash"),
 			},
-			NotarizedInRound: 1194,
+			NotarizedInRound: 1199,
 		},
+	}
+}
+
+func createValidHeaderV3ToTestForGenesisRound() *block.HeaderV3 {
+	return &block.HeaderV3{
+		Nonce:           0,
+		Round:           0,
+		Epoch:           0,
+		RandSeed:        []byte("rand seed for genesis"),
+		LeaderSignature: []byte("leader signature for genesis"),
+		SoftwareVersion: []byte("v1.0.0"),
 	}
 }
