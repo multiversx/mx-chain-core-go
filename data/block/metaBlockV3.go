@@ -151,6 +151,47 @@ func (m *MetaBlockV3) SetShardInfoHandlers(shardInfo []data.ShardDataHandler) er
 	return nil
 }
 
+// GetShardInfoProposalHandlers gets the shardInfoProposal as an array of ShardDataProposalHandler
+func (m *MetaBlockV3) GetShardInfoProposalHandlers() []data.ShardDataProposalHandler {
+	if m == nil || m.ShardInfoProposal == nil {
+		return nil
+	}
+
+	shardInfoProposalHandlers := make([]data.ShardDataProposalHandler, len(m.ShardInfoProposal))
+	for i := range m.ShardInfoProposal {
+		shardInfoProposalHandlers[i] = &m.ShardInfoProposal[i]
+	}
+
+	return shardInfoProposalHandlers
+}
+
+// SetShardInfoProposalHandlers will set the provided shard info proposal
+func (m *MetaBlockV3) SetShardInfoProposalHandlers(shardInfo []data.ShardDataProposalHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	if shardInfo == nil {
+		m.ShardInfoProposal = nil
+		return nil
+	}
+
+	sInfo := make([]ShardDataProposal, len(shardInfo))
+	for i := range shardInfo {
+		shData, ok := shardInfo[i].(*ShardDataProposal)
+		if !ok {
+			return data.ErrInvalidTypeAssertion
+		}
+		if shData == nil {
+			return data.ErrNilPointerDereference
+		}
+		sInfo[i] = *shData
+	}
+
+	m.ShardInfoProposal = sInfo
+
+	return nil
+}
+
 // SetValidatorStatsRootHash returns nil
 func (m *MetaBlockV3) SetValidatorStatsRootHash(_ []byte) error {
 	return data.ErrFieldNotSupported

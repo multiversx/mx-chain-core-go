@@ -1074,3 +1074,82 @@ func TestMetaBlockV3_SetEpochStartHandler(t *testing.T) {
 		require.Equal(t, epochStartHandler, header.GetEpochStartHandler())
 	})
 }
+
+func TestMetaBlockV3_GetShardInfoProposalHandlers(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var mb3 *block.MetaBlockV3
+		require.Nil(t, mb3.GetShardInfoProposalHandlers())
+	})
+
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
+		shardDataProposal1 := block.ShardDataProposal{ShardID: 0, HeaderHash: []byte("shard1"), Nonce: 10, Round: 100, Epoch: 1}
+		shardDataProposal2 := block.ShardDataProposal{ShardID: 1, HeaderHash: []byte("shard2"), Nonce: 20, Round: 200, Epoch: 2}
+		mb3 := &block.MetaBlockV3{
+			ShardInfoProposal: []block.ShardDataProposal{shardDataProposal1, shardDataProposal2},
+		}
+		expected := []data.ShardDataProposalHandler{&mb3.ShardInfoProposal[0], &mb3.ShardInfoProposal[1]}
+		result := mb3.GetShardInfoProposalHandlers()
+		require.Equal(t, expected, result)
+	})
+}
+
+func TestMetaBlockV3_SetShardInfoProposalHandlers(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var mb3 *block.MetaBlockV3
+		err := mb3.SetShardInfoProposalHandlers(nil)
+		require.Equal(t, data.ErrNilPointerReceiver, err)
+	})
+
+	t.Run("should work with nil", func(t *testing.T) {
+		t.Parallel()
+
+		mb3 := &block.MetaBlockV3{
+			ShardInfoProposal: make([]block.ShardDataProposal, 2),
+		}
+		err := mb3.SetShardInfoProposalHandlers(nil)
+		require.NoError(t, err)
+		require.Nil(t, mb3.ShardInfoProposal)
+	})
+
+	t.Run("should error on list of nil shard data proposal handlers", func(t *testing.T) {
+		t.Parallel()
+
+		mb3 := &block.MetaBlockV3{}
+		err := mb3.SetShardInfoProposalHandlers([]data.ShardDataProposalHandler{nil})
+		require.Equal(t, data.ErrInvalidTypeAssertion, err)
+	})
+
+	t.Run("should error on list of nil shard data proposal", func(t *testing.T) {
+		t.Parallel()
+
+		mb3 := &block.MetaBlockV3{}
+		var shardDataProposal *block.ShardDataProposal = nil
+		err := mb3.SetShardInfoProposalHandlers([]data.ShardDataProposalHandler{shardDataProposal})
+		require.Equal(t, data.ErrNilPointerDereference, err)
+	})
+
+	t.Run("should work with valid handlers", func(t *testing.T) {
+		t.Parallel()
+
+		shardDataProposal1 := &block.ShardDataProposal{ShardID: 0, HeaderHash: []byte("shard1"), Nonce: 10, Round: 100, Epoch: 1}
+		shardDataProposal2 := &block.ShardDataProposal{ShardID: 1, HeaderHash: []byte("shard2"), Nonce: 20, Round: 200, Epoch: 2}
+		handlers := []data.ShardDataProposalHandler{shardDataProposal1, shardDataProposal2}
+
+		mb3 := &block.MetaBlockV3{}
+		err := mb3.SetShardInfoProposalHandlers(handlers)
+		require.NoError(t, err)
+		require.Equal(t, 2, len(mb3.ShardInfoProposal))
+		assert.Equal(t, shardDataProposal1.GetShardID(), mb3.ShardInfoProposal[0].ShardID)
+		assert.Equal(t, shardDataProposal2.GetShardID(), mb3.ShardInfoProposal[1].ShardID)
+	})
+}

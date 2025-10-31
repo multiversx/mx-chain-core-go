@@ -195,9 +195,11 @@ type MetaHeaderHandler interface {
 	GetAccumulatedFeesInEpoch() *big.Int
 	GetDevFeesInEpoch() *big.Int
 	GetShardInfoHandlers() []ShardDataHandler
+	GetShardInfoProposalHandlers() []ShardDataProposalHandler
 	SetValidatorStatsRootHash(rHash []byte) error
 	SetDevFeesInEpoch(value *big.Int) error
 	SetShardInfoHandlers(shardInfo []ShardDataHandler) error
+	SetShardInfoProposalHandlers(shardInfo []ShardDataProposalHandler) error
 	SetAccumulatedFeesInEpoch(value *big.Int) error
 	SetEpochChangeProposed(value bool)
 	SetEpochStartHandler(epochStartHandler EpochStartHandler) error
@@ -273,6 +275,21 @@ type ShardDataHandler interface {
 	SetTxCount(txCount uint32) error
 
 	ShallowClone() ShardDataHandler
+}
+
+// ShardDataProposalHandler defines the behavior of a shard data proposal
+type ShardDataProposalHandler interface {
+	GetHeaderHash() []byte
+	SetHeaderHash(headerHash []byte)
+	GetRound() uint64
+	SetRound(round uint64)
+	GetNonce() uint64
+	SetNonce(nonce uint64)
+	GetShardID() uint32
+	SetShardID(shardID uint32)
+	GetEpoch() uint32
+	SetEpoch(epoch uint32)
+	IsInterfaceNil() bool
 }
 
 // EpochStartShardDataHandler defines setters and getters for EpochStartShardData
