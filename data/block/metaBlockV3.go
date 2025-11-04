@@ -5,6 +5,7 @@ package block
 import (
 	"fmt"
 	"math/big"
+	reflect "reflect"
 	"sort"
 
 	"github.com/multiversx/mx-chain-core-go/core"
@@ -594,12 +595,6 @@ func (m *MetaBlockV3) CheckFieldsForNil() error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
-	if m.PrevHash == nil {
-		return fmt.Errorf("%w in MetaBlockV3.PrevHash", data.ErrNilValue)
-	}
-	if m.PrevRandSeed == nil {
-		return fmt.Errorf("%w in MetaBlockV3.PrevRandSeed", data.ErrNilValue)
-	}
 	if m.RandSeed == nil {
 		return fmt.Errorf("%w in MetaBlockV3.RandSeed", data.ErrNilValue)
 	}
@@ -611,6 +606,113 @@ func (m *MetaBlockV3) CheckFieldsForNil() error {
 	}
 	if m.SoftwareVersion == nil {
 		return fmt.Errorf("%w in MetaBlockV3.SoftwareVersion", data.ErrNilValue)
+	}
+
+	isGenesisBlock := m.Nonce == 0
+	if isGenesisBlock {
+		return nil
+	}
+
+	if m.PrevHash == nil {
+		return fmt.Errorf("%w in MetaBlockV3.PrevHash", data.ErrNilValue)
+	}
+	if m.PrevRandSeed == nil {
+		return fmt.Errorf("%w in MetaBlockV3.PrevRandSeed", data.ErrNilValue)
+	}
+	if m.LastExecutionResult == nil {
+		return fmt.Errorf("%w in MetaBlockV3.LastExecutionResult", data.ErrNilValue)
+	}
+
+	return nil
+}
+
+// CheckFieldsIntegrity checks the integrity of the fields
+// It checks a predefined set of fields for nil values or invalid values.
+// It also checks the integrity of LastExecutionResult and ExecutionResults against the header
+func (m *MetaBlockV3) CheckFieldsIntegrity() error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	if len(m.Reserved) != 0 {
+		return fmt.Errorf("not nil value in MetaBlockV3.Reserved")
+	}
+	if len(m.ShardInfo) != 0 && len(m.ShardInfoProposal) == 0 {
+		return fmt.Errorf("MetaBlockV3.ShardInfoProposal cannot be nil when MetaBlockV3.ShardInfo is not nil")
+	}
+
+	isGenesisRound := m.GetNonce() == 0
+	if isGenesisRound {
+		return nil
+	}
+
+	err := m.checkLastExecutionResultIntegrity()
+	if err != nil {
+		return err
+	}
+	if m.Round <= m.LastExecutionResult.NotarizedInRound {
+		return fmt.Errorf("MetaBlockV3.Round (%d) must be greater than LastExecutionResult.NotarizedInRound (%d)", m.Round, m.LastExecutionResult.NotarizedInRound)
+	}
+
+	if len(m.ExecutionResults) > 0 {
+		err := m.checkExecutionResultsIntegrity()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// checkLastExecutionResultIntegrity checks the integrity of the last execution result against the header it is associated with
+func (m *MetaBlockV3) checkLastExecutionResultIntegrity() error {
+	if m.LastExecutionResult == nil {
+		return fmt.Errorf("%w in Header.LastExecutionResult", data.ErrNilValue)
+	}
+
+	return m.checkBaseExecutionResultIntegrity(m.LastExecutionResult.ExecutionResult)
+}
+
+// checkExecutionResultsIntegrity checks the integrity of the execution results against the header they are associated with
+func (m *MetaBlockV3) checkExecutionResultsIntegrity() error {
+
+	for i, execResult := range m.ExecutionResults {
+		if execResult == nil || reflect.ValueOf(execResult).IsNil() {
+			return fmt.Errorf("%w in MetaBlockV3.ExecutionResults at index %d", data.ErrNilValue, i)
+		}
+
+		err := m.checkBaseExecutionResultIntegrity(execResult.ExecutionResult)
+		if err != nil {
+			return fmt.Errorf("execution result integrity check failed at index %d: %w", i, err)
+		}
+	}
+
+	return nil
+}
+
+// checkBaseExecutionResultIntegrity checks the integrity of a base execution result against the header it is associated with
+func (m *MetaBlockV3) checkBaseExecutionResultIntegrity(ownBaseExecutionResult data.BaseExecutionResultHandler) error {
+	if ownBaseExecutionResult == nil || reflect.ValueOf(ownBaseExecutionResult).IsNil() {
+		return data.ErrNilValue
+	}
+
+	if len(ownBaseExecutionResult.GetHeaderHash()) == 0 {
+		return fmt.Errorf("%w in BaseExecutionResult.HeaderHash", data.ErrNilValue)
+	}
+
+	if ownBaseExecutionResult.GetHeaderNonce() >= m.Nonce {
+		return fmt.Errorf("BaseExecutionResult.HeaderNonce (%d) must be less than Header.Nonce (%d)", ownBaseExecutionResult.GetHeaderNonce(), m.Nonce)
+	}
+
+	if ownBaseExecutionResult.GetHeaderRound() >= m.Round {
+		return fmt.Errorf("BaseExecutionResult.HeaderRound (%d) must be less than Header.Round (%d)", ownBaseExecutionResult.GetHeaderRound(), m.Round)
+	}
+
+	if ownBaseExecutionResult.GetHeaderEpoch() > m.Epoch {
+		return fmt.Errorf("BaseExecutionResult.HeaderEpoch (%d) must be less than or equal to Header.Epoch (%d)", ownBaseExecutionResult.GetHeaderEpoch(), m.Epoch)
+	}
+
+	if len(ownBaseExecutionResult.GetRootHash()) == 0 {
+		return fmt.Errorf("%w in BaseExecutionResult.RootHash", data.ErrNilValue)
 	}
 
 	return nil
