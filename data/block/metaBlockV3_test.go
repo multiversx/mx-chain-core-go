@@ -1149,7 +1149,7 @@ func TestMetaBlockV3_SetShardInfoProposalHandlers(t *testing.T) {
 		err := mb3.SetShardInfoProposalHandlers(handlers)
 		require.NoError(t, err)
 		require.Equal(t, 2, len(mb3.ShardInfoProposal))
-		assert.Equal(t, shardDataProposal1.GetShardID(), mb3.ShardInfoProposal[0].ShardID)
-		assert.Equal(t, shardDataProposal2.GetShardID(), mb3.ShardInfoProposal[1].ShardID)
+		assert.True(t, shardDataProposal1.Equal(mb3.ShardInfoProposal[0]))
+		assert.True(t, shardDataProposal2.Equal(mb3.ShardInfoProposal[1]))
 	})
 }
