@@ -490,3 +490,14 @@ func TestMetaBlock_SetEpochStartHandler(t *testing.T) {
 		require.Equal(t, epochStartHandler, header.GetEpochStartHandler())
 	})
 }
+
+func TestMetaBlock_ShardInfoProposalHandlers(t *testing.T) {
+	t.Parallel()
+
+	metaHdr := &block.MetaBlock{}
+	handlers := metaHdr.GetShardInfoProposalHandlers()
+	require.Nil(t, handlers)
+
+	err := metaHdr.SetShardInfoProposalHandlers(nil)
+	require.Nil(t, err)
+}

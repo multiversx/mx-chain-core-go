@@ -531,6 +531,16 @@ func (m *MetaBlock) SetShardInfoHandlers(shardInfo []data.ShardDataHandler) erro
 	return nil
 }
 
+// GetShardInfoProposalHandlers always returns nil for metablock
+func (m *MetaBlock) GetShardInfoProposalHandlers() []data.ShardDataProposalHandler {
+	return nil
+}
+
+// SetShardInfoProposalHandlers always returns nil for metablock
+func (m *MetaBlock) SetShardInfoProposalHandlers(_ []data.ShardDataProposalHandler) error {
+	return nil
+}
+
 // SetScheduledRootHash not supported on the first version of metablock
 func (m *MetaBlock) SetScheduledRootHash(_ []byte) error {
 	return data.ErrScheduledRootHashNotSupported
