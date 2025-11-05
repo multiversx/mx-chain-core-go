@@ -23,7 +23,6 @@ func TestShardDataProposal_AllMethods(t *testing.T) {
 	t.Parallel()
 
 	var nilSdp *block.ShardDataProposal
-	nilSdp = nil
 	sdp := &block.ShardDataProposal{}
 
 	headerHash := []byte("header hash")
