@@ -258,6 +258,7 @@ type ShardDataHandler interface {
 	GetLastIncludedMetaNonce() uint64
 	GetShardID() uint32
 	GetTxCount() uint32
+	Equal(that interface{}) bool
 
 	SetHeaderHash(hash []byte) error
 	SetShardMiniBlockHeaderHandlers(mbHeaderHandlers []MiniBlockHeaderHandler) error
@@ -291,6 +292,7 @@ type ShardDataProposalHandler interface {
 	SetEpoch(epoch uint32) error
 	GetNumPendingMiniBlocks() uint32
 	SetNumPendingMiniBlocks(numPending uint32) error
+	Equal(that interface{}) bool
 	IsInterfaceNil() bool
 }
 
