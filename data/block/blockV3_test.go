@@ -648,18 +648,6 @@ func TestHeaderV3_CheckFieldsForNil(t *testing.T) {
 		require.True(t, strings.Contains(err.Error(), "LastExecutionResult"))
 	})
 
-	t.Run("valid header for genesis", func(t *testing.T) {
-		t.Parallel()
-		hv3 := &block.HeaderV3{
-			Nonce:           0,
-			RandSeed:        []byte("rand seed"),
-			LeaderSignature: []byte("leader sig"),
-			SoftwareVersion: []byte("v1.0.0"),
-		}
-		err := hv3.CheckFieldsForNil()
-		require.NoError(t, err)
-	})
-
 	t.Run("valid header", func(t *testing.T) {
 		t.Parallel()
 		hv3 := &block.HeaderV3{

@@ -575,6 +575,11 @@ func (m *MetaBlockV3) CheckFieldsForNil() error {
 	return nil
 }
 
+// CheckFieldsIntegrity checks a predefined set of fields for integrity - included for compatibility, implemented in a different PR
+func (m *MetaBlockV3) CheckFieldsIntegrity() error {
+	return nil
+}
+
 // SetEpochChangeProposed will set the provided value EpochStartProposed field
 func (m *MetaBlockV3) SetEpochChangeProposed(value bool) {
 	m.EpochChangeProposed = value

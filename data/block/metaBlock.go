@@ -595,6 +595,11 @@ func (m *MetaBlock) CheckFieldsForNil() error {
 	return nil
 }
 
+// CheckFieldsIntegrity checks a predefined set of fields for integrity - included for backward compatibility
+func (m *MetaBlock) CheckFieldsIntegrity() error {
+	return nil
+}
+
 // SetEpochChangeProposed will do nothing
 func (m *MetaBlock) SetEpochChangeProposed(_ bool) {
 }

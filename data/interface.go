@@ -88,6 +88,7 @@ type HeaderHandler interface {
 	IsStartOfEpochBlock() bool
 	ShallowClone() HeaderHandler
 	CheckFieldsForNil() error
+	CheckFieldsIntegrity() error
 	IsHeaderV3() bool
 	IsInterfaceNil() bool
 }

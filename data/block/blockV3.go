@@ -7,6 +7,7 @@ import (
 	"math/big"
 	reflect "reflect"
 
+	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
 )
@@ -345,19 +346,12 @@ func (hv3 *HeaderV3) CheckFieldsForNil() error {
 	if hv3.SoftwareVersion == nil {
 		return fmt.Errorf("%w in Header.SoftwareVersion", data.ErrNilValue)
 	}
-
-	isGenesisRound := hv3.GetNonce() == 0
-	if isGenesisRound {
-		return nil
-	}
-
 	if hv3.PrevHash == nil {
 		return fmt.Errorf("%w in Header.PrevHash", data.ErrNilValue)
 	}
 	if hv3.PrevRandSeed == nil {
 		return fmt.Errorf("%w in Header.PrevRandSeed", data.ErrNilValue)
 	}
-
 	if hv3.LastExecutionResult == nil {
 		return fmt.Errorf("%w in Header.LastExecutionResult", data.ErrNilValue)
 	}
@@ -418,7 +412,7 @@ func (hv3 *HeaderV3) checkLastExecutionResultIntegrity() error {
 func (hv3 *HeaderV3) checkExecutionResultsIntegrity() error {
 
 	for i, execResult := range hv3.ExecutionResults {
-		if execResult == nil || reflect.ValueOf(execResult).IsNil() {
+		if execResult == nil || check.IfNil(execResult) {
 			return fmt.Errorf("%w in Header.ExecutionResults at index %d", data.ErrNilValue, i)
 		}
 
