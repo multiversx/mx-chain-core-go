@@ -575,7 +575,8 @@ func (m *MetaBlockV3) CheckFieldsForNil() error {
 	return nil
 }
 
-// CheckFieldsIntegrity checks a predefined set of fields for integrity - included for compatibility, implemented in a different PR
+// CheckFieldsIntegrity checks a predefined set of fields for integrity - included for compatibility
+// TODO implement this method to perform meaningful integrity checks for v3 meta block
 func (m *MetaBlockV3) CheckFieldsIntegrity() error {
 	return nil
 }
