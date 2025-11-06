@@ -9,6 +9,7 @@ import (
 	"sort"
 
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
 )
@@ -628,7 +629,7 @@ func (m *MetaBlockV3) CheckFieldsIntegrity() error {
 		return data.ErrNilPointerReceiver
 	}
 	if len(m.Reserved) != 0 {
-		return fmt.Errorf("not nil value in MetaBlockV3.Reserved")
+		return data.ErrNotNilValue
 	}
 	if len(m.ShardInfo) != 0 && len(m.ShardInfoProposal) == 0 {
 		return fmt.Errorf("MetaBlockV3.ShardInfoProposal cannot be nil when MetaBlockV3.ShardInfo is not nil")
@@ -685,7 +686,7 @@ func (m *MetaBlockV3) checkExecutionResultsIntegrity() error {
 
 // checkBaseExecutionResultIntegrity checks the integrity of a base execution result against the header it is associated with
 func (m *MetaBlockV3) checkBaseExecutionResultIntegrity(ownBaseExecutionResult data.BaseExecutionResultHandler) error {
-	if ownBaseExecutionResult == nil || reflect.ValueOf(ownBaseExecutionResult).IsNil() {
+	if ownBaseExecutionResult == nil || check.IfNil(ownBaseExecutionResult) {
 		return data.ErrNilValue
 	}
 
@@ -709,12 +710,6 @@ func (m *MetaBlockV3) checkBaseExecutionResultIntegrity(ownBaseExecutionResult d
 		return fmt.Errorf("%w in BaseExecutionResult.RootHash", data.ErrNilValue)
 	}
 
-	return nil
-}
-
-// CheckFieldsIntegrity checks a predefined set of fields for integrity - included for compatibility
-// TODO implement this method to perform meaningful integrity checks for v3 meta block
-func (m *MetaBlockV3) CheckFieldsIntegrity() error {
 	return nil
 }
 

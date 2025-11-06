@@ -501,3 +501,21 @@ func TestMetaBlock_ShardInfoProposalHandlers(t *testing.T) {
 	err := metaHdr.SetShardInfoProposalHandlers(nil)
 	require.Nil(t, err)
 }
+
+func TestMetaBlock_CheckFieldsIntegrity(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.MetaBlock
+		require.Nil(t, header.CheckFieldsIntegrity())
+	})
+
+	t.Run("valid receiver", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.MetaBlock{}
+		require.Nil(t, header.CheckFieldsIntegrity())
+	})
+}

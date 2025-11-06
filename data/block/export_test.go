@@ -24,3 +24,18 @@ func (hv3 *HeaderV3) CheckExecutionResultsIntegrity() error {
 func (hv3 *HeaderV3) CheckLastExecutionResultIntegrity() error {
 	return hv3.checkLastExecutionResultIntegrity()
 }
+
+// CheckBaseExecutionResultIntegrity -
+func (m *MetaBlockV3) CheckBaseExecutionResultIntegrity(ownBaseExecutionResult data.BaseExecutionResultHandler) error {
+	return m.checkBaseExecutionResultIntegrity(ownBaseExecutionResult)
+}
+
+// CheckExecutionResultsIntegrity -
+func (m *MetaBlockV3) CheckExecutionResultsIntegrity() error {
+	return m.checkExecutionResultsIntegrity()
+}
+
+// CheckLastExecutionResultIntegrity -
+func (m *MetaBlockV3) CheckLastExecutionResultIntegrity() error {
+	return m.checkLastExecutionResultIntegrity()
+}
