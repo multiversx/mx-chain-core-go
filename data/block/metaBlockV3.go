@@ -712,6 +712,12 @@ func (m *MetaBlockV3) checkBaseExecutionResultIntegrity(ownBaseExecutionResult d
 	return nil
 }
 
+// CheckFieldsIntegrity checks a predefined set of fields for integrity - included for compatibility
+// TODO implement this method to perform meaningful integrity checks for v3 meta block
+func (m *MetaBlockV3) CheckFieldsIntegrity() error {
+	return nil
+}
+
 // SetEpochChangeProposed will set the provided value EpochStartProposed field
 func (m *MetaBlockV3) SetEpochChangeProposed(value bool) {
 	m.EpochChangeProposed = value

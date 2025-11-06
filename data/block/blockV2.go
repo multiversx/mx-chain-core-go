@@ -693,6 +693,12 @@ func (hv2 *HeaderV2) CheckFieldsForNil() error {
 	return nil
 }
 
+// CheckFieldsIntegrity checks a predefined set of fields for integrity - included for backward compatibility
+// TODO check if we can implement meaningful integrity checks for v2 header
+func (hv2 *HeaderV2) CheckFieldsIntegrity() error {
+	return nil
+}
+
 // IsHeaderV3 returns false as this is not a v3 header
 func (hv2 *HeaderV2) IsHeaderV3() bool {
 	return false
