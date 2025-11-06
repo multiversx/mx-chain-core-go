@@ -896,15 +896,30 @@ func TestMetaBlockV3_CheckFieldsForNil(t *testing.T) {
 		require.True(t, strings.Contains(err.Error(), "SoftwareVersion"))
 	})
 
-	t.Run("valid header", func(t *testing.T) {
+	t.Run("nil LastExecutionResult", func(t *testing.T) {
 		t.Parallel()
 		mb2 := &block.MetaBlockV3{
 			PrevHash:        []byte("prev hash"),
 			PrevRandSeed:    []byte("prev rand seed"),
 			RandSeed:        []byte("rand seed"),
-			LeaderSignature: []byte("leader sig"),
+			LeaderSignature: []byte("leader signature"),
 			SoftwareVersion: []byte("v1.0.0"),
 			ChainID:         []byte("chain"),
+		}
+		err := mb2.CheckFieldsForNil()
+		require.True(t, strings.Contains(err.Error(), "LastExecutionResult"))
+	})
+
+	t.Run("valid header", func(t *testing.T) {
+		t.Parallel()
+		mb2 := &block.MetaBlockV3{
+			PrevHash:            []byte("prev hash"),
+			PrevRandSeed:        []byte("prev rand seed"),
+			RandSeed:            []byte("rand seed"),
+			LeaderSignature:     []byte("leader sig"),
+			SoftwareVersion:     []byte("v1.0.0"),
+			ChainID:             []byte("chain"),
+			LastExecutionResult: &block.MetaExecutionResultInfo{},
 		}
 		err := mb2.CheckFieldsForNil()
 		require.NoError(t, err)

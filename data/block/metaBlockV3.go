@@ -595,6 +595,12 @@ func (m *MetaBlockV3) CheckFieldsForNil() error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
 	}
+	if m.PrevHash == nil {
+		return fmt.Errorf("%w in MetaBlockV3.PrevHash", data.ErrNilValue)
+	}
+	if m.PrevRandSeed == nil {
+		return fmt.Errorf("%w in MetaBlockV3.PrevRandSeed", data.ErrNilValue)
+	}
 	if m.RandSeed == nil {
 		return fmt.Errorf("%w in MetaBlockV3.RandSeed", data.ErrNilValue)
 	}
@@ -606,18 +612,6 @@ func (m *MetaBlockV3) CheckFieldsForNil() error {
 	}
 	if m.SoftwareVersion == nil {
 		return fmt.Errorf("%w in MetaBlockV3.SoftwareVersion", data.ErrNilValue)
-	}
-
-	isGenesisBlock := m.Nonce == 0
-	if isGenesisBlock {
-		return nil
-	}
-
-	if m.PrevHash == nil {
-		return fmt.Errorf("%w in MetaBlockV3.PrevHash", data.ErrNilValue)
-	}
-	if m.PrevRandSeed == nil {
-		return fmt.Errorf("%w in MetaBlockV3.PrevRandSeed", data.ErrNilValue)
 	}
 	if m.LastExecutionResult == nil {
 		return fmt.Errorf("%w in MetaBlockV3.LastExecutionResult", data.ErrNilValue)
