@@ -366,6 +366,7 @@ type ChainHandler interface {
 	GetGenesisHeaderHash() []byte
 	SetGenesisHeaderHash(hash []byte)
 	GetCurrentBlockHeader() HeaderHandler
+	SetCurrentBlockHeader(bh HeaderHandler) error
 	SetCurrentBlockHeaderAndRootHash(bh HeaderHandler, rootHash []byte) error
 	GetCurrentBlockHeaderHash() []byte
 	SetCurrentBlockHeaderHash(hash []byte)
@@ -374,6 +375,8 @@ type ChainHandler interface {
 	GetFinalBlockInfo() (nonce uint64, blockHash []byte, rootHash []byte)
 	SetLastExecutedBlockInfo(nonce uint64, headerHash []byte, rootHash []byte)
 	GetLastExecutedBlockInfo() (uint64, []byte, []byte)
+	GetLastExecutedBlockHeader() HeaderHandler
+	SetLastExecutedBlockHeader(header HeaderHandler) error
 	IsInterfaceNil() bool
 }
 
