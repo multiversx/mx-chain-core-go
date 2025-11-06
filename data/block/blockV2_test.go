@@ -1298,3 +1298,21 @@ func TestHeaderV2_SetExecutionResultsHandlers(t *testing.T) {
 		require.Equal(t, data.ErrFieldNotSupported, header.SetExecutionResultsHandlers(nil))
 	})
 }
+
+func TestHeaderV2_CheckFieldsIntegrity(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.HeaderV2
+		require.Nil(t, header.CheckFieldsIntegrity())
+	})
+
+	t.Run("valid receiver", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.HeaderV2{}
+		require.Nil(t, header.CheckFieldsIntegrity())
+	})
+}
