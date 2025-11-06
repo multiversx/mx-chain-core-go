@@ -375,7 +375,7 @@ type ChainHandler interface {
 	GetFinalBlockInfo() (nonce uint64, blockHash []byte, rootHash []byte)
 	GetLastExecutedBlockInfo() (uint64, []byte, []byte)
 	GetLastExecutedBlockHeader() HeaderHandler
-	SetLastExecutedBlockHeaderAndRootHash(header HeaderHandler, headerHash []byte, rootHash []byte) error
+	SetLastExecutedBlockHeaderAndRootHash(header HeaderHandler, headerHash []byte, rootHash []byte)
 	IsInterfaceNil() bool
 }
 
