@@ -323,8 +323,9 @@ func TestMetaBlockV3_GetMiniBlockHeadersWithDst(t *testing.T) {
 
 		mbsFromMetaToShard0 := []block.MiniBlockHeader{{Hash: []byte("hash3"), SenderShardID: core.MetachainShardId, ReceiverShardID: 0}}
 		mbsFromMetaToShard1 := []block.MiniBlockHeader{{Hash: []byte("hash4"), SenderShardID: core.MetachainShardId, ReceiverShardID: 1}}
-		metaHdr.MiniBlockHeaders = append(metaHdr.MiniBlockHeaders, mbsFromMetaToShard0...)
-		metaHdr.MiniBlockHeaders = append(metaHdr.MiniBlockHeaders, mbsFromMetaToShard1...)
+		metaHdr.ExecutionResults = make([]*block.MetaExecutionResult, 2)
+		metaHdr.ExecutionResults[0] = &block.MetaExecutionResult{MiniBlockHeaders: mbsFromMetaToShard0}
+		metaHdr.ExecutionResults[1] = &block.MetaExecutionResult{MiniBlockHeaders: mbsFromMetaToShard1}
 
 		mbDst0 := metaHdr.GetMiniBlockHeadersWithDst(0)
 		assert.Equal(t, len(mbsFromMetaToShard0), len(mbDst0))

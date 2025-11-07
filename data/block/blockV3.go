@@ -43,11 +43,14 @@ func (hv3 *HeaderV3) GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32
 	}
 
 	hashDst := make(map[string]uint32)
-	for _, val := range hv3.MiniBlockHeaders {
-		if val.ReceiverShardID == destId && val.SenderShardID != destId {
-			hashDst[string(val.Hash)] = val.SenderShardID
+	for _, execResults := range hv3.ExecutionResults {
+		for _, mbHeader := range execResults.MiniBlockHeaders {
+			if mbHeader.ReceiverShardID == destId && mbHeader.SenderShardID != destId {
+				hashDst[string(mbHeader.Hash)] = mbHeader.SenderShardID
+			}
 		}
 	}
+
 	return hashDst
 }
 

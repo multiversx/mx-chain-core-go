@@ -269,12 +269,14 @@ func (m *MetaBlockV3) GetMiniBlockHeadersWithDst(destID uint32) map[string]uint3
 		}
 	}
 
-	for _, val := range m.MiniBlockHeaders {
-		isDestinationShard := (val.ReceiverShardID == destID ||
-			val.ReceiverShardID == core.AllShardId) &&
-			val.SenderShardID != destID
-		if isDestinationShard {
-			hashDst[string(val.Hash)] = val.SenderShardID
+	for _, execResults := range m.ExecutionResults {
+		for _, mbHeader := range execResults.MiniBlockHeaders {
+			isDestinationShard := (mbHeader.ReceiverShardID == destID ||
+				mbHeader.ReceiverShardID == core.AllShardId) &&
+				mbHeader.SenderShardID != destID
+			if isDestinationShard {
+				hashDst[string(mbHeader.Hash)] = mbHeader.SenderShardID
+			}
 		}
 	}
 
