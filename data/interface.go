@@ -282,16 +282,18 @@ type ShardDataHandler interface {
 // ShardDataProposalHandler defines the behavior of a shard data proposal
 type ShardDataProposalHandler interface {
 	GetHeaderHash() []byte
-	SetHeaderHash(headerHash []byte)
-	Equal(that interface{}) bool
+	SetHeaderHash(headerHash []byte) error
 	GetRound() uint64
-	SetRound(round uint64)
+	SetRound(round uint64) error
 	GetNonce() uint64
-	SetNonce(nonce uint64)
+	SetNonce(nonce uint64) error
 	GetShardID() uint32
-	SetShardID(shardID uint32)
+	SetShardID(shardID uint32) error
 	GetEpoch() uint32
-	SetEpoch(epoch uint32)
+	SetEpoch(epoch uint32) error
+	GetNumPendingMiniBlocks() uint32
+	SetNumPendingMiniBlocks(numPending uint32) error
+	Equal(that interface{}) bool
 	IsInterfaceNil() bool
 }
 
@@ -364,14 +366,16 @@ type ChainHandler interface {
 	GetGenesisHeaderHash() []byte
 	SetGenesisHeaderHash(hash []byte)
 	GetCurrentBlockHeader() HeaderHandler
+	SetCurrentBlockHeader(bh HeaderHandler) error
 	SetCurrentBlockHeaderAndRootHash(bh HeaderHandler, rootHash []byte) error
 	GetCurrentBlockHeaderHash() []byte
 	SetCurrentBlockHeaderHash(hash []byte)
 	GetCurrentBlockRootHash() []byte
 	SetFinalBlockInfo(nonce uint64, blockHash []byte, rootHash []byte)
 	GetFinalBlockInfo() (nonce uint64, blockHash []byte, rootHash []byte)
-	SetLastExecutedBlockInfo(nonce uint64, headerHash []byte, rootHash []byte)
 	GetLastExecutedBlockInfo() (uint64, []byte, []byte)
+	GetLastExecutedBlockHeader() HeaderHandler
+	SetLastExecutedBlockHeaderAndRootHash(header HeaderHandler, headerHash []byte, rootHash []byte)
 	IsInterfaceNil() bool
 }
 
