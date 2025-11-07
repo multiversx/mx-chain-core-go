@@ -1371,6 +1371,7 @@ func TestMetaHeaderV3_CheckLastExecutionResultIntegrity(t *testing.T) {
 	t.Parallel()
 
 	t.Run("nil last execution result", func(t *testing.T) {
+		t.Parallel()
 		metaV3 := &block.MetaBlockV3{}
 		err := metaV3.CheckLastExecutionResultIntegrity()
 		require.True(t, errors.Is(err, data.ErrNilValue))
@@ -1393,8 +1394,7 @@ func TestMetaHeaderV3_CheckLastExecutionResultIntegrity(t *testing.T) {
 
 	t.Run("should work", func(t *testing.T) {
 		t.Parallel()
-
-		metaV3 := createValidHeaderV3ToTest()
+		metaV3 := createValidMetaHeaderV3ToTest()
 		err := metaV3.CheckLastExecutionResultIntegrity()
 		require.NoError(t, err)
 	})

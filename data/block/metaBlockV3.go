@@ -5,7 +5,6 @@ package block
 import (
 	"fmt"
 	"math/big"
-	reflect "reflect"
 	"sort"
 
 	"github.com/multiversx/mx-chain-core-go/core"
@@ -671,7 +670,7 @@ func (m *MetaBlockV3) checkLastExecutionResultIntegrity() error {
 func (m *MetaBlockV3) checkExecutionResultsIntegrity() error {
 
 	for i, execResult := range m.ExecutionResults {
-		if execResult == nil || reflect.ValueOf(execResult).IsNil() {
+		if execResult == nil || check.IfNil(execResult) {
 			return fmt.Errorf("%w in MetaBlockV3.ExecutionResults at index %d", data.ErrNilValue, i)
 		}
 
