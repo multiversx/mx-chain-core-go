@@ -30,6 +30,10 @@ func (m *MetaBlockV3) CheckBaseExecutionResultIntegrity(ownBaseExecutionResult d
 	return m.checkBaseExecutionResultIntegrity(ownBaseExecutionResult)
 }
 
+func (m *MetaBlockV3) CheckBaseMetaExecutionResultIntegrity(ownBaseMetaExecutionResult *BaseMetaExecutionResult) error {
+	return m.checkBaseMetaExecutionResultIntegrity(ownBaseMetaExecutionResult)
+}
+
 // CheckExecutionResultsIntegrity -
 func (m *MetaBlockV3) CheckExecutionResultsIntegrity() error {
 	return m.checkExecutionResultsIntegrity()

@@ -663,7 +663,7 @@ func (m *MetaBlockV3) checkLastExecutionResultIntegrity() error {
 		return fmt.Errorf("%w in Header.LastExecutionResult", data.ErrNilValue)
 	}
 
-	return m.checkBaseExecutionResultIntegrity(m.LastExecutionResult.ExecutionResult)
+	return m.checkBaseMetaExecutionResultIntegrity(m.LastExecutionResult.ExecutionResult)
 }
 
 // checkExecutionResultsIntegrity checks the integrity of the execution results against the header they are associated with
@@ -674,10 +674,55 @@ func (m *MetaBlockV3) checkExecutionResultsIntegrity() error {
 			return fmt.Errorf("%w in MetaBlockV3.ExecutionResults at index %d", data.ErrNilValue, i)
 		}
 
-		err := m.checkBaseExecutionResultIntegrity(execResult.ExecutionResult)
+		if len(execResult.ReceiptsHash) == 0 {
+			return fmt.Errorf("%w in MetaExecutionResult.ReceiptsHash at index %d", data.ErrNilValue, i)
+		}
+		if execResult.AccumulatedFees == nil {
+			return fmt.Errorf("%w in MetaExecutionResult.AccumulatedFees at index %d", data.ErrNilValue, i)
+		}
+		if execResult.AccumulatedFees.Cmp(big.NewInt(0)) < 0 {
+			return fmt.Errorf("%w: MetaExecutionResult.AccumulatedFees cannot be negative at index %d", data.ErrInvalidValue, i)
+		}
+		if execResult.DeveloperFees == nil {
+			return fmt.Errorf("%w in MetaExecutionResult.DeveloperFees at index %d", data.ErrNilValue, i)
+		}
+		if execResult.DeveloperFees.Cmp(big.NewInt(0)) < 0 {
+			return fmt.Errorf("%w: MetaExecutionResult.DeveloperFees cannot be negative at index %d", data.ErrInvalidValue, i)
+		}
+
+		err := m.checkBaseMetaExecutionResultIntegrity(execResult.ExecutionResult)
 		if err != nil {
 			return fmt.Errorf("execution result integrity check failed at index %d: %w", i, err)
 		}
+	}
+
+	return nil
+}
+
+func (m *MetaBlockV3) checkBaseMetaExecutionResultIntegrity(ownBaseMetaExecutionResult *BaseMetaExecutionResult) error {
+	if ownBaseMetaExecutionResult == nil || check.IfNil(ownBaseMetaExecutionResult) {
+		return data.ErrNilValue
+	}
+
+	if len(ownBaseMetaExecutionResult.GetValidatorStatsRootHash()) == 0 {
+		return fmt.Errorf("%w in BaseMetaExecutionResult.ValidatorStatsRootHash", data.ErrNilValue)
+	}
+	if ownBaseMetaExecutionResult.AccumulatedFeesInEpoch == nil {
+		return fmt.Errorf("%w in BaseMetaExecutionResult.AccumulatedFeesInEpoch", data.ErrNilValue)
+	}
+	if ownBaseMetaExecutionResult.AccumulatedFeesInEpoch.Cmp(big.NewInt(0)) < 0 {
+		return fmt.Errorf("%w: BaseMetaExecutionResult.AccumulatedFeesInEpoch cannot be negative", data.ErrInvalidValue)
+	}
+	if ownBaseMetaExecutionResult.DevFeesInEpoch == nil {
+		return fmt.Errorf("%w in BaseMetaExecutionResult.DevFeesInEpoch", data.ErrNilValue)
+	}
+	if ownBaseMetaExecutionResult.DevFeesInEpoch.Cmp(big.NewInt(0)) < 0 {
+		return fmt.Errorf("%w: BaseMetaExecutionResult.DevFeesInEpoch cannot be negative", data.ErrInvalidValue)
+	}
+
+	err := m.checkBaseExecutionResultIntegrity(ownBaseMetaExecutionResult.BaseExecutionResult)
+	if err != nil {
+		return err
 	}
 
 	return nil

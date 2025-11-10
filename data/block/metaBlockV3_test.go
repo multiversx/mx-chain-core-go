@@ -1329,6 +1329,173 @@ func TestMetaHeaderV3_checkBaseExecutionResultsIntegrity(t *testing.T) {
 	})
 }
 
+func TestMetaHeaderV3_CheckBaseMetaExecutionResultIntegrity(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil own base exec result", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{}
+		err := metaV3.CheckBaseMetaExecutionResultIntegrity(nil)
+		require.Equal(t, data.ErrNilValue, err)
+	})
+	t.Run("with nil value in ValidatorStatsRootHash", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		metaExecResult := &block.BaseMetaExecutionResult{
+			BaseExecutionResult: &block.BaseExecutionResult{
+				HeaderHash:  []byte("header hash"),
+				HeaderNonce: 1,
+				HeaderRound: 1,
+				HeaderEpoch: 1,
+				RootHash:    []byte("root hash"),
+			},
+		}
+		err := metaV3.CheckBaseMetaExecutionResultIntegrity(metaExecResult)
+		require.ErrorIs(t, err, data.ErrNilValue)
+		require.Contains(t, err.Error(), "ValidatorStatsRootHash")
+	})
+	t.Run("with nil value in AccumulatedFeesInEpoch", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		metaExecResult := &block.BaseMetaExecutionResult{
+			BaseExecutionResult: &block.BaseExecutionResult{
+				HeaderHash:  []byte("header hash"),
+				HeaderNonce: 1,
+				HeaderRound: 1,
+				HeaderEpoch: 1,
+				RootHash:    []byte("root hash"),
+			},
+			ValidatorStatsRootHash: []byte("validator stats root hash"),
+		}
+		err := metaV3.CheckBaseMetaExecutionResultIntegrity(metaExecResult)
+		require.ErrorIs(t, err, data.ErrNilValue)
+		require.Contains(t, err.Error(), "AccumulatedFeesInEpoch")
+	})
+	t.Run("with negative accumulated fees", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		metaExecResult := &block.BaseMetaExecutionResult{
+			BaseExecutionResult: &block.BaseExecutionResult{
+				HeaderHash:  []byte("header hash"),
+				HeaderNonce: 1,
+				HeaderRound: 1,
+				HeaderEpoch: 1,
+				RootHash:    []byte("root hash"),
+			},
+			ValidatorStatsRootHash: []byte("validator stats root hash"),
+			AccumulatedFeesInEpoch: big.NewInt(-100),
+		}
+		err := metaV3.CheckBaseMetaExecutionResultIntegrity(metaExecResult)
+		require.ErrorIs(t, err, data.ErrInvalidValue)
+		require.Contains(t, err.Error(), "AccumulatedFeesInEpoch")
+	})
+	t.Run("with nil value in DevFeesInEpoch", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		metaExecResult := &block.BaseMetaExecutionResult{
+			BaseExecutionResult: &block.BaseExecutionResult{
+				HeaderHash:  []byte("header hash"),
+				HeaderNonce: 1,
+				HeaderRound: 1,
+				HeaderEpoch: 1,
+				RootHash:    []byte("root hash"),
+			},
+			ValidatorStatsRootHash: []byte("validator stats root hash"),
+			AccumulatedFeesInEpoch: big.NewInt(100),
+		}
+		err := metaV3.CheckBaseMetaExecutionResultIntegrity(metaExecResult)
+		require.ErrorIs(t, err, data.ErrNilValue)
+		require.Contains(t, err.Error(), "DevFeesInEpoch")
+	})
+	t.Run("with negative developers fees", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		metaExecResult := &block.BaseMetaExecutionResult{
+			BaseExecutionResult: &block.BaseExecutionResult{
+				HeaderHash:  []byte("header hash"),
+				HeaderNonce: 1,
+				HeaderRound: 1,
+				HeaderEpoch: 1,
+				RootHash:    []byte("root hash"),
+			},
+			ValidatorStatsRootHash: []byte("validator stats root hash"),
+			AccumulatedFeesInEpoch: big.NewInt(100),
+			DevFeesInEpoch:         big.NewInt(-50),
+		}
+		err := metaV3.CheckBaseMetaExecutionResultIntegrity(metaExecResult)
+		require.ErrorIs(t, err, data.ErrInvalidValue)
+		require.Contains(t, err.Error(), "DevFeesInEpoch")
+	})
+	t.Run("with error in base execution result", func(t *testing.T) {
+		t.Parallel()
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		metaExecResult := &block.BaseMetaExecutionResult{
+			BaseExecutionResult: &block.BaseExecutionResult{
+				HeaderHash: []byte{},
+			},
+			ValidatorStatsRootHash: []byte("validator stats root hash"),
+			AccumulatedFeesInEpoch: big.NewInt(100),
+			DevFeesInEpoch:         big.NewInt(50),
+		}
+		err := metaV3.CheckBaseMetaExecutionResultIntegrity(metaExecResult)
+		require.ErrorIs(t, err, data.ErrNilValue)
+		require.Contains(t, err.Error(), "BaseExecutionResult.HeaderHash")
+	})
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		metaExecResult := &block.BaseMetaExecutionResult{
+			BaseExecutionResult: &block.BaseExecutionResult{
+				HeaderHash:  []byte("header hash"),
+				HeaderNonce: 1,
+				HeaderRound: 1,
+				HeaderEpoch: 1,
+				RootHash:    []byte("root hash"),
+			},
+			ValidatorStatsRootHash: []byte("validator stats root hash"),
+			AccumulatedFeesInEpoch: big.NewInt(100),
+			DevFeesInEpoch:         big.NewInt(50),
+		}
+		err := metaV3.CheckBaseMetaExecutionResultIntegrity(metaExecResult)
+		require.NoError(t, err)
+	})
+}
+
 func TestMetaHeaderV3_checkExecutionResultsIntegrity(t *testing.T) {
 	t.Parallel()
 	t.Run("nil execution result", func(t *testing.T) {
@@ -1340,6 +1507,49 @@ func TestMetaHeaderV3_checkExecutionResultsIntegrity(t *testing.T) {
 		err := metaV3.CheckExecutionResultsIntegrity()
 		require.Error(t, err)
 		require.ErrorIs(t, err, data.ErrNilValue)
+	})
+	t.Run("with nil receipts hash", func(t *testing.T) {
+		t.Parallel()
+		metaV3 := createValidMetaHeaderV3ToTest()
+		metaV3.ExecutionResults[0].ReceiptsHash = nil
+		err := metaV3.CheckExecutionResultsIntegrity()
+		require.ErrorIs(t, err, data.ErrNilValue)
+		require.Contains(t, err.Error(), "ReceiptsHash")
+	})
+	t.Run("with nil accumulated fees", func(t *testing.T) {
+		t.Parallel()
+		metaV3 := createValidMetaHeaderV3ToTest()
+		metaV3.ExecutionResults[0].AccumulatedFees = nil
+		err := metaV3.CheckExecutionResultsIntegrity()
+		require.ErrorIs(t, err, data.ErrNilValue)
+		require.Contains(t, err.Error(), "AccumulatedFees")
+	})
+	t.Run("with negative accumulated fees", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := createValidMetaHeaderV3ToTest()
+		metaV3.ExecutionResults[0].AccumulatedFees = big.NewInt(-100)
+		err := metaV3.CheckExecutionResultsIntegrity()
+		require.ErrorIs(t, err, data.ErrInvalidValue)
+		require.Contains(t, err.Error(), "AccumulatedFees")
+	})
+	t.Run("with nil developers fees", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := createValidMetaHeaderV3ToTest()
+		metaV3.ExecutionResults[0].DeveloperFees = nil
+		err := metaV3.CheckExecutionResultsIntegrity()
+		require.ErrorIs(t, err, data.ErrNilValue)
+		require.Contains(t, err.Error(), "DeveloperFees")
+	})
+	t.Run("with negative developers fees", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := createValidMetaHeaderV3ToTest()
+		metaV3.ExecutionResults[0].DeveloperFees = big.NewInt(-50)
+		err := metaV3.CheckExecutionResultsIntegrity()
+		require.ErrorIs(t, err, data.ErrInvalidValue)
+		require.Contains(t, err.Error(), "DeveloperFees")
 	})
 	t.Run("invalid execution result base exec result", func(t *testing.T) {
 		t.Parallel()
@@ -1530,7 +1740,13 @@ func createValidMetaHeaderV3ToTest() *block.MetaBlockV3 {
 						HeaderEpoch: 1,
 						RootHash:    []byte("root-hash-10"),
 					},
+					AccumulatedFeesInEpoch: big.NewInt(1000),
+					DevFeesInEpoch:         big.NewInt(100),
+					ValidatorStatsRootHash: []byte("validator-stats-root-hash-10"),
 				},
+				ReceiptsHash:    []byte("receipts-hash-10"),
+				AccumulatedFees: big.NewInt(1000),
+				DeveloperFees:   big.NewInt(100),
 			},
 			{
 				ExecutionResult: &block.BaseMetaExecutionResult{
@@ -1541,7 +1757,13 @@ func createValidMetaHeaderV3ToTest() *block.MetaBlockV3 {
 						HeaderEpoch: 1,
 						RootHash:    []byte("root-hash-11"),
 					},
+					AccumulatedFeesInEpoch: big.NewInt(2000),
+					DevFeesInEpoch:         big.NewInt(200),
+					ValidatorStatsRootHash: []byte("validator-stats-root-hash-11"),
 				},
+				ReceiptsHash:    []byte("receipts-hash-11"),
+				AccumulatedFees: big.NewInt(2000),
+				DeveloperFees:   big.NewInt(200),
 			},
 			{
 				ExecutionResult: &block.BaseMetaExecutionResult{
@@ -1552,7 +1774,13 @@ func createValidMetaHeaderV3ToTest() *block.MetaBlockV3 {
 						HeaderEpoch: 2,
 						RootHash:    []byte("root-hash-last"),
 					},
+					AccumulatedFeesInEpoch: big.NewInt(3000),
+					DevFeesInEpoch:         big.NewInt(300),
+					ValidatorStatsRootHash: []byte("validator-stats-root-hash-last"),
 				},
+				ReceiptsHash:    []byte("receipts-hash-last"),
+				AccumulatedFees: big.NewInt(3000),
+				DeveloperFees:   big.NewInt(300),
 			},
 		},
 
@@ -1566,6 +1794,9 @@ func createValidMetaHeaderV3ToTest() *block.MetaBlockV3 {
 					HeaderEpoch: 2,
 					RootHash:    []byte("root-hash-last"),
 				},
+				AccumulatedFeesInEpoch: big.NewInt(3000),
+				DevFeesInEpoch:         big.NewInt(300),
+				ValidatorStatsRootHash: []byte("validator-stats-root-hash-last"),
 			},
 		},
 	}
