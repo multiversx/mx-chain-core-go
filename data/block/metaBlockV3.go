@@ -643,8 +643,8 @@ func (m *MetaBlockV3) CheckFieldsIntegrity() error {
 	if err != nil {
 		return err
 	}
-	if m.Round <= m.LastExecutionResult.NotarizedInRound {
-		return fmt.Errorf("MetaBlockV3.Round (%d) must be greater than LastExecutionResult.NotarizedInRound (%d)", m.Round, m.LastExecutionResult.NotarizedInRound)
+	if m.Round < m.LastExecutionResult.NotarizedInRound {
+		return fmt.Errorf("MetaBlockV3.Round (%d) must be greater than or equal to LastExecutionResult.NotarizedInRound (%d)", m.Round, m.LastExecutionResult.NotarizedInRound)
 	}
 
 	if len(m.ExecutionResults) > 0 {
