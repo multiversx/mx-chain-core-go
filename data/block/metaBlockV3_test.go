@@ -334,6 +334,46 @@ func TestMetaBlockV3_GetMiniBlockHeadersWithDst(t *testing.T) {
 	})
 }
 
+func TestMetaBlockV3_GetProposedMiniBlockHeadersWithDst(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+		var mb2 *block.MetaBlockV3
+		require.Nil(t, mb2.GetProposedMiniBlockHeadersWithDst(0))
+	})
+	t.Run("should return headers with correct destination", func(t *testing.T) {
+		t.Parallel()
+
+		metaHdr := &block.MetaBlockV3{Round: 15}
+		metaHdr.ShardInfo = make([]block.ShardData, 0)
+
+		shardMBHeader := make([]block.MiniBlockHeader, 0)
+		shMBHdr1 := block.MiniBlockHeader{SenderShardID: 0, ReceiverShardID: 1, Hash: []byte("hash1")}
+		shMBHdr2 := block.MiniBlockHeader{SenderShardID: 0, ReceiverShardID: 1, Hash: []byte("hash2")}
+		shardMBHeader = append(shardMBHeader, shMBHdr1, shMBHdr2)
+
+		shData1 := block.ShardData{ShardID: 0, HeaderHash: []byte("sh"), ShardMiniBlockHeaders: shardMBHeader}
+		metaHdr.ShardInfo = append(metaHdr.ShardInfo, shData1)
+
+		shData2 := block.ShardData{ShardID: 1, HeaderHash: []byte("sh"), ShardMiniBlockHeaders: shardMBHeader}
+		metaHdr.ShardInfo = append(metaHdr.ShardInfo, shData2)
+
+		mbsFromMetaToShard0 := []block.MiniBlockHeader{{Hash: []byte("hash3"), SenderShardID: core.MetachainShardId, ReceiverShardID: 0}}
+		mbsFromMetaToShard1 := []block.MiniBlockHeader{{Hash: []byte("hash4"), SenderShardID: core.MetachainShardId, ReceiverShardID: 1}}
+		metaHdr.MiniBlockHeaders = append(metaHdr.MiniBlockHeaders, mbsFromMetaToShard0...)
+		metaHdr.MiniBlockHeaders = append(metaHdr.MiniBlockHeaders, mbsFromMetaToShard1...)
+		// should not include execution results
+		metaHdr.ExecutionResults = make([]*block.MetaExecutionResult, 1)
+		metaHdr.ExecutionResults[0] = &block.MetaExecutionResult{MiniBlockHeaders: mbsFromMetaToShard1}
+
+		mbDst0 := metaHdr.GetProposedMiniBlockHeadersWithDst(0)
+		require.Equal(t, len(mbsFromMetaToShard0), len(mbDst0))
+		mbDst1 := metaHdr.GetProposedMiniBlockHeadersWithDst(1)
+		require.Equal(t, len(shardMBHeader)+len(mbsFromMetaToShard1), len(mbDst1))
+	})
+}
+
 func TestMetaBlockV3_GetOrderedCrossMiniblocksWithDst(t *testing.T) {
 	t.Parallel()
 

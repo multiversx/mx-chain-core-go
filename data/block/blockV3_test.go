@@ -114,6 +114,49 @@ func TestHeaderV3_GetMiniBlockHeadersWithDst(t *testing.T) {
 	})
 }
 
+func TestHeaderV3_GetProposedMiniBlockHeadersWithDst(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+		var hv3 *block.HeaderV3
+		require.Nil(t, hv3.GetProposedMiniBlockHeadersWithDst(0))
+	})
+
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
+		destShardID := uint32(1)
+		hash1 := []byte("hash1")
+		hash2 := []byte("hash2")
+		hash3 := []byte("hash3")
+		hv3 := &block.HeaderV3{
+			MiniBlockHeaders: []block.MiniBlockHeader{
+				{ReceiverShardID: destShardID, SenderShardID: 0, Hash: hash1},
+				{ReceiverShardID: destShardID, SenderShardID: 2, Hash: hash2},
+				{ReceiverShardID: 2, SenderShardID: 2, Hash: hash3},
+			},
+			// should not include execution results
+			ExecutionResults: []*block.ExecutionResult{
+				{
+					MiniBlockHeaders: []block.MiniBlockHeader{
+						{
+							ReceiverShardID: destShardID, SenderShardID: 0, Hash: []byte("hash4"),
+						},
+					},
+				},
+			},
+		}
+
+		expected := map[string]uint32{
+			string(hash1): 0,
+			string(hash2): 2,
+		}
+		result := hv3.GetProposedMiniBlockHeadersWithDst(destShardID)
+		require.Equal(t, expected, result)
+	})
+}
+
 func TestHeaderV3_GetOrderedCrossMiniblocksWithDst(t *testing.T) {
 	t.Parallel()
 

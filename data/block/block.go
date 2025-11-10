@@ -214,20 +214,13 @@ func (h *Header) GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32 {
 	}
 
 	hashDst := make(map[string]uint32)
-	for _, val := range h.MiniBlockHeaders {
-		if val.ReceiverShardID == destId && val.SenderShardID != destId {
-			hashDst[string(val.Hash)] = val.SenderShardID
-		}
-	}
+	addShardMBHeadersMBToDestMap(h.MiniBlockHeaders, hashDst, destId)
+
 	return hashDst
 }
 
 // GetProposedMiniBlockHeadersWithDst returns empty map, as this method just implements the interface needed for supernova
 func (h *Header) GetProposedMiniBlockHeadersWithDst(_ uint32) map[string]uint32 {
-	if h == nil {
-		return nil
-	}
-
 	return make(map[string]uint32)
 }
 

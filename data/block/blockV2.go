@@ -362,10 +362,6 @@ func (hv2 *HeaderV2) GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32
 
 // GetProposedMiniBlockHeadersWithDst returns empty map, as this method just implements the interface needed for supernova
 func (hv2 *HeaderV2) GetProposedMiniBlockHeadersWithDst(_ uint32) map[string]uint32 {
-	if hv2 == nil {
-		return nil
-	}
-
 	return make(map[string]uint32)
 }
 
