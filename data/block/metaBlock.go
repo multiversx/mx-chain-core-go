@@ -290,7 +290,7 @@ func (m *MetaBlock) SetShardID(_ uint32) error {
 	return nil
 }
 
-// GetMiniBlockHeadersWithDst as a map of hashes and sender IDs
+// GetMiniBlockHeadersWithDst returns a map of hashes and sender IDs
 func (m *MetaBlock) GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32 {
 	if m == nil {
 		return nil
@@ -319,6 +319,15 @@ func (m *MetaBlock) GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32 
 	}
 
 	return hashDst
+}
+
+// GetProposedMiniBlockHeadersWithDst returns empty map, as this method just implements the interface needed for supernova
+func (m *MetaBlock) GetProposedMiniBlockHeadersWithDst(_ uint32) map[string]uint32 {
+	if m == nil {
+		return nil
+	}
+
+	return make(map[string]uint32)
 }
 
 // GetOrderedCrossMiniblocksWithDst gets all cross miniblocks with the given destination shard ID, ordered in a
