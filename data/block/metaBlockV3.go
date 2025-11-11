@@ -290,14 +290,6 @@ func (m *MetaBlockV3) GetProposedMiniBlockHeadersWithDst(destID uint32) map[stri
 	}
 
 	hashDst := make(map[string]uint32)
-	for i := 0; i < len(m.ShardInfo); i++ {
-		if m.ShardInfo[i].ShardID == destID {
-			continue
-		}
-
-		addShardMBHeadersMBToDestMap(m.ShardInfo[i].ShardMiniBlockHeaders, hashDst, destID)
-	}
-
 	addMetaMBHeadersMBToDestMap(m.MiniBlockHeaders, hashDst, destID)
 
 	return hashDst
