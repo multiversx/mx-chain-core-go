@@ -881,6 +881,20 @@ func TestMetaBlockV3_CheckFieldsForNil(t *testing.T) {
 		require.True(t, strings.Contains(err.Error(), "LeaderSignature"))
 	})
 
+	t.Run("nil chain ID", func(t *testing.T) {
+		t.Parallel()
+		mb2 := &block.MetaBlockV3{
+			PrevHash:        []byte("prev hash"),
+			PrevRandSeed:    []byte("prev rand seed"),
+			RandSeed:        []byte("rand seed"),
+			LeaderSignature: []byte("leader signature"),
+			SoftwareVersion: nil,
+		}
+		err := mb2.CheckFieldsForNil()
+		require.True(t, errors.Is(err, data.ErrNilValue))
+		require.True(t, strings.Contains(err.Error(), "ChainID"))
+	})
+
 	t.Run("nil software version", func(t *testing.T) {
 		t.Parallel()
 		mb2 := &block.MetaBlockV3{
@@ -896,15 +910,30 @@ func TestMetaBlockV3_CheckFieldsForNil(t *testing.T) {
 		require.True(t, strings.Contains(err.Error(), "SoftwareVersion"))
 	})
 
-	t.Run("valid header", func(t *testing.T) {
+	t.Run("nil LastExecutionResult", func(t *testing.T) {
 		t.Parallel()
 		mb2 := &block.MetaBlockV3{
 			PrevHash:        []byte("prev hash"),
 			PrevRandSeed:    []byte("prev rand seed"),
 			RandSeed:        []byte("rand seed"),
-			LeaderSignature: []byte("leader sig"),
+			LeaderSignature: []byte("leader signature"),
 			SoftwareVersion: []byte("v1.0.0"),
 			ChainID:         []byte("chain"),
+		}
+		err := mb2.CheckFieldsForNil()
+		require.True(t, strings.Contains(err.Error(), "LastExecutionResult"))
+	})
+
+	t.Run("valid header", func(t *testing.T) {
+		t.Parallel()
+		mb2 := &block.MetaBlockV3{
+			PrevHash:            []byte("prev hash"),
+			PrevRandSeed:        []byte("prev rand seed"),
+			RandSeed:            []byte("rand seed"),
+			LeaderSignature:     []byte("leader sig"),
+			SoftwareVersion:     []byte("v1.0.0"),
+			ChainID:             []byte("chain"),
+			LastExecutionResult: &block.MetaExecutionResultInfo{},
 		}
 		err := mb2.CheckFieldsForNil()
 		require.NoError(t, err)
@@ -1152,4 +1181,634 @@ func TestMetaBlockV3_SetShardInfoProposalHandlers(t *testing.T) {
 		assert.True(t, shardDataProposal1.Equal(mb3.ShardInfoProposal[0]))
 		assert.True(t, shardDataProposal2.Equal(mb3.ShardInfoProposal[1]))
 	})
+}
+
+func TestMetaHeaderV3_checkBaseExecutionResultsIntegrity(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil base exec result", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{}
+		err := metaV3.CheckBaseExecutionResultIntegrity(nil)
+		require.Equal(t, data.ErrNilValue, err)
+	})
+	t.Run("nil base exec result with reflect", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Round: 2,
+			LastExecutionResult: &block.MetaExecutionResultInfo{
+				NotarizedInRound: 1,
+			},
+			ExecutionResults: []*block.MetaExecutionResult{
+				&block.MetaExecutionResult{},
+			},
+		}
+		err := metaV3.CheckBaseExecutionResultIntegrity(metaV3.LastExecutionResult.ExecutionResult)
+		require.Equal(t, data.ErrNilValue, err)
+		err = metaV3.CheckBaseExecutionResultIntegrity(metaV3.ExecutionResults[0].ExecutionResult)
+		require.Equal(t, data.ErrNilValue, err)
+	})
+	t.Run("invalid base execution result header hash", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 1,
+			Round: 1,
+			Epoch: 1,
+		}
+		baseExecResult := &block.BaseExecutionResult{
+			HeaderHash: []byte{},
+		}
+		err := metaV3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.True(t, errors.Is(err, data.ErrNilValue))
+		require.True(t, strings.Contains(err.Error(), "HeaderHash"))
+	})
+	t.Run("invalid base execution result header nonce", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 1,
+			Round: 1,
+			Epoch: 1,
+		}
+		baseExecResult := &block.BaseExecutionResult{
+			HeaderHash:  []byte("header hash"),
+			HeaderNonce: 1,
+		}
+		err := metaV3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.NotNil(t, err)
+		require.True(t, strings.Contains(err.Error(), "HeaderNonce"))
+
+		baseExecResult.HeaderNonce = 2
+		err = metaV3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.NotNil(t, err)
+		require.True(t, strings.Contains(err.Error(), "HeaderNonce"))
+	})
+	t.Run("invalid base execution result header round", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 1,
+			Epoch: 1,
+		}
+		baseExecResult := &block.BaseExecutionResult{
+			HeaderHash:  []byte("header hash"),
+			HeaderNonce: 1,
+			HeaderRound: 1,
+		}
+		err := metaV3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.NotNil(t, err)
+		require.True(t, strings.Contains(err.Error(), "HeaderRound"))
+
+		baseExecResult.HeaderRound = 2
+		err = metaV3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.NotNil(t, err)
+		require.True(t, strings.Contains(err.Error(), "HeaderRound"))
+	})
+	t.Run("invalid base execution result header epoch", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 1,
+		}
+		baseExecResult := &block.BaseExecutionResult{
+			HeaderHash:  []byte("header hash"),
+			HeaderNonce: 1,
+			HeaderRound: 1,
+			HeaderEpoch: 2,
+		}
+		err := metaV3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.NotNil(t, err)
+		require.True(t, strings.Contains(err.Error(), "HeaderEpoch"))
+	})
+	t.Run("invalid base execution result root hash", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		baseExecResult := &block.BaseExecutionResult{
+			HeaderHash:  []byte("header hash"),
+			HeaderNonce: 1,
+			HeaderRound: 1,
+			HeaderEpoch: 1,
+		}
+		err := metaV3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.True(t, errors.Is(err, data.ErrNilValue))
+		require.True(t, strings.Contains(err.Error(), "RootHash"))
+
+		baseExecResult.RootHash = []byte{}
+		err = metaV3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.True(t, errors.Is(err, data.ErrNilValue))
+		require.True(t, strings.Contains(err.Error(), "RootHash"))
+	})
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		baseExecResult := &block.BaseExecutionResult{
+			HeaderHash:  []byte("header hash"),
+			HeaderNonce: 1,
+			HeaderRound: 1,
+			HeaderEpoch: 1,
+			RootHash:    []byte("root hash"),
+		}
+		err := metaV3.CheckBaseExecutionResultIntegrity(baseExecResult)
+		require.NoError(t, err)
+	})
+}
+
+func TestMetaHeaderV3_CheckBaseMetaExecutionResultIntegrity(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil own base exec result", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{}
+		err := metaV3.CheckBaseMetaExecutionResultIntegrity(nil)
+		require.Equal(t, data.ErrNilValue, err)
+	})
+	t.Run("with nil value in ValidatorStatsRootHash", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		metaExecResult := &block.BaseMetaExecutionResult{
+			BaseExecutionResult: &block.BaseExecutionResult{
+				HeaderHash:  []byte("header hash"),
+				HeaderNonce: 1,
+				HeaderRound: 1,
+				HeaderEpoch: 1,
+				RootHash:    []byte("root hash"),
+			},
+		}
+		err := metaV3.CheckBaseMetaExecutionResultIntegrity(metaExecResult)
+		require.ErrorIs(t, err, data.ErrNilValue)
+		require.Contains(t, err.Error(), "ValidatorStatsRootHash")
+	})
+	t.Run("with nil value in AccumulatedFeesInEpoch", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		metaExecResult := &block.BaseMetaExecutionResult{
+			BaseExecutionResult: &block.BaseExecutionResult{
+				HeaderHash:  []byte("header hash"),
+				HeaderNonce: 1,
+				HeaderRound: 1,
+				HeaderEpoch: 1,
+				RootHash:    []byte("root hash"),
+			},
+			ValidatorStatsRootHash: []byte("validator stats root hash"),
+		}
+		err := metaV3.CheckBaseMetaExecutionResultIntegrity(metaExecResult)
+		require.ErrorIs(t, err, data.ErrNilValue)
+		require.Contains(t, err.Error(), "AccumulatedFeesInEpoch")
+	})
+	t.Run("with negative accumulated fees", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		metaExecResult := &block.BaseMetaExecutionResult{
+			BaseExecutionResult: &block.BaseExecutionResult{
+				HeaderHash:  []byte("header hash"),
+				HeaderNonce: 1,
+				HeaderRound: 1,
+				HeaderEpoch: 1,
+				RootHash:    []byte("root hash"),
+			},
+			ValidatorStatsRootHash: []byte("validator stats root hash"),
+			AccumulatedFeesInEpoch: big.NewInt(-100),
+		}
+		err := metaV3.CheckBaseMetaExecutionResultIntegrity(metaExecResult)
+		require.ErrorIs(t, err, data.ErrInvalidValue)
+		require.Contains(t, err.Error(), "AccumulatedFeesInEpoch")
+	})
+	t.Run("with nil value in DevFeesInEpoch", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		metaExecResult := &block.BaseMetaExecutionResult{
+			BaseExecutionResult: &block.BaseExecutionResult{
+				HeaderHash:  []byte("header hash"),
+				HeaderNonce: 1,
+				HeaderRound: 1,
+				HeaderEpoch: 1,
+				RootHash:    []byte("root hash"),
+			},
+			ValidatorStatsRootHash: []byte("validator stats root hash"),
+			AccumulatedFeesInEpoch: big.NewInt(100),
+		}
+		err := metaV3.CheckBaseMetaExecutionResultIntegrity(metaExecResult)
+		require.ErrorIs(t, err, data.ErrNilValue)
+		require.Contains(t, err.Error(), "DevFeesInEpoch")
+	})
+	t.Run("with negative developers fees", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		metaExecResult := &block.BaseMetaExecutionResult{
+			BaseExecutionResult: &block.BaseExecutionResult{
+				HeaderHash:  []byte("header hash"),
+				HeaderNonce: 1,
+				HeaderRound: 1,
+				HeaderEpoch: 1,
+				RootHash:    []byte("root hash"),
+			},
+			ValidatorStatsRootHash: []byte("validator stats root hash"),
+			AccumulatedFeesInEpoch: big.NewInt(100),
+			DevFeesInEpoch:         big.NewInt(-50),
+		}
+		err := metaV3.CheckBaseMetaExecutionResultIntegrity(metaExecResult)
+		require.ErrorIs(t, err, data.ErrInvalidValue)
+		require.Contains(t, err.Error(), "DevFeesInEpoch")
+	})
+	t.Run("with error in base execution result", func(t *testing.T) {
+		t.Parallel()
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		metaExecResult := &block.BaseMetaExecutionResult{
+			BaseExecutionResult: &block.BaseExecutionResult{
+				HeaderHash: []byte{},
+			},
+			ValidatorStatsRootHash: []byte("validator stats root hash"),
+			AccumulatedFeesInEpoch: big.NewInt(100),
+			DevFeesInEpoch:         big.NewInt(50),
+		}
+		err := metaV3.CheckBaseMetaExecutionResultIntegrity(metaExecResult)
+		require.ErrorIs(t, err, data.ErrNilValue)
+		require.Contains(t, err.Error(), "BaseExecutionResult.HeaderHash")
+	})
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		metaExecResult := &block.BaseMetaExecutionResult{
+			BaseExecutionResult: &block.BaseExecutionResult{
+				HeaderHash:  []byte("header hash"),
+				HeaderNonce: 1,
+				HeaderRound: 1,
+				HeaderEpoch: 1,
+				RootHash:    []byte("root hash"),
+			},
+			ValidatorStatsRootHash: []byte("validator stats root hash"),
+			AccumulatedFeesInEpoch: big.NewInt(100),
+			DevFeesInEpoch:         big.NewInt(50),
+		}
+		err := metaV3.CheckBaseMetaExecutionResultIntegrity(metaExecResult)
+		require.NoError(t, err)
+	})
+}
+
+func TestMetaHeaderV3_checkExecutionResultsIntegrity(t *testing.T) {
+	t.Parallel()
+	t.Run("nil execution result", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{}
+		metaV3.ExecutionResults = make([]*block.MetaExecutionResult, 1)
+		assert.Equal(t, metaV3.ExecutionResults[0].IsInterfaceNil(), true)
+		err := metaV3.CheckExecutionResultsIntegrity()
+		require.Error(t, err)
+		require.ErrorIs(t, err, data.ErrNilValue)
+	})
+	t.Run("with nil receipts hash", func(t *testing.T) {
+		t.Parallel()
+		metaV3 := createValidMetaHeaderV3ToTest()
+		metaV3.ExecutionResults[0].ReceiptsHash = nil
+		err := metaV3.CheckExecutionResultsIntegrity()
+		require.ErrorIs(t, err, data.ErrNilValue)
+		require.Contains(t, err.Error(), "ReceiptsHash")
+	})
+	t.Run("with nil accumulated fees", func(t *testing.T) {
+		t.Parallel()
+		metaV3 := createValidMetaHeaderV3ToTest()
+		metaV3.ExecutionResults[0].AccumulatedFees = nil
+		err := metaV3.CheckExecutionResultsIntegrity()
+		require.ErrorIs(t, err, data.ErrNilValue)
+		require.Contains(t, err.Error(), "AccumulatedFees")
+	})
+	t.Run("with negative accumulated fees", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := createValidMetaHeaderV3ToTest()
+		metaV3.ExecutionResults[0].AccumulatedFees = big.NewInt(-100)
+		err := metaV3.CheckExecutionResultsIntegrity()
+		require.ErrorIs(t, err, data.ErrInvalidValue)
+		require.Contains(t, err.Error(), "AccumulatedFees")
+	})
+	t.Run("with nil developers fees", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := createValidMetaHeaderV3ToTest()
+		metaV3.ExecutionResults[0].DeveloperFees = nil
+		err := metaV3.CheckExecutionResultsIntegrity()
+		require.ErrorIs(t, err, data.ErrNilValue)
+		require.Contains(t, err.Error(), "DeveloperFees")
+	})
+	t.Run("with negative developers fees", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := createValidMetaHeaderV3ToTest()
+		metaV3.ExecutionResults[0].DeveloperFees = big.NewInt(-50)
+		err := metaV3.CheckExecutionResultsIntegrity()
+		require.ErrorIs(t, err, data.ErrInvalidValue)
+		require.Contains(t, err.Error(), "DeveloperFees")
+	})
+	t.Run("invalid execution result base exec result", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := createValidMetaHeaderV3ToTest()
+		metaV3.ExecutionResults[0].ExecutionResult = nil
+		err := metaV3.CheckExecutionResultsIntegrity()
+		require.ErrorIs(t, err, data.ErrNilValue)
+	})
+	t.Run("invalid execution result base exec result first one good", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := createValidMetaHeaderV3ToTest()
+		metaV3.ExecutionResults[1].ExecutionResult = nil
+		err := metaV3.CheckExecutionResultsIntegrity()
+		require.ErrorIs(t, err, data.ErrNilValue)
+	})
+
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := createValidMetaHeaderV3ToTest()
+		err := metaV3.CheckExecutionResultsIntegrity()
+		require.NoError(t, err)
+	})
+}
+
+func TestMetaHeaderV3_CheckLastExecutionResultIntegrity(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil last execution result", func(t *testing.T) {
+		t.Parallel()
+		metaV3 := &block.MetaBlockV3{}
+		err := metaV3.CheckLastExecutionResultIntegrity()
+		require.True(t, errors.Is(err, data.ErrNilValue))
+		require.True(t, strings.Contains(err.Error(), "LastExecutionResult"))
+	})
+	t.Run("invalid last execution result base exec result", func(t *testing.T) {
+		t.Parallel()
+
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+			LastExecutionResult: &block.MetaExecutionResultInfo{
+				NotarizedInRound: 1,
+			},
+		}
+		err := metaV3.CheckLastExecutionResultIntegrity()
+		require.ErrorIs(t, err, data.ErrNilValue)
+	})
+
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+		metaV3 := createValidMetaHeaderV3ToTest()
+		err := metaV3.CheckLastExecutionResultIntegrity()
+		require.NoError(t, err)
+	})
+}
+
+func TestMetaHeaderV3_CheckFieldsIntegrity(t *testing.T) {
+	t.Parallel()
+	t.Run("nil header", func(t *testing.T) {
+		t.Parallel()
+		var metaV3 *block.MetaBlockV3
+		err := metaV3.CheckFieldsIntegrity()
+		require.Equal(t, data.ErrNilPointerReceiver, err)
+	})
+
+	t.Run("not nil reserved field", func(t *testing.T) {
+		t.Parallel()
+		metaV3 := createValidMetaHeaderV3ToTest()
+		metaV3.Reserved = []byte("not nil reserved")
+		err := metaV3.CheckFieldsIntegrity()
+		require.Error(t, err)
+		require.ErrorIs(t, err, data.ErrNotNilValue)
+	})
+
+	t.Run("invalid shard info proposal", func(t *testing.T) {
+		t.Parallel()
+		metaV3 := createValidMetaHeaderV3ToTest()
+		metaV3.ShardInfoProposal = make([]block.ShardDataProposal, 0)
+		err := metaV3.CheckFieldsIntegrity()
+		require.Error(t, err)
+		require.Contains(t, err.Error(), "ShardInfoProposal")
+	})
+
+	t.Run("genesis round should work", func(t *testing.T) {
+		t.Parallel()
+		metaV3 := createValidMetaHeaderV3ToTestForGenesisRound()
+		err := metaV3.CheckFieldsIntegrity()
+		require.NoError(t, err)
+	})
+	t.Run("nil last execution result", func(t *testing.T) {
+		t.Parallel()
+		metaV3 := &block.MetaBlockV3{
+			Nonce: 2,
+			Round: 2,
+			Epoch: 2,
+		}
+		err := metaV3.CheckFieldsIntegrity()
+		require.Error(t, err)
+		require.ErrorIs(t, err, data.ErrNilValue)
+	})
+
+	t.Run("invalid execution results", func(t *testing.T) {
+		t.Parallel()
+		metaV3 := createValidMetaHeaderV3ToTest()
+		metaV3.ExecutionResults[0].ExecutionResult = nil
+		err := metaV3.CheckFieldsIntegrity()
+		require.Error(t, err)
+		require.ErrorIs(t, err, data.ErrNilValue)
+	})
+	t.Run("invalid last execution result", func(t *testing.T) {
+		t.Parallel()
+		metaV3 := createValidMetaHeaderV3ToTest()
+		metaV3.LastExecutionResult.ExecutionResult = nil
+		err := metaV3.CheckFieldsIntegrity()
+		require.Error(t, err)
+		require.ErrorIs(t, err, data.ErrNilValue)
+	})
+	t.Run("invalid round in last execution result", func(t *testing.T) {
+		t.Parallel()
+		metaV3 := createValidMetaHeaderV3ToTest()
+		metaV3.LastExecutionResult.NotarizedInRound = 1300
+		err := metaV3.CheckFieldsIntegrity()
+		require.Error(t, err)
+		require.Contains(t, err.Error(), "LastExecutionResult.NotarizedInRound")
+	})
+	t.Run("should work", func(t *testing.T) {
+		t.Parallel()
+		metaV3 := createValidMetaHeaderV3ToTest()
+		err := metaV3.CheckFieldsIntegrity()
+		require.NoError(t, err)
+	})
+}
+
+func createValidMetaHeaderV3ToTest() *block.MetaBlockV3 {
+	return &block.MetaBlockV3{
+		Nonce:           42,
+		Epoch:           2,
+		Round:           15,
+		TimestampMs:     123456789,
+		PrevHash:        []byte("prev_hash"),
+		PrevRandSeed:    []byte("prev_seed"),
+		RandSeed:        []byte("new_seed"),
+		ChainID:         []byte("chain-id"),
+		SoftwareVersion: []byte("v1.0.0"),
+
+		MiniBlockHeaders: []block.MiniBlockHeader{
+			{Hash: []byte("meta-to-s0"), SenderShardID: core.MetachainShardId, ReceiverShardID: 0},
+			{Hash: []byte("meta-to-s1"), SenderShardID: core.MetachainShardId, ReceiverShardID: 1},
+		},
+
+		ShardInfo: []block.ShardData{
+			{
+				ShardID:    0,
+				Round:      10,
+				Nonce:      41,
+				Epoch:      1,
+				HeaderHash: []byte("shard0-hash"),
+				ShardMiniBlockHeaders: []block.MiniBlockHeader{
+					{SenderShardID: 0, ReceiverShardID: 1, Hash: []byte("s0-to-s1")},
+				},
+			},
+			{
+				ShardID:    1,
+				Round:      11,
+				Nonce:      40,
+				Epoch:      1,
+				HeaderHash: []byte("shard1-hash"),
+				ShardMiniBlockHeaders: []block.MiniBlockHeader{
+					{SenderShardID: 1, ReceiverShardID: 0, Hash: []byte("s1-to-s0")},
+				},
+			},
+		},
+		ShardInfoProposal: []block.ShardDataProposal{
+			{ShardID: 0, HeaderHash: []byte("shard-0-hash"), Nonce: 41, Round: 10, Epoch: 1},
+			{ShardID: 1, HeaderHash: []byte("shard-1-hash"), Nonce: 40, Round: 11, Epoch: 1},
+		},
+		ExecutionResults: []*block.MetaExecutionResult{
+			{
+				ExecutionResult: &block.BaseMetaExecutionResult{
+					BaseExecutionResult: &block.BaseExecutionResult{
+						HeaderHash:  []byte("hdr-hash-10"),
+						HeaderNonce: 39,
+						HeaderRound: 10,
+						HeaderEpoch: 1,
+						RootHash:    []byte("root-hash-10"),
+					},
+					AccumulatedFeesInEpoch: big.NewInt(1000),
+					DevFeesInEpoch:         big.NewInt(100),
+					ValidatorStatsRootHash: []byte("validator-stats-root-hash-10"),
+				},
+				ReceiptsHash:    []byte("receipts-hash-10"),
+				AccumulatedFees: big.NewInt(1000),
+				DeveloperFees:   big.NewInt(100),
+			},
+			{
+				ExecutionResult: &block.BaseMetaExecutionResult{
+					BaseExecutionResult: &block.BaseExecutionResult{
+						HeaderHash:  []byte("hdr-hash-11"),
+						HeaderNonce: 40,
+						HeaderRound: 11,
+						HeaderEpoch: 1,
+						RootHash:    []byte("root-hash-11"),
+					},
+					AccumulatedFeesInEpoch: big.NewInt(2000),
+					DevFeesInEpoch:         big.NewInt(200),
+					ValidatorStatsRootHash: []byte("validator-stats-root-hash-11"),
+				},
+				ReceiptsHash:    []byte("receipts-hash-11"),
+				AccumulatedFees: big.NewInt(2000),
+				DeveloperFees:   big.NewInt(200),
+			},
+			{
+				ExecutionResult: &block.BaseMetaExecutionResult{
+					BaseExecutionResult: &block.BaseExecutionResult{
+						HeaderHash:  []byte("hdr-hash-last"),
+						HeaderNonce: 41,
+						HeaderRound: 12,
+						HeaderEpoch: 2,
+						RootHash:    []byte("root-hash-last"),
+					},
+					AccumulatedFeesInEpoch: big.NewInt(3000),
+					DevFeesInEpoch:         big.NewInt(300),
+					ValidatorStatsRootHash: []byte("validator-stats-root-hash-last"),
+				},
+				ReceiptsHash:    []byte("receipts-hash-last"),
+				AccumulatedFees: big.NewInt(3000),
+				DeveloperFees:   big.NewInt(300),
+			},
+		},
+
+		LastExecutionResult: &block.MetaExecutionResultInfo{
+			NotarizedInRound: 14,
+			ExecutionResult: &block.BaseMetaExecutionResult{
+				BaseExecutionResult: &block.BaseExecutionResult{
+					HeaderHash:  []byte("hdr-hash-last"),
+					HeaderNonce: 41,
+					HeaderRound: 12,
+					HeaderEpoch: 2,
+					RootHash:    []byte("root-hash-last"),
+				},
+				AccumulatedFeesInEpoch: big.NewInt(3000),
+				DevFeesInEpoch:         big.NewInt(300),
+				ValidatorStatsRootHash: []byte("validator-stats-root-hash-last"),
+			},
+		},
+	}
+}
+
+func createValidMetaHeaderV3ToTestForGenesisRound() *block.MetaBlockV3 {
+	return &block.MetaBlockV3{
+		Nonce:           0,
+		Round:           0,
+		Epoch:           0,
+		RandSeed:        []byte("rand seed for genesis"),
+		LeaderSignature: []byte("leader signature for genesis"),
+		SoftwareVersion: []byte("v1.0.0"),
+	}
 }

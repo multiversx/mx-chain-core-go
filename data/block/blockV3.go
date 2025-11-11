@@ -385,8 +385,8 @@ func (hv3 *HeaderV3) CheckFieldsIntegrity() error {
 		return err
 	}
 
-	if hv3.Round <= hv3.LastExecutionResult.NotarizedInRound {
-		return fmt.Errorf("Header.Round (%d) must be greater than LastExecutionResult.NotarizedInRound (%d)", hv3.Round, hv3.LastExecutionResult.NotarizedInRound)
+	if hv3.Round < hv3.LastExecutionResult.NotarizedInRound {
+		return fmt.Errorf("Header.Round (%d) must be greater than or equal to LastExecutionResult.NotarizedInRound (%d)", hv3.Round, hv3.LastExecutionResult.NotarizedInRound)
 	}
 
 	if len(hv3.ExecutionResults) > 0 {
