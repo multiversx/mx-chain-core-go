@@ -370,7 +370,7 @@ func TestMetaBlockV3_GetProposedMiniBlockHeadersWithDst(t *testing.T) {
 		mbDst0 := metaHdr.GetProposedMiniBlockHeadersWithDst(0)
 		require.Equal(t, len(mbsFromMetaToShard0), len(mbDst0))
 		mbDst1 := metaHdr.GetProposedMiniBlockHeadersWithDst(1)
-		require.Equal(t, len(shardMBHeader)+len(mbsFromMetaToShard1), len(mbDst1))
+		require.Equal(t, len(mbsFromMetaToShard1), len(mbDst1)) // should not include shard info data
 	})
 }
 
