@@ -251,7 +251,7 @@ func (m *MetaBlockV3) GetDeveloperFees() *big.Int {
 	return nil
 }
 
-// GetMiniBlockHeadersWithDst as a map of hashes and sender IDs
+// GetMiniBlockHeadersWithDst returns a map of hashes and sender IDs
 func (m *MetaBlockV3) GetMiniBlockHeadersWithDst(destID uint32) map[string]uint32 {
 	if m == nil {
 		return nil
@@ -263,21 +263,35 @@ func (m *MetaBlockV3) GetMiniBlockHeadersWithDst(destID uint32) map[string]uint3
 			continue
 		}
 
-		for _, val := range m.ShardInfo[i].ShardMiniBlockHeaders {
-			if val.ReceiverShardID == destID && val.SenderShardID != destID {
-				hashDst[string(val.Hash)] = val.SenderShardID
-			}
-		}
+		addShardMBHeadersMBToDestMap(m.ShardInfo[i].ShardMiniBlockHeaders, hashDst, destID)
 	}
 
-	for _, val := range m.MiniBlockHeaders {
-		isDestinationShard := (val.ReceiverShardID == destID ||
-			val.ReceiverShardID == core.AllShardId) &&
-			val.SenderShardID != destID
+	for _, execResults := range m.ExecutionResults {
+		addMetaMBHeadersMBToDestMap(execResults.MiniBlockHeaders, hashDst, destID)
+	}
+
+	return hashDst
+}
+
+func addMetaMBHeadersMBToDestMap(miniBlockHeaders []MiniBlockHeader, hashDst map[string]uint32, destID uint32) {
+	for _, mbHeader := range miniBlockHeaders {
+		isDestinationShard := (mbHeader.ReceiverShardID == destID ||
+			mbHeader.ReceiverShardID == core.AllShardId) &&
+			mbHeader.SenderShardID != destID
 		if isDestinationShard {
-			hashDst[string(val.Hash)] = val.SenderShardID
+			hashDst[string(mbHeader.Hash)] = mbHeader.SenderShardID
 		}
 	}
+}
+
+// GetProposedMiniBlockHeadersWithDst returns a map of hashes and sender IDs for proposed mini blocks
+func (m *MetaBlockV3) GetProposedMiniBlockHeadersWithDst(destID uint32) map[string]uint32 {
+	if m == nil {
+		return nil
+	}
+
+	hashDst := make(map[string]uint32)
+	addMetaMBHeadersMBToDestMap(m.MiniBlockHeaders, hashDst, destID)
 
 	return hashDst
 }

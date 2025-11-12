@@ -361,6 +361,22 @@ func TestMetaBlock_GetOrderedCrossMiniblocksWithDstShouldWork(t *testing.T) {
 	assert.Equal(t, miniBlocksInfo[2].Round, uint64(7))
 }
 
+func TestMetaBlock_GetProposedMiniBlockHeadersWithDst(t *testing.T) {
+	t.Parallel()
+
+	hdr := &block.MetaBlock{}
+	require.Empty(t, hdr.GetProposedMiniBlockHeadersWithDst(0))
+
+	hdr.MiniBlockHeaders = []block.MiniBlockHeader{
+		{
+			SenderShardID:   0,
+			ReceiverShardID: 0,
+			Hash:            []byte("hash"),
+		},
+	}
+	require.Empty(t, hdr.GetProposedMiniBlockHeadersWithDst(0))
+}
+
 func TestMetaBlock_SetScheduledRootHash(t *testing.T) {
 	t.Parallel()
 

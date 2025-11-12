@@ -51,6 +51,7 @@ type HeaderHandler interface {
 	GetDeveloperFees() *big.Int
 	GetReserved() []byte
 	GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32
+	GetProposedMiniBlockHeadersWithDst(destId uint32) map[string]uint32
 	GetOrderedCrossMiniblocksWithDst(destId uint32) []*MiniBlockInfo
 	GetMiniBlockHeadersHashes() [][]byte
 	GetMiniBlockHeaderHandlers() []MiniBlockHeaderHandler
