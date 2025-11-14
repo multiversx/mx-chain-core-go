@@ -254,6 +254,7 @@ type ShardDataHandler interface {
 	GetRound() uint64
 	GetPrevHash() []byte
 	GetNonce() uint64
+	GetEpoch() uint32
 	GetAccumulatedFees() *big.Int
 	GetDeveloperFees() *big.Int
 	GetNumPendingMiniBlocks() uint32
