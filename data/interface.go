@@ -378,6 +378,8 @@ type ChainHandler interface {
 	GetLastExecutedBlockInfo() (uint64, []byte, []byte)
 	GetLastExecutedBlockHeader() HeaderHandler
 	SetLastExecutedBlockHeaderAndRootHash(header HeaderHandler, headerHash []byte, rootHash []byte)
+	GetLastExecutionResult() BaseExecutionResultHandler
+	SetLastExecutionResult(result BaseExecutionResultHandler)
 	IsInterfaceNil() bool
 }
 
