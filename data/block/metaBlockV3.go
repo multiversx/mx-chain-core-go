@@ -8,6 +8,7 @@ import (
 	"sort"
 
 	"github.com/multiversx/mx-chain-core-go/core"
+	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
 )
@@ -250,7 +251,7 @@ func (m *MetaBlockV3) GetDeveloperFees() *big.Int {
 	return nil
 }
 
-// GetMiniBlockHeadersWithDst as a map of hashes and sender IDs
+// GetMiniBlockHeadersWithDst returns a map of hashes and sender IDs
 func (m *MetaBlockV3) GetMiniBlockHeadersWithDst(destID uint32) map[string]uint32 {
 	if m == nil {
 		return nil
@@ -262,21 +263,35 @@ func (m *MetaBlockV3) GetMiniBlockHeadersWithDst(destID uint32) map[string]uint3
 			continue
 		}
 
-		for _, val := range m.ShardInfo[i].ShardMiniBlockHeaders {
-			if val.ReceiverShardID == destID && val.SenderShardID != destID {
-				hashDst[string(val.Hash)] = val.SenderShardID
-			}
-		}
+		addShardMBHeadersMBToDestMap(m.ShardInfo[i].ShardMiniBlockHeaders, hashDst, destID)
 	}
 
-	for _, val := range m.MiniBlockHeaders {
-		isDestinationShard := (val.ReceiverShardID == destID ||
-			val.ReceiverShardID == core.AllShardId) &&
-			val.SenderShardID != destID
+	for _, execResults := range m.ExecutionResults {
+		addMetaMBHeadersMBToDestMap(execResults.MiniBlockHeaders, hashDst, destID)
+	}
+
+	return hashDst
+}
+
+func addMetaMBHeadersMBToDestMap(miniBlockHeaders []MiniBlockHeader, hashDst map[string]uint32, destID uint32) {
+	for _, mbHeader := range miniBlockHeaders {
+		isDestinationShard := (mbHeader.ReceiverShardID == destID ||
+			mbHeader.ReceiverShardID == core.AllShardId) &&
+			mbHeader.SenderShardID != destID
 		if isDestinationShard {
-			hashDst[string(val.Hash)] = val.SenderShardID
+			hashDst[string(mbHeader.Hash)] = mbHeader.SenderShardID
 		}
 	}
+}
+
+// GetProposedMiniBlockHeadersWithDst returns a map of hashes and sender IDs for proposed mini blocks
+func (m *MetaBlockV3) GetProposedMiniBlockHeadersWithDst(destID uint32) map[string]uint32 {
+	if m == nil {
+		return nil
+	}
+
+	hashDst := make(map[string]uint32)
+	addMetaMBHeadersMBToDestMap(m.MiniBlockHeaders, hashDst, destID)
 
 	return hashDst
 }
@@ -612,13 +627,147 @@ func (m *MetaBlockV3) CheckFieldsForNil() error {
 	if m.SoftwareVersion == nil {
 		return fmt.Errorf("%w in MetaBlockV3.SoftwareVersion", data.ErrNilValue)
 	}
+	if m.LastExecutionResult == nil {
+		return fmt.Errorf("%w in MetaBlockV3.LastExecutionResult", data.ErrNilValue)
+	}
 
 	return nil
 }
 
-// CheckFieldsIntegrity checks a predefined set of fields for integrity - included for compatibility
-// TODO implement this method to perform meaningful integrity checks for v3 meta block
+// CheckFieldsIntegrity checks the integrity of the fields
+// It checks a predefined set of fields for nil values or invalid values.
+// It also checks the integrity of LastExecutionResult and ExecutionResults against the header
 func (m *MetaBlockV3) CheckFieldsIntegrity() error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	if len(m.Reserved) != 0 {
+		return data.ErrNotNilValue
+	}
+	if len(m.ShardInfo) != 0 && len(m.ShardInfoProposal) == 0 {
+		return fmt.Errorf("MetaBlockV3.ShardInfoProposal cannot be nil when MetaBlockV3.ShardInfo is not nil")
+	}
+
+	isGenesisRound := m.GetNonce() == 0
+	if isGenesisRound {
+		return nil
+	}
+
+	err := m.checkLastExecutionResultIntegrity()
+	if err != nil {
+		return err
+	}
+	if m.Round < m.LastExecutionResult.NotarizedInRound {
+		return fmt.Errorf("MetaBlockV3.Round (%d) must be greater than or equal to LastExecutionResult.NotarizedInRound (%d)", m.Round, m.LastExecutionResult.NotarizedInRound)
+	}
+
+	if len(m.ExecutionResults) > 0 {
+		err := m.checkExecutionResultsIntegrity()
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+// checkLastExecutionResultIntegrity checks the integrity of the last execution result against the header it is associated with
+func (m *MetaBlockV3) checkLastExecutionResultIntegrity() error {
+	if m.LastExecutionResult == nil {
+		return fmt.Errorf("%w in Header.LastExecutionResult", data.ErrNilValue)
+	}
+
+	return m.checkBaseMetaExecutionResultIntegrity(m.LastExecutionResult.ExecutionResult)
+}
+
+// checkExecutionResultsIntegrity checks the integrity of the execution results against the header they are associated with
+func (m *MetaBlockV3) checkExecutionResultsIntegrity() error {
+
+	for i, execResult := range m.ExecutionResults {
+		if execResult == nil || check.IfNil(execResult) {
+			return fmt.Errorf("%w in MetaBlockV3.ExecutionResults at index %d", data.ErrNilValue, i)
+		}
+
+		if len(execResult.ReceiptsHash) == 0 {
+			return fmt.Errorf("%w in MetaExecutionResult.ReceiptsHash at index %d", data.ErrNilValue, i)
+		}
+		if execResult.AccumulatedFees == nil {
+			return fmt.Errorf("%w in MetaExecutionResult.AccumulatedFees at index %d", data.ErrNilValue, i)
+		}
+		if execResult.AccumulatedFees.Cmp(big.NewInt(0)) < 0 {
+			return fmt.Errorf("%w: MetaExecutionResult.AccumulatedFees cannot be negative at index %d", data.ErrInvalidValue, i)
+		}
+		if execResult.DeveloperFees == nil {
+			return fmt.Errorf("%w in MetaExecutionResult.DeveloperFees at index %d", data.ErrNilValue, i)
+		}
+		if execResult.DeveloperFees.Cmp(big.NewInt(0)) < 0 {
+			return fmt.Errorf("%w: MetaExecutionResult.DeveloperFees cannot be negative at index %d", data.ErrInvalidValue, i)
+		}
+
+		err := m.checkBaseMetaExecutionResultIntegrity(execResult.ExecutionResult)
+		if err != nil {
+			return fmt.Errorf("execution result integrity check failed at index %d: %w", i, err)
+		}
+	}
+
+	return nil
+}
+
+func (m *MetaBlockV3) checkBaseMetaExecutionResultIntegrity(ownBaseMetaExecutionResult *BaseMetaExecutionResult) error {
+	if ownBaseMetaExecutionResult == nil || check.IfNil(ownBaseMetaExecutionResult) {
+		return data.ErrNilValue
+	}
+
+	if len(ownBaseMetaExecutionResult.GetValidatorStatsRootHash()) == 0 {
+		return fmt.Errorf("%w in BaseMetaExecutionResult.ValidatorStatsRootHash", data.ErrNilValue)
+	}
+	if ownBaseMetaExecutionResult.AccumulatedFeesInEpoch == nil {
+		return fmt.Errorf("%w in BaseMetaExecutionResult.AccumulatedFeesInEpoch", data.ErrNilValue)
+	}
+	if ownBaseMetaExecutionResult.AccumulatedFeesInEpoch.Cmp(big.NewInt(0)) < 0 {
+		return fmt.Errorf("%w: BaseMetaExecutionResult.AccumulatedFeesInEpoch cannot be negative", data.ErrInvalidValue)
+	}
+	if ownBaseMetaExecutionResult.DevFeesInEpoch == nil {
+		return fmt.Errorf("%w in BaseMetaExecutionResult.DevFeesInEpoch", data.ErrNilValue)
+	}
+	if ownBaseMetaExecutionResult.DevFeesInEpoch.Cmp(big.NewInt(0)) < 0 {
+		return fmt.Errorf("%w: BaseMetaExecutionResult.DevFeesInEpoch cannot be negative", data.ErrInvalidValue)
+	}
+
+	err := m.checkBaseExecutionResultIntegrity(ownBaseMetaExecutionResult.BaseExecutionResult)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// checkBaseExecutionResultIntegrity checks the integrity of a base execution result against the header it is associated with
+func (m *MetaBlockV3) checkBaseExecutionResultIntegrity(ownBaseExecutionResult data.BaseExecutionResultHandler) error {
+	if ownBaseExecutionResult == nil || check.IfNil(ownBaseExecutionResult) {
+		return data.ErrNilValue
+	}
+
+	if len(ownBaseExecutionResult.GetHeaderHash()) == 0 {
+		return fmt.Errorf("%w in BaseExecutionResult.HeaderHash", data.ErrNilValue)
+	}
+
+	if ownBaseExecutionResult.GetHeaderNonce() >= m.Nonce {
+		return fmt.Errorf("BaseExecutionResult.HeaderNonce (%d) must be less than Header.Nonce (%d)", ownBaseExecutionResult.GetHeaderNonce(), m.Nonce)
+	}
+
+	if ownBaseExecutionResult.GetHeaderRound() >= m.Round {
+		return fmt.Errorf("BaseExecutionResult.HeaderRound (%d) must be less than Header.Round (%d)", ownBaseExecutionResult.GetHeaderRound(), m.Round)
+	}
+
+	if ownBaseExecutionResult.GetHeaderEpoch() > m.Epoch {
+		return fmt.Errorf("BaseExecutionResult.HeaderEpoch (%d) must be less than or equal to Header.Epoch (%d)", ownBaseExecutionResult.GetHeaderEpoch(), m.Epoch)
+	}
+
+	if len(ownBaseExecutionResult.GetRootHash()) == 0 {
+		return fmt.Errorf("%w in BaseExecutionResult.RootHash", data.ErrNilValue)
+	}
+
 	return nil
 }
 

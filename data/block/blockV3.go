@@ -36,18 +36,37 @@ func (hv3 *HeaderV3) GetTimeStamp() uint64 {
 	return hv3.TimestampMs
 }
 
-// GetMiniBlockHeadersWithDst as a map of hashes and sender IDs
+// GetMiniBlockHeadersWithDst returns a map of hashes and sender IDs
 func (hv3 *HeaderV3) GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32 {
 	if hv3 == nil {
 		return nil
 	}
 
 	hashDst := make(map[string]uint32)
-	for _, val := range hv3.MiniBlockHeaders {
-		if val.ReceiverShardID == destId && val.SenderShardID != destId {
-			hashDst[string(val.Hash)] = val.SenderShardID
+	for _, execResults := range hv3.ExecutionResults {
+		addShardMBHeadersMBToDestMap(execResults.MiniBlockHeaders, hashDst, destId)
+	}
+
+	return hashDst
+}
+
+func addShardMBHeadersMBToDestMap(miniBlockHeaders []MiniBlockHeader, hashDst map[string]uint32, destId uint32) {
+	for _, mbHeader := range miniBlockHeaders {
+		if mbHeader.ReceiverShardID == destId && mbHeader.SenderShardID != destId {
+			hashDst[string(mbHeader.Hash)] = mbHeader.SenderShardID
 		}
 	}
+}
+
+// GetProposedMiniBlockHeadersWithDst returns a map of hashes and sender IDs for proposed mini blocks
+func (hv3 *HeaderV3) GetProposedMiniBlockHeadersWithDst(destId uint32) map[string]uint32 {
+	if hv3 == nil {
+		return nil
+	}
+
+	hashDst := make(map[string]uint32)
+	addShardMBHeadersMBToDestMap(hv3.MiniBlockHeaders, hashDst, destId)
+
 	return hashDst
 }
 
@@ -385,8 +404,8 @@ func (hv3 *HeaderV3) CheckFieldsIntegrity() error {
 		return err
 	}
 
-	if hv3.Round <= hv3.LastExecutionResult.NotarizedInRound {
-		return fmt.Errorf("Header.Round (%d) must be greater than LastExecutionResult.NotarizedInRound (%d)", hv3.Round, hv3.LastExecutionResult.NotarizedInRound)
+	if hv3.Round < hv3.LastExecutionResult.NotarizedInRound {
+		return fmt.Errorf("Header.Round (%d) must be greater than or equal to LastExecutionResult.NotarizedInRound (%d)", hv3.Round, hv3.LastExecutionResult.NotarizedInRound)
 	}
 
 	if len(hv3.ExecutionResults) > 0 {

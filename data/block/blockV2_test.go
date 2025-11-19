@@ -807,6 +807,22 @@ func TestHeaderV2_GetMiniBlockHeadersWithDstShouldWork(t *testing.T) {
 	require.Equal(t, uint32(0), hashesWithDest2[string(hash2S0R2)])
 }
 
+func TestHeaderV2_GetProposedMiniBlockHeadersWithDst(t *testing.T) {
+	t.Parallel()
+
+	hdr := &block.HeaderV2{Header: &block.Header{}}
+	require.Empty(t, hdr.GetProposedMiniBlockHeadersWithDst(0))
+
+	hdr.Header.MiniBlockHeaders = []block.MiniBlockHeader{
+		{
+			SenderShardID:   0,
+			ReceiverShardID: 0,
+			Hash:            []byte("hash"),
+		},
+	}
+	require.Empty(t, hdr.GetProposedMiniBlockHeadersWithDst(0))
+}
+
 func TestHeaderV2_GetOrderedCrossMiniblocksWithDstShouldWork(t *testing.T) {
 	t.Parallel()
 

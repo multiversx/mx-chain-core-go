@@ -207,19 +207,21 @@ func (h *Header) SetShardID(shId uint32) error {
 	return nil
 }
 
-// GetMiniBlockHeadersWithDst as a map of hashes and sender IDs
+// GetMiniBlockHeadersWithDst returns a map of hashes and sender IDs
 func (h *Header) GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32 {
 	if h == nil {
 		return nil
 	}
 
 	hashDst := make(map[string]uint32)
-	for _, val := range h.MiniBlockHeaders {
-		if val.ReceiverShardID == destId && val.SenderShardID != destId {
-			hashDst[string(val.Hash)] = val.SenderShardID
-		}
-	}
+	addShardMBHeadersMBToDestMap(h.MiniBlockHeaders, hashDst, destId)
+
 	return hashDst
+}
+
+// GetProposedMiniBlockHeadersWithDst returns empty map, as this method just implements the interface needed for supernova
+func (h *Header) GetProposedMiniBlockHeadersWithDst(_ uint32) map[string]uint32 {
+	return make(map[string]uint32)
 }
 
 // GetOrderedCrossMiniblocksWithDst gets all cross miniblocks with the given destination shard ID, ordered in a
