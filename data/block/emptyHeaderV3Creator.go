@@ -9,7 +9,7 @@ func NewEmptyHeaderV3Creator() *emptyHeaderV3Creator {
 	return &emptyHeaderV3Creator{}
 }
 
-// CreateNewHeader creates a new empty header v2
+// CreateNewHeader creates a new empty header v3
 func (creator *emptyHeaderV3Creator) CreateNewHeader() data.HeaderHandler {
 	return &HeaderV3{}
 }

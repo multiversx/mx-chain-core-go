@@ -75,7 +75,7 @@ func TestEmptyBlockCreatorsContainer_ConcurrentOperations(t *testing.T) {
 			case 1:
 				_, _ = container.Get(core.ShardHeaderV1)
 			case 2:
-				_, _ = container.Get(core.ShardHeaderV3)
+				_, _ = container.Get(core.ShardHeaderV2)
 			case 3:
 				_ = container.Add(core.ShardHeaderV3, NewEmptyHeaderCreator())
 			default:

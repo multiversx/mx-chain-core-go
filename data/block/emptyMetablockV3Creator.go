@@ -9,7 +9,7 @@ func NewEmptyMetaBlockV3Creator() *emptyMetaBlockV3Creator {
 	return &emptyMetaBlockV3Creator{}
 }
 
-// CreateNewHeader creates a new empty metablock
+// CreateNewHeader creates a new empty metablock v 3
 func (creator *emptyMetaBlockV3Creator) CreateNewHeader() data.HeaderHandler {
 	return &MetaBlockV3{}
 }
