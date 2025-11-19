@@ -307,6 +307,7 @@ type EpochStartShardDataHandler interface {
 	GetNonce() uint64
 	GetHeaderHash() []byte
 	GetRootHash() []byte
+	GetScheduledRootHash() []byte
 	GetFirstPendingMetaBlock() []byte
 	GetLastFinishedMetaBlock() []byte
 	GetPendingMiniBlockHeaderHandlers() []MiniBlockHeaderHandler
