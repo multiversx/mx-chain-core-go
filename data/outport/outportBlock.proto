@@ -41,6 +41,16 @@ message BlockData {
   repeated MiniBlock IntraShardMiniBlocks = 6 [(gogoproto.jsontag) = "intraShardMiniBlocks,omitempty"];
   HeaderProof        HeaderProof          = 7 [(gogoproto.jsontag) = "proof,omitempty"];
   uint64             TimestampMs          = 8 [(gogoproto.jsontag) = "timestampMs,omitempty"];
+  map <string, ExecutionResultData> Results = 9  [(gogoproto.jsontag) = "results,omitempty"];
+}
+
+message ExecutionResultData {
+  uint64                       HeaderNonce               = 1 [(gogoproto.jsontag) = "headerNonce"];
+  uint64                       TimestampMs               = 2 [(gogoproto.jsontag) = "timestampMs"];
+  Body                         Body                      = 3 [(gogoproto.jsontag) = "body,omitempty"];
+  repeated MiniBlock           IntraShardMiniBlocks      = 4 [(gogoproto.jsontag) = "intraShardMiniBlocks,omitempty"];
+  TransactionPool              TransactionPool           = 5 [(gogoproto.jsontag) = "transactionPool,omitempty"];
+  map <string, AlteredAccount> AlteredAccounts           = 6 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
 }
 
 message TransactionPool {

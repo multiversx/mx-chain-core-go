@@ -20,6 +20,7 @@ type HeaderDataWithBody struct {
 	IntraShardMiniBlocks []*block.MiniBlock
 	HeaderHash           []byte
 	HeaderProof          data.HeaderProofHandler
+	Results              map[string]*ExecutionResultData
 }
 
 // OutportBlockWithHeaderAndBody is a wrapper for OutportBlock used for outport handler

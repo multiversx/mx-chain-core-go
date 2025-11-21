@@ -74,12 +74,16 @@ func TestEmptyBlockCreatorsContainer_ConcurrentOperations(t *testing.T) {
 				_ = container.Add(core.ShardHeaderV1, NewEmptyHeaderCreator())
 			case 1:
 				_, _ = container.Get(core.ShardHeaderV1)
+			case 2:
+				_, _ = container.Get(core.ShardHeaderV2)
+			case 3:
+				_ = container.Add(core.ShardHeaderV3, NewEmptyHeaderCreator())
 			default:
 				require.Nil(t, fmt.Sprintf("invalid index %d", idx))
 			}
 
 			wg.Done()
-		}(i % 2)
+		}(i % 4)
 	}
 
 	wg.Wait()
@@ -94,7 +98,11 @@ func TestSemiIntegrationUnmarshal(t *testing.T) {
 	require.Nil(t, err)
 	err = container.Add(core.ShardHeaderV2, NewEmptyHeaderV2Creator())
 	require.Nil(t, err)
+	err = container.Add(core.ShardHeaderV3, NewEmptyHeaderV3Creator())
+	require.Nil(t, err)
 	err = container.Add(core.MetaHeader, NewEmptyMetaBlockCreator())
+	require.Nil(t, err)
+	err = container.Add(core.MetaHeaderV3, NewEmptyMetaBlockV3Creator())
 	require.Nil(t, err)
 
 	marshaller, _ := factory.NewMarshalizer(factory.GogoProtobuf)
@@ -109,4 +117,13 @@ func TestSemiIntegrationUnmarshal(t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, headerV1, recoveredHeader)
 	assert.False(t, headerV1 == recoveredHeader) // pointer testing, different objects
+
+	headerV3 := &HeaderV3{Nonce: 1}
+	h3Bytes, _ := marshaller.Marshal(headerV3)
+
+	creator, err = container.Get(core.ShardHeaderV3)
+	require.Nil(t, err)
+	recoveredHeader, err = GetHeaderFromBytes(marshaller, creator, h3Bytes)
+	assert.Nil(t, err)
+	assert.Equal(t, headerV3, recoveredHeader)
 }
