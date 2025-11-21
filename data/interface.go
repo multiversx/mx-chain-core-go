@@ -254,6 +254,7 @@ type ShardDataHandler interface {
 	GetRound() uint64
 	GetPrevHash() []byte
 	GetNonce() uint64
+	GetEpoch() uint32
 	GetAccumulatedFees() *big.Int
 	GetDeveloperFees() *big.Int
 	GetNumPendingMiniBlocks() uint32
@@ -306,6 +307,7 @@ type EpochStartShardDataHandler interface {
 	GetNonce() uint64
 	GetHeaderHash() []byte
 	GetRootHash() []byte
+	GetScheduledRootHash() []byte
 	GetFirstPendingMetaBlock() []byte
 	GetLastFinishedMetaBlock() []byte
 	GetPendingMiniBlockHeaderHandlers() []MiniBlockHeaderHandler
@@ -377,6 +379,8 @@ type ChainHandler interface {
 	GetLastExecutedBlockInfo() (uint64, []byte, []byte)
 	GetLastExecutedBlockHeader() HeaderHandler
 	SetLastExecutedBlockHeaderAndRootHash(header HeaderHandler, headerHash []byte, rootHash []byte)
+	GetLastExecutionResult() BaseExecutionResultHandler
+	SetLastExecutionResult(result BaseExecutionResultHandler)
 	IsInterfaceNil() bool
 }
 
