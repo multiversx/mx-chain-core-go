@@ -21,19 +21,19 @@ message StateAccessesForBlock {
 }
 
 message OutportBlock {
-  uint32                          ShardID                = 1 [(gogoproto.jsontag) = "shardID,omitempty"];
-  BlockData                       BlockData              = 2 [(gogoproto.jsontag) = "blockData,omitempty"];
-  TransactionPool                 TransactionPool        = 3 [(gogoproto.jsontag) = "transactionPool,omitempty"];
-  HeaderGasConsumption            HeaderGasConsumption   = 4 [(gogoproto.jsontag) = "headerGasConsumption,omitempty"];
-  map <string, AlteredAccount>    AlteredAccounts        = 5 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
-  repeated string                 NotarizedHeadersHashes = 6 [(gogoproto.jsontag) = "notarizedHeadersHashes,omitempty"];
-  uint32                          NumberOfShards         = 7 [(gogoproto.jsontag) = "numberOfShards"];
-  repeated uint64                 SignersIndexes         = 8 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
-  uint64                          HighestFinalBlockNonce = 9 [(gogoproto.jsontag) = "highestFinalBlockNonce"];
-  bytes                           HighestFinalBlockHash  = 10 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
-  uint64                          LeaderIndex            = 11 [(gogoproto.jsontag) = "leaderIndex"];
-  bytes                           LeaderBLSKey           = 12 [(gogoproto.jsontag) = "leaderKey,omitempty"];
-  repeated StateAccessesForBlock  StateAccessesForBlock  = 13 [(gogoproto.jsontag) = "stateAccessesForBlock,omitempty"];
+  uint32                              ShardID                = 1 [(gogoproto.jsontag) = "shardID,omitempty"];
+  BlockData                           BlockData              = 2 [(gogoproto.jsontag) = "blockData,omitempty"];
+  TransactionPool                     TransactionPool        = 3 [(gogoproto.jsontag) = "transactionPool,omitempty"];
+  HeaderGasConsumption                HeaderGasConsumption   = 4 [(gogoproto.jsontag) = "headerGasConsumption,omitempty"];
+  map <string, AlteredAccount>        AlteredAccounts        = 5 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
+  repeated string                     NotarizedHeadersHashes = 6 [(gogoproto.jsontag) = "notarizedHeadersHashes,omitempty"];
+  uint32                              NumberOfShards         = 7 [(gogoproto.jsontag) = "numberOfShards"];
+  repeated uint64                     SignersIndexes         = 8 [(gogoproto.jsontag) = "signersIndexes,omitempty"];
+  uint64                              HighestFinalBlockNonce = 9 [(gogoproto.jsontag) = "highestFinalBlockNonce"];
+  bytes                               HighestFinalBlockHash  = 10 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
+  uint64                              LeaderIndex            = 11 [(gogoproto.jsontag) = "leaderIndex"];
+  bytes                               LeaderBLSKey           = 12 [(gogoproto.jsontag) = "leaderKey,omitempty"];
+  map <string, StateAccessesForBlock> StateAccessesForBlock  = 13 [(gogoproto.jsontag) = "stateAccessesForBlock,omitempty"];
 }
 
 message BlockData {
