@@ -39,6 +39,7 @@ type MetaTriggerRegistryHandler interface {
 	GetEpochChangeProposed() bool
 	GetEpochStartMetaHeaderHandler() MetaHeaderHandler
 
+	SetEpoch(epoch uint32) error
 	SetCurrentRound(round uint64) error
 	SetEpochFinalityAttestingRound(round uint64) error
 	SetCurrEpochStartRound(round uint64) error
