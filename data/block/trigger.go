@@ -1,7 +1,11 @@
 //go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf  --gogoslick_out=. trigger.proto
 package block
 
-import "github.com/multiversx/mx-chain-core-go/data"
+import (
+	"fmt"
+
+	"github.com/multiversx/mx-chain-core-go/data"
+)
 
 // GetEpochStartHeaderHandler returns the epoch start headerHandler
 func (str *ShardTriggerRegistry) GetEpochStartHeaderHandler() data.HeaderHandler {
@@ -189,5 +193,151 @@ func (strV2 *ShardTriggerRegistryV2) SetEpochStartHeaderHandler(epochStartHeader
 	if !ok {
 		return data.ErrInvalidTypeAssertion
 	}
+	return nil
+}
+
+func (m *MetaTriggerRegistry) GetEpochChangeProposed() bool {
+	return false
+}
+
+func (m *MetaTriggerRegistry) GetEpochStartMetaHeaderHandler() data.MetaHeaderHandler {
+	return m.GetEpochStartMeta()
+}
+
+func (m *MetaTriggerRegistry) SetEpoch(epoch uint32) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.Epoch = epoch
+	return nil
+}
+
+func (m *MetaTriggerRegistry) SetEpochChangeProposed(_ bool) error {
+	return nil
+}
+
+func (m *MetaTriggerRegistry) SetCurrentRound(round uint64) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.CurrentRound = round
+	return nil
+}
+
+func (m *MetaTriggerRegistry) SetEpochFinalityAttestingRound(round uint64) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.EpochFinalityAttestingRound = round
+	return nil
+}
+func (m *MetaTriggerRegistry) SetCurrEpochStartRound(round uint64) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.CurrEpochStartRound = round
+	return nil
+}
+
+func (m *MetaTriggerRegistry) SetPrevEpochStartRound(round uint64) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.PrevEpochStartRound = round
+	return nil
+}
+
+func (m *MetaTriggerRegistry) SetEpochStartMetaHash(hash []byte) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.EpochStartMetaHash = hash
+	return nil
+}
+func (m *MetaTriggerRegistry) SetEpochStartMetaHeaderHandler(header data.MetaHeaderHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	headerV1, castOk := header.(*MetaBlock)
+	if !castOk {
+		return fmt.Errorf("%w in MetaTriggerRegistry.SetEpochStartMetaHeaderHandler", data.ErrInvalidTypeAssertion)
+	}
+
+	m.EpochStartMeta = headerV1
+	return nil
+}
+
+func (m *MetaTriggerRegistryV3) GetEpochStartMetaHeaderHandler() data.MetaHeaderHandler {
+	return m.GetEpochStartMeta()
+}
+
+func (m *MetaTriggerRegistryV3) SetEpoch(epoch uint32) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.Epoch = epoch
+	return nil
+}
+
+func (m *MetaTriggerRegistryV3) SetCurrentRound(round uint64) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.CurrentRound = round
+	return nil
+}
+
+func (m *MetaTriggerRegistryV3) SetEpochFinalityAttestingRound(round uint64) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.EpochFinalityAttestingRound = round
+	return nil
+}
+func (m *MetaTriggerRegistryV3) SetCurrEpochStartRound(round uint64) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.CurrEpochStartRound = round
+	return nil
+}
+
+func (m *MetaTriggerRegistryV3) SetPrevEpochStartRound(round uint64) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.PrevEpochStartRound = round
+	return nil
+}
+
+func (m *MetaTriggerRegistryV3) SetEpochStartMetaHash(hash []byte) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.EpochStartMetaHash = hash
+	return nil
+}
+
+func (m *MetaTriggerRegistryV3) SetEpochStartMetaHeaderHandler(header data.MetaHeaderHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	headerV3, castOk := header.(*MetaBlockV3)
+	if !castOk {
+		return fmt.Errorf("%w in MetaTriggerRegistryV3.SetEpochStartMetaHeaderHandler", data.ErrInvalidTypeAssertion)
+	}
+
+	m.EpochStartMeta = headerV3
+	return nil
+}
+
+func (m *MetaTriggerRegistryV3) SetEpochChangeProposed(flag bool) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	m.EpochChangeProposed = flag
 	return nil
 }
