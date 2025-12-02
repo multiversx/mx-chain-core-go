@@ -5,7 +5,6 @@ package block
 import (
 	"fmt"
 	"math/big"
-	"sort"
 
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/core/check"
@@ -304,7 +303,6 @@ func (m *MetaBlockV3) GetOrderedCrossMiniblocksWithDst(destID uint32) []*data.Mi
 	}
 
 	miniBlocks := make([]*data.MiniBlockInfo, 0)
-
 	for i := 0; i < len(m.ShardInfo); i++ {
 		if m.ShardInfo[i].ShardID == destID {
 			continue
@@ -321,7 +319,8 @@ func (m *MetaBlockV3) GetOrderedCrossMiniblocksWithDst(destID uint32) []*data.Mi
 		}
 	}
 
-	for _, mb := range m.MiniBlockHeaders {
+	miniBlockHeaders := m.getMiniBlocksWithDstFromMetaExecutionResults(destID)
+	for _, mb := range miniBlockHeaders {
 		isDestinationShard := (mb.ReceiverShardID == destID ||
 			mb.ReceiverShardID == core.AllShardId) &&
 			mb.SenderShardID != destID
@@ -334,10 +333,22 @@ func (m *MetaBlockV3) GetOrderedCrossMiniblocksWithDst(destID uint32) []*data.Mi
 		}
 	}
 
-	sort.Slice(miniBlocks, func(i, j int) bool {
-		return miniBlocks[i].Round < miniBlocks[j].Round
-	})
+	return miniBlocks
+}
 
+func (m *MetaBlockV3) getMiniBlocksWithDstFromMetaExecutionResults(destID uint32) []MiniBlockHeader {
+	miniBlocks := make([]MiniBlockHeader, 0)
+
+	for _, execResults := range m.ExecutionResults {
+		for _, mb := range execResults.MiniBlockHeaders {
+			isDestinationShard := (mb.ReceiverShardID == destID ||
+				mb.ReceiverShardID == core.AllShardId) &&
+				mb.SenderShardID != destID
+			if isDestinationShard {
+				miniBlocks = append(miniBlocks, mb)
+			}
+		}
+	}
 	return miniBlocks
 }
 
