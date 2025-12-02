@@ -196,14 +196,17 @@ func (strV2 *ShardTriggerRegistryV2) SetEpochStartHeaderHandler(epochStartHeader
 	return nil
 }
 
+// GetEpochChangeProposed returns false for legacy meta registry
 func (m *MetaTriggerRegistry) GetEpochChangeProposed() bool {
 	return false
 }
 
+// GetEpochStartMetaHeaderHandler returns internal meta v1 header
 func (m *MetaTriggerRegistry) GetEpochStartMetaHeaderHandler() data.MetaHeaderHandler {
 	return m.GetEpochStartMeta()
 }
 
+// SetEpoch sets the epoch
 func (m *MetaTriggerRegistry) SetEpoch(epoch uint32) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
@@ -212,10 +215,16 @@ func (m *MetaTriggerRegistry) SetEpoch(epoch uint32) error {
 	return nil
 }
 
+// SetEpochChangeProposed does nothing for legacy meta registry
 func (m *MetaTriggerRegistry) SetEpochChangeProposed(_ bool) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
 	return nil
 }
 
+// SetCurrentRound sets the current round
 func (m *MetaTriggerRegistry) SetCurrentRound(round uint64) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
@@ -224,6 +233,7 @@ func (m *MetaTriggerRegistry) SetCurrentRound(round uint64) error {
 	return nil
 }
 
+// SetEpochFinalityAttestingRound sets epoch finality attesting round
 func (m *MetaTriggerRegistry) SetEpochFinalityAttestingRound(round uint64) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
@@ -231,6 +241,8 @@ func (m *MetaTriggerRegistry) SetEpochFinalityAttestingRound(round uint64) error
 	m.EpochFinalityAttestingRound = round
 	return nil
 }
+
+// SetCurrEpochStartRound sets current epoch start round
 func (m *MetaTriggerRegistry) SetCurrEpochStartRound(round uint64) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
@@ -239,6 +251,7 @@ func (m *MetaTriggerRegistry) SetCurrEpochStartRound(round uint64) error {
 	return nil
 }
 
+// SetPrevEpochStartRound sets previous epoch start round
 func (m *MetaTriggerRegistry) SetPrevEpochStartRound(round uint64) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
@@ -247,6 +260,7 @@ func (m *MetaTriggerRegistry) SetPrevEpochStartRound(round uint64) error {
 	return nil
 }
 
+// SetEpochStartMetaHash sets epoch start meta hash
 func (m *MetaTriggerRegistry) SetEpochStartMetaHash(hash []byte) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
@@ -254,6 +268,8 @@ func (m *MetaTriggerRegistry) SetEpochStartMetaHash(hash []byte) error {
 	m.EpochStartMetaHash = hash
 	return nil
 }
+
+// SetEpochStartMetaHeaderHandler sets internal meta block v1
 func (m *MetaTriggerRegistry) SetEpochStartMetaHeaderHandler(header data.MetaHeaderHandler) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
@@ -268,10 +284,12 @@ func (m *MetaTriggerRegistry) SetEpochStartMetaHeaderHandler(header data.MetaHea
 	return nil
 }
 
+// GetEpochStartMetaHeaderHandler returns internal meta v3 header
 func (m *MetaTriggerRegistryV3) GetEpochStartMetaHeaderHandler() data.MetaHeaderHandler {
 	return m.GetEpochStartMeta()
 }
 
+// SetEpoch sets the epoch
 func (m *MetaTriggerRegistryV3) SetEpoch(epoch uint32) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
@@ -280,6 +298,17 @@ func (m *MetaTriggerRegistryV3) SetEpoch(epoch uint32) error {
 	return nil
 }
 
+// SetEpochChangeProposed sets epoch change proposed bool flag
+func (m *MetaTriggerRegistryV3) SetEpochChangeProposed(flag bool) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	m.EpochChangeProposed = flag
+	return nil
+}
+
+// SetCurrentRound sets the current round
 func (m *MetaTriggerRegistryV3) SetCurrentRound(round uint64) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
@@ -288,6 +317,7 @@ func (m *MetaTriggerRegistryV3) SetCurrentRound(round uint64) error {
 	return nil
 }
 
+// SetEpochFinalityAttestingRound sets epoch finality attesting round
 func (m *MetaTriggerRegistryV3) SetEpochFinalityAttestingRound(round uint64) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
@@ -295,6 +325,8 @@ func (m *MetaTriggerRegistryV3) SetEpochFinalityAttestingRound(round uint64) err
 	m.EpochFinalityAttestingRound = round
 	return nil
 }
+
+// SetCurrEpochStartRound sets current epoch start round
 func (m *MetaTriggerRegistryV3) SetCurrEpochStartRound(round uint64) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
@@ -303,6 +335,7 @@ func (m *MetaTriggerRegistryV3) SetCurrEpochStartRound(round uint64) error {
 	return nil
 }
 
+// SetPrevEpochStartRound sets previous epoch start round
 func (m *MetaTriggerRegistryV3) SetPrevEpochStartRound(round uint64) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
@@ -311,6 +344,7 @@ func (m *MetaTriggerRegistryV3) SetPrevEpochStartRound(round uint64) error {
 	return nil
 }
 
+// SetEpochStartMetaHash sets epoch start meta hash
 func (m *MetaTriggerRegistryV3) SetEpochStartMetaHash(hash []byte) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
@@ -319,6 +353,7 @@ func (m *MetaTriggerRegistryV3) SetEpochStartMetaHash(hash []byte) error {
 	return nil
 }
 
+// SetEpochStartMetaHeaderHandler sets internal meta block v3
 func (m *MetaTriggerRegistryV3) SetEpochStartMetaHeaderHandler(header data.MetaHeaderHandler) error {
 	if m == nil {
 		return data.ErrNilPointerReceiver
@@ -330,14 +365,5 @@ func (m *MetaTriggerRegistryV3) SetEpochStartMetaHeaderHandler(header data.MetaH
 	}
 
 	m.EpochStartMeta = headerV3
-	return nil
-}
-
-func (m *MetaTriggerRegistryV3) SetEpochChangeProposed(flag bool) error {
-	if m == nil {
-		return data.ErrNilPointerReceiver
-	}
-
-	m.EpochChangeProposed = flag
 	return nil
 }
