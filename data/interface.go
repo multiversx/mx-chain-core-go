@@ -29,6 +29,7 @@ type TriggerRegistryHandler interface {
 	SetEpochStartHeaderHandler(epochStartHeaderHandler HeaderHandler) error
 }
 
+// MetaTriggerRegistryHandler defines setters and getters for meta trigger registry
 type MetaTriggerRegistryHandler interface {
 	GetEpoch() uint32
 	GetCurrentRound() uint64
