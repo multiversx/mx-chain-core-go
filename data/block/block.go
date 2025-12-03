@@ -230,19 +230,8 @@ func (h *Header) GetOrderedCrossMiniblocksWithDst(destId uint32) []*data.MiniBlo
 	if h == nil {
 		return nil
 	}
-	miniBlocks := make([]*data.MiniBlockInfo, 0)
 
-	for _, mb := range h.MiniBlockHeaders {
-		if mb.ReceiverShardID == destId && mb.SenderShardID != destId {
-			miniBlocks = append(miniBlocks, &data.MiniBlockInfo{
-				Hash:          mb.Hash,
-				SenderShardID: mb.SenderShardID,
-				Round:         h.Round,
-			})
-		}
-	}
-
-	return miniBlocks
+	return GetOrderedCrossMiniblocksWithDst(h.MiniBlockHeaders, h.Round, destId)
 }
 
 // GetMiniBlockHeadersHashes gets the miniblock hashes

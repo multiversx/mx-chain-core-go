@@ -303,23 +303,7 @@ func (m *MetaBlockV3) GetOrderedCrossMiniblocksWithDst(destID uint32) []*data.Mi
 		return nil
 	}
 
-	miniBlocks := make([]*data.MiniBlockInfo, 0)
-	for i := 0; i < len(m.ShardInfo); i++ {
-		if m.ShardInfo[i].ShardID == destID {
-			continue
-		}
-
-		for _, mb := range m.ShardInfo[i].ShardMiniBlockHeaders {
-			if mb.ReceiverShardID == destID && mb.SenderShardID != destID {
-				miniBlocks = append(miniBlocks, &data.MiniBlockInfo{
-					Hash:          mb.Hash,
-					SenderShardID: mb.SenderShardID,
-					Round:         m.ShardInfo[i].Round,
-				})
-			}
-		}
-	}
-
+	miniBlocks := GetCrossMiniBlocksFromShardInfo(m.ShardInfo, destID)
 	miniBlockHeaders := m.getMiniBlocksWithDstFromMetaExecutionResults(destID)
 	miniBlocks = append(miniBlocks, miniBlockHeaders...)
 
@@ -334,17 +318,47 @@ func (m *MetaBlockV3) getMiniBlocksWithDstFromMetaExecutionResults(destID uint32
 	miniBlocks := make([]*data.MiniBlockInfo, 0)
 
 	for _, execResults := range m.ExecutionResults {
-		for _, mb := range execResults.MiniBlockHeaders {
-			isDestinationShard := (mb.ReceiverShardID == destID ||
-				mb.ReceiverShardID == core.AllShardId) &&
-				mb.SenderShardID != destID
-			if isDestinationShard {
+		mbs := GetCrossMiniBlocksFromMiniBlockHeaders(execResults.MiniBlockHeaders, destID, execResults.GetHeaderRound())
+		miniBlocks = append(miniBlocks, mbs...)
+	}
+
+	return miniBlocks
+}
+func GetCrossMiniBlocksFromShardInfo(shardInfo []ShardData, destId uint32) []*data.MiniBlockInfo {
+	miniBlocks := make([]*data.MiniBlockInfo, 0)
+
+	for i := 0; i < len(shardInfo); i++ {
+		if shardInfo[i].ShardID == destId {
+			continue
+		}
+
+		for _, mb := range shardInfo[i].ShardMiniBlockHeaders {
+			if mb.ReceiverShardID == destId && mb.SenderShardID != destId {
 				miniBlocks = append(miniBlocks, &data.MiniBlockInfo{
 					Hash:          mb.Hash,
 					SenderShardID: mb.SenderShardID,
-					Round:         execResults.GetHeaderRound(),
+					Round:         shardInfo[i].Round,
 				})
 			}
+		}
+	}
+
+	return miniBlocks
+}
+
+func GetCrossMiniBlocksFromMiniBlockHeaders(miniBlockHeaders []MiniBlockHeader, destId uint32, round uint64) []*data.MiniBlockInfo {
+	miniBlocks := make([]*data.MiniBlockInfo, 0)
+
+	for _, mb := range miniBlockHeaders {
+		isDestinationShard := (mb.ReceiverShardID == destId ||
+			mb.ReceiverShardID == core.AllShardId) &&
+			mb.SenderShardID != destId
+		if isDestinationShard {
+			miniBlocks = append(miniBlocks, &data.MiniBlockInfo{
+				Hash:          mb.Hash,
+				SenderShardID: mb.SenderShardID,
+				Round:         round,
+			})
 		}
 	}
 

@@ -80,14 +80,27 @@ func (hv3 *HeaderV3) GetOrderedCrossMiniblocksWithDst(destId uint32) []*data.Min
 	miniBlocks := make([]*data.MiniBlockInfo, 0)
 
 	for _, execResults := range hv3.ExecutionResults {
-		for _, mb := range execResults.MiniBlockHeaders {
-			if mb.ReceiverShardID == destId && mb.SenderShardID != destId {
-				miniBlocks = append(miniBlocks, &data.MiniBlockInfo{
-					Hash:          mb.Hash,
-					SenderShardID: mb.SenderShardID,
-					Round:         execResults.GetHeaderRound(),
-				})
-			}
+		mbFromExecResult := GetOrderedCrossMiniblocksWithDst(
+			execResults.MiniBlockHeaders,
+			execResults.GetHeaderRound(),
+			destId,
+		)
+		miniBlocks = append(miniBlocks, mbFromExecResult...)
+	}
+
+	return miniBlocks
+}
+
+func GetOrderedCrossMiniblocksWithDst(mbHeaders []MiniBlockHeader, round uint64, destId uint32) []*data.MiniBlockInfo {
+	miniBlocks := make([]*data.MiniBlockInfo, 0)
+
+	for _, mb := range mbHeaders {
+		if mb.ReceiverShardID == destId && mb.SenderShardID != destId {
+			miniBlocks = append(miniBlocks, &data.MiniBlockInfo{
+				Hash:          mb.Hash,
+				SenderShardID: mb.SenderShardID,
+				Round:         round,
+			})
 		}
 	}
 

@@ -321,37 +321,10 @@ func (m *MetaBlock) GetOrderedCrossMiniblocksWithDst(destId uint32) []*data.Mini
 		return nil
 	}
 
-	miniBlocks := make([]*data.MiniBlockInfo, 0)
+	miniBlocks := GetCrossMiniBlocksFromShardInfo(m.ShardInfo, destId)
+	miniBlocksFromMbHeaders := GetCrossMiniBlocksFromMiniBlockHeaders(m.MiniBlockHeaders, destId, m.Round)
 
-	for i := 0; i < len(m.ShardInfo); i++ {
-		if m.ShardInfo[i].ShardID == destId {
-			continue
-		}
-
-		for _, mb := range m.ShardInfo[i].ShardMiniBlockHeaders {
-			if mb.ReceiverShardID == destId && mb.SenderShardID != destId {
-				miniBlocks = append(miniBlocks, &data.MiniBlockInfo{
-					Hash:          mb.Hash,
-					SenderShardID: mb.SenderShardID,
-					Round:         m.ShardInfo[i].Round,
-				})
-			}
-		}
-	}
-
-	for _, mb := range m.MiniBlockHeaders {
-		isDestinationShard := (mb.ReceiverShardID == destId ||
-			mb.ReceiverShardID == core.AllShardId) &&
-			mb.SenderShardID != destId
-		if isDestinationShard {
-			miniBlocks = append(miniBlocks, &data.MiniBlockInfo{
-				Hash:          mb.Hash,
-				SenderShardID: mb.SenderShardID,
-				Round:         m.Round,
-			})
-		}
-	}
-
+	miniBlocks = append(miniBlocks, miniBlocksFromMbHeaders...)
 	sort.Slice(miniBlocks, func(i, j int) bool {
 		return miniBlocks[i].Round < miniBlocks[j].Round
 	})
