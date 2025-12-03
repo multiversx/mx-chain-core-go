@@ -333,7 +333,9 @@ func GetCrossMiniBlocksFromShardInfo(shardInfo []ShardData, destId uint32) []*da
 		}
 
 		for _, mb := range shardInfo[i].ShardMiniBlockHeaders {
-			if mb.ReceiverShardID == destId && mb.SenderShardID != destId {
+			if (mb.ReceiverShardID == destId ||
+				mb.ReceiverShardID == core.AllShardId) &&
+				mb.SenderShardID != destId {
 				miniBlocks = append(miniBlocks, &data.MiniBlockInfo{
 					Hash:          mb.Hash,
 					SenderShardID: mb.SenderShardID,
