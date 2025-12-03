@@ -1,7 +1,11 @@
 //go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf  --gogoslick_out=. trigger.proto
 package block
 
-import "github.com/multiversx/mx-chain-core-go/data"
+import (
+	"fmt"
+
+	"github.com/multiversx/mx-chain-core-go/data"
+)
 
 // GetEpochStartHeaderHandler returns the epoch start headerHandler
 func (str *ShardTriggerRegistry) GetEpochStartHeaderHandler() data.HeaderHandler {
@@ -189,5 +193,177 @@ func (strV2 *ShardTriggerRegistryV2) SetEpochStartHeaderHandler(epochStartHeader
 	if !ok {
 		return data.ErrInvalidTypeAssertion
 	}
+	return nil
+}
+
+// GetEpochChangeProposed returns false for legacy meta registry
+func (m *MetaTriggerRegistry) GetEpochChangeProposed() bool {
+	return false
+}
+
+// GetEpochStartMetaHeaderHandler returns internal meta v1 header
+func (m *MetaTriggerRegistry) GetEpochStartMetaHeaderHandler() data.MetaHeaderHandler {
+	return m.GetEpochStartMeta()
+}
+
+// SetEpoch sets the epoch
+func (m *MetaTriggerRegistry) SetEpoch(epoch uint32) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.Epoch = epoch
+	return nil
+}
+
+// SetEpochChangeProposed does nothing for legacy meta registry
+func (m *MetaTriggerRegistry) SetEpochChangeProposed(_ bool) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return nil
+}
+
+// SetCurrentRound sets the current round
+func (m *MetaTriggerRegistry) SetCurrentRound(round uint64) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.CurrentRound = round
+	return nil
+}
+
+// SetEpochFinalityAttestingRound sets epoch finality attesting round
+func (m *MetaTriggerRegistry) SetEpochFinalityAttestingRound(round uint64) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.EpochFinalityAttestingRound = round
+	return nil
+}
+
+// SetCurrEpochStartRound sets current epoch start round
+func (m *MetaTriggerRegistry) SetCurrEpochStartRound(round uint64) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.CurrEpochStartRound = round
+	return nil
+}
+
+// SetPrevEpochStartRound sets previous epoch start round
+func (m *MetaTriggerRegistry) SetPrevEpochStartRound(round uint64) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.PrevEpochStartRound = round
+	return nil
+}
+
+// SetEpochStartMetaHash sets epoch start meta hash
+func (m *MetaTriggerRegistry) SetEpochStartMetaHash(hash []byte) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.EpochStartMetaHash = hash
+	return nil
+}
+
+// SetEpochStartMetaHeaderHandler sets internal meta block v1
+func (m *MetaTriggerRegistry) SetEpochStartMetaHeaderHandler(header data.MetaHeaderHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	headerV1, castOk := header.(*MetaBlock)
+	if !castOk {
+		return fmt.Errorf("%w in MetaTriggerRegistry.SetEpochStartMetaHeaderHandler", data.ErrInvalidTypeAssertion)
+	}
+
+	m.EpochStartMeta = headerV1
+	return nil
+}
+
+// GetEpochStartMetaHeaderHandler returns internal meta v3 header
+func (m *MetaTriggerRegistryV3) GetEpochStartMetaHeaderHandler() data.MetaHeaderHandler {
+	return m.GetEpochStartMeta()
+}
+
+// SetEpoch sets the epoch
+func (m *MetaTriggerRegistryV3) SetEpoch(epoch uint32) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.Epoch = epoch
+	return nil
+}
+
+// SetEpochChangeProposed sets epoch change proposed bool flag
+func (m *MetaTriggerRegistryV3) SetEpochChangeProposed(flag bool) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	m.EpochChangeProposed = flag
+	return nil
+}
+
+// SetCurrentRound sets the current round
+func (m *MetaTriggerRegistryV3) SetCurrentRound(round uint64) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.CurrentRound = round
+	return nil
+}
+
+// SetEpochFinalityAttestingRound sets epoch finality attesting round
+func (m *MetaTriggerRegistryV3) SetEpochFinalityAttestingRound(round uint64) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.EpochFinalityAttestingRound = round
+	return nil
+}
+
+// SetCurrEpochStartRound sets current epoch start round
+func (m *MetaTriggerRegistryV3) SetCurrEpochStartRound(round uint64) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.CurrEpochStartRound = round
+	return nil
+}
+
+// SetPrevEpochStartRound sets previous epoch start round
+func (m *MetaTriggerRegistryV3) SetPrevEpochStartRound(round uint64) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.PrevEpochStartRound = round
+	return nil
+}
+
+// SetEpochStartMetaHash sets epoch start meta hash
+func (m *MetaTriggerRegistryV3) SetEpochStartMetaHash(hash []byte) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	m.EpochStartMetaHash = hash
+	return nil
+}
+
+// SetEpochStartMetaHeaderHandler sets internal meta block v3
+func (m *MetaTriggerRegistryV3) SetEpochStartMetaHeaderHandler(header data.MetaHeaderHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	headerV3, castOk := header.(*MetaBlockV3)
+	if !castOk {
+		return fmt.Errorf("%w in MetaTriggerRegistryV3.SetEpochStartMetaHeaderHandler", data.ErrInvalidTypeAssertion)
+	}
+
+	m.EpochStartMeta = headerV3
 	return nil
 }
