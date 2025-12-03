@@ -321,8 +321,8 @@ func (m *MetaBlock) GetOrderedCrossMiniblocksWithDst(destId uint32) []*data.Mini
 		return nil
 	}
 
-	miniBlocks := GetCrossMiniBlocksFromShardInfo(m.ShardInfo, destId)
-	miniBlocksFromMbHeaders := GetCrossMiniBlocksFromMiniBlockHeaders(m.MiniBlockHeaders, destId, m.Round)
+	miniBlocks := getCrossMiniBlocksFromShardInfo(m.ShardInfo, destId)
+	miniBlocksFromMbHeaders := getCrossMiniBlocksFromMiniBlockHeaders(m.MiniBlockHeaders, destId, m.Round)
 
 	miniBlocks = append(miniBlocks, miniBlocksFromMbHeaders...)
 	sort.Slice(miniBlocks, func(i, j int) bool {
