@@ -171,10 +171,16 @@ func TestHeaderV3_GetOrderedCrossMiniblocksWithDst(t *testing.T) {
 		hash1 := []byte("hash1")
 		hash2 := []byte("hash2")
 		hv3 := &block.HeaderV3{
-			Round: 42,
-			MiniBlockHeaders: []block.MiniBlockHeader{
-				{ReceiverShardID: 1, SenderShardID: 0, Hash: hash1},
-				{ReceiverShardID: 2, SenderShardID: 1, Hash: hash2},
+			ExecutionResults: []*block.ExecutionResult{
+				{
+					BaseExecutionResult: &block.BaseExecutionResult{
+						HeaderRound: 42,
+					},
+					MiniBlockHeaders: []block.MiniBlockHeader{
+						{ReceiverShardID: 1, SenderShardID: 0, Hash: hash1},
+						{ReceiverShardID: 2, SenderShardID: 1, Hash: hash2},
+					},
+				},
 			},
 		}
 		expected := []*data.MiniBlockInfo{

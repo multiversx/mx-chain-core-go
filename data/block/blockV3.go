@@ -5,7 +5,7 @@ package block
 import (
 	"fmt"
 	"math/big"
-	reflect "reflect"
+	"reflect"
 
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data"
@@ -79,12 +79,27 @@ func (hv3 *HeaderV3) GetOrderedCrossMiniblocksWithDst(destId uint32) []*data.Min
 
 	miniBlocks := make([]*data.MiniBlockInfo, 0)
 
-	for _, mb := range hv3.MiniBlockHeaders {
+	for _, execResults := range hv3.ExecutionResults {
+		mbFromExecResult := getOrderedCrossMiniblocksWithDst(
+			execResults.MiniBlockHeaders,
+			execResults.GetHeaderRound(),
+			destId,
+		)
+		miniBlocks = append(miniBlocks, mbFromExecResult...)
+	}
+
+	return miniBlocks
+}
+
+func getOrderedCrossMiniblocksWithDst(mbHeaders []MiniBlockHeader, round uint64, destId uint32) []*data.MiniBlockInfo {
+	miniBlocks := make([]*data.MiniBlockInfo, 0)
+
+	for _, mb := range mbHeaders {
 		if mb.ReceiverShardID == destId && mb.SenderShardID != destId {
 			miniBlocks = append(miniBlocks, &data.MiniBlockInfo{
 				Hash:          mb.Hash,
 				SenderShardID: mb.SenderShardID,
-				Round:         hv3.Round,
+				Round:         round,
 			})
 		}
 	}
