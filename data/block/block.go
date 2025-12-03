@@ -231,7 +231,7 @@ func (h *Header) GetOrderedCrossMiniblocksWithDst(destId uint32) []*data.MiniBlo
 		return nil
 	}
 
-	return GetOrderedCrossMiniblocksWithDst(h.MiniBlockHeaders, h.Round, destId)
+	return getOrderedCrossMiniblocksWithDst(h.MiniBlockHeaders, h.Round, destId)
 }
 
 // GetMiniBlockHeadersHashes gets the miniblock hashes
