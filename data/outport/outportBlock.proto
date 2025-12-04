@@ -55,6 +55,7 @@ message ExecutionResultData {
   repeated MiniBlock           IntraShardMiniBlocks      = 4 [(gogoproto.jsontag) = "intraShardMiniBlocks,omitempty"];
   TransactionPool              TransactionPool           = 5 [(gogoproto.jsontag) = "transactionPool,omitempty"];
   map <string, AlteredAccount> AlteredAccounts           = 6 [(gogoproto.jsontag) = "alteredAccounts,omitempty"];
+  bytes                        RootHash                  = 7 [(gogoproto.jsontag) = "rootHash,omitempty"];
 }
 
 message TransactionPool {
