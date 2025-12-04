@@ -407,23 +407,30 @@ func TestMetaBlockV3_GetOrderedCrossMiniblocksWithDst(t *testing.T) {
 
 	metaHdr.ShardInfo = append(metaHdr.ShardInfo, shData1, shData2, shData3, shData4, shData5)
 
-	metaHdr.MiniBlockHeaders = append(metaHdr.MiniBlockHeaders, block.MiniBlockHeader{
+	mb1 := block.MiniBlockHeader{
 		Hash:            []byte("hash6"),
 		SenderShardID:   core.MetachainShardId,
 		ReceiverShardID: 1,
-	})
+	}
 
-	metaHdr.MiniBlockHeaders = append(metaHdr.MiniBlockHeaders, block.MiniBlockHeader{
+	mb2 := block.MiniBlockHeader{
 		Hash:            []byte("hash7"),
 		SenderShardID:   core.MetachainShardId,
 		ReceiverShardID: core.AllShardId,
-	})
+	}
 
-	metaHdr.MiniBlockHeaders = append(metaHdr.MiniBlockHeaders, block.MiniBlockHeader{
+	mb3 := block.MiniBlockHeader{
 		Hash:            []byte("hash8"),
 		SenderShardID:   core.MetachainShardId,
 		ReceiverShardID: 2,
-	})
+	}
+	metaHdr.ExecutionResults = make([]*block.MetaExecutionResult, 1)
+	metaHdr.ExecutionResults[0] = &block.MetaExecutionResult{
+		MiniBlockHeaders: []block.MiniBlockHeader{mb1, mb2, mb3},
+		ExecutionResult: &block.BaseMetaExecutionResult{
+			BaseExecutionResult: &block.BaseExecutionResult{HeaderRound: 6},
+		},
+	}
 
 	miniBlocksInfo := metaHdr.GetOrderedCrossMiniblocksWithDst(1)
 	require.Equal(t, 6, len(miniBlocksInfo))
