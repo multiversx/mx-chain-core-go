@@ -6,6 +6,12 @@ type LogData struct {
 	TxHash string
 }
 
+// LogDataHandler is an interface implemented by LogData structure
+type LogDataHandler interface {
+	LogHandler
+	GetTxHash() string
+}
+
 // KeyValuePair is a tuple of (key, value)
 type KeyValuePair struct {
 	Key   []byte
