@@ -2,7 +2,7 @@ package transaction
 
 // LogData defines an extended log data needed for indexing logs and events
 type LogData struct {
-	Log
+	*Log
 	TxHash string
 }
 
