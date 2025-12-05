@@ -479,7 +479,7 @@ type LogHandler interface {
 
 // LogDataHandler holds the data needed for indexing logs and events
 type LogDataHandler interface {
-	LogHandler
+	GetLogHandler() LogHandler
 	GetTxHash() string
 }
 
