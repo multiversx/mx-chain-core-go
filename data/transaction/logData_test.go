@@ -38,7 +38,6 @@ func TestLogDataMarshal(t *testing.T) {
 
 	marshalledLogData, err := marshaller.Marshal(logData)
 	require.NoError(t, err)
-	println(string(marshalledLogData))
 
 	var logData2 LogData
 	err = marshaller.Unmarshal(&logData2, marshalledLogData)
