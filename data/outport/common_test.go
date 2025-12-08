@@ -46,6 +46,20 @@ func TestGetHeaderBytesAndType(t *testing.T) {
 	require.Equal(t, expectedHeaderBytes, headerBytes)
 	require.Equal(t, core.MetaHeader, headerType)
 	require.Nil(t, err)
+
+	header = &block.MetaBlockV3{}
+	headerBytes, headerType, err = GetHeaderBytesAndType(marshaller, header)
+	expectedHeaderBytes, _ = marshaller.Marshal(header)
+	require.Equal(t, expectedHeaderBytes, headerBytes)
+	require.Equal(t, core.MetaHeaderV3, headerType)
+	require.Nil(t, err)
+
+	header = &block.HeaderV3{}
+	headerBytes, headerType, err = GetHeaderBytesAndType(marshaller, header)
+	expectedHeaderBytes, _ = marshaller.Marshal(header)
+	require.Equal(t, expectedHeaderBytes, headerBytes)
+	require.Equal(t, core.ShardHeaderV3, headerType)
+	require.Nil(t, err)
 }
 
 func TestGetBody(t *testing.T) {
