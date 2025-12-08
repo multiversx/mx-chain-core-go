@@ -89,11 +89,6 @@ message SCRInfo {
   uint32              ExecutionOrder      = 3 [(gogoproto.jsontag) = "executionOrder"];
 }
 
-message LogData{
-  string TxHash = 1 [(gogoproto.jsontag) = "txHash"];
-  Log    Log    = 2 [(gogoproto.jsontag) = "log"];
-}
-
 message RewardInfo {
   RewardTx Reward         = 1 [(gogoproto.jsontag) = "reward,omitempty"];
   uint32   ExecutionOrder = 2 [(gogoproto.jsontag) = "executionOrder"];
