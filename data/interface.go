@@ -477,6 +477,12 @@ type LogHandler interface {
 	IsInterfaceNil() bool
 }
 
+// LogDataHandler holds the data needed for indexing logs and events
+type LogDataHandler interface {
+	GetLogHandler() LogHandler
+	GetTxHash() string
+}
+
 // EventHandler defines the type for an event resulted from a smart contract call contained in a log
 type EventHandler interface {
 	// GetAddress returns the address of the contract that generated this event
