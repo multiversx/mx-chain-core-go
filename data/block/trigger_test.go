@@ -41,6 +41,20 @@ func createDefaultShardTriggerRegistryV2() *ShardTriggerRegistryV2 {
 	}
 }
 
+func createDefaultShardTriggerRegistryV3() *ShardTriggerRegistryV3 {
+	return &ShardTriggerRegistryV3{
+		EpochStartShardHeader:       &HeaderV3{},
+		IsEpochStart:                true,
+		NewEpochHeaderReceived:      true,
+		Epoch:                       10,
+		MetaEpoch:                   11,
+		CurrentRoundIndex:           10000,
+		EpochStartRound:             10000,
+		EpochFinalityAttestingRound: 10002,
+		EpochMetaBlockHash:          []byte("metaBlockHash"),
+	}
+}
+
 func TestShardTriggerRegistry_GetEpochStartHeaderHandlerNilShardTriggerRegistry(t *testing.T) {
 	t.Parallel()
 
@@ -476,6 +490,23 @@ func TestShardTriggerRegistryV2_SetEpochStartHeaderHandlerOK(t *testing.T) {
 	setHeader := &HeaderV2{
 		Header:            &Header{Epoch: 10},
 		ScheduledRootHash: []byte("set scheduled root hash"),
+	}
+
+	err := str.SetEpochStartHeaderHandler(setHeader)
+	require.Nil(t, err)
+	require.Equal(t, setHeader, str.EpochStartShardHeader)
+}
+
+func TestShardTriggerRegistryV3_SettersAndGetters(t *testing.T) {
+	t.Parallel()
+
+	str := createDefaultShardTriggerRegistryV3()
+	str.EpochStartShardHeader = &HeaderV3{
+		Epoch: 1,
+	}
+
+	setHeader := &HeaderV3{
+		Epoch: 10,
 	}
 
 	err := str.SetEpochStartHeaderHandler(setHeader)

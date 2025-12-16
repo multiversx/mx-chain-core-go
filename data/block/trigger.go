@@ -196,6 +196,100 @@ func (strV2 *ShardTriggerRegistryV2) SetEpochStartHeaderHandler(epochStartHeader
 	return nil
 }
 
+// GetEpochStartHeaderHandler returns the epoch start headerHandler
+func (strV3 *ShardTriggerRegistryV3) GetEpochStartHeaderHandler() data.HeaderHandler {
+	if strV3 == nil {
+		return nil
+	}
+	return strV3.GetEpochStartShardHeader()
+}
+
+// SetIsEpochStart sets the isEpochStart flag
+func (strV3 *ShardTriggerRegistryV3) SetIsEpochStart(isEpochStart bool) error {
+	if strV3 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	strV3.IsEpochStart = isEpochStart
+	return nil
+}
+
+// SetNewEpochHeaderReceived sets the neeEpochHeaderReceived flag
+func (strV3 *ShardTriggerRegistryV3) SetNewEpochHeaderReceived(newEpochHeaderReceived bool) error {
+	if strV3 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	strV3.NewEpochHeaderReceived = newEpochHeaderReceived
+	return nil
+}
+
+// SetEpoch sets the epoch
+func (strV3 *ShardTriggerRegistryV3) SetEpoch(epoch uint32) error {
+	if strV3 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	strV3.Epoch = epoch
+	return nil
+}
+
+// SetMetaEpoch sets the metaChain epoch
+func (strV3 *ShardTriggerRegistryV3) SetMetaEpoch(metaEpoch uint32) error {
+	if strV3 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	strV3.MetaEpoch = metaEpoch
+	return nil
+}
+
+// SetCurrentRoundIndex sets the current round index
+func (strV3 *ShardTriggerRegistryV3) SetCurrentRoundIndex(roundIndex int64) error {
+	if strV3 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	strV3.CurrentRoundIndex = roundIndex
+	return nil
+}
+
+// SetEpochStartRound sets the epoch start round
+func (strV3 *ShardTriggerRegistryV3) SetEpochStartRound(startRound uint64) error {
+	if strV3 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	strV3.EpochStartRound = startRound
+	return nil
+}
+
+// SetEpochFinalityAttestingRound sets the epoch finality attesting round
+func (strV3 *ShardTriggerRegistryV3) SetEpochFinalityAttestingRound(finalityAttestingRound uint64) error {
+	if strV3 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	strV3.EpochFinalityAttestingRound = finalityAttestingRound
+	return nil
+}
+
+// SetEpochMetaBlockHash sets the epoch metaChain block hash
+func (strV3 *ShardTriggerRegistryV3) SetEpochMetaBlockHash(epochMetaBlockHash []byte) error {
+	if strV3 == nil {
+		return data.ErrNilPointerReceiver
+	}
+	strV3.EpochMetaBlockHash = epochMetaBlockHash
+	return nil
+}
+
+// SetEpochStartHeaderHandler sets the epoch start header
+func (strV3 *ShardTriggerRegistryV3) SetEpochStartHeaderHandler(epochStartHeaderHandler data.HeaderHandler) error {
+	if strV3 == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	var ok bool
+	strV3.EpochStartShardHeader, ok = epochStartHeaderHandler.(*HeaderV3)
+	if !ok {
+		return data.ErrInvalidTypeAssertion
+	}
+	return nil
+}
+
 // GetEpochChangeProposed returns false for legacy meta registry
 func (m *MetaTriggerRegistry) GetEpochChangeProposed() bool {
 	return false
