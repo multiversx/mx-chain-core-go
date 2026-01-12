@@ -316,7 +316,12 @@ func TestMetaBlock_GetOrderedCrossMiniblocksWithDstShouldWork(t *testing.T) {
 	shardMBHeader5 = append(shardMBHeader5, shMBHdr5)
 	shData5 := block.ShardData{Round: 7, ShardID: 1, HeaderHash: []byte("sh5"), ShardMiniBlockHeaders: shardMBHeader5}
 
-	metaHdr.ShardInfo = append(metaHdr.ShardInfo, shData1, shData2, shData3, shData4, shData5)
+	shardMBHeader6 := make([]block.MiniBlockHeader, 0)
+	shMBHdr6 := block.MiniBlockHeader{SenderShardID: core.MetachainShardId, ReceiverShardID: core.AllShardId, Hash: []byte("hashAll")}
+	shardMBHeader6 = append(shardMBHeader6, shMBHdr6)
+	shData6 := block.ShardData{Round: 12, ShardID: 1, HeaderHash: []byte("sh6"), ShardMiniBlockHeaders: shardMBHeader6}
+
+	metaHdr.ShardInfo = append(metaHdr.ShardInfo, shData1, shData2, shData3, shData4, shData5, shData6)
 
 	metaHdr.MiniBlockHeaders = append(metaHdr.MiniBlockHeaders, block.MiniBlockHeader{
 		Hash:            []byte("hash6"),
