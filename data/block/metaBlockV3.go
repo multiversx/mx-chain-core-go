@@ -326,17 +326,26 @@ func (m *MetaBlockV3) getMiniBlocksWithDstFromMetaExecutionResults(destID uint32
 }
 func getCrossMiniBlocksFromShardInfo(shardInfo []ShardData, destId uint32) []*data.MiniBlockInfo {
 	miniBlocks := make([]*data.MiniBlockInfo, 0)
-
 	for i := 0; i < len(shardInfo); i++ {
 		if shardInfo[i].ShardID == destId {
 			continue
 		}
-
 		mbs := getCrossMiniBlocksFromMiniBlockHeaders(shardInfo[i].ShardMiniBlockHeaders, destId, shardInfo[i].Round)
+		mbs = removeMiniBlocksFromShard(mbs, core.MetachainShardId)
 		miniBlocks = append(miniBlocks, mbs...)
 	}
 
 	return miniBlocks
+}
+
+func removeMiniBlocksFromShard(miniBlocks []*data.MiniBlockInfo, shardID uint32) []*data.MiniBlockInfo {
+	filteredMiniBlocks := make([]*data.MiniBlockInfo, 0)
+	for _, mb := range miniBlocks {
+		if mb.SenderShardID != shardID {
+			filteredMiniBlocks = append(filteredMiniBlocks, mb)
+		}
+	}
+	return filteredMiniBlocks
 }
 
 func getCrossMiniBlocksFromMiniBlockHeaders(miniBlockHeaders []MiniBlockHeader, destId uint32, round uint64) []*data.MiniBlockInfo {
