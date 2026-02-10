@@ -24,6 +24,6 @@ message Log {
 }
 
 message LogData {
-    Log    Log    = 1 [(gogoproto.jsontag) = "log"];
-    string TxHash = 2 [(gogoproto.jsontag) = "txHash"];
+    string TxHash = 1 [(gogoproto.jsontag) = "txHash"];
+    Log    Log    = 2 [(gogoproto.jsontag) = "log"];
 }

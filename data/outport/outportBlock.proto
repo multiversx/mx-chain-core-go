@@ -33,7 +33,8 @@ message OutportBlock {
   bytes                               HighestFinalBlockHash  = 10 [(gogoproto.jsontag) = "highestFinalBlockHash,omitempty"];
   uint64                              LeaderIndex            = 11 [(gogoproto.jsontag) = "leaderIndex"];
   bytes                               LeaderBLSKey           = 12 [(gogoproto.jsontag) = "leaderKey,omitempty"];
-  map <string, StateAccessesForBlock> StateAccessesForBlock  = 13 [(gogoproto.jsontag) = "stateAccessesForBlock,omitempty"];
+  map <string, StateAccesses>         StateAccesses          = 13 [(gogoproto.jsontag) = "stateAccesses,omitempty",deprecated = true];
+  map <string, StateAccessesForBlock> StateAccessesForBlock  = 14 [(gogoproto.jsontag) = "stateAccessesForBlock,omitempty"];
 }
 
 message BlockData {
