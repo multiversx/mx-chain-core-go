@@ -402,14 +402,15 @@ func (m *ExecutionResultData) GetRootHash() []byte {
 }
 
 type TransactionPool struct {
-	Transactions                               map[string]*TxInfo          `protobuf:"bytes,1,rep,name=Transactions,proto3" json:"transactions,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	SmartContractResults                       map[string]*SCRInfo         `protobuf:"bytes,2,rep,name=SmartContractResults,proto3" json:"smartContractResults,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Rewards                                    map[string]*RewardInfo      `protobuf:"bytes,3,rep,name=Rewards,proto3" json:"rewards,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Receipts                                   map[string]*receipt.Receipt `protobuf:"bytes,4,rep,name=Receipts,proto3" json:"receipts,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	InvalidTxs                                 map[string]*TxInfo          `protobuf:"bytes,5,rep,name=InvalidTxs,proto3" json:"invalidTxs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
-	Logs                                       []*transaction.LogData      `protobuf:"bytes,6,rep,name=Logs,proto3" json:"logs,omitempty"`
-	ScheduledExecutedSCRSHashesPrevBlock       []string                    `protobuf:"bytes,7,rep,name=ScheduledExecutedSCRSHashesPrevBlock,proto3" json:"scheduledExecutedSCRSHashesPrevBlock,omitempty"`
-	ScheduledExecutedInvalidTxsHashesPrevBlock []string                    `protobuf:"bytes,8,rep,name=ScheduledExecutedInvalidTxsHashesPrevBlock,proto3" json:"scheduledExecutedInvalidTxsHashesPrevBlock,omitempty"`
+	Transactions                               map[string]*TxInfo                  `protobuf:"bytes,1,rep,name=Transactions,proto3" json:"transactions,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	SmartContractResults                       map[string]*SCRInfo                 `protobuf:"bytes,2,rep,name=SmartContractResults,proto3" json:"smartContractResults,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Rewards                                    map[string]*RewardInfo              `protobuf:"bytes,3,rep,name=Rewards,proto3" json:"rewards,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Receipts                                   map[string]*receipt.Receipt         `protobuf:"bytes,4,rep,name=Receipts,proto3" json:"receipts,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	InvalidTxs                                 map[string]*TxInfo                  `protobuf:"bytes,5,rep,name=InvalidTxs,proto3" json:"invalidTxs,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	Logs                                       []*transaction.LogData              `protobuf:"bytes,6,rep,name=Logs,proto3" json:"logs,omitempty"`
+	ScheduledExecutedSCRSHashesPrevBlock       []string                            `protobuf:"bytes,7,rep,name=ScheduledExecutedSCRSHashesPrevBlock,proto3" json:"scheduledExecutedSCRSHashesPrevBlock,omitempty"`
+	ScheduledExecutedInvalidTxsHashesPrevBlock []string                            `protobuf:"bytes,8,rep,name=ScheduledExecutedInvalidTxsHashesPrevBlock,proto3" json:"scheduledExecutedInvalidTxsHashesPrevBlock,omitempty"`
+	UnexecutableTransactions                   map[string]*transaction.Transaction `protobuf:"bytes,9,rep,name=UnexecutableTransactions,proto3" json:"unexecutableTransactions,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (m *TransactionPool) Reset()      { *m = TransactionPool{} }
@@ -492,6 +493,13 @@ func (m *TransactionPool) GetScheduledExecutedSCRSHashesPrevBlock() []string {
 func (m *TransactionPool) GetScheduledExecutedInvalidTxsHashesPrevBlock() []string {
 	if m != nil {
 		return m.ScheduledExecutedInvalidTxsHashesPrevBlock
+	}
+	return nil
+}
+
+func (m *TransactionPool) GetUnexecutableTransactions() map[string]*transaction.Transaction {
+	if m != nil {
+		return m.UnexecutableTransactions
 	}
 	return nil
 }
@@ -1282,6 +1290,7 @@ func init() {
 	proto.RegisterMapType((map[string]*RewardInfo)(nil), "proto.TransactionPool.RewardsEntry")
 	proto.RegisterMapType((map[string]*SCRInfo)(nil), "proto.TransactionPool.SmartContractResultsEntry")
 	proto.RegisterMapType((map[string]*TxInfo)(nil), "proto.TransactionPool.TransactionsEntry")
+	proto.RegisterMapType((map[string]*transaction.Transaction)(nil), "proto.TransactionPool.UnexecutableTransactionsEntry")
 	proto.RegisterType((*FeeInfo)(nil), "proto.FeeInfo")
 	proto.RegisterType((*TxInfo)(nil), "proto.TxInfo")
 	proto.RegisterType((*SCRInfo)(nil), "proto.SCRInfo")
@@ -1749,6 +1758,14 @@ func (this *TransactionPool) Equal(that interface{}) bool {
 	}
 	for i := range this.ScheduledExecutedInvalidTxsHashesPrevBlock {
 		if this.ScheduledExecutedInvalidTxsHashesPrevBlock[i] != that1.ScheduledExecutedInvalidTxsHashesPrevBlock[i] {
+			return false
+		}
+	}
+	if len(this.UnexecutableTransactions) != len(that1.UnexecutableTransactions) {
+		return false
+	}
+	for i := range this.UnexecutableTransactions {
+		if !this.UnexecutableTransactions[i].Equal(that1.UnexecutableTransactions[i]) {
 			return false
 		}
 	}
@@ -2358,7 +2375,7 @@ func (this *TransactionPool) GoString() string {
 	if this == nil {
 		return "nil"
 	}
-	s := make([]string, 0, 12)
+	s := make([]string, 0, 13)
 	s = append(s, "&outport.TransactionPool{")
 	keysForTransactions := make([]string, 0, len(this.Transactions))
 	for k, _ := range this.Transactions {
@@ -2430,6 +2447,19 @@ func (this *TransactionPool) GoString() string {
 	}
 	s = append(s, "ScheduledExecutedSCRSHashesPrevBlock: "+fmt.Sprintf("%#v", this.ScheduledExecutedSCRSHashesPrevBlock)+",\n")
 	s = append(s, "ScheduledExecutedInvalidTxsHashesPrevBlock: "+fmt.Sprintf("%#v", this.ScheduledExecutedInvalidTxsHashesPrevBlock)+",\n")
+	keysForUnexecutableTransactions := make([]string, 0, len(this.UnexecutableTransactions))
+	for k, _ := range this.UnexecutableTransactions {
+		keysForUnexecutableTransactions = append(keysForUnexecutableTransactions, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForUnexecutableTransactions)
+	mapStringForUnexecutableTransactions := "map[string]*transaction.Transaction{"
+	for _, k := range keysForUnexecutableTransactions {
+		mapStringForUnexecutableTransactions += fmt.Sprintf("%#v: %#v,", k, this.UnexecutableTransactions[k])
+	}
+	mapStringForUnexecutableTransactions += "}"
+	if this.UnexecutableTransactions != nil {
+		s = append(s, "UnexecutableTransactions: "+mapStringForUnexecutableTransactions+",\n")
+	}
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
@@ -3135,6 +3165,37 @@ func (m *TransactionPool) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.UnexecutableTransactions) > 0 {
+		keysForUnexecutableTransactions := make([]string, 0, len(m.UnexecutableTransactions))
+		for k := range m.UnexecutableTransactions {
+			keysForUnexecutableTransactions = append(keysForUnexecutableTransactions, string(k))
+		}
+		github_com_gogo_protobuf_sortkeys.Strings(keysForUnexecutableTransactions)
+		for iNdEx := len(keysForUnexecutableTransactions) - 1; iNdEx >= 0; iNdEx-- {
+			v := m.UnexecutableTransactions[string(keysForUnexecutableTransactions[iNdEx])]
+			baseI := i
+			if v != nil {
+				{
+					size, err := v.MarshalToSizedBuffer(dAtA[:i])
+					if err != nil {
+						return 0, err
+					}
+					i -= size
+					i = encodeVarintOutportBlock(dAtA, i, uint64(size))
+				}
+				i--
+				dAtA[i] = 0x12
+			}
+			i -= len(keysForUnexecutableTransactions[iNdEx])
+			copy(dAtA[i:], keysForUnexecutableTransactions[iNdEx])
+			i = encodeVarintOutportBlock(dAtA, i, uint64(len(keysForUnexecutableTransactions[iNdEx])))
+			i--
+			dAtA[i] = 0xa
+			i = encodeVarintOutportBlock(dAtA, i, uint64(baseI-i))
+			i--
+			dAtA[i] = 0x4a
+		}
+	}
 	if len(m.ScheduledExecutedInvalidTxsHashesPrevBlock) > 0 {
 		for iNdEx := len(m.ScheduledExecutedInvalidTxsHashesPrevBlock) - 1; iNdEx >= 0; iNdEx-- {
 			i -= len(m.ScheduledExecutedInvalidTxsHashesPrevBlock[iNdEx])
@@ -3711,20 +3772,20 @@ func (m *RoundInfo) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		dAtA[i] = 0x18
 	}
 	if len(m.SignersIndexes) > 0 {
-		dAtA26 := make([]byte, len(m.SignersIndexes)*10)
-		var j25 int
+		dAtA27 := make([]byte, len(m.SignersIndexes)*10)
+		var j26 int
 		for _, num := range m.SignersIndexes {
 			for num >= 1<<7 {
-				dAtA26[j25] = uint8(uint64(num)&0x7f | 0x80)
+				dAtA27[j26] = uint8(uint64(num)&0x7f | 0x80)
 				num >>= 7
-				j25++
+				j26++
 			}
-			dAtA26[j25] = uint8(num)
-			j25++
+			dAtA27[j26] = uint8(num)
+			j26++
 		}
-		i -= j25
-		copy(dAtA[i:], dAtA26[:j25])
-		i = encodeVarintOutportBlock(dAtA, i, uint64(j25))
+		i -= j26
+		copy(dAtA[i:], dAtA27[:j26])
+		i = encodeVarintOutportBlock(dAtA, i, uint64(j26))
 		i--
 		dAtA[i] = 0x12
 	}
@@ -4306,6 +4367,19 @@ func (m *TransactionPool) Size() (n int) {
 			n += 1 + l + sovOutportBlock(uint64(l))
 		}
 	}
+	if len(m.UnexecutableTransactions) > 0 {
+		for k, v := range m.UnexecutableTransactions {
+			_ = k
+			_ = v
+			l = 0
+			if v != nil {
+				l = v.Size()
+				l += 1 + sovOutportBlock(uint64(l))
+			}
+			mapEntrySize := 1 + len(k) + sovOutportBlock(uint64(len(k))) + l
+			n += mapEntrySize + 1 + sovOutportBlock(uint64(mapEntrySize))
+		}
+	}
 	return n
 }
 
@@ -4796,6 +4870,16 @@ func (this *TransactionPool) String() string {
 		mapStringForInvalidTxs += fmt.Sprintf("%v: %v,", k, this.InvalidTxs[k])
 	}
 	mapStringForInvalidTxs += "}"
+	keysForUnexecutableTransactions := make([]string, 0, len(this.UnexecutableTransactions))
+	for k, _ := range this.UnexecutableTransactions {
+		keysForUnexecutableTransactions = append(keysForUnexecutableTransactions, k)
+	}
+	github_com_gogo_protobuf_sortkeys.Strings(keysForUnexecutableTransactions)
+	mapStringForUnexecutableTransactions := "map[string]*transaction.Transaction{"
+	for _, k := range keysForUnexecutableTransactions {
+		mapStringForUnexecutableTransactions += fmt.Sprintf("%v: %v,", k, this.UnexecutableTransactions[k])
+	}
+	mapStringForUnexecutableTransactions += "}"
 	s := strings.Join([]string{`&TransactionPool{`,
 		`Transactions:` + mapStringForTransactions + `,`,
 		`SmartContractResults:` + mapStringForSmartContractResults + `,`,
@@ -4805,6 +4889,7 @@ func (this *TransactionPool) String() string {
 		`Logs:` + repeatedStringForLogs + `,`,
 		`ScheduledExecutedSCRSHashesPrevBlock:` + fmt.Sprintf("%v", this.ScheduledExecutedSCRSHashesPrevBlock) + `,`,
 		`ScheduledExecutedInvalidTxsHashesPrevBlock:` + fmt.Sprintf("%v", this.ScheduledExecutedInvalidTxsHashesPrevBlock) + `,`,
+		`UnexecutableTransactions:` + mapStringForUnexecutableTransactions + `,`,
 		`}`,
 	}, "")
 	return s
@@ -7425,6 +7510,135 @@ func (m *TransactionPool) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.ScheduledExecutedInvalidTxsHashesPrevBlock = append(m.ScheduledExecutedInvalidTxsHashesPrevBlock, string(dAtA[iNdEx:postIndex]))
+			iNdEx = postIndex
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field UnexecutableTransactions", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowOutportBlock
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthOutportBlock
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthOutportBlock
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.UnexecutableTransactions == nil {
+				m.UnexecutableTransactions = make(map[string]*transaction.Transaction)
+			}
+			var mapkey string
+			var mapvalue *transaction.Transaction
+			for iNdEx < postIndex {
+				entryPreIndex := iNdEx
+				var wire uint64
+				for shift := uint(0); ; shift += 7 {
+					if shift >= 64 {
+						return ErrIntOverflowOutportBlock
+					}
+					if iNdEx >= l {
+						return io.ErrUnexpectedEOF
+					}
+					b := dAtA[iNdEx]
+					iNdEx++
+					wire |= uint64(b&0x7F) << shift
+					if b < 0x80 {
+						break
+					}
+				}
+				fieldNum := int32(wire >> 3)
+				if fieldNum == 1 {
+					var stringLenmapkey uint64
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOutportBlock
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						stringLenmapkey |= uint64(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					intStringLenmapkey := int(stringLenmapkey)
+					if intStringLenmapkey < 0 {
+						return ErrInvalidLengthOutportBlock
+					}
+					postStringIndexmapkey := iNdEx + intStringLenmapkey
+					if postStringIndexmapkey < 0 {
+						return ErrInvalidLengthOutportBlock
+					}
+					if postStringIndexmapkey > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapkey = string(dAtA[iNdEx:postStringIndexmapkey])
+					iNdEx = postStringIndexmapkey
+				} else if fieldNum == 2 {
+					var mapmsglen int
+					for shift := uint(0); ; shift += 7 {
+						if shift >= 64 {
+							return ErrIntOverflowOutportBlock
+						}
+						if iNdEx >= l {
+							return io.ErrUnexpectedEOF
+						}
+						b := dAtA[iNdEx]
+						iNdEx++
+						mapmsglen |= int(b&0x7F) << shift
+						if b < 0x80 {
+							break
+						}
+					}
+					if mapmsglen < 0 {
+						return ErrInvalidLengthOutportBlock
+					}
+					postmsgIndex := iNdEx + mapmsglen
+					if postmsgIndex < 0 {
+						return ErrInvalidLengthOutportBlock
+					}
+					if postmsgIndex > l {
+						return io.ErrUnexpectedEOF
+					}
+					mapvalue = &transaction.Transaction{}
+					if err := mapvalue.Unmarshal(dAtA[iNdEx:postmsgIndex]); err != nil {
+						return err
+					}
+					iNdEx = postmsgIndex
+				} else {
+					iNdEx = entryPreIndex
+					skippy, err := skipOutportBlock(dAtA[iNdEx:])
+					if err != nil {
+						return err
+					}
+					if skippy < 0 {
+						return ErrInvalidLengthOutportBlock
+					}
+					if (iNdEx + skippy) > postIndex {
+						return io.ErrUnexpectedEOF
+					}
+					iNdEx += skippy
+				}
+			}
+			m.UnexecutableTransactions[mapkey] = mapvalue
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex

@@ -59,14 +59,15 @@ message ExecutionResultData {
 }
 
 message TransactionPool {
-  map<string, TxInfo>     Transactions                               = 1 [(gogoproto.jsontag) = "transactions,omitempty"];
-  map<string, SCRInfo>    SmartContractResults                       = 2 [(gogoproto.jsontag) = "smartContractResults,omitempty"];
-  map<string, RewardInfo> Rewards                                    = 3 [(gogoproto.jsontag) = "rewards,omitempty"];
-  map<string, Receipt>    Receipts                                   = 4 [(gogoproto.jsontag) = "receipts,omitempty"];
-  map<string, TxInfo>     InvalidTxs                                 = 5 [(gogoproto.jsontag) = "invalidTxs,omitempty"];
-  repeated LogData        Logs                                       = 6 [(gogoproto.jsontag) = "logs,omitempty"];
-  repeated string         ScheduledExecutedSCRSHashesPrevBlock       = 7 [(gogoproto.jsontag) = "scheduledExecutedSCRSHashesPrevBlock,omitempty"];
-  repeated string         ScheduledExecutedInvalidTxsHashesPrevBlock = 8 [(gogoproto.jsontag) = "scheduledExecutedInvalidTxsHashesPrevBlock,omitempty"];
+  map<string, TxInfo>      Transactions                               = 1 [(gogoproto.jsontag) = "transactions,omitempty"];
+  map<string, SCRInfo>     SmartContractResults                       = 2 [(gogoproto.jsontag) = "smartContractResults,omitempty"];
+  map<string, RewardInfo>  Rewards                                    = 3 [(gogoproto.jsontag) = "rewards,omitempty"];
+  map<string, Receipt>     Receipts                                   = 4 [(gogoproto.jsontag) = "receipts,omitempty"];
+  map<string, TxInfo>      InvalidTxs                                 = 5 [(gogoproto.jsontag) = "invalidTxs,omitempty"];
+  repeated LogData         Logs                                       = 6 [(gogoproto.jsontag) = "logs,omitempty"];
+  repeated string          ScheduledExecutedSCRSHashesPrevBlock       = 7 [(gogoproto.jsontag) = "scheduledExecutedSCRSHashesPrevBlock,omitempty"];
+  repeated string          ScheduledExecutedInvalidTxsHashesPrevBlock = 8 [(gogoproto.jsontag) = "scheduledExecutedInvalidTxsHashesPrevBlock,omitempty"];
+  map<string, Transaction> UnexecutableTransactions                   = 9 [(gogoproto.jsontag) = "unexecutableTransactions,omitempty"];
 }
 
 message FeeInfo {
