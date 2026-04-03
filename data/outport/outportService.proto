@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package proto;
+
+option go_package = "github.com/multiversx/mx-chain-core-go/data/outport;outport";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "outportBlock.proto";
+import "config.proto";
+
+service OutportService {
+    rpc SaveBlock(OutportBlock) returns (ResponseData);
+    rpc RevertIndexedBlock(BlockData)  returns (ResponseData);
+    rpc SaveRoundsInfo(RoundsInfo)  returns (ResponseData);
+    rpc SaveValidatorsPubKeys(ValidatorsPubKeys)  returns (ResponseData);
+    rpc SaveValidatorsRating(ValidatorsRating)  returns (ResponseData);
+    rpc SaveAccounts(Accounts) returns (ResponseData);
+    rpc FinalizedBlockEvent(FinalizedBlock) returns (ResponseData);
+    rpc SetOutportConfig(OutportConfig) returns (ResponseData);
+}
