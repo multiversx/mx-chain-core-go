@@ -59,13 +59,14 @@ func (ogs *OutportGRPCServer) Start() error {
 	return ogs.server.Serve(ogs.listener)
 }
 
-// Stop stops the underlying gRPC server and closes active listeners.
-func (ogs *OutportGRPCServer) Stop() {
+// Close stops the underlying gRPC server and closes active listeners.
+func (ogs *OutportGRPCServer) Close() error {
 	if ogs == nil || ogs.server == nil {
-		return
+		return nil
 	}
 
 	ogs.server.Stop()
+	return nil
 }
 
 // Address returns the resolved listening address.
