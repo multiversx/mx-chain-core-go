@@ -78,7 +78,7 @@ func TestOutportGRPCRoundTrip(t *testing.T) {
 		serveErrChan <- server.Start()
 	}()
 	t.Cleanup(func() {
-		server.Stop()
+		_ = server.Close()
 	})
 
 	client, err := NewOutportGRPCClient(
@@ -117,7 +117,7 @@ func TestOutportGRPCRoundTrip(t *testing.T) {
 	_, err = client.FinalizedBlockEvent(ctx, expectedFinalizedBlock)
 	require.NoError(t, err)
 
-	server.Stop()
+	_ = server.Close()
 	select {
 	case serveErr := <-serveErrChan:
 		require.True(t, serveErr == nil || errors.Is(serveErr, grpc.ErrServerStopped))
@@ -186,7 +186,7 @@ func TestOutportGRPCRoundTripRealPort9876(t *testing.T) {
 		serveErrChan <- server.Start()
 	}()
 	t.Cleanup(func() {
-		server.Stop()
+		_ = server.Close()
 	})
 
 	client, err := NewOutportGRPCClient(
@@ -230,7 +230,7 @@ func TestOutportGRPCRoundTripRealPort9876(t *testing.T) {
 	require.NoError(t, err)
 	require.Equal(t, expectedResponse, response)
 
-	server.Stop()
+	_ = server.Close()
 	select {
 	case serveErr := <-serveErrChan:
 		require.True(t, serveErr == nil || errors.Is(serveErr, grpc.ErrServerStopped))
