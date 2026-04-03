@@ -43,7 +43,6 @@ func TestOutportServerDelegation(t *testing.T) {
 	expectedValidatorsRating := &outport.ValidatorsRating{ShardID: 5}
 	expectedAccounts := &outport.Accounts{ShardID: 6}
 	expectedFinalizedBlock := &outport.FinalizedBlock{ShardID: 7}
-	expectedOutportConfig := &outport.OutportConfig{ShardID: 8, IsInImportDBMode: true}
 
 	createServer := func(overrides *outportHandlerStub) *outportServer {
 		server, err := NewOutportServer(&outportHandlerStub{
@@ -66,9 +65,6 @@ func TestOutportServerDelegation(t *testing.T) {
 				return nil
 			},
 			finalizedBlockCalled: func(in *outport.FinalizedBlock) error {
-				return nil
-			},
-			setOutportConfigCalled: func(in *outport.OutportConfig) error {
 				return nil
 			},
 		})
@@ -95,9 +91,6 @@ func TestOutportServerDelegation(t *testing.T) {
 		}
 		if overrides.finalizedBlockCalled != nil {
 			handler.finalizedBlockCalled = overrides.finalizedBlockCalled
-		}
-		if overrides.setOutportConfigCalled != nil {
-			handler.setOutportConfigCalled = overrides.setOutportConfigCalled
 		}
 
 		return server
@@ -190,19 +183,6 @@ func TestOutportServerDelegation(t *testing.T) {
 		})
 
 		_, returnedErr := server.FinalizedBlockEvent(context.Background(), expectedFinalizedBlock)
-
-		require.Equal(t, expectedErr, returnedErr)
-	})
-
-	t.Run("SetOutportConfig", func(t *testing.T) {
-		server := createServer(&outportHandlerStub{
-			setOutportConfigCalled: func(in *outport.OutportConfig) error {
-				require.Equal(t, expectedOutportConfig, in)
-				return expectedErr
-			},
-		})
-
-		_, returnedErr := server.SetOutportConfig(context.Background(), expectedOutportConfig)
 
 		require.Equal(t, expectedErr, returnedErr)
 	})

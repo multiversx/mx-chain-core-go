@@ -7,7 +7,6 @@ option (gogoproto.stable_marshaler_all) = true;
 
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "outportBlock.proto";
-import "config.proto";
 
 service OutportService {
     rpc SaveBlock(OutportBlock) returns (ResponseData);
@@ -17,5 +16,4 @@ service OutportService {
     rpc SaveValidatorsRating(ValidatorsRating)  returns (ResponseData);
     rpc SaveAccounts(Accounts) returns (ResponseData);
     rpc FinalizedBlockEvent(FinalizedBlock) returns (ResponseData);
-    rpc SetOutportConfig(OutportConfig) returns (ResponseData);
 }

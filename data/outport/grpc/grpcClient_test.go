@@ -18,7 +18,6 @@ type outportServiceClientStub struct {
 	saveValidatorsRating     func(ctx context.Context, in *outport.ValidatorsRating) (*outport.ResponseData, error)
 	saveAccountsCalled       func(ctx context.Context, in *outport.Accounts) (*outport.ResponseData, error)
 	finalizedBlockEvent      func(ctx context.Context, in *outport.FinalizedBlock) (*outport.ResponseData, error)
-	setOutportConfigCalled   func(ctx context.Context, in *outport.OutportConfig) (*outport.ResponseData, error)
 }
 
 func (stub *outportServiceClientStub) SaveAccounts(ctx context.Context, in *outport.Accounts, _ ...grpc.CallOption) (*outport.ResponseData, error) {
@@ -49,10 +48,6 @@ func (stub *outportServiceClientStub) FinalizedBlockEvent(ctx context.Context, i
 	return stub.finalizedBlockEvent(ctx, in)
 }
 
-func (stub *outportServiceClientStub) SetOutportConfig(ctx context.Context, in *outport.OutportConfig, _ ...grpc.CallOption) (*outport.ResponseData, error) {
-	return stub.setOutportConfigCalled(ctx, in)
-}
-
 type outportHandlerStub struct {
 	saveBlockCalled          func(in *outport.OutportBlock) error
 	revertIndexedBlockCalled func(in *outport.BlockData) error
@@ -61,7 +56,6 @@ type outportHandlerStub struct {
 	saveValidatorsRating     func(in *outport.ValidatorsRating) error
 	saveAccountsCalled       func(in *outport.Accounts) error
 	finalizedBlockCalled     func(in *outport.FinalizedBlock) error
-	setOutportConfigCalled   func(in *outport.OutportConfig) error
 }
 
 func (stub *outportHandlerStub) SaveBlock(in *outport.OutportBlock) error {
@@ -90,10 +84,6 @@ func (stub *outportHandlerStub) SaveAccounts(in *outport.Accounts) error {
 
 func (stub *outportHandlerStub) FinalizedBlock(in *outport.FinalizedBlock) error {
 	return stub.finalizedBlockCalled(in)
-}
-
-func (stub *outportHandlerStub) SetOutportConfig(in *outport.OutportConfig) error {
-	return stub.setOutportConfigCalled(in)
 }
 
 func (stub *outportHandlerStub) IsInterfaceNil() bool {
@@ -135,7 +125,6 @@ func TestOutportClientDelegation(t *testing.T) {
 	expectedValidatorsRating := &outport.ValidatorsRating{ShardID: 4}
 	expectedAccounts := &outport.Accounts{ShardID: 5}
 	expectedFinalizedBlock := &outport.FinalizedBlock{ShardID: 6}
-	expectedOutportConfig := &outport.OutportConfig{ShardID: 7, IsInImportDBMode: true}
 
 	createClient := func(overrides *outportServiceClientStub) *outportClient {
 		client, err := NewOutportClient(&outportServiceClientStub{
@@ -158,9 +147,6 @@ func TestOutportClientDelegation(t *testing.T) {
 				return nil, nil
 			},
 			finalizedBlockEvent: func(ctx context.Context, in *outport.FinalizedBlock) (*outport.ResponseData, error) {
-				return nil, nil
-			},
-			setOutportConfigCalled: func(ctx context.Context, in *outport.OutportConfig) (*outport.ResponseData, error) {
 				return nil, nil
 			},
 		})
@@ -186,9 +172,6 @@ func TestOutportClientDelegation(t *testing.T) {
 		}
 		if overrides.finalizedBlockEvent != nil {
 			client.client.(*outportServiceClientStub).finalizedBlockEvent = overrides.finalizedBlockEvent
-		}
-		if overrides.setOutportConfigCalled != nil {
-			client.client.(*outportServiceClientStub).setOutportConfigCalled = overrides.setOutportConfigCalled
 		}
 
 		return client
@@ -301,22 +284,6 @@ func TestOutportClientDelegation(t *testing.T) {
 		})
 
 		response, returnedErr := client.FinalizedBlockEvent(context.Background(), expectedFinalizedBlock)
-
-		require.Equal(t, expectedResponse, response)
-		require.Equal(t, expectedErr, returnedErr)
-	})
-
-	t.Run("SetOutportConfig", func(t *testing.T) {
-		client := createClient(&outportServiceClientStub{
-			setOutportConfigCalled: func(ctx context.Context, in *outport.OutportConfig) (*outport.ResponseData, error) {
-				require.Equal(t, expectedOutportConfig, in)
-				require.NotNil(t, ctx)
-
-				return expectedResponse, expectedErr
-			},
-		})
-
-		response, returnedErr := client.SetOutportConfig(context.Background(), expectedOutportConfig)
 
 		require.Equal(t, expectedResponse, response)
 		require.Equal(t, expectedErr, returnedErr)

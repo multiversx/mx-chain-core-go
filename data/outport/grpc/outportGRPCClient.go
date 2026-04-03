@@ -77,11 +77,6 @@ func (ogc *OutportGRPCClient) FinalizedBlockEvent(ctx context.Context, in *outpo
 	return ogc.client.FinalizedBlockEvent(ctx, in)
 }
 
-// SetOutportConfig forwards the request to the remote outport service.
-func (ogc *OutportGRPCClient) SetOutportConfig(ctx context.Context, in *outport.OutportConfig) (*outport.ResponseData, error) {
-	return ogc.client.SetOutportConfig(ctx, in)
-}
-
 // Close closes the underlying gRPC connection.
 func (ogc *OutportGRPCClient) Close() error {
 	if ogc == nil || ogc.conn == nil {

@@ -15,7 +15,6 @@ type OutportClient interface {
 	SaveValidatorsRating(ctx context.Context, in *outport.ValidatorsRating) (*outport.ResponseData, error)
 	SaveAccounts(ctx context.Context, in *outport.Accounts) (*outport.ResponseData, error)
 	FinalizedBlockEvent(ctx context.Context, in *outport.FinalizedBlock) (*outport.ResponseData, error)
-	SetOutportConfig(ctx context.Context, in *outport.OutportConfig) (*outport.ResponseData, error)
 	IsInterfaceNil() bool
 }
 
@@ -28,6 +27,5 @@ type OutportHandler interface {
 	SaveValidatorsRating(ratingData *outport.ValidatorsRating) error
 	SaveAccounts(accountsData *outport.Accounts) error
 	FinalizedBlock(finalizedBlock *outport.FinalizedBlock) error
-	SetOutportConfig(outportConfig *outport.OutportConfig) error
 	IsInterfaceNil() bool
 }

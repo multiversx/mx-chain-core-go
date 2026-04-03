@@ -71,13 +71,6 @@ func (os *outportServer) FinalizedBlockEvent(ctx context.Context, in *outport.Fi
 	return &outport.ResponseData{}, err
 }
 
-// SetOutportConfig forwards the call to the provided handler.
-func (os *outportServer) SetOutportConfig(ctx context.Context, in *outport.OutportConfig) (*outport.ResponseData, error) {
-	err := os.handler.SetOutportConfig(in)
-
-	return &outport.ResponseData{}, err
-}
-
 // IsInterfaceNil returns true if there is no value under the interface.
 func (os *outportServer) IsInterfaceNil() bool {
 	return os == nil

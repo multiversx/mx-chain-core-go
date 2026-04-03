@@ -39,7 +39,6 @@ func TestOutportGRPCRoundTrip(t *testing.T) {
 	expectedValidatorsRating := &outport.ValidatorsRating{ShardID: 10}
 	expectedAccounts := &outport.Accounts{ShardID: 11}
 	expectedFinalizedBlock := &outport.FinalizedBlock{ShardID: 12}
-	expectedOutportConfig := &outport.OutportConfig{ShardID: 13, IsInImportDBMode: true}
 	listener := bufconn.Listen(1024 * 1024)
 
 	server, err := NewOutportGRPCServerOnListener(listener, &outportHandlerStub{
@@ -69,10 +68,6 @@ func TestOutportGRPCRoundTrip(t *testing.T) {
 		},
 		finalizedBlockCalled: func(in *outport.FinalizedBlock) error {
 			require.Equal(t, expectedFinalizedBlock, in)
-			return nil
-		},
-		setOutportConfigCalled: func(in *outport.OutportConfig) error {
-			require.Equal(t, expectedOutportConfig, in)
 			return nil
 		},
 	})
@@ -122,9 +117,6 @@ func TestOutportGRPCRoundTrip(t *testing.T) {
 	_, err = client.FinalizedBlockEvent(ctx, expectedFinalizedBlock)
 	require.NoError(t, err)
 
-	_, err = client.SetOutportConfig(ctx, expectedOutportConfig)
-	require.NoError(t, err)
-
 	server.Stop()
 	select {
 	case serveErr := <-serveErrChan:
@@ -143,7 +135,6 @@ func TestOutportGRPCRoundTripRealPort9876(t *testing.T) {
 	expectedValidatorsRating := &outport.ValidatorsRating{ShardID: 12}
 	expectedAccounts := &outport.Accounts{ShardID: 13}
 	expectedFinalizedBlock := &outport.FinalizedBlock{ShardID: 14}
-	expectedOutportConfig := &outport.OutportConfig{ShardID: 15, IsInImportDBMode: true}
 
 	listener, err := net.Listen("tcp", "127.0.0.1:9876")
 	if err != nil {
@@ -185,10 +176,6 @@ func TestOutportGRPCRoundTripRealPort9876(t *testing.T) {
 		},
 		finalizedBlockCalled: func(in *outport.FinalizedBlock) error {
 			require.Equal(t, expectedFinalizedBlock, in)
-			return nil
-		},
-		setOutportConfigCalled: func(in *outport.OutportConfig) error {
-			require.Equal(t, expectedOutportConfig, in)
 			return nil
 		},
 	})
@@ -240,10 +227,6 @@ func TestOutportGRPCRoundTripRealPort9876(t *testing.T) {
 	require.Equal(t, expectedResponse, response)
 
 	response, err = client.FinalizedBlockEvent(ctx, expectedFinalizedBlock)
-	require.NoError(t, err)
-	require.Equal(t, expectedResponse, response)
-
-	response, err = client.SetOutportConfig(ctx, expectedOutportConfig)
 	require.NoError(t, err)
 	require.Equal(t, expectedResponse, response)
 

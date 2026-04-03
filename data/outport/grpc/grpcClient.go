@@ -57,11 +57,6 @@ func (oc *outportClient) FinalizedBlockEvent(ctx context.Context, in *outport.Fi
 	return oc.client.FinalizedBlockEvent(ctx, in)
 }
 
-// SetOutportConfig forwards the call to the generated gRPC client.
-func (oc *outportClient) SetOutportConfig(ctx context.Context, in *outport.OutportConfig) (*outport.ResponseData, error) {
-	return oc.client.SetOutportConfig(ctx, in)
-}
-
 // IsInterfaceNil returns true if there is no value under the interface.
 func (oc *outportClient) IsInterfaceNil() bool {
 	return oc == nil
