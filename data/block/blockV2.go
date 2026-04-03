@@ -351,13 +351,18 @@ func (hv2 *HeaderV2) SetShardID(shId uint32) error {
 	return hv2.Header.SetShardID(shId)
 }
 
-// GetMiniBlockHeadersWithDst as a map of hashes and sender IDs
+// GetMiniBlockHeadersWithDst returns a map of hashes and sender IDs
 func (hv2 *HeaderV2) GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32 {
 	if hv2 == nil {
 		return nil
 	}
 
 	return hv2.Header.GetMiniBlockHeadersWithDst(destId)
+}
+
+// GetProposedMiniBlockHeadersWithDst returns empty map, as this method just implements the interface needed for supernova
+func (hv2 *HeaderV2) GetProposedMiniBlockHeadersWithDst(_ uint32) map[string]uint32 {
+	return make(map[string]uint32)
 }
 
 // GetOrderedCrossMiniblocksWithDst gets all cross miniblocks with the given destination shard ID, ordered in a
@@ -640,6 +645,39 @@ func (hv2 *HeaderV2) GetAdditionalData() headerVersionData.HeaderAdditionalData 
 	return additionalVersionData
 }
 
+// GetGasLimit always returns 0
+func (hv2 *HeaderV2) GetGasLimit() uint32 {
+	return 0
+}
+
+// GetLastExecutionResultHandler always returns nil
+func (hv2 *HeaderV2) GetLastExecutionResultHandler() data.LastExecutionResultHandler {
+	return nil
+}
+
+// GetExecutionResultsHandlers always returns nil
+func (hv2 *HeaderV2) GetExecutionResultsHandlers() []data.BaseExecutionResultHandler {
+	return nil
+}
+
+// SetLastExecutionResultHandler always returns an error as v2 Header has no support for execution results
+func (hv2 *HeaderV2) SetLastExecutionResultHandler(_ data.LastExecutionResultHandler) error {
+	if hv2 == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return data.ErrFieldNotSupported
+}
+
+// SetExecutionResultsHandlers always returns an error as v2 Header has no support for execution results
+func (hv2 *HeaderV2) SetExecutionResultsHandlers(_ []data.BaseExecutionResultHandler) error {
+	if hv2 == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return data.ErrFieldNotSupported
+}
+
 // CheckFieldsForNil checks a predefined set of fields for nil values
 func (hv2 *HeaderV2) CheckFieldsForNil() error {
 	if hv2 == nil {
@@ -658,4 +696,15 @@ func (hv2 *HeaderV2) CheckFieldsForNil() error {
 	}
 
 	return nil
+}
+
+// CheckFieldsIntegrity checks a predefined set of fields for integrity - included for backward compatibility
+// TODO check if we can implement meaningful integrity checks for v2 header
+func (hv2 *HeaderV2) CheckFieldsIntegrity() error {
+	return nil
+}
+
+// IsHeaderV3 returns false as this is not a v3 header
+func (hv2 *HeaderV2) IsHeaderV3() bool {
+	return false
 }

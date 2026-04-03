@@ -29,6 +29,27 @@ type TriggerRegistryHandler interface {
 	SetEpochStartHeaderHandler(epochStartHeaderHandler HeaderHandler) error
 }
 
+// MetaTriggerRegistryHandler defines setters and getters for meta trigger registry
+type MetaTriggerRegistryHandler interface {
+	GetEpoch() uint32
+	GetCurrentRound() uint64
+	GetEpochFinalityAttestingRound() uint64
+	GetCurrEpochStartRound() uint64
+	GetPrevEpochStartRound() uint64
+	GetEpochStartMetaHash() []byte
+	GetEpochChangeProposed() bool
+	GetEpochStartMetaHeaderHandler() MetaHeaderHandler
+
+	SetEpoch(epoch uint32) error
+	SetCurrentRound(round uint64) error
+	SetEpochFinalityAttestingRound(round uint64) error
+	SetCurrEpochStartRound(round uint64) error
+	SetPrevEpochStartRound(round uint64) error
+	SetEpochStartMetaHash(hash []byte) error
+	SetEpochChangeProposed(flag bool) error
+	SetEpochStartMetaHeaderHandler(header MetaHeaderHandler) error
+}
+
 // HeaderHandler defines getters and setters for header data holder
 type HeaderHandler interface {
 	GetShardID() uint32
@@ -51,12 +72,15 @@ type HeaderHandler interface {
 	GetDeveloperFees() *big.Int
 	GetReserved() []byte
 	GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32
+	GetProposedMiniBlockHeadersWithDst(destId uint32) map[string]uint32
 	GetOrderedCrossMiniblocksWithDst(destId uint32) []*MiniBlockInfo
 	GetMiniBlockHeadersHashes() [][]byte
 	GetMiniBlockHeaderHandlers() []MiniBlockHeaderHandler
 	HasScheduledSupport() bool
 	GetAdditionalData() headerVersionData.HeaderAdditionalData
 	HasScheduledMiniBlocks() bool
+	GetLastExecutionResultHandler() LastExecutionResultHandler
+	GetExecutionResultsHandlers() []BaseExecutionResultHandler
 
 	SetAccumulatedFees(value *big.Int) error
 	SetDeveloperFees(value *big.Int) error
@@ -78,11 +102,16 @@ type HeaderHandler interface {
 	SetMiniBlockHeaderHandlers(mbHeaderHandlers []MiniBlockHeaderHandler) error
 	SetReceiptsHash(hash []byte) error
 	SetScheduledRootHash(rootHash []byte) error
-	ValidateHeaderVersion() error
 	SetAdditionalData(headerVersionData headerVersionData.HeaderAdditionalData) error
+	SetLastExecutionResultHandler(resultHandler LastExecutionResultHandler) error
+	SetExecutionResultsHandlers(resultHandlers []BaseExecutionResultHandler) error
+
+	ValidateHeaderVersion() error
 	IsStartOfEpochBlock() bool
 	ShallowClone() HeaderHandler
 	CheckFieldsForNil() error
+	CheckFieldsIntegrity() error
+	IsHeaderV3() bool
 	IsInterfaceNil() bool
 }
 
@@ -99,6 +128,75 @@ type HeaderProofHandler interface {
 	IsInterfaceNil() bool
 }
 
+// LastExecutionResultHandler defines the interface for the last execution result
+type LastExecutionResultHandler interface {
+	Equal(other interface{}) bool
+	IsInterfaceNil() bool
+}
+
+// BaseExecutionResultHandler defines getters and setters for the base execution result
+type BaseExecutionResultHandler interface {
+	GetHeaderHash() []byte
+	GetHeaderNonce() uint64
+	GetHeaderRound() uint64
+	GetHeaderEpoch() uint32
+	GetRootHash() []byte
+	GetGasUsed() uint64
+	Equal(other interface{}) bool
+	IsInterfaceNil() bool
+}
+
+// LastShardExecutionResultHandler defines the getters for shard execution result info
+type LastShardExecutionResultHandler interface {
+	GetNotarizedInRound() uint64
+	GetExecutionResultHandler() BaseExecutionResultHandler
+	Equal(other interface{}) bool
+	IsInterfaceNil() bool
+}
+
+// LastMetaExecutionResultHandler defines the getter for meta execution result info
+type LastMetaExecutionResultHandler interface {
+	GetNotarizedInRound() uint64
+	GetExecutionResultHandler() BaseMetaExecutionResultHandler
+	Equal(other interface{}) bool
+	IsInterfaceNil() bool
+}
+
+// BaseMetaExecutionResultHandler defines getter and setters for a base meta execution result
+type BaseMetaExecutionResultHandler interface {
+	BaseExecutionResultHandler
+	GetValidatorStatsRootHash() []byte
+	GetAccumulatedFeesInEpoch() *big.Int
+	GetDevFeesInEpoch() *big.Int
+	Equal(other interface{}) bool
+	IsInterfaceNil() bool
+}
+
+// MetaExecutionResultHandler defines getter for a meta execution result
+type MetaExecutionResultHandler interface {
+	BaseMetaExecutionResultHandler
+	GetMiniBlockHeadersHandlers() []MiniBlockHeaderHandler
+	SetMiniBlockHeadersHandlers(mbs []MiniBlockHeaderHandler) error
+	GetReceiptsHash() []byte
+	GetDeveloperFees() *big.Int
+	GetAccumulatedFees() *big.Int
+	GetExecutedTxCount() uint64
+	IsInterfaceNil() bool
+}
+
+// ExecutionResultHandler defines getters and setters for the execution result
+type ExecutionResultHandler interface {
+	BaseExecutionResultHandler
+	GetReceiptsHash() []byte
+	GetMiniBlockHeadersHandlers() []MiniBlockHeaderHandler
+	SetMiniBlockHeadersHandlers(mbs []MiniBlockHeaderHandler) error
+	GetDeveloperFees() *big.Int
+	GetAccumulatedFees() *big.Int
+	GetExecutedTxCount() uint64
+	Equal(other interface{}) bool
+	IsInterfaceNil() bool
+}
+
 // ShardHeaderHandler defines getters and setters for the shard block header
 type ShardHeaderHandler interface {
 	HeaderHandler
@@ -109,6 +207,7 @@ type ShardHeaderHandler interface {
 	SetMetaBlockHashes(hashes [][]byte) error
 	MapMiniBlockHashesToShards() map[string]uint32
 	SetBlockBodyTypeInt32(blockBodyType int32) error
+	GetGasLimit() uint32
 }
 
 // MetaHeaderHandler defines getters and setters for the meta block header
@@ -116,12 +215,18 @@ type MetaHeaderHandler interface {
 	HeaderHandler
 	GetValidatorStatsRootHash() []byte
 	GetEpochStartHandler() EpochStartHandler
+	GetAccumulatedFeesInEpoch() *big.Int
 	GetDevFeesInEpoch() *big.Int
 	GetShardInfoHandlers() []ShardDataHandler
+	GetShardInfoProposalHandlers() []ShardDataProposalHandler
 	SetValidatorStatsRootHash(rHash []byte) error
 	SetDevFeesInEpoch(value *big.Int) error
 	SetShardInfoHandlers(shardInfo []ShardDataHandler) error
+	SetShardInfoProposalHandlers(shardInfo []ShardDataProposalHandler) error
 	SetAccumulatedFeesInEpoch(value *big.Int) error
+	SetEpochChangeProposed(value bool)
+	SetEpochStartHandler(epochStartHandler EpochStartHandler) error
+	IsEpochChangeProposed() bool
 }
 
 // MiniBlockHeaderHandler defines setters and getters for miniBlock headers
@@ -170,12 +275,14 @@ type ShardDataHandler interface {
 	GetRound() uint64
 	GetPrevHash() []byte
 	GetNonce() uint64
+	GetEpoch() uint32
 	GetAccumulatedFees() *big.Int
 	GetDeveloperFees() *big.Int
 	GetNumPendingMiniBlocks() uint32
 	GetLastIncludedMetaNonce() uint64
 	GetShardID() uint32
 	GetTxCount() uint32
+	Equal(that interface{}) bool
 
 	SetHeaderHash(hash []byte) error
 	SetShardMiniBlockHeaderHandlers(mbHeaderHandlers []MiniBlockHeaderHandler) error
@@ -195,6 +302,24 @@ type ShardDataHandler interface {
 	ShallowClone() ShardDataHandler
 }
 
+// ShardDataProposalHandler defines the behavior of a shard data proposal
+type ShardDataProposalHandler interface {
+	GetHeaderHash() []byte
+	SetHeaderHash(headerHash []byte) error
+	GetRound() uint64
+	SetRound(round uint64) error
+	GetNonce() uint64
+	SetNonce(nonce uint64) error
+	GetShardID() uint32
+	SetShardID(shardID uint32) error
+	GetEpoch() uint32
+	SetEpoch(epoch uint32) error
+	GetNumPendingMiniBlocks() uint32
+	SetNumPendingMiniBlocks(numPending uint32) error
+	Equal(that interface{}) bool
+	IsInterfaceNil() bool
+}
+
 // EpochStartShardDataHandler defines setters and getters for EpochStartShardData
 type EpochStartShardDataHandler interface {
 	GetShardID() uint32
@@ -203,6 +328,7 @@ type EpochStartShardDataHandler interface {
 	GetNonce() uint64
 	GetHeaderHash() []byte
 	GetRootHash() []byte
+	GetScheduledRootHash() []byte
 	GetFirstPendingMetaBlock() []byte
 	GetLastFinishedMetaBlock() []byte
 	GetPendingMiniBlockHeaderHandlers() []MiniBlockHeaderHandler
@@ -264,12 +390,18 @@ type ChainHandler interface {
 	GetGenesisHeaderHash() []byte
 	SetGenesisHeaderHash(hash []byte)
 	GetCurrentBlockHeader() HeaderHandler
+	SetCurrentBlockHeader(bh HeaderHandler) error
 	SetCurrentBlockHeaderAndRootHash(bh HeaderHandler, rootHash []byte) error
 	GetCurrentBlockHeaderHash() []byte
 	SetCurrentBlockHeaderHash(hash []byte)
 	GetCurrentBlockRootHash() []byte
 	SetFinalBlockInfo(nonce uint64, blockHash []byte, rootHash []byte)
 	GetFinalBlockInfo() (nonce uint64, blockHash []byte, rootHash []byte)
+	GetLastExecutedBlockInfo() (uint64, []byte, []byte)
+	GetLastExecutedBlockHeader() HeaderHandler
+	SetLastExecutedBlockHeaderAndRootHash(header HeaderHandler, headerHash []byte, rootHash []byte)
+	GetLastExecutionResult() BaseExecutionResultHandler
+	SetLastExecutionResult(result BaseExecutionResultHandler)
 	IsInterfaceNil() bool
 }
 
@@ -343,6 +475,12 @@ type LogHandler interface {
 	GetLogEvents() []EventHandler
 
 	IsInterfaceNil() bool
+}
+
+// LogDataHandler holds the data needed for indexing logs and events
+type LogDataHandler interface {
+	GetLogHandler() LogHandler
+	GetTxHash() string
 }
 
 // EventHandler defines the type for an event resulted from a smart contract call contained in a log

@@ -22,3 +22,8 @@ message Log {
     bytes Address         = 1 [(gogoproto.jsontag) = "address"];
     repeated Event Events = 2 [(gogoproto.jsontag) = "events"];
 }
+
+message LogData {
+    string TxHash = 1 [(gogoproto.jsontag) = "txHash"];
+    Log    Log    = 2 [(gogoproto.jsontag) = "log"];
+}

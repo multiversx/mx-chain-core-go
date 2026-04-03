@@ -46,6 +46,9 @@ var ErrLeafSizeTooBig = errors.New("leaf size too big")
 // ErrNilValue signals the value is nil
 var ErrNilValue = errors.New("nil value")
 
+// ErrNotNilValue signals the value is not nil when it should be
+var ErrNotNilValue = errors.New("not nil value")
+
 // ErrNilSignature signals that a operation has been attempted with a nil signature
 var ErrNilSignature = errors.New("nil signature")
 
@@ -84,3 +87,6 @@ var ErrWrongTransactionsTypeSize = errors.New("wrong transactions type size")
 
 // ErrNilReservedField signals that a nil reserved field was provided
 var ErrNilReservedField = errors.New("reserved field is nil")
+
+// ErrFieldNotSupported signals that a field is not supported
+var ErrFieldNotSupported = errors.New("field not supported")

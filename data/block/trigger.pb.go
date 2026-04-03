@@ -232,6 +232,109 @@ func (m *ShardTriggerRegistryV2) GetEpochMetaBlockHash() []byte {
 	return nil
 }
 
+type ShardTriggerRegistryV3 struct {
+	EpochStartShardHeader       *HeaderV3 `protobuf:"bytes,1,opt,name=EpochStartShardHeader,proto3" json:"EpochStartShardHeader,omitempty"`
+	IsEpochStart                bool      `protobuf:"varint,2,opt,name=IsEpochStart,proto3" json:"IsEpochStart,omitempty"`
+	NewEpochHeaderReceived      bool      `protobuf:"varint,3,opt,name=NewEpochHeaderReceived,proto3" json:"NewEpochHeaderReceived,omitempty"`
+	Epoch                       uint32    `protobuf:"varint,4,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
+	MetaEpoch                   uint32    `protobuf:"varint,5,opt,name=MetaEpoch,proto3" json:"MetaEpoch,omitempty"`
+	CurrentRoundIndex           int64     `protobuf:"varint,6,opt,name=CurrentRoundIndex,proto3" json:"CurrentRoundIndex,omitempty"`
+	EpochStartRound             uint64    `protobuf:"varint,7,opt,name=EpochStartRound,proto3" json:"EpochStartRound,omitempty"`
+	EpochFinalityAttestingRound uint64    `protobuf:"varint,8,opt,name=EpochFinalityAttestingRound,proto3" json:"EpochFinalityAttestingRound,omitempty"`
+	EpochMetaBlockHash          []byte    `protobuf:"bytes,9,opt,name=EpochMetaBlockHash,proto3" json:"EpochMetaBlockHash,omitempty"`
+}
+
+func (m *ShardTriggerRegistryV3) Reset()      { *m = ShardTriggerRegistryV3{} }
+func (*ShardTriggerRegistryV3) ProtoMessage() {}
+func (*ShardTriggerRegistryV3) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8c31e6d8b4368946, []int{2}
+}
+func (m *ShardTriggerRegistryV3) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *ShardTriggerRegistryV3) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *ShardTriggerRegistryV3) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_ShardTriggerRegistryV3.Merge(m, src)
+}
+func (m *ShardTriggerRegistryV3) XXX_Size() int {
+	return m.Size()
+}
+func (m *ShardTriggerRegistryV3) XXX_DiscardUnknown() {
+	xxx_messageInfo_ShardTriggerRegistryV3.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_ShardTriggerRegistryV3 proto.InternalMessageInfo
+
+func (m *ShardTriggerRegistryV3) GetEpochStartShardHeader() *HeaderV3 {
+	if m != nil {
+		return m.EpochStartShardHeader
+	}
+	return nil
+}
+
+func (m *ShardTriggerRegistryV3) GetIsEpochStart() bool {
+	if m != nil {
+		return m.IsEpochStart
+	}
+	return false
+}
+
+func (m *ShardTriggerRegistryV3) GetNewEpochHeaderReceived() bool {
+	if m != nil {
+		return m.NewEpochHeaderReceived
+	}
+	return false
+}
+
+func (m *ShardTriggerRegistryV3) GetEpoch() uint32 {
+	if m != nil {
+		return m.Epoch
+	}
+	return 0
+}
+
+func (m *ShardTriggerRegistryV3) GetMetaEpoch() uint32 {
+	if m != nil {
+		return m.MetaEpoch
+	}
+	return 0
+}
+
+func (m *ShardTriggerRegistryV3) GetCurrentRoundIndex() int64 {
+	if m != nil {
+		return m.CurrentRoundIndex
+	}
+	return 0
+}
+
+func (m *ShardTriggerRegistryV3) GetEpochStartRound() uint64 {
+	if m != nil {
+		return m.EpochStartRound
+	}
+	return 0
+}
+
+func (m *ShardTriggerRegistryV3) GetEpochFinalityAttestingRound() uint64 {
+	if m != nil {
+		return m.EpochFinalityAttestingRound
+	}
+	return 0
+}
+
+func (m *ShardTriggerRegistryV3) GetEpochMetaBlockHash() []byte {
+	if m != nil {
+		return m.EpochMetaBlockHash
+	}
+	return nil
+}
+
 type MetaTriggerRegistry struct {
 	Epoch                       uint32     `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
 	CurrentRound                uint64     `protobuf:"varint,2,opt,name=CurrentRound,proto3" json:"CurrentRound,omitempty"`
@@ -245,7 +348,7 @@ type MetaTriggerRegistry struct {
 func (m *MetaTriggerRegistry) Reset()      { *m = MetaTriggerRegistry{} }
 func (*MetaTriggerRegistry) ProtoMessage() {}
 func (*MetaTriggerRegistry) Descriptor() ([]byte, []int) {
-	return fileDescriptor_8c31e6d8b4368946, []int{2}
+	return fileDescriptor_8c31e6d8b4368946, []int{3}
 }
 func (m *MetaTriggerRegistry) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -319,50 +422,151 @@ func (m *MetaTriggerRegistry) GetEpochStartMeta() *MetaBlock {
 	return nil
 }
 
+type MetaTriggerRegistryV3 struct {
+	Epoch                       uint32       `protobuf:"varint,1,opt,name=Epoch,proto3" json:"Epoch,omitempty"`
+	CurrentRound                uint64       `protobuf:"varint,2,opt,name=CurrentRound,proto3" json:"CurrentRound,omitempty"`
+	EpochFinalityAttestingRound uint64       `protobuf:"varint,3,opt,name=EpochFinalityAttestingRound,proto3" json:"EpochFinalityAttestingRound,omitempty"`
+	CurrEpochStartRound         uint64       `protobuf:"varint,4,opt,name=CurrEpochStartRound,proto3" json:"CurrEpochStartRound,omitempty"`
+	PrevEpochStartRound         uint64       `protobuf:"varint,5,opt,name=PrevEpochStartRound,proto3" json:"PrevEpochStartRound,omitempty"`
+	EpochStartMetaHash          []byte       `protobuf:"bytes,6,opt,name=EpochStartMetaHash,proto3" json:"EpochStartMetaHash,omitempty"`
+	EpochChangeProposed         bool         `protobuf:"varint,7,opt,name=EpochChangeProposed,proto3" json:"EpochChangeProposed,omitempty"`
+	EpochStartMeta              *MetaBlockV3 `protobuf:"bytes,8,opt,name=EpochStartMeta,proto3" json:"EpochStartMeta,omitempty"`
+}
+
+func (m *MetaTriggerRegistryV3) Reset()      { *m = MetaTriggerRegistryV3{} }
+func (*MetaTriggerRegistryV3) ProtoMessage() {}
+func (*MetaTriggerRegistryV3) Descriptor() ([]byte, []int) {
+	return fileDescriptor_8c31e6d8b4368946, []int{4}
+}
+func (m *MetaTriggerRegistryV3) XXX_Unmarshal(b []byte) error {
+	return m.Unmarshal(b)
+}
+func (m *MetaTriggerRegistryV3) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
+	b = b[:cap(b)]
+	n, err := m.MarshalToSizedBuffer(b)
+	if err != nil {
+		return nil, err
+	}
+	return b[:n], nil
+}
+func (m *MetaTriggerRegistryV3) XXX_Merge(src proto.Message) {
+	xxx_messageInfo_MetaTriggerRegistryV3.Merge(m, src)
+}
+func (m *MetaTriggerRegistryV3) XXX_Size() int {
+	return m.Size()
+}
+func (m *MetaTriggerRegistryV3) XXX_DiscardUnknown() {
+	xxx_messageInfo_MetaTriggerRegistryV3.DiscardUnknown(m)
+}
+
+var xxx_messageInfo_MetaTriggerRegistryV3 proto.InternalMessageInfo
+
+func (m *MetaTriggerRegistryV3) GetEpoch() uint32 {
+	if m != nil {
+		return m.Epoch
+	}
+	return 0
+}
+
+func (m *MetaTriggerRegistryV3) GetCurrentRound() uint64 {
+	if m != nil {
+		return m.CurrentRound
+	}
+	return 0
+}
+
+func (m *MetaTriggerRegistryV3) GetEpochFinalityAttestingRound() uint64 {
+	if m != nil {
+		return m.EpochFinalityAttestingRound
+	}
+	return 0
+}
+
+func (m *MetaTriggerRegistryV3) GetCurrEpochStartRound() uint64 {
+	if m != nil {
+		return m.CurrEpochStartRound
+	}
+	return 0
+}
+
+func (m *MetaTriggerRegistryV3) GetPrevEpochStartRound() uint64 {
+	if m != nil {
+		return m.PrevEpochStartRound
+	}
+	return 0
+}
+
+func (m *MetaTriggerRegistryV3) GetEpochStartMetaHash() []byte {
+	if m != nil {
+		return m.EpochStartMetaHash
+	}
+	return nil
+}
+
+func (m *MetaTriggerRegistryV3) GetEpochChangeProposed() bool {
+	if m != nil {
+		return m.EpochChangeProposed
+	}
+	return false
+}
+
+func (m *MetaTriggerRegistryV3) GetEpochStartMeta() *MetaBlockV3 {
+	if m != nil {
+		return m.EpochStartMeta
+	}
+	return nil
+}
+
 func init() {
 	proto.RegisterType((*ShardTriggerRegistry)(nil), "proto.ShardTriggerRegistry")
 	proto.RegisterType((*ShardTriggerRegistryV2)(nil), "proto.ShardTriggerRegistryV2")
+	proto.RegisterType((*ShardTriggerRegistryV3)(nil), "proto.ShardTriggerRegistryV3")
 	proto.RegisterType((*MetaTriggerRegistry)(nil), "proto.MetaTriggerRegistry")
+	proto.RegisterType((*MetaTriggerRegistryV3)(nil), "proto.MetaTriggerRegistryV3")
 }
 
 func init() { proto.RegisterFile("trigger.proto", fileDescriptor_8c31e6d8b4368946) }
 
 var fileDescriptor_8c31e6d8b4368946 = []byte{
-	// 532 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x9c, 0x54, 0xcb, 0x6e, 0xd3, 0x40,
-	0x14, 0xf5, 0xc4, 0x76, 0x9a, 0x4c, 0x12, 0x02, 0xd3, 0x52, 0x59, 0x05, 0x8d, 0x2c, 0xaf, 0xbc,
-	0x80, 0x14, 0x19, 0x09, 0xb1, 0x03, 0x5a, 0x15, 0xb5, 0x8b, 0x22, 0x34, 0x45, 0x59, 0xb0, 0x73,
-	0xe2, 0xc1, 0xb1, 0x68, 0xed, 0x6a, 0x32, 0x29, 0x74, 0xc7, 0x27, 0xf0, 0x19, 0xfc, 0x00, 0x0b,
-	0xfe, 0x80, 0x65, 0x96, 0xd9, 0x41, 0x9c, 0x0d, 0xcb, 0x7e, 0x02, 0xf2, 0x75, 0x48, 0x62, 0xd7,
-	0xa6, 0x8f, 0x55, 0x72, 0xcf, 0xb9, 0xe7, 0xce, 0xcc, 0xb9, 0x27, 0xc1, 0x2d, 0x29, 0x02, 0xdf,
-	0xe7, 0xa2, 0x73, 0x2a, 0x22, 0x19, 0x11, 0x1d, 0x3e, 0xb6, 0x1e, 0xfb, 0x81, 0x1c, 0x8c, 0x7a,
-	0x9d, 0x7e, 0x74, 0xb2, 0xed, 0x47, 0x7e, 0xb4, 0x0d, 0x70, 0x6f, 0xf4, 0x01, 0x2a, 0x28, 0xe0,
-	0x5b, 0xaa, 0xda, 0x6a, 0xf4, 0x8e, 0xa3, 0xfe, 0xc7, 0x79, 0xd1, 0x82, 0xa2, 0xeb, 0xcc, 0xcb,
-	0xf6, 0x09, 0x97, 0xee, 0xce, 0x92, 0xb7, 0xbe, 0xab, 0x78, 0xe3, 0x68, 0xe0, 0x0a, 0xef, 0x5d,
-	0x7a, 0x32, 0xe3, 0x7e, 0x30, 0x94, 0xe2, 0x9c, 0x58, 0xb8, 0x79, 0x30, 0xdc, 0x3b, 0x8d, 0xfa,
-	0x83, 0x23, 0xe9, 0x0a, 0x69, 0x20, 0x13, 0xd9, 0x35, 0x96, 0xc1, 0xc8, 0x33, 0xbc, 0xf9, 0x86,
-	0x7f, 0x02, 0x60, 0x9f, 0xbb, 0x5e, 0xa2, 0xee, 0xf3, 0xe0, 0x8c, 0x7b, 0x46, 0x05, 0xba, 0x4b,
-	0x58, 0xb2, 0x81, 0x75, 0x80, 0x0d, 0xd5, 0x44, 0x76, 0x8b, 0xa5, 0x05, 0x79, 0x88, 0xeb, 0x87,
-	0x5c, 0xba, 0x29, 0xa3, 0x01, 0xb3, 0x04, 0xc8, 0x23, 0x7c, 0x6f, 0x77, 0x24, 0x04, 0x0f, 0x25,
-	0x8b, 0x46, 0xa1, 0x77, 0x10, 0x7a, 0xfc, 0xb3, 0xa1, 0x9b, 0xc8, 0x56, 0xd9, 0x65, 0x82, 0xd8,
-	0xb8, 0xbd, 0xbc, 0x27, 0xe0, 0x46, 0xd5, 0x44, 0xb6, 0xc6, 0xf2, 0x30, 0x79, 0x89, 0x1f, 0x00,
-	0xf4, 0x3a, 0x08, 0xdd, 0xe3, 0x40, 0x9e, 0xbf, 0x92, 0x92, 0x0f, 0x65, 0x10, 0xfa, 0xa9, 0x6a,
-	0x0d, 0x54, 0xff, 0x6b, 0x21, 0x1d, 0x4c, 0x80, 0x3e, 0xfc, 0x67, 0xed, 0xbe, 0x3b, 0x1c, 0x18,
-	0x35, 0x13, 0xd9, 0x4d, 0x56, 0xc0, 0x90, 0x5d, 0x7c, 0x7f, 0x79, 0x09, 0xf0, 0x3e, 0xb5, 0xc7,
-	0xa8, 0x9b, 0xc8, 0x6e, 0x38, 0xad, 0x74, 0x33, 0x9d, 0xb9, 0x67, 0xc5, 0xbd, 0xd6, 0x0f, 0x15,
-	0x6f, 0x16, 0xed, 0xad, 0xeb, 0x90, 0xbd, 0xb2, 0xf9, 0x08, 0xe6, 0xb7, 0x33, 0xf3, 0xbb, 0x4e,
-	0xc9, 0x09, 0x97, 0x02, 0x50, 0xb9, 0x51, 0x00, 0xd4, 0xeb, 0x05, 0x40, 0x2b, 0x0d, 0x80, 0x7e,
-	0xad, 0x00, 0x54, 0x6f, 0x10, 0x80, 0xb5, 0x5b, 0x05, 0xa0, 0x76, 0xdb, 0x00, 0xd4, 0xcb, 0x02,
-	0x60, 0xfd, 0xaa, 0xe0, 0xf5, 0x04, 0xc9, 0xff, 0xe4, 0x16, 0xae, 0xa0, 0x55, 0x57, 0x2c, 0xdc,
-	0x5c, 0x7d, 0x1e, 0xec, 0x41, 0x63, 0x19, 0xec, 0xaa, 0x37, 0xa8, 0x57, 0xbf, 0xe1, 0x09, 0x5e,
-	0x4f, 0x26, 0xe6, 0x3d, 0xd3, 0x40, 0x59, 0x44, 0x25, 0x8a, 0xb7, 0x82, 0x9f, 0xe5, 0x15, 0x7a,
-	0xaa, 0x28, 0xa0, 0x16, 0x3e, 0x01, 0x94, 0x18, 0x00, 0x3e, 0x55, 0x57, 0x7c, 0xca, 0x30, 0xe4,
-	0x39, 0xbe, 0x93, 0x45, 0x61, 0x85, 0x0d, 0xe7, 0xee, 0x3c, 0xc1, 0x0b, 0x57, 0x59, 0xae, 0x6f,
-	0xe7, 0xc5, 0x78, 0x4a, 0x95, 0xc9, 0x94, 0x2a, 0x17, 0x53, 0x8a, 0xbe, 0xc4, 0x14, 0x7d, 0x8b,
-	0x29, 0xfa, 0x19, 0x53, 0x34, 0x8e, 0x29, 0x9a, 0xc4, 0x14, 0xfd, 0x8e, 0x29, 0xfa, 0x13, 0x53,
-	0xe5, 0x22, 0xa6, 0xe8, 0xeb, 0x8c, 0x2a, 0xe3, 0x19, 0x55, 0x26, 0x33, 0xaa, 0xbc, 0xd7, 0xe1,
-	0xff, 0xb2, 0x57, 0x85, 0x13, 0x9e, 0xfe, 0x0d, 0x00, 0x00, 0xff, 0xff, 0x15, 0x5a, 0xda, 0x3b,
-	0x91, 0x05, 0x00, 0x00,
+	// 603 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xec, 0x56, 0xb1, 0x6e, 0xda, 0x50,
+	0x14, 0xf5, 0xc3, 0x98, 0xc0, 0x03, 0x4a, 0xf3, 0x48, 0x22, 0x2b, 0xad, 0x9e, 0x2c, 0x26, 0x0f,
+	0x2d, 0x89, 0xb0, 0x54, 0x55, 0x5d, 0xda, 0x06, 0xa5, 0x4a, 0x86, 0x54, 0x91, 0x53, 0x31, 0x74,
+	0x33, 0xf0, 0x6a, 0xac, 0x26, 0x36, 0x7a, 0x3c, 0xd2, 0x66, 0xeb, 0x27, 0x74, 0xe9, 0x3f, 0xf4,
+	0x07, 0x3a, 0xf4, 0x0f, 0x3a, 0x32, 0xb2, 0xb5, 0x98, 0xa5, 0x63, 0x3e, 0xa1, 0xe2, 0x9a, 0x00,
+	0x36, 0x76, 0x13, 0x32, 0x64, 0xca, 0x04, 0xf7, 0x9c, 0x7b, 0xaf, 0xdf, 0x3b, 0xe7, 0x80, 0x8c,
+	0x8b, 0x82, 0x3b, 0xb6, 0xcd, 0x78, 0xb5, 0xcb, 0x3d, 0xe1, 0x11, 0x05, 0x3e, 0xb6, 0x9f, 0xda,
+	0x8e, 0xe8, 0xf4, 0x9b, 0xd5, 0x96, 0x77, 0xb6, 0x63, 0x7b, 0xb6, 0xb7, 0x03, 0x70, 0xb3, 0xff,
+	0x01, 0x2a, 0x28, 0xe0, 0x5b, 0x30, 0xb5, 0x9d, 0x6f, 0x9e, 0x7a, 0xad, 0x8f, 0xd3, 0xa2, 0x08,
+	0x45, 0xa3, 0x16, 0x2e, 0x8d, 0x69, 0x59, 0x3a, 0x63, 0xc2, 0xda, 0x5b, 0x68, 0x5f, 0x9f, 0x01,
+	0x57, 0x3d, 0x95, 0x1f, 0x32, 0xde, 0x38, 0xe9, 0x58, 0xbc, 0xfd, 0x2e, 0x38, 0x9b, 0xc9, 0x6c,
+	0xa7, 0x27, 0xf8, 0x05, 0xa9, 0xe0, 0xc2, 0x61, 0x6f, 0xbf, 0xeb, 0xb5, 0x3a, 0x27, 0xc2, 0xe2,
+	0x42, 0x45, 0x1a, 0xd2, 0xb3, 0x66, 0x08, 0x23, 0xcf, 0xf0, 0xd6, 0x5b, 0xf6, 0x09, 0x80, 0x03,
+	0x66, 0xb5, 0x27, 0xd3, 0x2d, 0xe6, 0x9c, 0xb3, 0xb6, 0x9a, 0x82, 0xee, 0x04, 0x96, 0x6c, 0x60,
+	0x05, 0x60, 0x55, 0xd6, 0x90, 0x5e, 0x34, 0x83, 0x82, 0x3c, 0xc6, 0xb9, 0x23, 0x26, 0xac, 0x80,
+	0x49, 0x03, 0x33, 0x07, 0xc8, 0x13, 0xbc, 0x5e, 0xef, 0x73, 0xce, 0x5c, 0x61, 0x7a, 0x7d, 0xb7,
+	0x7d, 0xe8, 0xb6, 0xd9, 0x67, 0x55, 0xd1, 0x90, 0x2e, 0x9b, 0xcb, 0x04, 0xd1, 0x71, 0x69, 0x7e,
+	0x4e, 0xc0, 0xd5, 0x8c, 0x86, 0xf4, 0xb4, 0x19, 0x85, 0xc9, 0x2b, 0xfc, 0x08, 0xa0, 0x37, 0x8e,
+	0x6b, 0x9d, 0x3a, 0xe2, 0xe2, 0xb5, 0x10, 0xac, 0x27, 0x1c, 0xd7, 0x0e, 0xa6, 0xd6, 0x60, 0xea,
+	0x7f, 0x2d, 0xa4, 0x8a, 0x09, 0xd0, 0x47, 0x57, 0xe2, 0x1e, 0x58, 0xbd, 0x8e, 0x9a, 0xd5, 0x90,
+	0x5e, 0x30, 0x63, 0x18, 0x52, 0xc7, 0x9b, 0xf3, 0x43, 0x80, 0xf6, 0x81, 0x3c, 0x6a, 0x4e, 0x43,
+	0x7a, 0xbe, 0x56, 0x0c, 0x9c, 0xa9, 0x4e, 0x35, 0x8b, 0xef, 0xad, 0xfc, 0x94, 0xf1, 0x56, 0x9c,
+	0x6f, 0x8d, 0x1a, 0xd9, 0x4f, 0xda, 0x8f, 0x60, 0x7f, 0x29, 0xb4, 0xbf, 0x51, 0x4b, 0x78, 0xc2,
+	0x52, 0x00, 0x52, 0x2b, 0x05, 0x40, 0xbe, 0x59, 0x00, 0xd2, 0x89, 0x01, 0x50, 0x6e, 0x14, 0x80,
+	0xcc, 0x0a, 0x01, 0x58, 0xbb, 0x55, 0x00, 0xb2, 0xb7, 0x0d, 0x40, 0x2e, 0x29, 0x00, 0xc9, 0xde,
+	0x19, 0x2b, 0x7a, 0x67, 0xdc, 0x7b, 0x77, 0xd7, 0xde, 0xfd, 0x4e, 0xe1, 0xf2, 0x04, 0x89, 0xfe,
+	0x5d, 0xce, 0x54, 0x41, 0x8b, 0xaa, 0x54, 0x70, 0x61, 0xf1, 0x7a, 0xe0, 0x43, 0xda, 0x0c, 0x61,
+	0xd7, 0xdd, 0x41, 0xbe, 0xfe, 0x0e, 0xbb, 0xb8, 0x3c, 0xd9, 0x18, 0xd5, 0x2c, 0x0d, 0x93, 0x71,
+	0xd4, 0x64, 0xe2, 0x98, 0xb3, 0xf3, 0xe8, 0x84, 0x12, 0x4c, 0xc4, 0x50, 0x33, 0x9d, 0x00, 0x9a,
+	0x08, 0x00, 0x3a, 0x65, 0x16, 0x74, 0x0a, 0x31, 0xe4, 0x39, 0x7e, 0x10, 0x46, 0xc1, 0xc2, 0x7c,
+	0xed, 0xe1, 0x34, 0xc1, 0x33, 0x55, 0xcd, 0x48, 0x5f, 0xe5, 0x9b, 0x8c, 0x37, 0x63, 0x14, 0x6e,
+	0x18, 0xf7, 0x1a, 0x47, 0x34, 0xde, 0xc5, 0x65, 0x40, 0xeb, 0x1d, 0xcb, 0xb5, 0xd9, 0x31, 0xf7,
+	0xba, 0x5e, 0x8f, 0x05, 0xbf, 0x95, 0xac, 0x19, 0x47, 0x91, 0x17, 0x4b, 0xae, 0x64, 0xc1, 0x15,
+	0x12, 0x75, 0xa5, 0x61, 0x44, 0x7d, 0xd9, 0x7b, 0x39, 0x18, 0x51, 0x69, 0x38, 0xa2, 0xd2, 0xe5,
+	0x88, 0xa2, 0x2f, 0x3e, 0x45, 0xdf, 0x7d, 0x8a, 0x7e, 0xf9, 0x14, 0x0d, 0x7c, 0x8a, 0x86, 0x3e,
+	0x45, 0x7f, 0x7c, 0x8a, 0xfe, 0xfa, 0x54, 0xba, 0xf4, 0x29, 0xfa, 0x3a, 0xa6, 0xd2, 0x60, 0x4c,
+	0xa5, 0xe1, 0x98, 0x4a, 0xef, 0x15, 0x78, 0x2d, 0x69, 0x66, 0xe0, 0x19, 0xc6, 0xbf, 0x00, 0x00,
+	0x00, 0xff, 0xff, 0xe2, 0x2f, 0xbe, 0x28, 0x07, 0x09, 0x00, 0x00,
 }
 
 func (this *ShardTriggerRegistry) Equal(that interface{}) bool {
@@ -461,6 +665,54 @@ func (this *ShardTriggerRegistryV2) Equal(that interface{}) bool {
 	}
 	return true
 }
+func (this *ShardTriggerRegistryV3) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*ShardTriggerRegistryV3)
+	if !ok {
+		that2, ok := that.(ShardTriggerRegistryV3)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if !this.EpochStartShardHeader.Equal(that1.EpochStartShardHeader) {
+		return false
+	}
+	if this.IsEpochStart != that1.IsEpochStart {
+		return false
+	}
+	if this.NewEpochHeaderReceived != that1.NewEpochHeaderReceived {
+		return false
+	}
+	if this.Epoch != that1.Epoch {
+		return false
+	}
+	if this.MetaEpoch != that1.MetaEpoch {
+		return false
+	}
+	if this.CurrentRoundIndex != that1.CurrentRoundIndex {
+		return false
+	}
+	if this.EpochStartRound != that1.EpochStartRound {
+		return false
+	}
+	if this.EpochFinalityAttestingRound != that1.EpochFinalityAttestingRound {
+		return false
+	}
+	if !bytes.Equal(this.EpochMetaBlockHash, that1.EpochMetaBlockHash) {
+		return false
+	}
+	return true
+}
 func (this *MetaTriggerRegistry) Equal(that interface{}) bool {
 	if that == nil {
 		return this == nil
@@ -496,6 +748,51 @@ func (this *MetaTriggerRegistry) Equal(that interface{}) bool {
 		return false
 	}
 	if !bytes.Equal(this.EpochStartMetaHash, that1.EpochStartMetaHash) {
+		return false
+	}
+	if !this.EpochStartMeta.Equal(that1.EpochStartMeta) {
+		return false
+	}
+	return true
+}
+func (this *MetaTriggerRegistryV3) Equal(that interface{}) bool {
+	if that == nil {
+		return this == nil
+	}
+
+	that1, ok := that.(*MetaTriggerRegistryV3)
+	if !ok {
+		that2, ok := that.(MetaTriggerRegistryV3)
+		if ok {
+			that1 = &that2
+		} else {
+			return false
+		}
+	}
+	if that1 == nil {
+		return this == nil
+	} else if this == nil {
+		return false
+	}
+	if this.Epoch != that1.Epoch {
+		return false
+	}
+	if this.CurrentRound != that1.CurrentRound {
+		return false
+	}
+	if this.EpochFinalityAttestingRound != that1.EpochFinalityAttestingRound {
+		return false
+	}
+	if this.CurrEpochStartRound != that1.CurrEpochStartRound {
+		return false
+	}
+	if this.PrevEpochStartRound != that1.PrevEpochStartRound {
+		return false
+	}
+	if !bytes.Equal(this.EpochStartMetaHash, that1.EpochStartMetaHash) {
+		return false
+	}
+	if this.EpochChangeProposed != that1.EpochChangeProposed {
 		return false
 	}
 	if !this.EpochStartMeta.Equal(that1.EpochStartMeta) {
@@ -543,6 +840,26 @@ func (this *ShardTriggerRegistryV2) GoString() string {
 	s = append(s, "}")
 	return strings.Join(s, "")
 }
+func (this *ShardTriggerRegistryV3) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 13)
+	s = append(s, "&block.ShardTriggerRegistryV3{")
+	if this.EpochStartShardHeader != nil {
+		s = append(s, "EpochStartShardHeader: "+fmt.Sprintf("%#v", this.EpochStartShardHeader)+",\n")
+	}
+	s = append(s, "IsEpochStart: "+fmt.Sprintf("%#v", this.IsEpochStart)+",\n")
+	s = append(s, "NewEpochHeaderReceived: "+fmt.Sprintf("%#v", this.NewEpochHeaderReceived)+",\n")
+	s = append(s, "Epoch: "+fmt.Sprintf("%#v", this.Epoch)+",\n")
+	s = append(s, "MetaEpoch: "+fmt.Sprintf("%#v", this.MetaEpoch)+",\n")
+	s = append(s, "CurrentRoundIndex: "+fmt.Sprintf("%#v", this.CurrentRoundIndex)+",\n")
+	s = append(s, "EpochStartRound: "+fmt.Sprintf("%#v", this.EpochStartRound)+",\n")
+	s = append(s, "EpochFinalityAttestingRound: "+fmt.Sprintf("%#v", this.EpochFinalityAttestingRound)+",\n")
+	s = append(s, "EpochMetaBlockHash: "+fmt.Sprintf("%#v", this.EpochMetaBlockHash)+",\n")
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
 func (this *MetaTriggerRegistry) GoString() string {
 	if this == nil {
 		return "nil"
@@ -555,6 +872,25 @@ func (this *MetaTriggerRegistry) GoString() string {
 	s = append(s, "CurrEpochStartRound: "+fmt.Sprintf("%#v", this.CurrEpochStartRound)+",\n")
 	s = append(s, "PrevEpochStartRound: "+fmt.Sprintf("%#v", this.PrevEpochStartRound)+",\n")
 	s = append(s, "EpochStartMetaHash: "+fmt.Sprintf("%#v", this.EpochStartMetaHash)+",\n")
+	if this.EpochStartMeta != nil {
+		s = append(s, "EpochStartMeta: "+fmt.Sprintf("%#v", this.EpochStartMeta)+",\n")
+	}
+	s = append(s, "}")
+	return strings.Join(s, "")
+}
+func (this *MetaTriggerRegistryV3) GoString() string {
+	if this == nil {
+		return "nil"
+	}
+	s := make([]string, 0, 12)
+	s = append(s, "&block.MetaTriggerRegistryV3{")
+	s = append(s, "Epoch: "+fmt.Sprintf("%#v", this.Epoch)+",\n")
+	s = append(s, "CurrentRound: "+fmt.Sprintf("%#v", this.CurrentRound)+",\n")
+	s = append(s, "EpochFinalityAttestingRound: "+fmt.Sprintf("%#v", this.EpochFinalityAttestingRound)+",\n")
+	s = append(s, "CurrEpochStartRound: "+fmt.Sprintf("%#v", this.CurrEpochStartRound)+",\n")
+	s = append(s, "PrevEpochStartRound: "+fmt.Sprintf("%#v", this.PrevEpochStartRound)+",\n")
+	s = append(s, "EpochStartMetaHash: "+fmt.Sprintf("%#v", this.EpochStartMetaHash)+",\n")
+	s = append(s, "EpochChangeProposed: "+fmt.Sprintf("%#v", this.EpochChangeProposed)+",\n")
 	if this.EpochStartMeta != nil {
 		s = append(s, "EpochStartMeta: "+fmt.Sprintf("%#v", this.EpochStartMeta)+",\n")
 	}
@@ -743,6 +1079,93 @@ func (m *ShardTriggerRegistryV2) MarshalToSizedBuffer(dAtA []byte) (int, error) 
 	return len(dAtA) - i, nil
 }
 
+func (m *ShardTriggerRegistryV3) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *ShardTriggerRegistryV3) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *ShardTriggerRegistryV3) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if len(m.EpochMetaBlockHash) > 0 {
+		i -= len(m.EpochMetaBlockHash)
+		copy(dAtA[i:], m.EpochMetaBlockHash)
+		i = encodeVarintTrigger(dAtA, i, uint64(len(m.EpochMetaBlockHash)))
+		i--
+		dAtA[i] = 0x4a
+	}
+	if m.EpochFinalityAttestingRound != 0 {
+		i = encodeVarintTrigger(dAtA, i, uint64(m.EpochFinalityAttestingRound))
+		i--
+		dAtA[i] = 0x40
+	}
+	if m.EpochStartRound != 0 {
+		i = encodeVarintTrigger(dAtA, i, uint64(m.EpochStartRound))
+		i--
+		dAtA[i] = 0x38
+	}
+	if m.CurrentRoundIndex != 0 {
+		i = encodeVarintTrigger(dAtA, i, uint64(m.CurrentRoundIndex))
+		i--
+		dAtA[i] = 0x30
+	}
+	if m.MetaEpoch != 0 {
+		i = encodeVarintTrigger(dAtA, i, uint64(m.MetaEpoch))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.Epoch != 0 {
+		i = encodeVarintTrigger(dAtA, i, uint64(m.Epoch))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.NewEpochHeaderReceived {
+		i--
+		if m.NewEpochHeaderReceived {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.IsEpochStart {
+		i--
+		if m.IsEpochStart {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.EpochStartShardHeader != nil {
+		{
+			size, err := m.EpochStartShardHeader.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTrigger(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0xa
+	}
+	return len(dAtA) - i, nil
+}
+
 func (m *MetaTriggerRegistry) Marshal() (dAtA []byte, err error) {
 	size := m.Size()
 	dAtA = make([]byte, size)
@@ -774,6 +1197,83 @@ func (m *MetaTriggerRegistry) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 		}
 		i--
 		dAtA[i] = 0x3a
+	}
+	if len(m.EpochStartMetaHash) > 0 {
+		i -= len(m.EpochStartMetaHash)
+		copy(dAtA[i:], m.EpochStartMetaHash)
+		i = encodeVarintTrigger(dAtA, i, uint64(len(m.EpochStartMetaHash)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if m.PrevEpochStartRound != 0 {
+		i = encodeVarintTrigger(dAtA, i, uint64(m.PrevEpochStartRound))
+		i--
+		dAtA[i] = 0x28
+	}
+	if m.CurrEpochStartRound != 0 {
+		i = encodeVarintTrigger(dAtA, i, uint64(m.CurrEpochStartRound))
+		i--
+		dAtA[i] = 0x20
+	}
+	if m.EpochFinalityAttestingRound != 0 {
+		i = encodeVarintTrigger(dAtA, i, uint64(m.EpochFinalityAttestingRound))
+		i--
+		dAtA[i] = 0x18
+	}
+	if m.CurrentRound != 0 {
+		i = encodeVarintTrigger(dAtA, i, uint64(m.CurrentRound))
+		i--
+		dAtA[i] = 0x10
+	}
+	if m.Epoch != 0 {
+		i = encodeVarintTrigger(dAtA, i, uint64(m.Epoch))
+		i--
+		dAtA[i] = 0x8
+	}
+	return len(dAtA) - i, nil
+}
+
+func (m *MetaTriggerRegistryV3) Marshal() (dAtA []byte, err error) {
+	size := m.Size()
+	dAtA = make([]byte, size)
+	n, err := m.MarshalToSizedBuffer(dAtA[:size])
+	if err != nil {
+		return nil, err
+	}
+	return dAtA[:n], nil
+}
+
+func (m *MetaTriggerRegistryV3) MarshalTo(dAtA []byte) (int, error) {
+	size := m.Size()
+	return m.MarshalToSizedBuffer(dAtA[:size])
+}
+
+func (m *MetaTriggerRegistryV3) MarshalToSizedBuffer(dAtA []byte) (int, error) {
+	i := len(dAtA)
+	_ = i
+	var l int
+	_ = l
+	if m.EpochStartMeta != nil {
+		{
+			size, err := m.EpochStartMeta.MarshalToSizedBuffer(dAtA[:i])
+			if err != nil {
+				return 0, err
+			}
+			i -= size
+			i = encodeVarintTrigger(dAtA, i, uint64(size))
+		}
+		i--
+		dAtA[i] = 0x42
+	}
+	if m.EpochChangeProposed {
+		i--
+		if m.EpochChangeProposed {
+			dAtA[i] = 1
+		} else {
+			dAtA[i] = 0
+		}
+		i--
+		dAtA[i] = 0x38
 	}
 	if len(m.EpochStartMetaHash) > 0 {
 		i -= len(m.EpochStartMetaHash)
@@ -897,6 +1397,44 @@ func (m *ShardTriggerRegistryV2) Size() (n int) {
 	return n
 }
 
+func (m *ShardTriggerRegistryV3) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.EpochStartShardHeader != nil {
+		l = m.EpochStartShardHeader.Size()
+		n += 1 + l + sovTrigger(uint64(l))
+	}
+	if m.IsEpochStart {
+		n += 2
+	}
+	if m.NewEpochHeaderReceived {
+		n += 2
+	}
+	if m.Epoch != 0 {
+		n += 1 + sovTrigger(uint64(m.Epoch))
+	}
+	if m.MetaEpoch != 0 {
+		n += 1 + sovTrigger(uint64(m.MetaEpoch))
+	}
+	if m.CurrentRoundIndex != 0 {
+		n += 1 + sovTrigger(uint64(m.CurrentRoundIndex))
+	}
+	if m.EpochStartRound != 0 {
+		n += 1 + sovTrigger(uint64(m.EpochStartRound))
+	}
+	if m.EpochFinalityAttestingRound != 0 {
+		n += 1 + sovTrigger(uint64(m.EpochFinalityAttestingRound))
+	}
+	l = len(m.EpochMetaBlockHash)
+	if l > 0 {
+		n += 1 + l + sovTrigger(uint64(l))
+	}
+	return n
+}
+
 func (m *MetaTriggerRegistry) Size() (n int) {
 	if m == nil {
 		return 0
@@ -921,6 +1459,41 @@ func (m *MetaTriggerRegistry) Size() (n int) {
 	l = len(m.EpochStartMetaHash)
 	if l > 0 {
 		n += 1 + l + sovTrigger(uint64(l))
+	}
+	if m.EpochStartMeta != nil {
+		l = m.EpochStartMeta.Size()
+		n += 1 + l + sovTrigger(uint64(l))
+	}
+	return n
+}
+
+func (m *MetaTriggerRegistryV3) Size() (n int) {
+	if m == nil {
+		return 0
+	}
+	var l int
+	_ = l
+	if m.Epoch != 0 {
+		n += 1 + sovTrigger(uint64(m.Epoch))
+	}
+	if m.CurrentRound != 0 {
+		n += 1 + sovTrigger(uint64(m.CurrentRound))
+	}
+	if m.EpochFinalityAttestingRound != 0 {
+		n += 1 + sovTrigger(uint64(m.EpochFinalityAttestingRound))
+	}
+	if m.CurrEpochStartRound != 0 {
+		n += 1 + sovTrigger(uint64(m.CurrEpochStartRound))
+	}
+	if m.PrevEpochStartRound != 0 {
+		n += 1 + sovTrigger(uint64(m.PrevEpochStartRound))
+	}
+	l = len(m.EpochStartMetaHash)
+	if l > 0 {
+		n += 1 + l + sovTrigger(uint64(l))
+	}
+	if m.EpochChangeProposed {
+		n += 2
 	}
 	if m.EpochStartMeta != nil {
 		l = m.EpochStartMeta.Size()
@@ -971,6 +1544,24 @@ func (this *ShardTriggerRegistryV2) String() string {
 	}, "")
 	return s
 }
+func (this *ShardTriggerRegistryV3) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&ShardTriggerRegistryV3{`,
+		`EpochStartShardHeader:` + strings.Replace(fmt.Sprintf("%v", this.EpochStartShardHeader), "HeaderV3", "HeaderV3", 1) + `,`,
+		`IsEpochStart:` + fmt.Sprintf("%v", this.IsEpochStart) + `,`,
+		`NewEpochHeaderReceived:` + fmt.Sprintf("%v", this.NewEpochHeaderReceived) + `,`,
+		`Epoch:` + fmt.Sprintf("%v", this.Epoch) + `,`,
+		`MetaEpoch:` + fmt.Sprintf("%v", this.MetaEpoch) + `,`,
+		`CurrentRoundIndex:` + fmt.Sprintf("%v", this.CurrentRoundIndex) + `,`,
+		`EpochStartRound:` + fmt.Sprintf("%v", this.EpochStartRound) + `,`,
+		`EpochFinalityAttestingRound:` + fmt.Sprintf("%v", this.EpochFinalityAttestingRound) + `,`,
+		`EpochMetaBlockHash:` + fmt.Sprintf("%v", this.EpochMetaBlockHash) + `,`,
+		`}`,
+	}, "")
+	return s
+}
 func (this *MetaTriggerRegistry) String() string {
 	if this == nil {
 		return "nil"
@@ -983,6 +1574,23 @@ func (this *MetaTriggerRegistry) String() string {
 		`PrevEpochStartRound:` + fmt.Sprintf("%v", this.PrevEpochStartRound) + `,`,
 		`EpochStartMetaHash:` + fmt.Sprintf("%v", this.EpochStartMetaHash) + `,`,
 		`EpochStartMeta:` + strings.Replace(fmt.Sprintf("%v", this.EpochStartMeta), "MetaBlock", "MetaBlock", 1) + `,`,
+		`}`,
+	}, "")
+	return s
+}
+func (this *MetaTriggerRegistryV3) String() string {
+	if this == nil {
+		return "nil"
+	}
+	s := strings.Join([]string{`&MetaTriggerRegistryV3{`,
+		`Epoch:` + fmt.Sprintf("%v", this.Epoch) + `,`,
+		`CurrentRound:` + fmt.Sprintf("%v", this.CurrentRound) + `,`,
+		`EpochFinalityAttestingRound:` + fmt.Sprintf("%v", this.EpochFinalityAttestingRound) + `,`,
+		`CurrEpochStartRound:` + fmt.Sprintf("%v", this.CurrEpochStartRound) + `,`,
+		`PrevEpochStartRound:` + fmt.Sprintf("%v", this.PrevEpochStartRound) + `,`,
+		`EpochStartMetaHash:` + fmt.Sprintf("%v", this.EpochStartMetaHash) + `,`,
+		`EpochChangeProposed:` + fmt.Sprintf("%v", this.EpochChangeProposed) + `,`,
+		`EpochStartMeta:` + strings.Replace(fmt.Sprintf("%v", this.EpochStartMeta), "MetaBlockV3", "MetaBlockV3", 1) + `,`,
 		`}`,
 	}, "")
 	return s
@@ -1511,6 +2119,264 @@ func (m *ShardTriggerRegistryV2) Unmarshal(dAtA []byte) error {
 	}
 	return nil
 }
+func (m *ShardTriggerRegistryV3) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTrigger
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: ShardTriggerRegistryV3: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: ShardTriggerRegistryV3: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EpochStartShardHeader", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTrigger
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTrigger
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTrigger
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.EpochStartShardHeader == nil {
+				m.EpochStartShardHeader = &HeaderV3{}
+			}
+			if err := m.EpochStartShardHeader.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IsEpochStart", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTrigger
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.IsEpochStart = bool(v != 0)
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field NewEpochHeaderReceived", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTrigger
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.NewEpochHeaderReceived = bool(v != 0)
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Epoch", wireType)
+			}
+			m.Epoch = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTrigger
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Epoch |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field MetaEpoch", wireType)
+			}
+			m.MetaEpoch = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTrigger
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.MetaEpoch |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CurrentRoundIndex", wireType)
+			}
+			m.CurrentRoundIndex = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTrigger
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CurrentRoundIndex |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EpochStartRound", wireType)
+			}
+			m.EpochStartRound = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTrigger
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.EpochStartRound |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 8:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EpochFinalityAttestingRound", wireType)
+			}
+			m.EpochFinalityAttestingRound = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTrigger
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.EpochFinalityAttestingRound |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 9:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EpochMetaBlockHash", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTrigger
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthTrigger
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTrigger
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.EpochMetaBlockHash = append(m.EpochMetaBlockHash[:0], dAtA[iNdEx:postIndex]...)
+			if m.EpochMetaBlockHash == nil {
+				m.EpochMetaBlockHash = []byte{}
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTrigger(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTrigger
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTrigger
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
 func (m *MetaTriggerRegistry) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)
 	iNdEx := 0
@@ -1700,6 +2566,244 @@ func (m *MetaTriggerRegistry) Unmarshal(dAtA []byte) error {
 			}
 			if m.EpochStartMeta == nil {
 				m.EpochStartMeta = &MetaBlock{}
+			}
+			if err := m.EpochStartMeta.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
+				return err
+			}
+			iNdEx = postIndex
+		default:
+			iNdEx = preIndex
+			skippy, err := skipTrigger(dAtA[iNdEx:])
+			if err != nil {
+				return err
+			}
+			if skippy < 0 {
+				return ErrInvalidLengthTrigger
+			}
+			if (iNdEx + skippy) < 0 {
+				return ErrInvalidLengthTrigger
+			}
+			if (iNdEx + skippy) > l {
+				return io.ErrUnexpectedEOF
+			}
+			iNdEx += skippy
+		}
+	}
+
+	if iNdEx > l {
+		return io.ErrUnexpectedEOF
+	}
+	return nil
+}
+func (m *MetaTriggerRegistryV3) Unmarshal(dAtA []byte) error {
+	l := len(dAtA)
+	iNdEx := 0
+	for iNdEx < l {
+		preIndex := iNdEx
+		var wire uint64
+		for shift := uint(0); ; shift += 7 {
+			if shift >= 64 {
+				return ErrIntOverflowTrigger
+			}
+			if iNdEx >= l {
+				return io.ErrUnexpectedEOF
+			}
+			b := dAtA[iNdEx]
+			iNdEx++
+			wire |= uint64(b&0x7F) << shift
+			if b < 0x80 {
+				break
+			}
+		}
+		fieldNum := int32(wire >> 3)
+		wireType := int(wire & 0x7)
+		if wireType == 4 {
+			return fmt.Errorf("proto: MetaTriggerRegistryV3: wiretype end group for non-group")
+		}
+		if fieldNum <= 0 {
+			return fmt.Errorf("proto: MetaTriggerRegistryV3: illegal tag %d (wire type %d)", fieldNum, wire)
+		}
+		switch fieldNum {
+		case 1:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field Epoch", wireType)
+			}
+			m.Epoch = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTrigger
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.Epoch |= uint32(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 2:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CurrentRound", wireType)
+			}
+			m.CurrentRound = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTrigger
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CurrentRound |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EpochFinalityAttestingRound", wireType)
+			}
+			m.EpochFinalityAttestingRound = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTrigger
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.EpochFinalityAttestingRound |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field CurrEpochStartRound", wireType)
+			}
+			m.CurrEpochStartRound = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTrigger
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.CurrEpochStartRound |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 5:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PrevEpochStartRound", wireType)
+			}
+			m.PrevEpochStartRound = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTrigger
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.PrevEpochStartRound |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EpochStartMetaHash", wireType)
+			}
+			var byteLen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTrigger
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				byteLen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if byteLen < 0 {
+				return ErrInvalidLengthTrigger
+			}
+			postIndex := iNdEx + byteLen
+			if postIndex < 0 {
+				return ErrInvalidLengthTrigger
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.EpochStartMetaHash = append(m.EpochStartMetaHash[:0], dAtA[iNdEx:postIndex]...)
+			if m.EpochStartMetaHash == nil {
+				m.EpochStartMetaHash = []byte{}
+			}
+			iNdEx = postIndex
+		case 7:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EpochChangeProposed", wireType)
+			}
+			var v int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTrigger
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				v |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			m.EpochChangeProposed = bool(v != 0)
+		case 8:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EpochStartMeta", wireType)
+			}
+			var msglen int
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowTrigger
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				msglen |= int(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			if msglen < 0 {
+				return ErrInvalidLengthTrigger
+			}
+			postIndex := iNdEx + msglen
+			if postIndex < 0 {
+				return ErrInvalidLengthTrigger
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			if m.EpochStartMeta == nil {
+				m.EpochStartMeta = &MetaBlockV3{}
 			}
 			if err := m.EpochStartMeta.Unmarshal(dAtA[iNdEx:postIndex]); err != nil {
 				return err

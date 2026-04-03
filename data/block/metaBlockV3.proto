@@ -1,0 +1,47 @@
+// This file holds the data structures related to the functionality of a meta block V3
+syntax = "proto3";
+
+package proto;
+
+option go_package = "block";
+option (gogoproto.stable_marshaler_all) = true;
+
+import "github.com/gogo/protobuf/gogoproto/gogo.proto";
+import "block.proto";
+import "executionResult.proto";
+import "metaBlock.proto";
+
+// MetaBlockV3 holds all the fields needed for a meta block v3. This is the part that is being hashed and run through consensus.
+message MetaBlockV3 {
+  uint64                       Nonce               = 1 [(gogoproto.jsontag) = "nonce"];
+  uint32                       Epoch               = 2 [(gogoproto.jsontag) = "epoch"];
+  uint64                       Round               = 3 [(gogoproto.jsontag) = "round"];
+  uint64                       TimestampMs         = 4 [(gogoproto.jsontag) = "timestampMs,omitempty"];
+  repeated ShardData           ShardInfo           = 5 [(gogoproto.jsontag) = "shardInfo", (gogoproto.nullable) = false];
+  repeated PeerData            PeerInfo            = 6 [(gogoproto.jsontag) = "peerInfo", (gogoproto.nullable) = false];
+  bytes                        LeaderSignature     = 7 [(gogoproto.jsontag) = "leaderSignature,omitempty"];
+  bytes                        PrevHash            = 8 [(gogoproto.jsontag) = "prevHash,omitempty"];
+  bytes                        PrevRandSeed        = 9 [(gogoproto.jsontag) = "prevRandSeed,omitempty"];
+  bytes                        RandSeed            = 10 [(gogoproto.jsontag) = "randSeed,omitempty"];
+  repeated MiniBlockHeader     MiniBlockHeaders    = 11 [(gogoproto.jsontag) = "miniBlockHeaders", (gogoproto.nullable) = false];
+  bool                         EpochChangeProposed  = 12 [(gogoproto.jsontag) = "epochChangeProposed"];
+  EpochStart                   EpochStart          = 13 [(gogoproto.jsontag) = "epochStart,omitempty", (gogoproto.nullable) = false];
+  bytes                        ChainID             = 14 [(gogoproto.jsontag) = "chainID,omitempty"];
+  bytes                        SoftwareVersion     = 15 [(gogoproto.jsontag) = "softwareVersion,omitempty"];
+  bytes                        Reserved            = 16 [(gogoproto.jsontag) = "reserved,omitempty"];
+  uint64                       GasLimit            = 17 [(gogoproto.jsontag) = "gasLimit,omitempty"];
+  uint32                       TxCount             = 18 [(gogoproto.jsontag) = "txCount"];
+  MetaExecutionResultInfo      LastExecutionResult = 19 [(gogoproto.jsontag) = "lastExecutionResult,omitempty"];
+  repeated MetaExecutionResult ExecutionResults    = 20 [(gogoproto.jsontag) = "executionResults,omitempty"];
+  repeated ShardDataProposal ShardInfoProposal     = 21 [(gogoproto.jsontag) = "shardInfoProposal", (gogoproto.nullable) = false];
+}
+
+// ShardDataProposal holds the block information proposed by the shards
+message ShardDataProposal {
+  bytes  HeaderHash           = 1 [(gogoproto.jsontag) = "headerHash,omitempty"];
+  uint64 Round                = 2 [(gogoproto.jsontag) = "round,omitempty"];
+  uint64 Nonce                = 3 [(gogoproto.jsontag) = "nonce,omitempty"];
+  uint32 ShardID              = 4 [(gogoproto.jsontag) = "shardID,omitempty"];
+  uint32 Epoch                = 5 [(gogoproto.jsontag) = "epoch,omitempty"];
+  uint32 NumPendingMiniBlocks = 6 [(gogoproto.jsontag) = "numPendingMiniBlocks"];
+}
