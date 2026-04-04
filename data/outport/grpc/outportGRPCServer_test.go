@@ -15,9 +15,20 @@ import (
 	"google.golang.org/grpc/test/bufconn"
 )
 
+type outportServiceServerStub struct {
+	outport.UnimplementedOutportServiceServer
+}
+
 func TestNewOutportGRPCServer(t *testing.T) {
 	t.Run("empty address should error", func(t *testing.T) {
 		server, err := NewOutportGRPCServer("", &outportHandlerStub{})
+
+		require.Nil(t, server)
+		require.True(t, errors.Is(err, ErrEmptyOutportGRPCAddress))
+	})
+
+	t.Run("empty address with adapter should error", func(t *testing.T) {
+		server, err := NewOutportGRPCServerWithAdapter("", &outportServiceServerStub{})
 
 		require.Nil(t, server)
 		require.True(t, errors.Is(err, ErrEmptyOutportGRPCAddress))
@@ -28,6 +39,22 @@ func TestNewOutportGRPCServer(t *testing.T) {
 
 		require.Nil(t, server)
 		require.True(t, errors.Is(err, ErrNilOutportGRPCListener))
+	})
+
+	t.Run("nil adapter should error", func(t *testing.T) {
+		server, err := NewOutportGRPCServerWithAdapter("127.0.0.1:0", nil)
+
+		require.Nil(t, server)
+		require.True(t, errors.Is(err, ErrNilOutportServiceServer))
+	})
+
+	t.Run("typed nil adapter should error", func(t *testing.T) {
+		var adapter *outportServiceServerStub
+
+		server, err := NewOutportGRPCServerWithAdapter("127.0.0.1:0", adapter)
+
+		require.Nil(t, server)
+		require.True(t, errors.Is(err, ErrNilOutportServiceServer))
 	})
 }
 
