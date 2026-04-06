@@ -1,4 +1,4 @@
-package grpc
+package grpcadapter
 
 import (
 	"net"
@@ -59,7 +59,7 @@ func newOutportGRPCServerOnListenerWithAdapter(listener net.Listener, adapter ou
 		return nil, ErrNilOutportGRPCListener
 	}
 
-	if adapter == nil || check.IfNilReflect(adapter) {
+	if check.IfNilReflect(adapter) {
 		return nil, ErrNilOutportServiceServer
 	}
 
