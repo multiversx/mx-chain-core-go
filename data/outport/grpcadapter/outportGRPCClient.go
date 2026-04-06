@@ -6,7 +6,6 @@ import (
 
 	"github.com/multiversx/mx-chain-core-go/data/outport"
 	"google.golang.org/grpc"
-	"google.golang.org/grpc/credentials/insecure"
 )
 
 // OutportGRPCClient is a networked outport client that owns its gRPC connection.
@@ -20,10 +19,6 @@ type OutportGRPCClient struct {
 func NewOutportGRPCClient(target string, opts ...grpc.DialOption) (*OutportGRPCClient, error) {
 	if strings.TrimSpace(target) == "" {
 		return nil, ErrEmptyOutportGRPCAddress
-	}
-
-	if len(opts) == 0 {
-		opts = append(opts, grpc.WithTransportCredentials(insecure.NewCredentials()))
 	}
 
 	conn, err := grpc.NewClient(target, opts...)
