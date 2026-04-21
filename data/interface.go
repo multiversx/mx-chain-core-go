@@ -401,7 +401,7 @@ type ChainHandler interface {
 	GetLastExecutedBlockHeader() HeaderHandler
 	SetLastExecutedBlockHeaderAndRootHash(header HeaderHandler, headerHash []byte, rootHash []byte)
 	GetLastExecutionResult() BaseExecutionResultHandler
-	SetLastExecutionResult(result BaseExecutionResultHandler)
+	SetLastExecutionInfo(header HeaderHandler, result BaseExecutionResultHandler)
 	IsInterfaceNil() bool
 }
 
