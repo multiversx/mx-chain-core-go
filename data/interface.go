@@ -394,6 +394,7 @@ type ChainHandler interface {
 	SetCurrentBlockHeaderAndHash(headerHash []byte, bh HeaderHandler) error
 	SetCurrentBlockHeaderAndRootHash(bh HeaderHandler, rootHash []byte) error
 	GetCurrentBlockHeaderHash() []byte
+	GetCurrentBlockHeaderAndHash() (HeaderHandler, []byte)
 	SetCurrentBlockHeaderHash(hash []byte)
 	GetCurrentBlockRootHash() []byte
 	SetFinalBlockInfo(nonce uint64, blockHash []byte, rootHash []byte)
