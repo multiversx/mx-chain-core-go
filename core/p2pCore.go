@@ -52,7 +52,7 @@ type P2PPeerInfo struct {
 	PeerSubType             P2PPeerSubType
 	ShardID                 uint32
 	PkBytes                 []byte
-	AuthenticationTimestamp uint64
+	AuthenticationTimestamp int64
 }
 
 // QueryP2PPeerInfo represents a DTO used in exporting p2p peer info after a query
