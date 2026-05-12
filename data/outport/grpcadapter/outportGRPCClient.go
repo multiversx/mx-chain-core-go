@@ -21,7 +21,7 @@ func NewOutportGRPCClient(target string, opts ...grpc.DialOption) (*OutportGRPCC
 		return nil, ErrEmptyOutportGRPCAddress
 	}
 
-	conn, err := grpc.Dial(target, opts...)
+	conn, err := grpc.NewClient(target, opts...)
 	if err != nil {
 		return nil, err
 	}

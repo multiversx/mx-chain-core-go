@@ -2,8 +2,6 @@ module github.com/multiversx/mx-chain-core-go
 
 go 1.23
 
-toolchain go1.23.7
-
 require (
 	github.com/btcsuite/btcd/btcutil v1.1.3
 	github.com/denisbrodbeck/machineid v1.0.1
@@ -14,7 +12,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/stretchr/testify v1.7.0
 	golang.org/x/crypto v0.33.0
-	google.golang.org/grpc v1.59.0
+	google.golang.org/grpc v1.67.1
 )
 
 require (
@@ -23,8 +21,8 @@ require (
 	golang.org/x/net v0.35.0 // indirect
 	golang.org/x/sys v0.30.0 // indirect
 	golang.org/x/text v0.22.0 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20230822172742-b8732ec3820d // indirect
-	google.golang.org/protobuf v1.33.0 // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240814211410-ddb44dafa142 // indirect
+	google.golang.org/protobuf v1.34.2 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20200313102051-9f266ea9e77c // indirect
 )
 
