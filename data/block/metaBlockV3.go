@@ -552,15 +552,9 @@ func (m *MetaBlockV3) SetSoftwareVersion(version []byte) error {
 	return nil
 }
 
-// SetTxCount sets the transaction count of the current meta block
-func (m *MetaBlockV3) SetTxCount(txCount uint32) error {
-	if m == nil {
-		return data.ErrNilPointerReceiver
-	}
-
-	m.TxCount = txCount
-
-	return nil
+// SetTxCount returns error
+func (m *MetaBlockV3) SetTxCount(_ uint32) error {
+	return data.ErrFieldNotSupported
 }
 
 // SetMiniBlockHeaderHandlers sets the miniBlock headers from the given miniBlock header handlers
