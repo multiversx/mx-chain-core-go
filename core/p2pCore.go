@@ -48,10 +48,11 @@ func (pst P2PPeerSubType) String() string {
 
 // P2PPeerInfo represents a peer info structure
 type P2PPeerInfo struct {
-	PeerType    P2PPeerType
-	PeerSubType P2PPeerSubType
-	ShardID     uint32
-	PkBytes     []byte
+	PeerType                P2PPeerType
+	PeerSubType             P2PPeerSubType
+	ShardID                 uint32
+	PkBytes                 []byte
+	AuthTimestamp int64
 }
 
 // QueryP2PPeerInfo represents a DTO used in exporting p2p peer info after a query
