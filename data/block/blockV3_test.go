@@ -550,20 +550,9 @@ func TestHeaderV3_SetMiniBlockHeaderHandlers(t *testing.T) {
 func TestHeaderV3_SetReceiptsHash(t *testing.T) {
 	t.Parallel()
 
-	t.Run("nil receiver", func(t *testing.T) {
-		t.Parallel()
-		var hv3 *block.HeaderV3
-		err := hv3.SetReceiptsHash([]byte("receipts"))
-		require.Equal(t, data.ErrNilPointerReceiver, err)
-	})
-
-	t.Run("should work", func(t *testing.T) {
-		t.Parallel()
-		receiptsHash := []byte("receipts hash")
-		hv3 := &block.HeaderV3{}
-		require.NoError(t, hv3.SetReceiptsHash(receiptsHash))
-		require.Equal(t, receiptsHash, hv3.ReceiptsHash)
-	})
+	hv3 := &block.HeaderV3{}
+	err := hv3.SetReceiptsHash([]byte("receipts"))
+	require.Equal(t, data.ErrFieldNotSupported, err)
 }
 
 func TestHeaderV3_SetScheduledRootHash(t *testing.T) {
