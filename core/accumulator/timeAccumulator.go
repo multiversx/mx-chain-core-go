@@ -39,6 +39,9 @@ func NewTimeAccumulator(maxAllowedTime time.Duration, maxOffset time.Duration, l
 	if maxOffset < 0 {
 		return nil, fmt.Errorf("%w for maxOffset: should not be negative", core.ErrInvalidValue)
 	}
+	if maxOffset > maxAllowedTime {
+		return nil, fmt.Errorf("%w for maxOffset: should not be higher than max allowed time, maxOffset: %v, maxAllowedTime: %v", core.ErrInvalidValue, maxOffset, maxAllowedTime)
+	}
 	if check.IfNil(logger) {
 		return nil, core.ErrNilLogger
 	}
