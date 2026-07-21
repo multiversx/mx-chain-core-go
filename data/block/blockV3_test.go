@@ -633,6 +633,7 @@ func TestHeaderV3_CheckFieldsForNil(t *testing.T) {
 			RandSeed:        []byte("rand seed"),
 			LeaderSignature: []byte("leader signature"),
 			SoftwareVersion: []byte("v1.0.0"),
+			ChainID:         []byte("chainID"),
 			PrevHash:        nil,
 		}
 		err := hv3.CheckFieldsForNil()
@@ -648,6 +649,7 @@ func TestHeaderV3_CheckFieldsForNil(t *testing.T) {
 			LeaderSignature: []byte("leader signature"),
 			SoftwareVersion: []byte("v1.0.0"),
 			PrevHash:        []byte("prev hash"),
+			ChainID:         []byte("chainID"),
 			PrevRandSeed:    nil,
 		}
 		err := hv3.CheckFieldsForNil()
@@ -706,6 +708,7 @@ func TestHeaderV3_CheckFieldsForNil(t *testing.T) {
 			RandSeed:            []byte("rand seed"),
 			LeaderSignature:     []byte("leader signature"),
 			SoftwareVersion:     []byte("v1.0.0"),
+			ChainID:             []byte("chainID"),
 			LastExecutionResult: nil,
 		}
 		err := hv3.CheckFieldsForNil()
@@ -722,6 +725,7 @@ func TestHeaderV3_CheckFieldsForNil(t *testing.T) {
 			RandSeed:            []byte("rand seed"),
 			LeaderSignature:     []byte("leader sig"),
 			SoftwareVersion:     []byte("v1.0.0"),
+			ChainID:             []byte("chainID"),
 			LastExecutionResult: &block.ExecutionResultInfo{},
 		}
 		err := hv3.CheckFieldsForNil()
