@@ -27,6 +27,18 @@ func TestEmptyChannelShouldWorkOnBufferedChannel(t *testing.T) {
 	assert.Equal(t, 3, readsCnt)
 }
 
+func TestEmptyChannelShouldWorkOnEmptyChannel(t *testing.T) {
+	ch := make(chan bool)
+
+	assert.Equal(t, 0, len(ch))
+
+	close(ch)
+
+	readsCnt := EmptyChannel(ch)
+	assert.Equal(t, 0, len(ch))
+	assert.Equal(t, 0, readsCnt)
+}
+
 func TestEmptyChannelShouldWorkOnNotBufferedChannel(t *testing.T) {
 	ch := make(chan bool)
 
