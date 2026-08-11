@@ -324,12 +324,7 @@ func (hv3 *HeaderV3) SetMiniBlockHeaderHandlers(mbHeaderHandlers []data.MiniBloc
 
 // SetReceiptsHash sets the receipts hash
 func (hv3 *HeaderV3) SetReceiptsHash(hash []byte) error {
-	if hv3 == nil {
-		return data.ErrNilPointerReceiver
-	}
-
-	hv3.ReceiptsHash = hash
-	return nil
+	return data.ErrFieldNotSupported
 }
 
 // SetScheduledRootHash always returns nil
@@ -379,6 +374,9 @@ func (hv3 *HeaderV3) CheckFieldsForNil() error {
 	}
 	if hv3.SoftwareVersion == nil {
 		return fmt.Errorf("%w in Header.SoftwareVersion", data.ErrNilValue)
+	}
+	if hv3.ChainID == nil {
+		return fmt.Errorf("%w in Header.ChainID", data.ErrNilValue)
 	}
 	if hv3.PrevHash == nil {
 		return fmt.Errorf("%w in Header.PrevHash", data.ErrNilValue)
