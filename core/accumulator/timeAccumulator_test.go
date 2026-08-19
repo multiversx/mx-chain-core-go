@@ -27,10 +27,23 @@ func TestNewTimeAccumulator_InvalidMaxWaitTimeShouldErr(t *testing.T) {
 func TestNewTimeAccumulator_InvalidMaxOffsetShouldErr(t *testing.T) {
 	t.Parallel()
 
-	ta, err := accumulator.NewTimeAccumulator(accumulator.MinimumAllowedTime, -1, &mock.LoggerMock{})
+	t.Run("negative value", func(t *testing.T) {
+		t.Parallel()
 
-	assert.True(t, check.IfNil(ta))
-	assert.True(t, errors.Is(err, core.ErrInvalidValue))
+		ta, err := accumulator.NewTimeAccumulator(accumulator.MinimumAllowedTime, -1, &mock.LoggerMock{})
+
+		assert.True(t, check.IfNil(ta))
+		assert.True(t, errors.Is(err, core.ErrInvalidValue))
+	})
+
+	t.Run("higher than max allowed time", func(t *testing.T) {
+		t.Parallel()
+
+		ta, err := accumulator.NewTimeAccumulator(accumulator.MinimumAllowedTime, accumulator.MinimumAllowedTime+1, &mock.LoggerMock{})
+
+		assert.True(t, check.IfNil(ta))
+		assert.True(t, errors.Is(err, core.ErrInvalidValue))
+	})
 }
 
 func TestNewTimeAccumulator_NilLoggerShouldErr(t *testing.T) {

@@ -10,7 +10,11 @@ func EmptyChannel(ch chan bool) int {
 	readsCnt := 0
 	for {
 		select {
-		case <-ch:
+		case _, ok := <-ch:
+			if !ok {
+				return readsCnt
+			}
+
 			readsCnt++
 		default:
 			return readsCnt

@@ -550,20 +550,9 @@ func TestHeaderV3_SetMiniBlockHeaderHandlers(t *testing.T) {
 func TestHeaderV3_SetReceiptsHash(t *testing.T) {
 	t.Parallel()
 
-	t.Run("nil receiver", func(t *testing.T) {
-		t.Parallel()
-		var hv3 *block.HeaderV3
-		err := hv3.SetReceiptsHash([]byte("receipts"))
-		require.Equal(t, data.ErrNilPointerReceiver, err)
-	})
-
-	t.Run("should work", func(t *testing.T) {
-		t.Parallel()
-		receiptsHash := []byte("receipts hash")
-		hv3 := &block.HeaderV3{}
-		require.NoError(t, hv3.SetReceiptsHash(receiptsHash))
-		require.Equal(t, receiptsHash, hv3.ReceiptsHash)
-	})
+	hv3 := &block.HeaderV3{}
+	err := hv3.SetReceiptsHash([]byte("receipts"))
+	require.Equal(t, data.ErrFieldNotSupported, err)
 }
 
 func TestHeaderV3_SetScheduledRootHash(t *testing.T) {
@@ -644,6 +633,7 @@ func TestHeaderV3_CheckFieldsForNil(t *testing.T) {
 			RandSeed:        []byte("rand seed"),
 			LeaderSignature: []byte("leader signature"),
 			SoftwareVersion: []byte("v1.0.0"),
+			ChainID:         []byte("chainID"),
 			PrevHash:        nil,
 		}
 		err := hv3.CheckFieldsForNil()
@@ -659,6 +649,7 @@ func TestHeaderV3_CheckFieldsForNil(t *testing.T) {
 			LeaderSignature: []byte("leader signature"),
 			SoftwareVersion: []byte("v1.0.0"),
 			PrevHash:        []byte("prev hash"),
+			ChainID:         []byte("chainID"),
 			PrevRandSeed:    nil,
 		}
 		err := hv3.CheckFieldsForNil()
@@ -717,6 +708,7 @@ func TestHeaderV3_CheckFieldsForNil(t *testing.T) {
 			RandSeed:            []byte("rand seed"),
 			LeaderSignature:     []byte("leader signature"),
 			SoftwareVersion:     []byte("v1.0.0"),
+			ChainID:             []byte("chainID"),
 			LastExecutionResult: nil,
 		}
 		err := hv3.CheckFieldsForNil()
@@ -733,6 +725,7 @@ func TestHeaderV3_CheckFieldsForNil(t *testing.T) {
 			RandSeed:            []byte("rand seed"),
 			LeaderSignature:     []byte("leader sig"),
 			SoftwareVersion:     []byte("v1.0.0"),
+			ChainID:             []byte("chainID"),
 			LastExecutionResult: &block.ExecutionResultInfo{},
 		}
 		err := hv3.CheckFieldsForNil()
