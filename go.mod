@@ -1,18 +1,19 @@
 module github.com/multiversx/mx-chain-core-go
 
-go 1.23
+go 1.26
 
 require (
-	github.com/btcsuite/btcd/btcutil v1.1.3
+	github.com/btcsuite/btcd/btcutil v1.2.0
 	github.com/denisbrodbeck/machineid v1.0.1
 	github.com/gogo/protobuf v1.3.2
 	github.com/golang/protobuf v1.5.3
-	github.com/mr-tron/base58 v1.2.0
-	github.com/pelletier/go-toml v1.9.3
+	github.com/mr-tron/base58 v1.3.0
+	github.com/pelletier/go-toml v1.9.5
 	github.com/pkg/errors v0.9.1
-	github.com/stretchr/testify v1.7.0
-	golang.org/x/crypto v0.33.0
+	github.com/stretchr/testify v1.11.1
+	golang.org/x/crypto v0.54.0
 	google.golang.org/grpc v1.67.1
+
 )
 
 require (
