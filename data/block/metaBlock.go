@@ -15,6 +15,34 @@ import (
 var _ = data.HeaderHandler(&MetaBlock{})
 var _ = data.MetaHeaderHandler(&MetaBlock{})
 
+// GetLastExecutionResultHandler returns nil
+func (m *MetaBlock) GetLastExecutionResultHandler() data.LastExecutionResultHandler {
+	return nil
+}
+
+// GetExecutionResultsHandlers returns nil
+func (m *MetaBlock) GetExecutionResultsHandlers() []data.BaseExecutionResultHandler {
+	return nil
+}
+
+// SetLastExecutionResultHandler always returns an error as MetaBlock has no support for execution results
+func (m *MetaBlock) SetLastExecutionResultHandler(_ data.LastExecutionResultHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return data.ErrFieldNotSupported
+}
+
+// SetExecutionResultsHandlers always returns an error as MetaBlock has no support for execution results
+func (m *MetaBlock) SetExecutionResultsHandlers(_ []data.BaseExecutionResultHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return data.ErrFieldNotSupported
+}
+
 // GetShardID returns the metachain shard id
 func (m *MetaBlock) GetShardID() uint32 {
 	return core.MetachainShardId
@@ -262,7 +290,7 @@ func (m *MetaBlock) SetShardID(_ uint32) error {
 	return nil
 }
 
-// GetMiniBlockHeadersWithDst as a map of hashes and sender IDs
+// GetMiniBlockHeadersWithDst returns a map of hashes and sender IDs
 func (m *MetaBlock) GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32 {
 	if m == nil {
 		return nil
@@ -274,23 +302,16 @@ func (m *MetaBlock) GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32 
 			continue
 		}
 
-		for _, val := range m.ShardInfo[i].ShardMiniBlockHeaders {
-			if val.ReceiverShardID == destId && val.SenderShardID != destId {
-				hashDst[string(val.Hash)] = val.SenderShardID
-			}
-		}
+		addShardMBHeadersMBToDestMap(m.ShardInfo[i].ShardMiniBlockHeaders, hashDst, destId)
 	}
 
-	for _, val := range m.MiniBlockHeaders {
-		isDestinationShard := (val.ReceiverShardID == destId ||
-			val.ReceiverShardID == core.AllShardId) &&
-			val.SenderShardID != destId
-		if isDestinationShard {
-			hashDst[string(val.Hash)] = val.SenderShardID
-		}
-	}
-
+	addMetaMBHeadersMBToDestMap(m.MiniBlockHeaders, hashDst, destId)
 	return hashDst
+}
+
+// GetProposedMiniBlockHeadersWithDst returns empty map, as this method just implements the interface needed for supernova
+func (m *MetaBlock) GetProposedMiniBlockHeadersWithDst(_ uint32) map[string]uint32 {
+	return make(map[string]uint32)
 }
 
 // GetOrderedCrossMiniblocksWithDst gets all cross miniblocks with the given destination shard ID, ordered in a
@@ -300,37 +321,10 @@ func (m *MetaBlock) GetOrderedCrossMiniblocksWithDst(destId uint32) []*data.Mini
 		return nil
 	}
 
-	miniBlocks := make([]*data.MiniBlockInfo, 0)
+	miniBlocks := getCrossMiniBlocksFromShardInfo(m.ShardInfo, destId)
+	miniBlocksFromMbHeaders := getCrossMiniBlocksFromMiniBlockHeaders(m.MiniBlockHeaders, destId, m.Round)
 
-	for i := 0; i < len(m.ShardInfo); i++ {
-		if m.ShardInfo[i].ShardID == destId {
-			continue
-		}
-
-		for _, mb := range m.ShardInfo[i].ShardMiniBlockHeaders {
-			if mb.ReceiverShardID == destId && mb.SenderShardID != destId {
-				miniBlocks = append(miniBlocks, &data.MiniBlockInfo{
-					Hash:          mb.Hash,
-					SenderShardID: mb.SenderShardID,
-					Round:         m.ShardInfo[i].Round,
-				})
-			}
-		}
-	}
-
-	for _, mb := range m.MiniBlockHeaders {
-		isDestinationShard := (mb.ReceiverShardID == destId ||
-			mb.ReceiverShardID == core.AllShardId) &&
-			mb.SenderShardID != destId
-		if isDestinationShard {
-			miniBlocks = append(miniBlocks, &data.MiniBlockInfo{
-				Hash:          mb.Hash,
-				SenderShardID: mb.SenderShardID,
-				Round:         m.Round,
-			})
-		}
-	}
-
+	miniBlocks = append(miniBlocks, miniBlocksFromMbHeaders...)
 	sort.Slice(miniBlocks, func(i, j int) bool {
 		return miniBlocks[i].Round < miniBlocks[j].Round
 	})
@@ -503,6 +497,16 @@ func (m *MetaBlock) SetShardInfoHandlers(shardInfo []data.ShardDataHandler) erro
 	return nil
 }
 
+// GetShardInfoProposalHandlers always returns nil for metablock
+func (m *MetaBlock) GetShardInfoProposalHandlers() []data.ShardDataProposalHandler {
+	return nil
+}
+
+// SetShardInfoProposalHandlers always returns nil for metablock
+func (m *MetaBlock) SetShardInfoProposalHandlers(_ []data.ShardDataProposalHandler) error {
+	return nil
+}
+
 // SetScheduledRootHash not supported on the first version of metablock
 func (m *MetaBlock) SetScheduledRootHash(_ []byte) error {
 	return data.ErrScheduledRootHashNotSupported
@@ -565,4 +569,45 @@ func (m *MetaBlock) CheckFieldsForNil() error {
 	}
 
 	return nil
+}
+
+// CheckFieldsIntegrity checks a predefined set of fields for integrity - included for backward compatibility
+// TODO check if we can implement meaningful integrity checks for metablock
+func (m *MetaBlock) CheckFieldsIntegrity() error {
+	return nil
+}
+
+// SetEpochChangeProposed will do nothing
+func (m *MetaBlock) SetEpochChangeProposed(_ bool) {
+}
+
+// SetEpochStartHandler sets the epoch start handler
+func (m *MetaBlock) SetEpochStartHandler(epochStartHandler data.EpochStartHandler) error {
+	if m == nil {
+		return data.ErrNilPointerReceiver
+	}
+	if epochStartHandler == nil {
+		return nil
+	}
+
+	es, ok := epochStartHandler.(*EpochStart)
+	if !ok {
+		return data.ErrInvalidTypeAssertion
+	}
+	if es == nil {
+		return data.ErrNilPointerDereference
+	}
+	m.EpochStart = *es
+
+	return nil
+}
+
+// IsEpochChangeProposed always returns false
+func (m *MetaBlock) IsEpochChangeProposed() bool {
+	return false
+}
+
+// IsHeaderV3 returns false as the initial version of metablock is not V3
+func (m *MetaBlock) IsHeaderV3() bool {
+	return false
 }

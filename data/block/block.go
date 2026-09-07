@@ -1,4 +1,5 @@
-//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf  --gogoslick_out=$GOPATH/src block.proto
+//go:generate protoc -I=. -I=$GOPATH/src -I=$GOPATH/src/github.com/multiversx/protobuf/protobuf  --gogoslick_out=. block.proto
+
 package block
 
 import (
@@ -206,19 +207,21 @@ func (h *Header) SetShardID(shId uint32) error {
 	return nil
 }
 
-// GetMiniBlockHeadersWithDst as a map of hashes and sender IDs
+// GetMiniBlockHeadersWithDst returns a map of hashes and sender IDs
 func (h *Header) GetMiniBlockHeadersWithDst(destId uint32) map[string]uint32 {
 	if h == nil {
 		return nil
 	}
 
 	hashDst := make(map[string]uint32)
-	for _, val := range h.MiniBlockHeaders {
-		if val.ReceiverShardID == destId && val.SenderShardID != destId {
-			hashDst[string(val.Hash)] = val.SenderShardID
-		}
-	}
+	addShardMBHeadersMBToDestMap(h.MiniBlockHeaders, hashDst, destId)
+
 	return hashDst
+}
+
+// GetProposedMiniBlockHeadersWithDst returns empty map, as this method just implements the interface needed for supernova
+func (h *Header) GetProposedMiniBlockHeadersWithDst(_ uint32) map[string]uint32 {
+	return make(map[string]uint32)
 }
 
 // GetOrderedCrossMiniblocksWithDst gets all cross miniblocks with the given destination shard ID, ordered in a
@@ -227,19 +230,8 @@ func (h *Header) GetOrderedCrossMiniblocksWithDst(destId uint32) []*data.MiniBlo
 	if h == nil {
 		return nil
 	}
-	miniBlocks := make([]*data.MiniBlockInfo, 0)
 
-	for _, mb := range h.MiniBlockHeaders {
-		if mb.ReceiverShardID == destId && mb.SenderShardID != destId {
-			miniBlocks = append(miniBlocks, &data.MiniBlockInfo{
-				Hash:          mb.Hash,
-				SenderShardID: mb.SenderShardID,
-				Round:         h.Round,
-			})
-		}
-	}
-
-	return miniBlocks
+	return getOrderedCrossMiniblocksWithDst(h.MiniBlockHeaders, h.Round, destId)
 }
 
 // GetMiniBlockHeadersHashes gets the miniblock hashes
@@ -594,6 +586,39 @@ func (h *Header) GetAdditionalData() headerVersionData.HeaderAdditionalData {
 	return nil
 }
 
+// GetGasLimit always returns 0
+func (h *Header) GetGasLimit() uint32 {
+	return 0
+}
+
+// GetExecutionResultsHandlers always returns nil
+func (h *Header) GetExecutionResultsHandlers() []data.BaseExecutionResultHandler {
+	return nil
+}
+
+// GetLastExecutionResultHandler always returns nil
+func (h *Header) GetLastExecutionResultHandler() data.LastExecutionResultHandler {
+	return nil
+}
+
+// SetLastExecutionResultHandler always returns an error as v1 Header has no support for execution results
+func (h *Header) SetLastExecutionResultHandler(_ data.LastExecutionResultHandler) error {
+	if h == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return data.ErrFieldNotSupported
+}
+
+// SetExecutionResultsHandlers always returns an error as v1 Header has no support for execution results
+func (h *Header) SetExecutionResultsHandlers(_ []data.BaseExecutionResultHandler) error {
+	if h == nil {
+		return data.ErrNilPointerReceiver
+	}
+
+	return data.ErrFieldNotSupported
+}
+
 // CheckFieldsForNil checks a predefined set of fields for nil values
 func (h *Header) CheckFieldsForNil() error {
 	if h == nil {
@@ -625,4 +650,15 @@ func (h *Header) CheckFieldsForNil() error {
 	}
 
 	return nil
+}
+
+// CheckFieldsIntegrity checks a predefined set of fields for integrity - included for backward compatibility
+// TODO check if we can implement meaningful integrity checks for v1 header
+func (h *Header) CheckFieldsIntegrity() error {
+	return nil
+}
+
+// IsHeaderV3 returns false as the first header version is not v3
+func (h *Header) IsHeaderV3() bool {
+	return false
 }

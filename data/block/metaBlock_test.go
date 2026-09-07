@@ -3,12 +3,13 @@ package block_test
 import (
 	"testing"
 
+	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/block"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
-	"github.com/stretchr/testify/assert"
-	"github.com/stretchr/testify/require"
 )
 
 func TestMetaBlock_GetEpoch(t *testing.T) {
@@ -315,7 +316,12 @@ func TestMetaBlock_GetOrderedCrossMiniblocksWithDstShouldWork(t *testing.T) {
 	shardMBHeader5 = append(shardMBHeader5, shMBHdr5)
 	shData5 := block.ShardData{Round: 7, ShardID: 1, HeaderHash: []byte("sh5"), ShardMiniBlockHeaders: shardMBHeader5}
 
-	metaHdr.ShardInfo = append(metaHdr.ShardInfo, shData1, shData2, shData3, shData4, shData5)
+	shardMBHeader6 := make([]block.MiniBlockHeader, 0)
+	shMBHdr6 := block.MiniBlockHeader{SenderShardID: core.MetachainShardId, ReceiverShardID: core.AllShardId, Hash: []byte("hashAll")}
+	shardMBHeader6 = append(shardMBHeader6, shMBHdr6)
+	shData6 := block.ShardData{Round: 12, ShardID: 1, HeaderHash: []byte("sh6"), ShardMiniBlockHeaders: shardMBHeader6}
+
+	metaHdr.ShardInfo = append(metaHdr.ShardInfo, shData1, shData2, shData3, shData4, shData5, shData6)
 
 	metaHdr.MiniBlockHeaders = append(metaHdr.MiniBlockHeaders, block.MiniBlockHeader{
 		Hash:            []byte("hash6"),
@@ -360,6 +366,22 @@ func TestMetaBlock_GetOrderedCrossMiniblocksWithDstShouldWork(t *testing.T) {
 	assert.Equal(t, miniBlocksInfo[2].Round, uint64(7))
 }
 
+func TestMetaBlock_GetProposedMiniBlockHeadersWithDst(t *testing.T) {
+	t.Parallel()
+
+	hdr := &block.MetaBlock{}
+	require.Empty(t, hdr.GetProposedMiniBlockHeadersWithDst(0))
+
+	hdr.MiniBlockHeaders = []block.MiniBlockHeader{
+		{
+			SenderShardID:   0,
+			ReceiverShardID: 0,
+			Hash:            []byte("hash"),
+		},
+	}
+	require.Empty(t, hdr.GetProposedMiniBlockHeadersWithDst(0))
+}
+
 func TestMetaBlock_SetScheduledRootHash(t *testing.T) {
 	t.Parallel()
 
@@ -401,4 +423,120 @@ func TestMetaBlock_HasScheduledMiniBlocks(t *testing.T) {
 	metaBlock.MiniBlockHeaders = []block.MiniBlockHeader{*mbHeader}
 
 	require.True(t, metaBlock.HasScheduledMiniBlocks())
+}
+
+func TestMetaBlock_IsHeaderV3(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var hv3 *block.MetaBlock
+		require.False(t, hv3.IsHeaderV3())
+	})
+	t.Run("non nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		metaBlock := &block.MetaBlock{}
+		require.False(t, metaBlock.IsHeaderV3())
+	})
+}
+
+func TestMetaBlock_SetLastExecutionResultHandler(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.MetaBlock
+		require.Equal(t, data.ErrNilPointerReceiver, header.SetLastExecutionResultHandler(nil))
+	})
+
+	t.Run("valid receiver", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.MetaBlock{}
+		require.Equal(t, data.ErrFieldNotSupported, header.SetLastExecutionResultHandler(nil))
+	})
+}
+
+func TestMetaBlock_SetExecutionResultsHandlers(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.MetaBlock
+		require.Equal(t, data.ErrNilPointerReceiver, header.SetExecutionResultsHandlers(nil))
+	})
+
+	t.Run("valid receiver", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.MetaBlock{}
+		require.Equal(t, data.ErrFieldNotSupported, header.SetExecutionResultsHandlers(nil))
+	})
+}
+
+func TestMetaBlock_SetEpochStartHandler(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.MetaBlock
+		require.Equal(t, data.ErrNilPointerReceiver, header.SetEpochStartHandler(nil))
+	})
+	t.Run("valid receiver, nil epochStartHandler should return nil", func(t *testing.T) {
+		t.Parallel()
+		header := &block.MetaBlock{}
+		require.Nil(t, header.SetEpochStartHandler(nil))
+		require.Len(t, header.EpochStart.LastFinalizedHeaders, 0)
+	})
+	t.Run("valid receiver, nil EpochStart for epochStartHandler should return error", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.MetaBlock{}
+		var nilValue *block.EpochStart
+		err := header.SetEpochStartHandler(nilValue)
+		require.Equal(t, data.ErrNilPointerDereference, err)
+	})
+	t.Run("valid receiver, non-nil epochStartHandler should set the field", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.MetaBlock{}
+		epochStartHandler := &block.EpochStart{}
+		err := header.SetEpochStartHandler(epochStartHandler)
+		require.Nil(t, err)
+		require.Equal(t, epochStartHandler, header.GetEpochStartHandler())
+	})
+}
+
+func TestMetaBlock_ShardInfoProposalHandlers(t *testing.T) {
+	t.Parallel()
+
+	metaHdr := &block.MetaBlock{}
+	handlers := metaHdr.GetShardInfoProposalHandlers()
+	require.Nil(t, handlers)
+
+	err := metaHdr.SetShardInfoProposalHandlers(nil)
+	require.Nil(t, err)
+}
+
+func TestMetaBlock_CheckFieldsIntegrity(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.MetaBlock
+		require.Nil(t, header.CheckFieldsIntegrity())
+	})
+
+	t.Run("valid receiver", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.MetaBlock{}
+		require.Nil(t, header.CheckFieldsIntegrity())
+	})
 }

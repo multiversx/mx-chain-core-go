@@ -8,7 +8,9 @@ option (gogoproto.stable_marshaler_all) = true;
 import "github.com/gogo/protobuf/gogoproto/gogo.proto";
 import "block.proto";
 import "blockV2.proto";
+import "blockV3.proto";
 import "metaBlock.proto";
+import "metaBlockV3.proto";
 
 message ShardTriggerRegistry {
     bool IsEpochStart                   = 1;
@@ -34,6 +36,18 @@ message ShardTriggerRegistryV2 {
     bytes EpochMetaBlockHash            = 9;
 }
 
+message ShardTriggerRegistryV3 {
+    HeaderV3 EpochStartShardHeader      = 1;
+    bool IsEpochStart                   = 2;
+    bool NewEpochHeaderReceived         = 3;
+    uint32 Epoch                        = 4;
+    uint32 MetaEpoch                    = 5;
+    int64 CurrentRoundIndex             = 6;
+    uint64 EpochStartRound              = 7;
+    uint64 EpochFinalityAttestingRound  = 8;
+    bytes EpochMetaBlockHash            = 9;
+}
+
 message MetaTriggerRegistry {
 	uint32 Epoch                        = 1;
 	uint64 CurrentRound                 = 2;
@@ -42,4 +56,15 @@ message MetaTriggerRegistry {
 	uint64 PrevEpochStartRound          = 5;
 	bytes EpochStartMetaHash            = 6;
 	MetaBlock EpochStartMeta            = 7;
+}
+
+message MetaTriggerRegistryV3 {
+  uint32 Epoch                        = 1;
+  uint64 CurrentRound                 = 2;
+  uint64 EpochFinalityAttestingRound  = 3;
+  uint64 CurrEpochStartRound          = 4;
+  uint64 PrevEpochStartRound          = 5;
+  bytes EpochStartMetaHash            = 6;
+  bool EpochChangeProposed            = 7;
+  MetaBlockV3 EpochStartMeta          = 8;
 }

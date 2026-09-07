@@ -41,6 +41,20 @@ func createDefaultShardTriggerRegistryV2() *ShardTriggerRegistryV2 {
 	}
 }
 
+func createDefaultShardTriggerRegistryV3() *ShardTriggerRegistryV3 {
+	return &ShardTriggerRegistryV3{
+		EpochStartShardHeader:       &HeaderV3{},
+		IsEpochStart:                true,
+		NewEpochHeaderReceived:      true,
+		Epoch:                       10,
+		MetaEpoch:                   11,
+		CurrentRoundIndex:           10000,
+		EpochStartRound:             10000,
+		EpochFinalityAttestingRound: 10002,
+		EpochMetaBlockHash:          []byte("metaBlockHash"),
+	}
+}
+
 func TestShardTriggerRegistry_GetEpochStartHeaderHandlerNilShardTriggerRegistry(t *testing.T) {
 	t.Parallel()
 
@@ -481,4 +495,79 @@ func TestShardTriggerRegistryV2_SetEpochStartHeaderHandlerOK(t *testing.T) {
 	err := str.SetEpochStartHeaderHandler(setHeader)
 	require.Nil(t, err)
 	require.Equal(t, setHeader, str.EpochStartShardHeader)
+}
+
+func TestShardTriggerRegistryV3_SettersAndGetters(t *testing.T) {
+	t.Parallel()
+
+	str := createDefaultShardTriggerRegistryV3()
+	str.EpochStartShardHeader = &HeaderV3{
+		Epoch: 1,
+	}
+
+	setHeader := &HeaderV3{
+		Epoch: 10,
+	}
+
+	err := str.SetEpochStartHeaderHandler(setHeader)
+	require.Nil(t, err)
+	require.Equal(t, setHeader, str.EpochStartShardHeader)
+}
+
+func TestMetaTriggerRegistryV1AndV3_SettersAndGetters(t *testing.T) {
+	t.Parallel()
+
+	var nilMetaRegistry *MetaTriggerRegistry
+	var nilMetaRegistryV3 *MetaTriggerRegistryV3
+
+	metaBlockV1 := &MetaBlock{Nonce: 1}
+	metaBlockV3 := &MetaBlockV3{Nonce: 2}
+
+	testNilMetaRegistrySetters(t, nilMetaRegistry, metaBlockV1)
+	testNilMetaRegistrySetters(t, nilMetaRegistryV3, metaBlockV3)
+
+	metaRegistry := &MetaTriggerRegistry{}
+	metaRegistryV3 := &MetaTriggerRegistryV3{}
+
+	testRegistryCommonSettersGetters(t, metaRegistry, metaBlockV1)
+	testRegistryCommonSettersGetters(t, metaRegistryV3, metaBlockV3)
+
+	require.Nil(t, metaRegistry.SetEpochChangeProposed(true))
+	require.Nil(t, metaRegistryV3.SetEpochChangeProposed(true))
+
+	require.False(t, metaRegistry.GetEpochChangeProposed())
+	require.True(t, metaRegistryV3.GetEpochChangeProposed())
+
+	require.ErrorIs(t, metaRegistry.SetEpochStartMetaHeaderHandler(metaBlockV3), data.ErrInvalidTypeAssertion)
+	require.ErrorIs(t, metaRegistryV3.SetEpochStartMetaHeaderHandler(metaBlockV1), data.ErrInvalidTypeAssertion)
+}
+
+func testNilMetaRegistrySetters(t *testing.T, nilMetaRegistry data.MetaTriggerRegistryHandler, metaHdrToSet data.MetaHeaderHandler) {
+	require.Equal(t, data.ErrNilPointerReceiver, nilMetaRegistry.SetEpoch(1))
+	require.Equal(t, data.ErrNilPointerReceiver, nilMetaRegistry.SetEpochChangeProposed(true))
+	require.Equal(t, data.ErrNilPointerReceiver, nilMetaRegistry.SetCurrentRound(2))
+	require.Equal(t, data.ErrNilPointerReceiver, nilMetaRegistry.SetEpochFinalityAttestingRound(3))
+	require.Equal(t, data.ErrNilPointerReceiver, nilMetaRegistry.SetCurrEpochStartRound(4))
+	require.Equal(t, data.ErrNilPointerReceiver, nilMetaRegistry.SetPrevEpochStartRound(5))
+	require.Equal(t, data.ErrNilPointerReceiver, nilMetaRegistry.SetEpochStartMetaHash([]byte("hash")))
+	require.Equal(t, data.ErrNilPointerReceiver, nilMetaRegistry.SetEpochStartMetaHeaderHandler(metaHdrToSet))
+}
+
+func testRegistryCommonSettersGetters(t *testing.T, registry data.MetaTriggerRegistryHandler, metaHdrToSet data.MetaHeaderHandler) {
+	require.Nil(t, registry.SetEpoch(1))
+	require.Nil(t, registry.SetCurrentRound(2))
+	require.Nil(t, registry.SetEpochFinalityAttestingRound(3))
+	require.Nil(t, registry.SetCurrEpochStartRound(4))
+	require.Nil(t, registry.SetPrevEpochStartRound(5))
+	require.Nil(t, registry.SetEpochStartMetaHash([]byte("hash")))
+	require.Nil(t, registry.SetEpochStartMetaHeaderHandler(metaHdrToSet))
+
+	require.Equal(t, uint32(1), registry.GetEpoch())
+	require.Equal(t, uint64(2), registry.GetCurrentRound())
+	require.Equal(t, uint64(3), registry.GetEpochFinalityAttestingRound())
+	require.Equal(t, uint64(4), registry.GetCurrEpochStartRound())
+	require.Equal(t, uint64(5), registry.GetPrevEpochStartRound())
+	require.Equal(t, []byte("hash"), registry.GetEpochStartMetaHash())
+	require.Equal(t, metaHdrToSet, registry.GetEpochStartMetaHeaderHandler())
+
 }

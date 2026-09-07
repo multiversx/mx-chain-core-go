@@ -5,11 +5,12 @@ import (
 	"reflect"
 	"testing"
 
+	"github.com/stretchr/testify/require"
+
 	"github.com/multiversx/mx-chain-core-go/core"
 	"github.com/multiversx/mx-chain-core-go/data"
 	"github.com/multiversx/mx-chain-core-go/data/block"
 	"github.com/multiversx/mx-chain-core-go/data/headerVersionData"
-	"github.com/stretchr/testify/require"
 )
 
 func TestHeaderV2_GetEpochNilPointerReceiverOrInnerHeader(t *testing.T) {
@@ -806,6 +807,22 @@ func TestHeaderV2_GetMiniBlockHeadersWithDstShouldWork(t *testing.T) {
 	require.Equal(t, uint32(0), hashesWithDest2[string(hash2S0R2)])
 }
 
+func TestHeaderV2_GetProposedMiniBlockHeadersWithDst(t *testing.T) {
+	t.Parallel()
+
+	hdr := &block.HeaderV2{Header: &block.Header{}}
+	require.Empty(t, hdr.GetProposedMiniBlockHeadersWithDst(0))
+
+	hdr.Header.MiniBlockHeaders = []block.MiniBlockHeader{
+		{
+			SenderShardID:   0,
+			ReceiverShardID: 0,
+			Hash:            []byte("hash"),
+		},
+	}
+	require.Empty(t, hdr.GetProposedMiniBlockHeadersWithDst(0))
+}
+
 func TestHeaderV2_GetOrderedCrossMiniblocksWithDstShouldWork(t *testing.T) {
 	t.Parallel()
 
@@ -1241,5 +1258,77 @@ func TestHeaderV2_SetBlockBodyTypeInt32(t *testing.T) {
 		err = header.SetBlockBodyTypeInt32(int32(block.TxBlock))
 		require.Nil(t, err)
 		require.Equal(t, int32(block.TxBlock), header.GetBlockBodyTypeInt32())
+	})
+}
+
+func TestHeaderV2_IsHeaderV3(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var h *block.HeaderV2
+		require.False(t, h.IsHeaderV3())
+	})
+	t.Run("valid receiver", func(t *testing.T) {
+		h := &block.HeaderV2{
+			Header: &block.Header{},
+		}
+
+		require.False(t, h.IsHeaderV3())
+	})
+}
+
+func TestHeaderV2_SetLastExecutionResultHandler(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.HeaderV2
+		require.Equal(t, data.ErrNilPointerReceiver, header.SetLastExecutionResultHandler(nil))
+	})
+
+	t.Run("valid receiver", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.HeaderV2{}
+		require.Equal(t, data.ErrFieldNotSupported, header.SetLastExecutionResultHandler(nil))
+	})
+}
+
+func TestHeaderV2_SetExecutionResultsHandlers(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.HeaderV2
+		require.Equal(t, data.ErrNilPointerReceiver, header.SetExecutionResultsHandlers(nil))
+	})
+
+	t.Run("valid receiver", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.HeaderV2{}
+		require.Equal(t, data.ErrFieldNotSupported, header.SetExecutionResultsHandlers(nil))
+	})
+}
+
+func TestHeaderV2_CheckFieldsIntegrity(t *testing.T) {
+	t.Parallel()
+
+	t.Run("nil receiver", func(t *testing.T) {
+		t.Parallel()
+
+		var header *block.HeaderV2
+		require.Nil(t, header.CheckFieldsIntegrity())
+	})
+
+	t.Run("valid receiver", func(t *testing.T) {
+		t.Parallel()
+
+		header := &block.HeaderV2{}
+		require.Nil(t, header.CheckFieldsIntegrity())
 	})
 }

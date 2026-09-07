@@ -19,6 +19,10 @@ func GetHeaderBytesAndType(marshaller marshal.Marshalizer, headerHandler data.He
 	var headerType core.HeaderType
 
 	switch headerHandler.(type) {
+	case *block.HeaderV3:
+		headerType = core.ShardHeaderV3
+	case *block.MetaBlockV3:
+		headerType = core.MetaHeaderV3
 	case *block.HeaderV2:
 		headerType = core.ShardHeaderV2
 	case *block.MetaBlock:
