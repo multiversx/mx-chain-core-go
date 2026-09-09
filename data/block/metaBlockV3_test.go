@@ -764,19 +764,9 @@ func TestMetaBlockV3_SetSoftwareVersion(t *testing.T) {
 func TestMetaBlockV3_SetTxCount(t *testing.T) {
 	t.Parallel()
 
-	t.Run("nil receiver", func(t *testing.T) {
-		t.Parallel()
-		var mb2 *block.MetaBlockV3
-		err := mb2.SetTxCount(10)
-		require.Equal(t, data.ErrNilPointerReceiver, err)
-	})
-
-	t.Run("should work", func(t *testing.T) {
-		t.Parallel()
-		mb2 := &block.MetaBlockV3{}
-		require.NoError(t, mb2.SetTxCount(42))
-		require.Equal(t, uint32(42), mb2.TxCount)
-	})
+	mb2 := &block.MetaBlockV3{}
+	err := mb2.SetTxCount(42)
+	require.Equal(t, data.ErrFieldNotSupported, err)
 }
 
 func TestMetaBlockV3_SetMiniBlockHeaderHandlers(t *testing.T) {
