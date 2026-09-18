@@ -16,6 +16,10 @@ import "github.com/multiversx/mx-chain-core-go/data/rewardTx/rewardTx.proto";
 import "github.com/multiversx/mx-chain-core-go/data/alteredAccount/alteredAccount.proto";
 import "github.com/multiversx/mx-chain-core-go/data/stateChange/stateChange.proto";
 
+message ResponseData {
+    uint64 IndexingTimeInMs = 1;
+}
+
 message StateAccessesForBlock {
   map <string, StateAccesses>  StateAccesses          = 1 [(gogoproto.jsontag) = "stateAccesses,omitempty"];
 }
