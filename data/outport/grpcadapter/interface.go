@@ -15,6 +15,7 @@ type OutportClient interface {
 	SaveValidatorsRating(ctx context.Context, in *outport.ValidatorsRating) (*outport.ResponseData, error)
 	SaveAccounts(ctx context.Context, in *outport.Accounts) (*outport.ResponseData, error)
 	FinalizedBlockEvent(ctx context.Context, in *outport.FinalizedBlock) (*outport.ResponseData, error)
+	Close() error
 	IsInterfaceNil() bool
 }
 

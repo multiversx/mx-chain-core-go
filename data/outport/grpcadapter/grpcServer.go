@@ -5,7 +5,17 @@ import (
 
 	"github.com/multiversx/mx-chain-core-go/core/check"
 	"github.com/multiversx/mx-chain-core-go/data/outport"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
 )
+
+func responseForHandlerError(err error) (*outport.ResponseData, error) {
+	if err != nil {
+		return nil, status.Error(codes.Internal, "outport handler failed")
+	}
+
+	return &outport.ResponseData{}, nil
+}
 
 type outportServer struct {
 	handler OutportHandler
@@ -24,51 +34,37 @@ func NewOutportServer(handler OutportHandler) (*outportServer, error) {
 
 // SaveBlock forwards the call to the provided handler.
 func (os *outportServer) SaveBlock(ctx context.Context, in *outport.OutportBlock) (*outport.ResponseData, error) {
-	err := os.handler.SaveBlock(in)
-
-	return &outport.ResponseData{}, err
+	return responseForHandlerError(os.handler.SaveBlock(in))
 }
 
 // RevertIndexedBlock forwards the call to the provided handler.
 func (os *outportServer) RevertIndexedBlock(ctx context.Context, in *outport.BlockData) (*outport.ResponseData, error) {
-	err := os.handler.RevertIndexedBlock(in)
-
-	return &outport.ResponseData{}, err
+	return responseForHandlerError(os.handler.RevertIndexedBlock(in))
 }
 
 // SaveRoundsInfo forwards the call to the provided handler.
 func (os *outportServer) SaveRoundsInfo(ctx context.Context, in *outport.RoundsInfo) (*outport.ResponseData, error) {
-	err := os.handler.SaveRoundsInfo(in)
-
-	return &outport.ResponseData{}, err
+	return responseForHandlerError(os.handler.SaveRoundsInfo(in))
 }
 
 // SaveValidatorsPubKeys forwards the call to the provided handler.
 func (os *outportServer) SaveValidatorsPubKeys(ctx context.Context, in *outport.ValidatorsPubKeys) (*outport.ResponseData, error) {
-	err := os.handler.SaveValidatorsPubKeys(in)
-
-	return &outport.ResponseData{}, err
+	return responseForHandlerError(os.handler.SaveValidatorsPubKeys(in))
 }
 
 // SaveValidatorsRating forwards the call to the provided handler.
 func (os *outportServer) SaveValidatorsRating(ctx context.Context, in *outport.ValidatorsRating) (*outport.ResponseData, error) {
-	err := os.handler.SaveValidatorsRating(in)
-
-	return &outport.ResponseData{}, err
+	return responseForHandlerError(os.handler.SaveValidatorsRating(in))
 }
 
 // SaveAccounts forwards the call to the provided handler.
 func (os *outportServer) SaveAccounts(ctx context.Context, in *outport.Accounts) (*outport.ResponseData, error) {
-	err := os.handler.SaveAccounts(in)
-
-	return &outport.ResponseData{}, err
+	return responseForHandlerError(os.handler.SaveAccounts(in))
 }
 
 // FinalizedBlockEvent forwards the call to the provided handler.
 func (os *outportServer) FinalizedBlockEvent(ctx context.Context, in *outport.FinalizedBlock) (*outport.ResponseData, error) {
-	err := os.handler.FinalizedBlock(in)
-
-	return &outport.ResponseData{}, err
+	return responseForHandlerError(os.handler.FinalizedBlock(in))
 }
 
 // IsInterfaceNil returns true if there is no value under the interface.

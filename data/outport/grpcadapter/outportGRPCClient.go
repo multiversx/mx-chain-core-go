@@ -11,11 +11,11 @@ import (
 // OutportGRPCClient is a networked outport client that owns its gRPC connection.
 type OutportGRPCClient struct {
 	conn   *grpc.ClientConn
-	client OutportClient
+	client outport.OutportServiceClient
 }
 
 // NewOutportGRPCClient creates a gRPC client connected to the given target.
-// If no dial options are provided, insecure transport credentials are used.
+// Transport credentials must be provided in opts.
 func NewOutportGRPCClient(target string, opts ...grpc.DialOption) (*OutportGRPCClient, error) {
 	if strings.TrimSpace(target) == "" {
 		return nil, ErrEmptyOutportGRPCAddress
@@ -26,18 +26,13 @@ func NewOutportGRPCClient(target string, opts ...grpc.DialOption) (*OutportGRPCC
 		return nil, err
 	}
 
-	client, err := NewOutportClient(outport.NewOutportServiceClient(conn))
-	if err != nil {
-		_ = conn.Close()
-		return nil, err
-	}
-
 	return &OutportGRPCClient{
 		conn:   conn,
-		client: client,
+		client: outport.NewOutportServiceClient(conn),
 	}, nil
 }
 
+// SaveAccounts forwards the request to the remote outport service.
 func (ogc *OutportGRPCClient) SaveAccounts(ctx context.Context, in *outport.Accounts) (*outport.ResponseData, error) {
 	return ogc.client.SaveAccounts(ctx, in)
 }

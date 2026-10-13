@@ -9,6 +9,8 @@ import (
 	"google.golang.org/grpc"
 )
 
+const maxOutportGRPCMessageSize = 64 * 1024 * 1024
+
 // OutportGRPCServer is a bootstrapped gRPC server for the outport service.
 type OutportGRPCServer struct {
 	listener net.Listener
@@ -25,6 +27,7 @@ func NewOutportGRPCServer(address string, handler OutportHandler, opts ...grpc.S
 	return NewOutportGRPCServerWithAdapter(address, adapter, opts...)
 }
 
+// NewOutportGRPCServerWithAdapter listens on address and registers the provided service implementation.
 func NewOutportGRPCServerWithAdapter(address string, adapter outport.OutportServiceServer, opts ...grpc.ServerOption) (*OutportGRPCServer, error) {
 	if strings.TrimSpace(address) == "" {
 		return nil, ErrEmptyOutportGRPCAddress
@@ -63,6 +66,7 @@ func newOutportGRPCServerOnListenerWithAdapter(listener net.Listener, adapter ou
 		return nil, ErrNilOutportServiceServer
 	}
 
+	opts = append([]grpc.ServerOption{grpc.MaxRecvMsgSize(maxOutportGRPCMessageSize)}, opts...)
 	server := grpc.NewServer(opts...)
 	outport.RegisterOutportServiceServer(server, adapter)
 
@@ -84,6 +88,9 @@ func (ogs *OutportGRPCServer) Close() error {
 	}
 
 	ogs.server.Stop()
+	if ogs.listener != nil {
+		_ = ogs.listener.Close()
+	}
 	return nil
 }
 
